@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro"
+       name="xarm7" >
+
+  <arg name="prefix" default=""/>
+  <arg name="ros_control_namespace" default="xarm"/>
+  <arg name="limited" default="false"/>
+  <arg name="effort_control" default="false"/>
+
+  <!-- common stuff -->
+  <xacro:include filename="$(find xarm_description)/urdf/common.gazebo.xacro" />
+
+  <!-- xarm7 -->
+  <xacro:include filename="$(find xarm_description)/urdf/xarm7.urdf.xacro" />
+  <xacro:include filename="$(find xarm_description)/urdf/xarm7.transmission.xacro" />
+  <xacro:include filename="$(find xarm_description)/urdf/xarm7.gazebo.xacro" />
+
+  <!-- arm -->
+  <xacro:gazebo_ros_control_plugin namespace="$(arg ros_control_namespace)"/>
+
+  <xacro:if value="$(arg limited)">
+    <xacro:xarm7_urdf prefix="$(arg prefix)"
+      joint1_lower_limit="${-pi*0.99}" joint1_upper_limit="${pi*0.99}"
+      joint2_lower_limit="${-pi*0.99}" joint2_upper_limit="${pi*0.99}"
+      joint3_lower_limit="${-pi*0.99}" joint3_upper_limit="${pi*0.99}"
+      joint4_lower_limit="${-pi*0.99}" joint4_upper_limit="${pi*0.99}"
+      joint5_lower_limit="${-pi*0.99}" joint5_upper_limit="${pi*0.99}"
+      joint6_lower_limit="${-pi*0.99}" joint6_upper_limit="${pi*0.99}"
+      joint7_lower_limit="${-pi*0.99}" joint7_upper_limit="${pi*0.99}"/>
+  </xacro:if>
+  <xacro:unless value="$(arg limited)">
+    <xacro:xarm7_urdf prefix="$(arg prefix)"/>
+  </xacro:unless>
+
+  <xacro:if value="$(arg effort_control)">
+    <xacro:xarm7_transmission prefix="$(arg prefix)" hard_interface="EffortJointInterface" />
+  </xacro:if>
+  <xacro:unless value="$(arg effort_control)">
+    <xacro:xarm7_transmission prefix="$(arg prefix)" hard_interface="PositionJointInterface" />
+  </xacro:unless>
+
+  <xacro:xarm7_gazebo prefix="$(arg prefix)" />
+
+  <link name="world" />
+  <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link = "$(arg prefix)link_base" />
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+  </joint>
+
+</robot>

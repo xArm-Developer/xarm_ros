@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="limited" default="false" doc="If true, limits joint range [-PI, PI] on all joints." />
+
+  <param name="robot_description"
+    command="$(find xacro)/xacro
+    --inorder '$(find xarm_description)/urdf/xarm7_robot.urdf.xacro'
+    limited:=$(arg limited)" />
+
+</launch>
