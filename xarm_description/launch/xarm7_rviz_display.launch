@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!--test cmd: roslaunch xarm_description xarm7_rviz_test.launch limited:=true-->
+
+  <arg name="limited" default="True" doc="If true, limits joint range (-PI, PI) on all joints." />
+
+  <include file="$(find xarm_description)/launch/xarm7_upload.launch" >
+    <arg name="limited" value="$(arg limited)"/>
+  </include>
+
+  <param name="use_gui" value= "True" />
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+  <node name="rviz" pkg="rviz" type="rviz" />
+
+</launch>

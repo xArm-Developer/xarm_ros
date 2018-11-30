@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: xarm_description
+    relative_path: urdf/xarm7_robot.urdf.xacro
+  SRDF:
+    relative_path: config/xarm7.srdf
+  CONFIG:
+    author_name: jimy
+    author_email: jimy92@163.com
+    generated_timestamp: 1533194165
