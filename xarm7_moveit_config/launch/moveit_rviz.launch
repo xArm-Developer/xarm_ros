@@ -4,9 +4,9 @@
   <arg unless="$(arg debug)" name="launch_prefix" value="" />
   <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
-  <arg name="config" default="false" />
-  <arg unless="$(arg config)" name="command_args" value="" />
-  <arg     if="$(arg config)" name="command_args" value="-d $(find xarm7_moveit_config)/launch/moveit.rviz" />
+  <arg name="no_gui_ctrl" default="false" />
+  <arg if="$(arg no_gui_ctrl)" name="command_args" value="-d $(find xarm_planner)/launch/planner.rviz" />
+  <arg unless="$(arg no_gui_ctrl)" name="command_args" value="-d $(find xarm7_moveit_config)/launch/moveit.rviz" />
   
   <node name="$(anon rviz)" launch-prefix="$(arg launch_prefix)" pkg="rviz" type="rviz" respawn="false"
 	args="$(arg command_args)" output="screen">

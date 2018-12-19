@@ -24,8 +24,8 @@ from xarm.wrapper import XArmAPI
 
 DOF = 7
 JOINT_NAMES = ['joint1', 'joint2', 'joint3', 'joint4', 'joint5', 'joint6', 'joint7']
-UPDATE_RATE_HZ = 50
-STOP_DURATION = 0.5
+UPDATE_RATE_HZ = 100
+STOP_DURATION = 0.1
 P_TOLERANCE = [0.01]*DOF
 GAP_TOL_RAD = 0.1
 EXEC_TIME_TOLERANCE_SEC = 2.0
@@ -114,7 +114,7 @@ class xArmTrajAction(object):
             goal_handle.set_rejected()
             return
 
-        time.sleep(1.0) # temporary, for safty reation, delay 1.0 sec to execute 
+        # time.sleep(1.0) # temporary, for safty reation, delay 1.0 sec to execute 
         # make sure self.trajectory name/data is in proper order
         reorder_traj_joints(goal_handle.get_goal().trajectory, JOINT_NAMES)
         
@@ -164,7 +164,7 @@ class xArmTrajAction(object):
             stop_end = sample_traj(self.traj, now - self.goalStartTime + STOP_DURATION)
             stop_end.velocities = [0]*DOF
             stop_end.accelerations = [0]*DOF
-            stop_end.time_from_start = STOP_DURATION
+            stop_end.time_from_start = rospy.Duration(STOP_DURATION)
 
             with self.mutex:
                 if immediately:

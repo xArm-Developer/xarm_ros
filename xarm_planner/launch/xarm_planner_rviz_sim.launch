@@ -1,0 +1,19 @@
+<launch>
+
+  <include file="$(find xarm7_moveit_config)/launch/moveit_rviz_common.launch">
+    <arg name="jnt_stat_source" value="[/move_group/fake_controller_joint_states]" />
+    <!-- whether to use fake_execution controller to drive the motion -->
+    <arg name="fake_execution" value="true" />
+    <!-- option to publish tf topic or not -->
+    <arg name="pub_tf" value="true" />
+    <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
+    <arg name="NO_GUI_CTRL" value="true"/>
+    <!-- option to show rviz or not -->
+    <arg name="show_rviz" value="true" />
+    
+  </include>
+
+  <!-- bring up the simple planner (based on move_group) that provide plan service and execution server -->
+  <node name="xarm_move_group_planner" pkg="xarm_planner" type="xarm_simple_planner" />
+
+</launch>
