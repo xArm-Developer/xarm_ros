@@ -1,0 +1,13 @@
+# request: set robot state or mode.
+# data: int value indicating command robot state or execution mode.
+
+int16 data
+
+-----
+
+# response: 
+#	ret is 0 for successful execution and others for errors or warnings occured
+#	message is a string returned by function, indicating execution status.
+
+int16 ret
+string message

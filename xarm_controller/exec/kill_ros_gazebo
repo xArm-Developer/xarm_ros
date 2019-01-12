@@ -1,8 +1,0 @@
-#!/bin/bash
-# Kill all gazebo_related process with one shot
-ps -ef | awk '/ros/ && !/awk/ {print $2}' | xargs -r kill -9
-ps -ef | awk '/gzserver/ && !/awk/ {print $2}' | xargs -r kill -9
-ps -ef | awk '/gzclient/ && !/awk/ {print $2}' | xargs -r kill -9
-ps -ef | awk '/controller_manager/ && !/awk/ {print $2}' | xargs -r kill -9
-
-echo "Finished"

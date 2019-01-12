@@ -8,11 +8,11 @@
 
   <xacro:macro name="xarm7_urdf" params="prefix
     joint1_lower_limit:=${-2.0*pi}  joint1_upper_limit:=${2.0*pi}
-    joint2_lower_limit:=${-2.18}  joint2_upper_limit:=${2.18}
+    joint2_lower_limit:=${-2.0*pi}  joint2_upper_limit:=${2.0*pi}
     joint3_lower_limit:=${-2.0*pi}  joint3_upper_limit:=${2.0*pi}
-    joint4_lower_limit:=${-4.01}  joint4_upper_limit:=${0.11}
+    joint4_lower_limit:=${-2.0*pi}  joint4_upper_limit:=${2.0*pi}
     joint5_lower_limit:=${-2.0*pi}  joint5_upper_limit:=${2.0*pi}
-    joint6_lower_limit:=${-1.75}  joint6_upper_limit:=${1.0*pi}
+    joint6_lower_limit:=${-2.0*pi}  joint6_upper_limit:=${2.0*pi}
     joint7_lower_limit:=${-2.0*pi}  joint7_upper_limit:=${2.0*pi}">
 
     <material name="Black">

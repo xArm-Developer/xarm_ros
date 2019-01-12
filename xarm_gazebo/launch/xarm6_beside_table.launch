@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="run_demo" default="false" doc="If true, perform the demo after launch"/>
+  <arg name="paused" default="false" doc="Starts gazebo in paused mode" />
+  <arg name="gui" default="true" doc="Starts gazebo gui" />
+  <arg name="effort_control" default="false"/>
+
+  <rosparam file="$(find xarm6_moveit_config)/config/xarm6_params.yaml" command="load"/>
+  <!-- startup simulated world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find xarm_gazebo)/worlds/xarm_example1_table.world"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="gui" value="$(arg gui)"/>
+  </include>
+
+  <!-- send robot urdf to param server, joint limit may be overwritten if use moveit planner -->
+  <param name="robot_description"
+    command="$(find xacro)/xacro
+    --inorder '$(find xarm_description)/urdf/xarm6_robot.urdf.xacro'
+    effort_control:=$(arg effort_control)" />
+
+  <!-- spawn robot model in gazebo, located on the table -->
+  <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model"
+    respawn="false" output="screen"
+    args="-urdf -model xarm6 -x -0.2 -y -0.6 -z 1.021 -param robot_description"/>
+
+  <!-- load the corresponding controllers -->
+  <include file="$(find xarm_controller)/launch/xarm6_control.launch">
+    <arg name="run_demo_traj" value="$(arg run_demo)"/>
+    <arg name="effort_control" value="$(arg effort_control)"/>
+  </include>
+
+</launch>

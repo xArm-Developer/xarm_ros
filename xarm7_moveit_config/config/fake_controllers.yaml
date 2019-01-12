@@ -1,5 +1,6 @@
 controller_list:
   - name: fake_xarm7_controller
+    type: interpolate 
     joints:
       - joint1
       - joint2

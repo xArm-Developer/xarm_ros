@@ -21,7 +21,6 @@
 
 #define SPINNER_THREAD_NUM 2
 
-static const std::string PLANNING_GROUP("xarm7");
 
 class XArmSimplePlanner
 {
@@ -31,6 +30,8 @@ class XArmSimplePlanner
     ~XArmSimplePlanner(){};
     void start();
     void stop();
+
+    static std::string PLANNING_GROUP; // declaration of static class member
 
   private:
     ros::NodeHandle node_handle;
@@ -135,9 +136,37 @@ void XArmSimplePlanner::execute_plan_topic(const std_msgs::Bool::ConstPtr& exec)
 }
 
 
+std::string XArmSimplePlanner::PLANNING_GROUP; // Definition of static class member
+
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "xarm_move_group_planner");
+  ros::NodeHandle nh;
+  int jnt_num;
+
+  nh.getParam("DOF", jnt_num);
+  switch(jnt_num)
+  {
+    case 7:
+    {
+      XArmSimplePlanner::PLANNING_GROUP = "xarm7";
+      break;
+    }
+    case 6:
+    {
+      XArmSimplePlanner::PLANNING_GROUP = "xarm6";
+      break;
+    }
+    case 5:
+    {
+      XArmSimplePlanner::PLANNING_GROUP = "xarm5";
+      break;
+    }
+    default:
+    {
+      ROS_ERROR("ROS parameter DOF not correct, please CHECK!!");
+    }
+  }
 
   XArmSimplePlanner planner;
 

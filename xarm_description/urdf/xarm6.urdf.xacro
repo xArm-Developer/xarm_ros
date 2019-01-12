@@ -1,0 +1,297 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+<!--
+  Author: Jason Peng <jason@ufactory.cc>
+  Contributers:
+-->
+
+  <xacro:macro name="xarm6_urdf" params="prefix
+    joint1_lower_limit:=${-2.0*pi}  joint1_upper_limit:=${2.0*pi}
+    joint2_lower_limit:=${-2.0*pi}  joint2_upper_limit:=${2.0*pi}
+    joint3_lower_limit:=${-2.0*pi}  joint3_upper_limit:=${2.0*pi}
+    joint4_lower_limit:=${-2.0*pi}  joint4_upper_limit:=${2.0*pi}
+    joint5_lower_limit:=${-2.0*pi}  joint5_upper_limit:=${2.0*pi}
+    joint6_lower_limit:=${-2.0*pi}  joint6_upper_limit:=${2.0*pi}">
+
+    <material name="Black">
+      <color rgba="0.0 0.0 0.0 1.0"/>
+    </material>
+
+    <material name="Red">
+      <color rgba="0.8 0.0 0.0 1.0"/>
+    </material>
+
+    <material name="White">
+      <color rgba="1.0 1.0 1.0 1.0"/>
+    </material>
+
+    <link name="${prefix}link_base">
+      <visual>
+        <geometry>
+          <mesh filename="package://xarm_description/meshes/xarm6/visual/base.stl"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <material name="White" />
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://xarm_description/meshes/xarm6/visual/base.stl"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </collision>
+      <inertial>
+      <origin xyz="0.0 0.0 0.09103" rpy="0 0 0" />
+      <mass value="1.91" />
+      <inertia
+        ixx="0.00494875"
+        ixy="-3.5E-06"
+        ixz="1.25E-05"
+        iyy="0.00494174"
+        iyz="1.67E-06"
+        izz="0.002219" />
+      </inertial>
+    </link>
+
+    <link name="${prefix}link1">
+      <visual>
+        <geometry>
+          <mesh filename="package://xarm_description/meshes/xarm6/visual/link1.stl"/>
+        </geometry>
+        <origin xyz="0 0 -0.267" rpy="0 0 0"/>
+        <material name="White" />
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://xarm_description/meshes/xarm6/visual/link1.stl"/>
+        </geometry>
+        <origin xyz="0 0 -0.267" rpy="0 0 0"/>
+      </collision>
+      <inertial>
+        <origin xyz="0.0008 0.02437 -0.00926" rpy="0 0 0"/>
+        <mass value="1.77"/>
+        <inertia
+          ixx="0.0038513"
+          ixy="-1.745E-05"
+          ixz="1.382E-05"
+          iyy="0.00301075"
+          iyz="0.00041214"
+          izz="0.00261883"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}joint1" type="revolute">
+      <parent link="${prefix}link_base"/>
+      <child  link="${prefix}link1"/>
+      <origin xyz="0 0 0.267" rpy="0 0 0"/>
+      <axis   xyz="0 0 1"/>
+      <limit
+        lower="${joint1_lower_limit}"
+        upper="${joint1_upper_limit}"
+        effort="50.0"
+        velocity="3.14"/>
+      <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+
+    <link name="${prefix}link2">
+      <visual>
+        <geometry>
+          <mesh filename="package://xarm_description/meshes/xarm6/visual/link2.stl"/>
+        </geometry>
+        <origin xyz="0 0 -0.267" rpy="0 0 0"/>
+        <material name="White" />
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://xarm_description/meshes/xarm6/visual/link2.stl"/>
+        </geometry>
+        <origin xyz="0 0 -0.267" rpy="0 0 0"/>
+      </collision>
+      <inertial>
+        <origin xyz="0.03917 0.03011 0.22939" rpy="0 0 0"/>
+        <mass value="1.59"/>
+        <inertia
+          ixx="0.01861081"
+          ixy="-0.00054949"
+          ixz="0.00325036"
+          iyy="0.0175515"
+          iyz="-0.0036833"
+          izz="0.00437426"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}joint2" type="revolute">
+      <parent link="${prefix}link1"/>
+      <child link="${prefix}link2"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit
+        lower="${joint2_lower_limit}"
+        upper="${joint2_upper_limit}"
+        effort="50.0"
+        velocity="3.14"/>
+      <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+
+    <link name="${prefix}link3">
+      <visual>
+        <geometry>
+          <mesh filename="package://xarm_description/meshes/xarm6/visual/link3.stl"/>
+        </geometry>
+        <origin xyz="-0.0525 0 -0.550" rpy="0 0 0"/>
+        <material name="White" />
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://xarm_description/meshes/xarm6/visual/link3.stl"/>
+        </geometry>
+        <origin xyz="-0.0525 0 -0.550" rpy="0 0 0"/>
+      </collision>
+      <inertial>
+        <origin xyz="0.06673 0.01669 -0.1027" rpy="0 0 0"/>
+        <mass value="1.38"/>
+        <inertia
+          ixx="0.00503299"
+          ixy="-0.00090286"
+          ixz="-0.001304"
+          iyy="0.00460762"
+          iyz="0.00161202"
+          izz="0.00311993"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}joint3" type="revolute">
+      <parent link="${prefix}link2"/>
+      <child link="${prefix}link3"/>
+      <origin xyz= "0.0525 0 0.2845" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit
+        lower="${joint3_lower_limit}"
+        upper="${joint3_upper_limit}"
+        effort="32.0"
+        velocity="3.14"/>
+      <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+
+    <link name="${prefix}link4">
+      <visual>
+        <geometry>
+          <mesh filename="package://xarm_description/meshes/xarm6/visual/link4.stl"/>
+        </geometry>
+        <origin xyz="-0.13025 0 -0.2075" rpy="0 0 0"/>
+        <material name="White" />
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://xarm_description/meshes/xarm6/visual/link4.stl"/>
+        </geometry>
+        <origin xyz="-0.13025 0 -0.2075" rpy="0 0 0"/>
+      </collision>
+      <inertial>
+        <origin xyz="-0.0006 -0.02398 0.02548" rpy="0 0 0"/>
+        <mass value="1.11"/>
+        <inertia
+          ixx="0.00433331"
+          ixy="1.863E-05"
+          ixz="1.0E-05"
+          iyy="0.00394289"
+          iyz="0.00044082"
+          izz="0.00111454"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}joint4" type="revolute">
+      <parent link="${prefix}link3"/>
+      <child link="${prefix}link4"/>
+      <origin xyz="0.07775 0 -0.3425" rpy="0 0 0"/>
+      <axis xyz="0 0 -1"/>
+      <limit
+        lower="${joint4_lower_limit}"
+        upper="${joint4_upper_limit}"
+        effort="32.0"
+        velocity="3.14"/>
+      <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+
+    <link name="${prefix}link5">
+      <visual>
+        <geometry>
+          <mesh filename="package://xarm_description/meshes/xarm6/visual/link5.stl"/>
+        </geometry>
+        <origin xyz="-0.13025 0 -0.2075" rpy="0 0 0"/>
+        <material name="White" />
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://xarm_description/meshes/xarm6/visual/link5.stl"/>
+        </geometry>
+        <origin xyz="-0.13025 0 -0.2075" rpy="0 0 0"/>
+      </collision>
+      <inertial>
+        <origin xyz="0.06506 0.00355 -0.02154" rpy="0 0 0"/>
+        <mass value="1.06"/>
+        <inertia
+          ixx="0.00095833"
+          ixy="-0.00020353"
+          ixz="-0.00024313"
+          iyy="0.00170033"
+          iyz="7.753E-05"
+          izz="0.00137284"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}joint5" type="revolute">
+      <parent link="${prefix}link4"/>
+      <child link="${prefix}link5"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit
+        lower="${joint5_lower_limit}"
+        upper="${joint5_upper_limit}"
+        effort="32.0"
+        velocity="3.14"/>
+      <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+
+    <link name="${prefix}link6">
+      <visual>
+        <geometry>
+          <mesh filename="package://xarm_description/meshes/xarm6/visual/link6.stl"/>
+        </geometry>
+        <origin xyz="-0.20625 0 -0.128" rpy="0 0 0"/>
+        <material name="White" />
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://xarm_description/meshes/xarm6/visual/link6.stl"/>
+        </geometry>
+        <origin xyz="-0.20625 0 -0.128" rpy="0 0 0"/>
+      </collision>
+      <inertial>
+        <origin xyz="-0.00061 0.00056 0.00749" rpy="0 0 0"/>
+        <mass value="0.1" />
+        <inertia
+          ixx="5.139E-05"
+          ixy="-1.76E-06"
+          ixz="-0.73E-06"
+          iyy="5.279E-05"
+          iyz="0.43E-06"
+          izz="9.249E-05"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}joint6" type="revolute">
+      <parent link="${prefix}link5"/>
+      <child link="${prefix}link6"/>
+      <origin xyz="0.076 0 -0.0795" rpy=" 0 0 0"/>
+      <axis xyz="0 0 -1"/>
+      <limit
+        lower="${joint6_lower_limit}"
+        upper="${joint6_upper_limit}"
+        effort="20.0"
+        velocity="3.14"/>
+      <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+
+  </xacro:macro>
+</robot>

@@ -1,6 +1,7 @@
 # Package Introduction
 &ensp;&ensp;This package is intended to provide users a demo programming interface to use moveit!, instead of just using the GUI. To use the API better, users are encouraged to go through [Moveit tutorial](http://docs.ros.org/kinetic/api/moveit_tutorials/html/).  
-&ensp;&ensp;Inside the package, 'xarm_simple_planner' is just a basic implementation of the Move_group interface, if higher level configurations (constraints, switch kinematic solver or planners, etc) are needed, user can fully explore Moveit abilities and implement a sofisticated version.
+&ensp;&ensp;Inside the package, 'xarm_simple_planner' is just a basic implementation of the Move_group interface, if higher level configurations (constraints, switch kinematic solver or planners, etc) are needed, user can fully explore Moveit abilities and implement a sofisticated version.  
+&ensp;&ensp;For simplified Chinese instructions: [简体中文版](./ReadMe_cn.md)    
 
 # Usage
 ## Launch the simple planner node:
@@ -8,11 +9,11 @@ If you want to try it in simulation, run:
 ```bash
    $ roslaunch xarm_planner xarm_planner_rviz_sim.launch
 ```
-Or, if you would work with real XArm, run:  
+Or, if you would work with real xArm, run:  
 ```bash
-   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address>
+   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7/6/5>
 ```
-This node can provide services for planning request in Cartesian target and joint space target. Service definition can be found in srv folder. User can call the services to let planner solve the path to specified target point, and retrieve the boolean result as successful or not. Once the node is launched, user can try in command-line first, something like:  
+Argument 'robot_dof' specifies the number of joints of your xArm (default is 7).This node can provide services for planning request in Cartesian target and joint space target. Service definition can be found in srv folder. User can call the services to let planner solve the path to specified target point, and retrieve the boolean result as successful or not. Once the node is launched, user can try in command-line first, something like:  
 
 ## For joint-space planning request:  
 ```bash
@@ -46,9 +47,8 @@ Just publish a message (type: std_msgs/Bool) to the topic "/xarm_planner_exec", 
 ```
 
 Alternative way of calling services or publish messages, is to do it programatically. User can refer to ROS [tutorial1](http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28c%2B%2B%29) and [tutorial2](http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28c%2B%2B%29) to find out how to do it, or refer to the 'xarm_simple_planner_test.cpp' in the src folder as an example.  
-To run the test program, after launching the simple planner:
+To run the test program ( ***for xArm7 only***, user can modify the command list for other models), after launching the simple planner:
 ```bash
    $ rosrun xarm_planner xarm_simple_planner_test
 ```
 The program will execute three hard-coded joint space target, ***MAKE SURE THERE ARE PLENTY SURROUNDING SPACES BEFORE EXECUTING THIS!***
-

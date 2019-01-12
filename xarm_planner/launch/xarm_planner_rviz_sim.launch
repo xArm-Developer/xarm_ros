@@ -1,5 +1,5 @@
 <launch>
-
+  <rosparam file="$(find xarm7_moveit_config)/config/xarm7_params.yaml" command="load"/>
   <include file="$(find xarm7_moveit_config)/launch/moveit_rviz_common.launch">
     <arg name="jnt_stat_source" value="[/move_group/fake_controller_joint_states]" />
     <!-- whether to use fake_execution controller to drive the motion -->
@@ -12,7 +12,8 @@
     <arg name="show_rviz" value="true" />
     
   </include>
-
+  
+  <remap from="/DOF" to="/xarm/DOF" />
   <!-- bring up the simple planner (based on move_group) that provide plan service and execution server -->
   <node name="xarm_move_group_planner" pkg="xarm_planner" type="xarm_simple_planner" />
 
