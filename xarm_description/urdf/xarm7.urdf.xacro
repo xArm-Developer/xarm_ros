@@ -245,7 +245,7 @@
       <parent link="${prefix}link4"/>
       <child link="${prefix}link5"/>
       <origin xyz="0.0785 0 -0.336" rpy="0 0 0"/>
-      <axis xyz="0 0 1"/>
+      <axis xyz="0 0 -1"/>
       <limit
         lower="${joint5_lower_limit}"
         upper="${joint5_upper_limit}"
@@ -325,7 +325,7 @@
       <parent link="${prefix}link6"/>
       <child link="${prefix}link7"/>
       <origin xyz="0.073 0 -0.0695" rpy="0 0 0"/>
-      <axis xyz="0 0 1"/>
+      <axis xyz="0 0 -1"/>
       <limit
         lower="${joint7_lower_limit}"
         upper="${joint7_upper_limit}"

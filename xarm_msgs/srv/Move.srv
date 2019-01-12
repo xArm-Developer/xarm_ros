@@ -1,0 +1,28 @@
+# request: command specification for motion executions.
+# Units:
+#	joint space/angles: radian, radian/s and radian/s^2.
+#	Cartesian space: mm, mm/s, and mm/s^2.
+#	time: sec
+
+# pose： target coordinate. 
+#	For Joint Space target，pose dimention is the number of joints. element as each target joint position.
+#	For Cartesian target: pose dimention is 6 for (x, y, z, roll, pitch, yaw)
+float32[] pose
+
+# mvvelo: specified maximum velocity during execution. linear or angular velocity 
+float32 mvvelo
+# mvacc: specified maximum acceleration during execution. linear or angular acceleration.
+float32 mvacc
+# mvtime: currently do not have any special meaning, please just give it 0.
+float32 mvtime
+# mvradii: this is special for move_ineb service, meaning the blending radius between 2 straight path trajectories, 0 for no blend.
+float32 mvradii
+
+---
+
+# response: 
+#	ret is 0 for successful execution and others for errors or warnings occured
+#	message is a string returned by function, indicating execution status.
+
+int16 ret
+string message

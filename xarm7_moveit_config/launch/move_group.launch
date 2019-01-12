@@ -1,6 +1,9 @@
 <launch>
-
-  <include file="$(find xarm7_moveit_config)/launch/planning_context.launch" />
+  <!-- <arg name="limit_range" default="false" />
+  Remove planning_context launch because it is redundant
+  <include file="$(find xarm7_moveit_config)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="arg $(limit_range)"/>
+  </include> -->
 
   <!-- GDB Debug Option -->
   <arg name="debug" default="false" />
@@ -46,13 +49,18 @@
     <param name="max_safe_path_cost" value="$(arg max_safe_path_cost)"/>
     <param name="jiggle_fraction" value="$(arg jiggle_fraction)" />
 
-    <!-- load these non-default MoveGroup capabilities -->
-    <!--
-    <param name="capabilities" value="
-                  a_package/AwsomeMotionPlanningCapability
-                  another_package/GraspPlanningPipeline
-                  " />
-    -->
+    <!-- MoveGroup capabilities to load -->
+    <param name="capabilities" value="move_group/MoveGroupCartesianPathService
+              move_group/MoveGroupExecuteTrajectoryAction
+              move_group/MoveGroupKinematicsService
+              move_group/MoveGroupMoveAction
+              move_group/MoveGroupPickPlaceAction
+              move_group/MoveGroupPlanService
+              move_group/MoveGroupQueryPlannersService
+              move_group/MoveGroupStateValidationService
+              move_group/MoveGroupGetPlanningSceneService
+              move_group/ClearOctomapService
+              " />
 
     <!-- inhibit these default MoveGroup capabilities -->
     <!--

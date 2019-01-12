@@ -1,11 +1,16 @@
 # 1. Introduction
-   &ensp;&ensp;This repository contains the 3D model of xArm and demo packages for ROS development and simulations.
-   Maintained by: Jimy (jimy.zhang@ufactory.cc) and Jason (jason@ufactory.cc)
+   &ensp;&ensp;This repository contains the 3D model of xArm and demo packages for ROS development and simulations.Developing and testing environment: Ubuntu 16.04 + ROS Kinetic Kame.  
+   Maintained by: Jason (jason@ufactory.cc) and Jimy (jimy.zhang@ufactory.cc)   
+   ***Instructions below is based on xArm7, other model user can replace 'xarm7' with 'xarm6' or 'xarm5' where applicable.***
+   For simplified Chinese instructions: [简体中文版](./ReadMe_cn.md)    
 
 # 2. Update Summary
-   This is the initial version, tests, bug fixes and new functions are to be updated regularly in the future. 
-   * Add xArm 7 description files, meshes and sample controller demos for ROS simulation and visualization ONLY.
-   * Direct control of real xArm is not yet available.
+   This package is still in early development, tests, bug fixes and new functions are to be updated regularly in the future. 
+   * Add xArm 7 description files, meshes and sample controller demos for ROS simulation and visualization.
+   * Add Moveit! planner support to control Gazebo virtual model and real xArm, but the two can not launch together.
+   * Direct control of real xArm through Moveit GUI is still in beta version, please use it with special care.
+   * Add xArm hardware interface to use ROS position_controllers/JointTrajectoryController on real robot.
+   * Add initial xArm 6 simulation support.
 
 # 3. Preparations before using this package
 
@@ -17,9 +22,10 @@
 ROS Wiki: <http://wiki.ros.org/>  
 Gazebo Tutorial: <http://gazebosim.org/tutorials>  
 Gazebo ROS Control: <http://gazebosim.org/tutorials/?tut=ros_control>  
+Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>  
 
 ## 3.3 Download the 'table' 3D model
-&ensp;&ensp;In Gazebo simulator, navigate through the model database for 'table' item, drag and place the 3D model inside the virtual environment. It will then be downloaded locally, as 'table' is needed running the demo.
+&ensp;&ensp;In Gazebo simulator, navigate through the model database for 'table' item, drag and place the 3D model inside the virtual environment. It will then be downloaded locally, as 'table' is needed for running the demo.
 
 # 4. Usage of ROS package 'xarm_ros'
    
@@ -47,14 +53,18 @@ Skip above operation if you already have that inside your ~/.bashrc. Then do:
 ```bash
 $ source ~/.bashrc
 ```
+## 4.5 First try out in RViz:
+```bash
+$ roslaunch xarm_description xarm7_rviz_display.launch
+```
 
-## 4.5 Run the demo in Gazebo simulator
+## 4.6 Run the demo in Gazebo simulator
    ```bash
-   $ roslaunch xarm_gazebo xarm7_beside_table.launch 
+   $ roslaunch xarm_gazebo xarm7_beside_table.launch [run_demo:=true]
    ```
-&ensp;&ensp;Motion will start after clicking on "play" button. The command trajectory is written in xarm_controller\src\sample_motion.cpp. And the arm in this demo is controlled by pure position interface.
+&ensp;&ensp;Add the run_demo option if you wish to see a pre-programed loop motion in action. The command trajectory is written in xarm_controller\src\sample_motion.cpp. And the trajectory in this demo is controlled by pure position interface.
 
-# 5. Package structure
+# 5. Package description & Usage Guidance
    
 ## 5.1 xarm_description
    &ensp;&ensp;xArm7 description files, mesh files and gazebo plugin configurations, etc. It's not recommended to change the xarm description file since other packages depend on it. 
@@ -63,30 +73,88 @@ $ source ~/.bashrc
    &ensp;&ensp;Gazebo world description files and simulation launch files. User can add or build their own models in the simulation world file.
 
 ## 5.3 xarm_controller
-   &ensp;&ensp;Controller configurations, robot command executable source, scripts and launch files. User can deploy their program inside this package or create their own.
+   &ensp;&ensp;Controller configurations, hardware_interface, robot command executable source, scripts and launch files. User can deploy their program inside this package or create their own. ***Note that*** effort controllers defined in xarm_controller/config are just examples for simulation purpose, when controlling the real arm, only 'position_controllers/JointTrajectoryController' interface is provided. User can add their self-defined controllers as well, refer to: http://wiki.ros.org/ros_control (controllers)
 
-### 5.3.1 xarm_controller/config
-   Controller parameters to load into server, there are three basic types of controllers:  
-   1) joint_state_controller/JointStateController: controller that publshes joint status, for Rviz or feedback.  
-   2) effort_controllers/JointPositionController: position controller that has joint effort (torque) interface.  
-   3) effort_controllers/JointEffortController: pure joint effort controller.  
-   4) position_controllers/JointPositionController: pure position controller with only joint position interface.  
-   User can add their self-defined controllers as well, refer to: http://wiki.ros.org/ros_control (controllers)
+## 5.4 xarm_bringup  
+&ensp;&ensp;launch files to load xarm driver to enable direct control of real xArm hardware.  
 
-### 5.3.2 xarm_controller/exec
-  &ensp;&ensp;User can put their control scripts (shell, python, etc) here and can execute with 'rosrun' after setting them as executables.
-
-### 5.3.3 xarm_controller/src, xarm_controller/include
-   &ensp;&ensp;User can apply ROS API to program in C++ or python to make a program to control the virtual robot to move or monitor its status. Source files can be put here, remember to edit CMakeLists.txt before compiling. Refer to:  
-   <http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28c%2B%2B%29>   
-   <http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28c%2B%2B%29>
-
-### 5.3.4 xarm_controller/launch
-&ensp;&ensp;For launch files that bring about all steps for a simulation in proper order. User can refer to the file provided, load and initiate controllers from yaml configuration file and then run user application program to command robot arm to move.
-
-## 5.4 xarm7_moveit_config
-   &ensp;&ensp;(Note that there may be some potential incompatibility issue with the STL format of the model, we will fix this problem soon)
-   &ensp;&ensp;Generated by moveit_setup_assistant, could use with Moveit Planner and Rviz visualization. If you have Moveit! installed, you can try the demo. 
+## 5.5 xarm7_moveit_config
+&ensp;&ensp;Partially generated by moveit_setup_assistant, could use with Moveit Planner and Rviz visualization. If you have Moveit! installed, you can try the demo. 
    ```bash
    $ roslaunch xarm7_moveit_config demo.launch
    ```
+#### To run Moveit! motion planner along with Gazebo simulator:  
+   First run:  
+   ```bash
+   $ roslaunch xarm_gazebo xarm7_beside_table.launch
+   ```
+   Then in another terminal:
+   ```bash
+   $ roslaunch xarm7_moveit_config xarm7_moveit_gazebo.launch
+   ```
+   If you have a satisfied motion planned in Moveit!, hit the "Execute" button and the virtual arm in Gazebo will execute the trajectory.
+
+#### To run Moveit! motion planner to control the real xArm:  
+   First make sure the xArm and the controller box are powered on, then execute:  
+   ```bash
+   $ roslaunch xarm7_moveit_config realMove_exec.launch robot_ip:=<your controller box LAN IP address>
+   ```
+   Examine the terminal output and see if any error occured during the launch. If not, just play with the robot in Rviz and you can execute the sucessfully planned trajectory on real arm. But be sure it will not hit any surroundings before execution!  
+
+## 5.6 xarm_planner:
+&ensp;&ensp;This implemented simple planner interface is based on move_group from Moveit! and provide ros service for users to do planning & execution based on the requested target, user can find detailed instructions on how to use it inside [***xarm_planner package***](./xarm_planner/).  
+#### To launch the xarm simple motion planner together with the real xArm:  
+```bash
+   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7/6/5>
+```
+Argument 'robot_dof' specifies the number of joints of your xArm (default is 7).  
+
+## 5.7 xarm_api/xarm_msgs:
+&ensp;&ensp;These two packages provide user with the ros services to control xArm without self-trajectory planning (through Moveit! or xarm_planner), the controller box computer will do the planning work. Note that these services ***does not*** use xarm hardware interface, which is for Moveit and 'JointTrajectoryController' interface. There are three types of motion command (service names) supported:  
+* move_joint: joint space point to point command, given target joint angles, max joint velocity and acceleration.  
+* move_line: straight-line motion to the specified Cartesian Tool Centre Point(TCP) target.  
+* move_lineb: a list of via points followed by target Cartesian point. Each segment is straight-line with Arc blending at the via points, to make velocity continuous.  
+Please ***keep in mind that*** before calling the three motion services above, first set robot mode to be 0, then set robot state to be 0, by calling relavent services. Meaning of the commands are consistent with the descriptions in product ***user manual***, other xarm API supported functions are also available as service call. Refer to [xarm_msgs package](./xarm_msgs/) for more details and usage guidance.
+
+#### Example of using API service calls:
+
+&ensp;&ensp;First startup the service server for xarm7, ip address is just an example:  
+```bash
+$ roslaunch xarm_bringup xarm7_server.launch robot_ip:=192.168.1.128
+```
+&ensp;&ensp;Then make sure all the servo motors are enabled, refer to [SetAxis.srv](/xarm_msgs/srv/SetAxis.srv):
+```bash
+$ rosservice call /xarm/motion_ctrl 8 1
+```
+&ensp;&ensp;Before any motion commands, set proper robot mode(0: POSE) and state(0: READY) ***in order***, refer to [SetInt16.srv](/xarm_msgs/srv/SetInt16.srv):    
+```bash
+$ rosservice call /xarm/set_mode 0
+
+$ rosservice call /xarm/set_state 0
+```
+&ensp;&ensp;All motion commands use the same type of srv request: [Move.srv](./xarm_msgs/srv/Move.srv). For example, to call joint space motion with max speed 0.35 rad/s and acceleration 7 rad/s^2:  
+```bash
+$ rosservice call /xarm/move_joint [0,0,0,0,0,0,0] 0.35 7 0 0
+```
+&ensp;&ensp;To call Cartesian spece motion with max speed 200 mm/s and acceleration 2000 mm/s^2:
+```bash
+$ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 200 2000 0 0
+```
+&ensp;&ensp;To go back to home (all joints at 0 rad) position with max speed 0.35 rad/s and acceleration 7 rad/s^2:  
+```bash
+$ rosservice call /xarm/go_home [] 0.35 7 0 0
+```
+
+#### Getting status feedback:
+&ensp;&ensp;Having connected with a real xArm robot by running 'xarm7_server.launch', user can subscribe to the topic ***"/xarm_status"*** for feedback information about current robot states, including joint angles, TCP position, error/warning code, etc. Refer to [RobotMsg.msg](./xarm_msgs/msg/RobotMsg.msg) for content details.  
+&ensp;&ensp;Another option is subscribing to ***"/joint_states"*** topic, which is reporting in [JointState.msg](http://docs.ros.org/jade/api/sensor_msgs/html/msg/JointState.html), however, currently ***only "position" field is valid***; "velocity" is non-filtered numerical differentiation based on 2 adjacent position data, so it is just for reference; and we do not provide "effort" feedback yet.
+&ensp;&ensp;In consideration of performance, current update rate of above two topics are set at ***10Hz***.  
+
+#### Setting Tool Center Point Offset:
+&ensp;&ensp;The tool tip point offset values can be set by calling service "/xarm/set_tcp_offset". Refer to the figure below, please note this offset coordinate is expressed with respect to ***initial tool frame*** (Frame B), which is located at flange center, with roll, pitch, yaw rotations of (PI, 0, 0) from base frame (Frame A).   
+![xArmFrames](./doc/xArmFrames.png)  
+&ensp;&ensp;For example:  
+```bash
+$ rosservice call /xarm/set_tcp_offset 0 0 20 0 0 0
+```
+&ensp;&ensp;This is to set tool frame position offset (x = 0 mm, y = 0 mm, z = 20 mm), and orientation (RPY) offset of ( 0, 0, 0 ) radians with respect to initial tool frame (Frame B in picture). ***Remember to set this offset each time the controller box is restarted !*** 

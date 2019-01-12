@@ -12,6 +12,10 @@
   <param name="use_gui" value= "True" />
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
-  <node name="rviz" pkg="rviz" type="rviz" />
 
+  <arg name="config" default="true" />
+  <arg unless="$(arg config)" name="command_args" value="" />
+  <arg     if="$(arg config)" name="command_args" value="-d $(find xarm_description)/launch/display.rviz" />
+  
+  <node name="rviz" pkg="rviz" type="rviz" args="$(arg command_args)" output="screen"/>
 </launch>
