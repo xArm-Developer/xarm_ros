@@ -111,7 +111,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES xarm_api
   CATKIN_DEPENDS roscpp std_msgs
-  DEPENDS system_lib
 )
 
 ###########
