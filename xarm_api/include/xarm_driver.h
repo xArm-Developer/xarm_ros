@@ -46,6 +46,7 @@ namespace xarm_api
             std::string ip;
             pthread_t thread_id_;
             ros::AsyncSpinner spinner;
+            int dof_;
 
             ros::NodeHandle nh_;
             ros::ServiceServer go_home_server_;

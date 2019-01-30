@@ -18,14 +18,17 @@
 ```bash
    $ rosservice call xarm_joint_plan 'target: [1.0, -0.5, 0.0, -0.3, 0.0, 0.0, 0.5]'
 ```
-这种情况下列表中的元素代表每个关节的目标角度(单位是radian)。  
+这种情况下列表中的元素代表每个关节的目标角度(单位是radian), 给定元素个数为关节数目。  
 
 ## 笛卡尔目标规划:  
 ```bash
-   $ rosservice call xarm_pose_plan 'target: [[0.28, -0.2, 0.5], [0.0, 0.0, 0.0, 1.0]]'
+   $ rosservice call xarm_pose_plan 'target: [[0.28, 0.2, 0.2], [1.0, 0.0, 0.0, 0.0]]'
 ```
-目标列表中的域分别指代工具坐标系原点位置(x, y, z)，单位：米；以及四元数方位(x, y, z, w)。  
+目标列表中的域分别指代工具坐标系原点位置(x, y, z)，单位：***米***；以及 ***四元数*** 方位(x, y, z, w)。  
 调用以上服务之后, 会返回名为'success'的布尔结果。 
+
+### 四元数计算提示：
+以上笛卡尔规划目标的姿态使用四元数表示，如果您对于从(roll, pitch, yaw)计算四元数的方法不熟悉，请参考[此链接](http://wiki.ros.org/tf2/Tutorials/Quaternions#Think_in_RPY_then_convert_to_quaternion)。  
 
 ## 执行规划好的轨迹:  
 

@@ -99,14 +99,14 @@
         <geometry>
           <mesh filename="package://xarm_description/meshes/xarm7/visual/link2.stl"/>
         </geometry>
-        <origin xyz="0 0 -0.261" rpy="0 0 0"/>
+        <origin xyz="0 0.261 0" rpy="1.5708 0 0"/>
         <material name="White" />
       </visual>
       <collision>
         <geometry>
           <mesh filename="package://xarm_description/meshes/xarm7/visual/link2.stl"/>
         </geometry>
-        <origin xyz="0 0 -0.261" rpy="0 0 0"/>
+        <origin xyz="0 0.261 0" rpy="1.5708 0 0"/>
       </collision>
       <inertial>
         <origin xyz="1E-05 -0.13885 0.0139" rpy="0 0 0"/>
@@ -124,8 +124,8 @@
     <joint name="${prefix}joint2" type="revolute">
       <parent link="${prefix}link1"/>
       <child link="${prefix}link2"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <axis xyz="0 1 0"/>
+      <origin xyz="0 0 0" rpy="-1.5708 0 0" />
+      <axis xyz="0 0 1"/>
       <limit
         lower="${joint2_lower_limit}"
         upper="${joint2_upper_limit}"
@@ -164,7 +164,7 @@
     <joint name="${prefix}joint3" type="revolute">
       <parent link="${prefix}link2"/>
       <child link="${prefix}link3"/>
-      <origin xyz= "0 0 0.285" rpy="0 0 0"/>
+      <origin xyz="0 -0.285 0" rpy="1.5708 0 0"/>
       <axis xyz="0 0 1"/>
       <limit
         lower="${joint3_lower_limit}"
@@ -179,14 +179,14 @@
         <geometry>
           <mesh filename="package://xarm_description/meshes/xarm7/visual/link4.stl"/>
         </geometry>
-        <origin xyz="-0.050 0 -0.546" rpy="0 0 0"/>
+        <origin xyz="-0.050 0.546 0" rpy="1.5708 0 0"/>
         <material name="White" />
       </visual>
       <collision>
         <geometry>
           <mesh filename="package://xarm_description/meshes/xarm7/visual/link4.stl"/>
         </geometry>
-        <origin xyz="-0.050 0 -0.546" rpy="0 0 0"/>
+        <origin xyz="-0.050 0.546 0" rpy="1.5708 0 0"/>
       </collision>
       <inertial>
         <origin xyz="0.07059 0.11905 0.01071" rpy="0 0 0"/>
@@ -204,8 +204,8 @@
     <joint name="${prefix}joint4" type="revolute">
       <parent link="${prefix}link3"/>
       <child link="${prefix}link4"/>
-      <origin xyz="0.050 0 0" rpy="0 0 0"/>
-      <axis xyz="0 1 0"/>
+      <origin xyz="0.05 0 0" rpy="-1.5708 0 0"/>
+      <axis xyz="0 0 1"/>
       <limit
         lower="${joint4_lower_limit}"
         upper="${joint4_upper_limit}"
@@ -219,7 +219,7 @@
         <geometry>
           <mesh filename="package://xarm_description/meshes/xarm7/visual/link5.stl"/>
         </geometry>
-        <origin xyz="-0.1285 0 -0.210" rpy="0 0 0"/>
+        <origin xyz="-0.1285 0 0.210" rpy="3.1416 0 0"/>
         <material name="White" />
       </visual>
       <collision>
@@ -229,7 +229,7 @@
         <origin xyz="-0.1285 0 -0.210" rpy="0 0 0"/>
       </collision>
       <inertial>
-        <origin xyz="-0.00014 0.0234 -0.03053" rpy="0 0 0"/>
+        <origin xyz="-0.1285 0 0.210" rpy="3.1416 0 0"/>
         <mass value="0.99"/>
         <inertia
           ixx="0.0042795"
@@ -244,8 +244,8 @@
     <joint name="${prefix}joint5" type="revolute">
       <parent link="${prefix}link4"/>
       <child link="${prefix}link5"/>
-      <origin xyz="0.0785 0 -0.336" rpy="0 0 0"/>
-      <axis xyz="0 0 -1"/>
+      <origin xyz="0.0785 0.336 0" rpy="-1.5708 0 0"/>
+      <axis xyz="0 0 1"/>
       <limit
         lower="${joint5_lower_limit}"
         upper="${joint5_upper_limit}"
@@ -259,14 +259,14 @@
         <geometry>
           <mesh filename="package://xarm_description/meshes/xarm7/visual/link6.stl"/>
         </geometry>
-        <origin xyz="-0.1285 0 -0.210" rpy="0 0 0"/>
+        <origin xyz="-0.1285 0.210 0" rpy="1.5708 0 0"/>
         <material name="White" />
       </visual>
       <collision>
         <geometry>
           <mesh filename="package://xarm_description/meshes/xarm7/visual/link6.stl"/>
         </geometry>
-        <origin xyz="-0.1285 0 -0.210" rpy="0 0 0"/>
+        <origin xyz="-0.1285 0.210 0" rpy="1.5708 0 0"/>
       </collision>
       <inertial>
         <origin xyz="0.06596 0.00669 0.00097" rpy="0 0 0"/>
@@ -284,8 +284,8 @@
     <joint name="${prefix}joint6" type="revolute">
       <parent link="${prefix}link5"/>
       <child link="${prefix}link6"/>
-      <origin xyz="0 0 0" rpy=" 0 0 0"/>
-      <axis xyz="0 1 0"/>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <axis xyz="0 0 1"/>
       <limit
         lower="${joint6_lower_limit}"
         upper="${joint6_upper_limit}"
@@ -299,14 +299,14 @@
         <geometry>
           <mesh filename="package://xarm_description/meshes/xarm7/visual/link7.stl"/>
         </geometry>
-        <origin xyz="-0.2015 0 -0.1405" rpy="0 0 0"/>
+        <origin xyz="-0.2015 0 0.1405" rpy="3.1416 0 0"/>
         <material name="White" />
       </visual>
       <collision>
         <geometry>
           <mesh filename="package://xarm_description/meshes/xarm7/visual/link7.stl"/>
         </geometry>
-        <origin xyz="-0.2015 0 -0.1405" rpy="0 0 0"/>
+        <origin xyz="-0.2015 0 0.1405" rpy="3.1416 0 0"/>
       </collision>
       <inertial>
         <origin xyz="-3.5072E-05 9.5542E-06 -0.022065" rpy="0 0 0"/>
@@ -324,8 +324,8 @@
     <joint name="${prefix}joint7" type="revolute">
       <parent link="${prefix}link6"/>
       <child link="${prefix}link7"/>
-      <origin xyz="0.073 0 -0.0695" rpy="0 0 0"/>
-      <axis xyz="0 0 -1"/>
+      <origin xyz="0.073 0.0695 0" rpy="-1.5708 0 0"/>
+      <axis xyz="0 0 1"/>
       <limit
         lower="${joint7_lower_limit}"
         upper="${joint7_upper_limit}"
