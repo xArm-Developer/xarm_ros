@@ -7,11 +7,11 @@
 ## Launch the simple planner node:
 If you want to try it in simulation, run:
 ```bash
-   $ roslaunch xarm_planner xarm_planner_rviz_sim.launch
+   $ roslaunch xarm_planner xarm_planner_rviz_sim.launch robot_dof:=<7|6|5>
 ```
 Or, if you would work with real xArm, run:  
 ```bash
-   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7/6/5>
+   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5>
 ```
 Argument 'robot_dof' specifies the number of joints of your xArm (default is 7).This node can provide services for planning request in Cartesian target and joint space target. Service definition can be found in srv folder. User can call the services to let planner solve the path to specified target point, and retrieve the boolean result as successful or not. Once the node is launched, user can try in command-line first, something like:  
 

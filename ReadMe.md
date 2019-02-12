@@ -105,7 +105,7 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 &ensp;&ensp;This implemented simple planner interface is based on move_group from Moveit! and provide ros service for users to do planning & execution based on the requested target, user can find detailed instructions on how to use it inside [***xarm_planner package***](./xarm_planner/).  
 #### To launch the xarm simple motion planner together with the real xArm:  
 ```bash
-   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7/6/5>
+   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5>
 ```
 Argument 'robot_dof' specifies the number of joints of your xArm (default is 7).  
 

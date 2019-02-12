@@ -6,11 +6,11 @@
 ## 启动simple planner:
 如果希望在仿真环境中使用，运行:
 ```bash
-   $ roslaunch xarm_planner xarm_planner_rviz_sim.launch
+   $ roslaunch xarm_planner xarm_planner_rviz_sim.launch robot_dof:=<7|6|5>
 ```
 或者如果希望直接控制真机，运行:  
 ```bash
-   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7/6/5>
+   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5>
 ```
 'robot_dof'参数指的是xArm的关节数目 (默认值为7)，这个节点提供针对笛卡尔或者关节坐标进行轨迹规划的service，Service的定义可以在srv文件夹寻找。 用户可以调用相关service去尝试进行轨迹规划求解, 并会收到成功与否的布尔值。 按以上步骤启动节点之后，可以先尝试命令行方法使用：
 
