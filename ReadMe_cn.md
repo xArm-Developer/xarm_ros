@@ -1,13 +1,13 @@
 # 1. 简介：
-   &ensp;&ensp;此代码库包含XArm模型文件以及相关的控制、规划等示例开发包。开发及测试使用的环境为 Ubuntu 16.04 + ROS Kinetic Kame。
+   &ensp;&ensp;此代码库包含xArm模型文件以及相关的控制、规划等示例开发包。开发及测试使用的环境为 Ubuntu 16.04 + ROS Kinetic Kame。
    维护者: Jason (jason@ufactory.cc),Jimy (jimy.zhang@ufactory.cc)   
    ***以下的指令说明是基于xArm7, 其他型号用户可以在对应位置将'xarm7'替换成'xarm6'或'xarm5'***
 
 # 2. 更新记录：
    此代码库仍然处在早期开发阶段，新的功能支持、示例代码，bug修复等等会保持更新。  
-   * 添加Xarm 7 描述文档，3D图形文件以及controller示例，用于进行ROS可视化仿真模拟。
-   * 添加MoveIt!规划器支持，用于控制Gazebo/RViz模型或者XArm真机，但二者不可同时启动。
-   * 由ROS直接控制XArm真机的相关支持目前还是Beta版本，用户使用时应尽量小心，我们会尽快完善。
+   * 添加xArm 7 描述文档，3D图形文件以及controller示例，用于进行ROS可视化仿真模拟。
+   * 添加MoveIt!规划器支持，用于控制Gazebo/RViz模型或者xArm真机，但二者不可同时启动。
+   * 由ROS直接控制xArm真机的相关支持目前还是Beta版本，用户使用时应尽量小心，我们会尽快完善。
    * 添加 xArm hardware interface 并在驱动真实机械臂时使用 ROS position_controllers/JointTrajectoryController。
    * 添加 xArm 6 初版仿真支持。
 
@@ -106,7 +106,7 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 这个简单包装实现的规划器接口是基于 Moveit!中的 move_group interface, 可以使用户通过service指定目标位置进行规划和执行。 这部分的详细使用方法请阅读[xarm_planner包](./xarm_planner)的文档。  
 #### 启动 xarm simple motion planner 控制 xArm 真实机械臂:  
 ```bash
-   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<控制盒的局域网IP地址> robot_dof:=<7/6/5>
+   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<控制盒的局域网IP地址> robot_dof:=<7|6|5>
 ```
 'robot_dof'参数指的是xArm的关节数目 (默认值为7)。  
 
@@ -146,7 +146,7 @@ $ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 200 2000 0 0
 $ rosservice call /xarm/go_home [] 0.35 7 0 0
 ```
 #### 获得反馈状态信息:
-&ensp;&ensp;如果通过运行'xarm7_server.launch'连接了一台xArm机械臂，用户可以通过订阅 ***"/xarm_status"*** topic 获得机械臂当前的各种状态信息， 包括关节角度、工具坐标点的位置、错误、警告信息等等。具体的信息列表请参考[RobotMsg.msg](./xarm_msgs/msg/RobotMsg.msg).  
+&ensp;&ensp;如果通过运行'xarm7_server.launch'连接了一台xArm机械臂，用户可以通过订阅 ***"/xarm_states"*** topic 获得机械臂当前的各种状态信息， 包括关节角度、工具坐标点的位置、错误、警告信息等等。具体的信息列表请参考[RobotMsg.msg](./xarm_msgs/msg/RobotMsg.msg).  
 &ensp;&ensp;另一种选择是订阅 ***"/joint_states"*** topic, 它是以[JointState.msg](http://docs.ros.org/jade/api/sensor_msgs/html/msg/JointState.html)格式发布数据的, 但是当前 ***只有 "position" 是有效数据***; "velocity" 是没有经过任何滤波的基于相邻两组位置数据进行的数值微分, 因而只能作为参考，我们目前还不提供 "effort" 的反馈数据.
 &ensp;&ensp;基于运行时性能考虑，目前以上两个topic的数据更新率固定为 ***10Hz***.  
 

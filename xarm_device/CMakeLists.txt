@@ -1,22 +1,17 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(xarm_api)
+project(xarm_device)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
- add_compile_options(-std=c++11)
+# add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  rospy
   std_msgs
-  std_srvs
-  genmsg
-  xarm_msgs
-  sensor_msgs
 )
-
-set(XARM_API_DIR src/xarm_core)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -37,10 +32,10 @@ set(XARM_API_DIR src/xarm_core)
 ##   your messages/services/actions (e.g. std_msgs, actionlib_msgs, ...).
 ## * In the file package.xml:
 ##   * add a build_depend tag for "message_generation"
-##   * add a build_depend and a exec_depend tag for each package in MSG_DEP_SET
+##   * add a build_depend and a run_depend tag for each package in MSG_DEP_SET
 ##   * If MSG_DEP_SET isn't empty the following dependency has been pulled in
 ##     but can be declared for certainty nonetheless:
-##     * add a exec_depend tag for "message_runtime"
+##     * add a run_depend tag for "message_runtime"
 ## * In this file (CMakeLists.txt):
 ##   * add "message_generation" and every package in MSG_DEP_SET to
 ##     find_package(catkin REQUIRED COMPONENTS ...)
@@ -85,7 +80,7 @@ set(XARM_API_DIR src/xarm_core)
 ## To declare and build dynamic reconfigure parameters within this
 ## package, follow these steps:
 ## * In the file package.xml:
-##   * add a build_depend and a exec_depend tag for "dynamic_reconfigure"
+##   * add a build_depend and a run_depend tag for "dynamic_reconfigure"
 ## * In this file (CMakeLists.txt):
 ##   * add "dynamic_reconfigure" to
 ##     find_package(catkin REQUIRED COMPONENTS ...)
@@ -108,9 +103,9 @@ set(XARM_API_DIR src/xarm_core)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES xarm_api
-  CATKIN_DEPENDS roscpp std_msgs
+#  INCLUDE_DIRS include
+#  LIBRARIES xarm_device
+#  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
 
@@ -121,55 +116,24 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
- include
+# include
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-add_library(${PROJECT_NAME}
-   ${XARM_API_DIR}/connect.cc
-   ${XARM_API_DIR}/report_data.cc
+# add_library(${PROJECT_NAME}
+#   src/${PROJECT_NAME}/xarm_device.cpp
+# )
 
-   ${XARM_API_DIR}/common/crc16.cc
-   ${XARM_API_DIR}/common/queue_memcpy.cc
-
-   ${XARM_API_DIR}/debug/debug_print.cc
-
-   ${XARM_API_DIR}/instruction/uxbus_cmd.cc
-   ${XARM_API_DIR}/instruction/uxbus_cmd_ser.cc
-   ${XARM_API_DIR}/instruction/uxbus_cmd_tcp.cc
-
-   ${XARM_API_DIR}/linux/network.cc
-   ${XARM_API_DIR}/linux/thread.cc
-
-   ${XARM_API_DIR}/port/serial.cc
-   ${XARM_API_DIR}/port/socket.cc
-
- )
-
-add_library(xarm_ros_client
-  src/xarm_ros_client.cpp
-)
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(example1_report_norm_node 
-   test/example1_report_norm.cc 
-)
-
-add_executable(xarm_driver_node
-   src/xarm_driver_node.cpp
-   src/xarm_driver.cpp
-)
-
-add_executable(move_test
-   test/move_test.cpp
-)
+# add_executable(${PROJECT_NAME}_node src/xarm_device_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -182,20 +146,9 @@ add_executable(move_test
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
- target_link_libraries(example1_report_norm_node 
-   ${PROJECT_NAME}
-   ${catkin_LIBRARIES}
- )
-
- target_link_libraries(xarm_driver_node 
-   ${PROJECT_NAME}
-   ${catkin_LIBRARIES}
- )
-
-target_link_libraries(move_test 
-   ${PROJECT_NAME}
-   ${catkin_LIBRARIES}
- )
+# target_link_libraries(${PROJECT_NAME}_node
+#   ${catkin_LIBRARIES}
+# )
 
 #############
 ## Install ##
@@ -237,7 +190,7 @@ target_link_libraries(move_test
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_xarm_api.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_xarm_device.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

@@ -6,11 +6,11 @@
 ## 启动simple planner:
 如果希望在仿真环境中使用，运行:
 ```bash
-   $ roslaunch xarm_planner xarm_planner_rviz_sim.launch
+   $ roslaunch xarm_planner xarm_planner_rviz_sim.launch robot_dof:=<7|6|5>
 ```
 或者如果希望直接控制真机，运行:  
 ```bash
-   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7/6/5>
+   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5>
 ```
 'robot_dof'参数指的是xArm的关节数目 (默认值为7)，这个节点提供针对笛卡尔或者关节坐标进行轨迹规划的service，Service的定义可以在srv文件夹寻找。 用户可以调用相关service去尝试进行轨迹规划求解, 并会收到成功与否的布尔值。 按以上步骤启动节点之后，可以先尝试命令行方法使用：
 
@@ -18,14 +18,17 @@
 ```bash
    $ rosservice call xarm_joint_plan 'target: [1.0, -0.5, 0.0, -0.3, 0.0, 0.0, 0.5]'
 ```
-这种情况下列表中的元素代表每个关节的目标角度(单位是radian)。  
+这种情况下列表中的元素代表每个关节的目标角度(单位是radian), 给定元素个数为关节数目。  
 
 ## 笛卡尔目标规划:  
 ```bash
-   $ rosservice call xarm_pose_plan 'target: [[0.28, -0.2, 0.5], [0.0, 0.0, 0.0, 1.0]]'
+   $ rosservice call xarm_pose_plan 'target: [[0.28, 0.2, 0.2], [1.0, 0.0, 0.0, 0.0]]'
 ```
-目标列表中的域分别指代工具坐标系原点位置(x, y, z)，单位：米；以及四元数方位(x, y, z, w)。  
+目标列表中的域分别指代工具坐标系原点位置(x, y, z)，单位：***米***；以及 ***四元数*** 方位(x, y, z, w)。  
 调用以上服务之后, 会返回名为'success'的布尔结果。 
+
+### 四元数计算提示：
+以上笛卡尔规划目标的姿态使用四元数表示，如果您对于从(roll, pitch, yaw)计算四元数的方法不熟悉，请参考[此链接](http://wiki.ros.org/tf2/Tutorials/Quaternions#Think_in_RPY_then_convert_to_quaternion)。  
 
 ## 执行规划好的轨迹:  
 

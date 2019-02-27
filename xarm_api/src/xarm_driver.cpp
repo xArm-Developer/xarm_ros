@@ -39,6 +39,8 @@ namespace xarm_api
         arm_cmd_ = connect_tcp_control(server_ip);  
         if (arm_cmd_ == NULL)
             ROS_ERROR("Xarm Connection Failed!");
+
+        nh_.getParam("DOF",dof_);
     }
 
     bool XARMDriver::MotionCtrlCB(xarm_msgs::SetAxis::Request& req, xarm_msgs::SetAxis::Response& res)
@@ -128,17 +130,17 @@ namespace xarm_api
 
     bool XARMDriver::MoveJointCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
     {
-        float joint[1][7];
+        float joint[1][7]={0};
         int index = 0;
-        if(req.pose.size() != 7)
+        if(req.pose.size() != dof_)
         {
             res.ret = req.pose.size();
-            res.message = "pose parameters incorrect!";
+            res.message = "pose parameters incorrect! Expected: "+std::to_string(dof_);
             return true;
         }
         else
         {
-            for(index = 0; index < 7; index++)
+            for(index = 0; index < 7; index++) // should always send 7 joint commands, whatever current DOF is.
             {
                 joint[0][index] = req.pose[index];
             }
@@ -197,17 +199,17 @@ namespace xarm_api
 
     bool XARMDriver::MoveServoJCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
     {
-        float pose[1][7];
+        float pose[1][7]={0};
         int index = 0;
-        if(req.pose.size() != 7)
+        if(req.pose.size() != dof_)
         {
-            res.ret = -1;
-            res.message = "parameters incorrect!";
+            res.ret = req.pose.size();
+            res.message = "pose parameters incorrect! Expected: "+std::to_string(dof_);
             return true;
         }
         else
         {
-            for(index = 0; index < 7; index++)
+            for(index = 0; index < 7; index++) // should always send 7 joint commands, whatever current DOF is.
             {
                 pose[0][index] = req.pose[index];
             }

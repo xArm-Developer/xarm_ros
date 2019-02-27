@@ -11,7 +11,7 @@
   <include file="$(find xarm_bringup)/launch/xarm_driver_common.launch">
     <arg name="robot_ip" value="$(arg robot_ip)" />
     <arg name="dof" value="6" />
-    <arg name="use_moveit" value="use_moveit" />
+    <arg name="use_moveit" value="$(arg use_moveit)" />
   </include>
 
 </launch>
