@@ -17,7 +17,7 @@ class ReportDataNorm {
   int flush_data(u8 *rx_data);
   void print_data(void);
 
- public:
+ //private:
   int runing_;
   int mode_;
   int mt_brake_;
@@ -25,11 +25,10 @@ class ReportDataNorm {
   int err_;
   int war_;
   int cmdnum_;
-
+  float angle_[7];
   float pose_[6];
   float tcp_offset_[6];
   int total_num_;
-  float angle_[7];
 };
 
 class ReportDataRich {

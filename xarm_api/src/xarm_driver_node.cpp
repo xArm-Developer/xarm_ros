@@ -100,6 +100,10 @@ class XarmRTConnection
                         rm_msg.offset[i] = norm_data.tcp_offset_[i];
                     }
                     xarm_driver.pub_robot_msg(rm_msg);
+
+                    // publish io state: This line may interfere with servoj execution
+                    // xarm_driver.pub_io_state();
+
                 }
                 else 
                 {

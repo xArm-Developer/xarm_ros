@@ -14,6 +14,9 @@
   <remap from="/move_lineb" to="/xarm/move_lineb"/>
   <remap from="/DOF" to="/xarm/DOF" />
   <remap from="/joint_names" to="/xarm/joint_names" />
+  <remap from="/get_digital_in" to="/xarm/get_digital_in" />
+  <remap from="/get_analog_in" to="/xarm/get_analog_in" />
+  <remap from="/set_digital_out" to="/xarm/set_digital_out" />
 
   <include file="$(find xarm_bringup)/launch/xarm_robot.launch">
     <arg name="robot_ip" value="$(arg robot_ip)" />

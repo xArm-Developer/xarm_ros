@@ -7,7 +7,7 @@
 #ifndef INSTRUCTION_UXBUS_CMD_CONFIG_H_
 #define INSTRUCTION_UXBUS_CMD_CONFIG_H_
 class UXBUS_RG {
- public:
+public:
   UXBUS_RG(void) {}
   ~UXBUS_RG(void) {}
 
@@ -60,7 +60,7 @@ class UXBUS_RG {
 };
 
 class UXBUS_STATE {
- public:
+public:
   UXBUS_STATE(void) {}
   ~UXBUS_STATE(void) {}
   static const int ERR_CODE = 1;
@@ -75,19 +75,20 @@ class UXBUS_STATE {
 };
 
 class UXBUS_CONF {
- public:
+public:
   UXBUS_CONF(void) {}
   ~UXBUS_CONF(void) {}
 
   static const int SET_TIMEOUT = 1000;  // ms
   static const int GET_TIMEOUT = 1000;  // ms
   static const int GRIPPER_ID = 8;
+  static const int GPIO_ID = 9;
   static const int MASTER_ID = 0xAA;
   static const int SLAVE_ID = 0x55;
 };
 
 class XARM_MODE {
- public:
+public:
   XARM_MODE(void) {}
   ~XARM_MODE(void) {}
 
@@ -98,7 +99,7 @@ class XARM_MODE {
 };
 
 class XARM_STATE {
- public:
+public:
   XARM_STATE(void) {}
   ~XARM_STATE(void) {}
 

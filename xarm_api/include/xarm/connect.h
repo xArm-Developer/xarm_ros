@@ -12,8 +12,8 @@
 
 UxbusCmdSer *connect_rs485_control(const char *com);
 UxbusCmdTcp *connect_tcp_control(char *server_ip);
-SocketPort *connect_tcp_report_norm(char *server_ip);
-SocketPort *connect_tcp_report_rich(char *server_ip);
-SocketPort *connect_tcp_report_real(char *server_ip);
+SocketPort *connext_tcp_report_norm(char *server_ip);
+SocketPort *connext_tcp_report_rich(char *server_ip);
+SocketPort *connext_tcp_report_real(char *server_ip);
 
 #endif

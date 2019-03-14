@@ -5,12 +5,13 @@
  * Author: Jimy Zhang <jimy92@163.com>
  ============================================================================*/
 class XARM_CONF {
- public:
+public:
   XARM_CONF() {}
   ~XARM_CONF() {}
 
   static const int AXIS_NUM = 7;
   static const int GRIPPER_ID = 8;
+  static const int GPIO_ID = 9;
   static const int SERIAL_BAUD = 921600;
   static const int TCP_PORT_CONTROL = 502;
   static const int TCP_PORT_REPORT_NORM = 30001;

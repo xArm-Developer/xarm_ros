@@ -31,11 +31,7 @@ ReportDataNorm::~ReportDataNorm(void) {}
 int ReportDataNorm::flush_data(u8 *rx_data) {
   u8 *data_fp = &rx_data[4];
   int sizeof_data = bin8_to_32(rx_data);
-  if (sizeof_data < 87) 
-  {
-      printf(" len = %d \n", sizeof_data);
-      return -1;
-  }
+  if (sizeof_data < 87) return -1;
 
   total_num_ = bin8_to_32(data_fp);
   if (total_num_ != 87) return -2;

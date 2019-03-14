@@ -24,17 +24,21 @@ namespace xarm_api
         set_mode_server_ = nh_.advertiseService("set_mode", &XARMDriver::SetModeCB, this);
         set_state_server_ = nh_.advertiseService("set_state", &XARMDriver::SetStateCB, this);
         set_tcp_offset_server_ = nh_.advertiseService("set_tcp_offset", &XARMDriver::SetTCPOffsetCB, this);
+        set_end_io_server_ = nh_.advertiseService("set_digital_out", &XARMDriver::SetDigitalIOCB, this);
+        get_digital_in_server_ = nh_.advertiseService("get_digital_in", &XARMDriver::GetDigitalIOCB, this);
+        get_analog_in_server_ = nh_.advertiseService("get_analog_in", &XARMDriver::GetAnalogIOCB, this);
         go_home_server_ = nh_.advertiseService("go_home", &XARMDriver::GoHomeCB, this);
         move_joint_server_ = nh_.advertiseService("move_joint", &XARMDriver::MoveJointCB, this);
         move_lineb_server_ = nh_.advertiseService("move_lineb", &XARMDriver::MoveLinebCB, this);
         move_line_server_ = nh_.advertiseService("move_line", &XARMDriver::MoveLineCB, this);
-        move_servoj_server_ = nh_.advertiseService("move_servoj", &XARMDriver::MoveServoJCB, this);
+        move_servoj_server_ = nh_.advertiseService("move_servoj", &XARMDriver::MoveServoJCB, this);        
 
         // state feedback topics:
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
         robot_rt_state_ = nh_.advertise<xarm_msgs::RobotMsg>("xarm_states", 10, true);
+        // end_input_state_ = nh_.advertise<xarm_msgs::IOState>("xarm_input_states", 10, true);
 
-        arm_report_ = connect_tcp_report_norm(server_ip);
+        arm_report_ = connext_tcp_report_norm(server_ip);
         // ReportDataNorm norm_data_;
         arm_cmd_ = connect_tcp_control(server_ip);  
         if (arm_cmd_ == NULL)
@@ -118,6 +122,39 @@ namespace xarm_api
         float offsets[6] = {req.x, req.y, req.z, req.roll, req.pitch, req.yaw};
         res.ret = arm_cmd_->set_tcp_offset(offsets);
         res.message = "set tcp offset: ret = " + std::to_string(res.ret); 
+        return true;
+    }
+
+    bool XARMDriver::SetDigitalIOCB(xarm_msgs::SetDigitalIO::Request &req, xarm_msgs::SetDigitalIO::Response &res)
+    {
+        res.ret = arm_cmd_->gpio_set_digital(req.io_num, req.value);
+        res.message = "set Digital port "+ std::to_string(req.io_num) +" to "+ std::to_string(req.value) + " : ret = " + std::to_string(res.ret); 
+        return true;
+    }
+
+    bool XARMDriver::GetDigitalIOCB(xarm_msgs::GetDigitalIO::Request &req, xarm_msgs::GetDigitalIO::Response &res)
+    {
+        res.ret = arm_cmd_->gpio_get_digital(&res.digital_1, &res.digital_2);
+        res.message = "get Digital port ret = " + std::to_string(res.ret); 
+        return true;
+    }
+
+    bool XARMDriver::GetAnalogIOCB(xarm_msgs::GetAnalogIO::Request &req, xarm_msgs::GetAnalogIO::Response &res)
+    {
+        switch (req.port_num)
+        {
+            case 1:
+                res.ret = arm_cmd_->gpio_get_analog1(&res.analog_value);
+                break;
+            case 2:
+                res.ret = arm_cmd_->gpio_get_analog2(&res.analog_value);
+                break;
+
+            default:
+                res.message = "GetAnalogIO Fail: port number incorrect !";
+                return false;
+        }
+        res.message = "get analog port ret = " + std::to_string(res.ret); 
         return true;
     }
 
@@ -228,6 +265,15 @@ namespace xarm_api
     void XARMDriver::pub_joint_state(sensor_msgs::JointState js_msg)
     {
         joint_state_.publish(js_msg);
+    }
+
+    void XARMDriver::pub_io_state()
+    {
+        arm_cmd_->gpio_get_digital(&io_msg.digital_1, &io_msg.digital_2);
+        arm_cmd_->gpio_get_analog1(&io_msg.analog_1);
+        arm_cmd_->gpio_get_analog2(&io_msg.analog_2);
+
+        end_input_state_.publish(io_msg);
     }
 
     int XARMDriver::get_frame(void)

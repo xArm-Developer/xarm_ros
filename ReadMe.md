@@ -145,6 +145,22 @@ $ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 200 2000 0 0
 $ rosservice call /xarm/go_home [] 0.35 7 0 0
 ```
 
+#### I/O Operations:
+&ensp;&ensp;We provide 2 digital, 2 analog input port and 2 digital output signals at the end I/O connector.  
+##### 1. To get current 2 DIGITAL input states:  
+```bash
+$ rosservice call /xarm/get_digital_in
+```
+##### 2. To get one of the ANALOG input value: 
+```bash
+$ rosservice call /xarm/get_analog_in 1  (last argument: port number, can only be 1 or 2)
+```
+##### 3. To set one of the Digital output:
+```bash
+$ rosservice call /xarm/set_digital_out 2 1  (Setting output 2 to be 1)
+```
+&ensp;&ensp;You have to make sure the operation is successful by checking responding "ret" to be 0.
+
 #### Getting status feedback:
 &ensp;&ensp;Having connected with a real xArm robot by running 'xarm7_server.launch', user can subscribe to the topic ***"/xarm_states"*** for feedback information about current robot states, including joint angles, TCP position, error/warning code, etc. Refer to [RobotMsg.msg](./xarm_msgs/msg/RobotMsg.msg) for content details.  
 &ensp;&ensp;Another option is subscribing to ***"/joint_states"*** topic, which is reporting in [JointState.msg](http://docs.ros.org/jade/api/sensor_msgs/html/msg/JointState.html), however, currently ***only "position" field is valid***; "velocity" is non-filtered numerical differentiation based on 2 adjacent position data, so it is just for reference; and we do not provide "effort" feedback yet.

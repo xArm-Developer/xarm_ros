@@ -16,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
 )
 
-set(XARM_API_DIR src/xarm_core)
+set(XARM_API_DIR src/xarm)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)

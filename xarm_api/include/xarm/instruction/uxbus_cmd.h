@@ -10,7 +10,7 @@
 #include "xarm/common/data_type.h"
 
 class UxbusCmd {
- public:
+public:
   UxbusCmd(void);
   ~UxbusCmd(void);
 
@@ -56,6 +56,12 @@ class UxbusCmd {
   int gripper_set_posspd(fp32 speed);
   int gripper_get_errcode(u8 rx_data[2]);
   int gripper_clean_err(void);
+
+  int gpio_get_digital(int *io1, int *io2);
+  int gpio_set_digital(int ionum, int value);
+  int gpio_get_analog1(float *value);
+  int gpio_get_analog2(float *value);
+
   int servo_set_zero(u8 id);
   int servo_get_dbmsg(u8 rx_data[16]);
   int servo_addr_w16(u8 id, u16 addr, fp32 value);
@@ -64,7 +70,7 @@ class UxbusCmd {
   int servo_addr_r32(u8 id, u16 addr, fp32 *value);
   virtual void close(void);
 
- private:
+private:
   virtual int check_xbus_prot(u8 *data, u8 funcode);
   virtual int send_pend(u8 funcode, int num, int timeout, u8 *rx_data);
   virtual int send_xbus(u8 funcode, u8 *txdata, int num);

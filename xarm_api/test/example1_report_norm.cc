@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
     return 0;
   }
   char *server_ip = argv[1];
-  SocketPort *arm_report = connect_tcp_report_norm(server_ip);
+  SocketPort *arm_report = connext_tcp_report_norm(server_ip);
   if (arm_report == NULL) return 0;
 
   int rxcnt = 0;

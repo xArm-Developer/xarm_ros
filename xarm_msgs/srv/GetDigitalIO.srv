@@ -1,0 +1,11 @@
+# Getting the 2 digital Input port at robot end connector
+
+---
+
+int32 digital_1
+
+int32 digital_2
+
+int16 ret
+
+string message
