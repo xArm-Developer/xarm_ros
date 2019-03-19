@@ -38,13 +38,28 @@ namespace xarm_api
         robot_rt_state_ = nh_.advertise<xarm_msgs::RobotMsg>("xarm_states", 10, true);
         // end_input_state_ = nh_.advertise<xarm_msgs::IOState>("xarm_input_states", 10, true);
 
+        nh_.getParam("DOF",dof_);
+
         arm_report_ = connext_tcp_report_norm(server_ip);
         // ReportDataNorm norm_data_;
         arm_cmd_ = connect_tcp_control(server_ip);  
         if (arm_cmd_ == NULL)
             ROS_ERROR("Xarm Connection Failed!");
+        else // clear unimportant errors
+        {
+            unsigned char dbg_msg[16] = {0};
+            arm_cmd_->servo_get_dbmsg(dbg_msg);
 
-        nh_.getParam("DOF",dof_);
+            for(int i=0; i<dof_; i++)
+            {
+                if((dbg_msg[i*2]==1)&&(dbg_msg[i*2+1]==40))
+                {
+                    arm_cmd_->clean_err();
+                    ROS_WARN("Cleared low-voltage error of joint %d", i+1);
+                }
+            }
+        }
+
     }
 
     bool XARMDriver::MotionCtrlCB(xarm_msgs::SetAxis::Request& req, xarm_msgs::SetAxis::Response& res)
