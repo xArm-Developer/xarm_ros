@@ -7,7 +7,7 @@
 #ifndef INSTRUCTION_SERVO3_CONFIG_H_
 #define INSTRUCTION_SERVO3_CONFIG_H_
 class SERVO3_RG {
- public:
+public:
   static const unsigned short CON_EN = 0x0100;
   static const unsigned short CON_MODE = 0x0101;
   static const unsigned short CON_DIR = 0x0102;
@@ -51,6 +51,11 @@ class SERVO3_RG {
   static const unsigned short ERR_SWITCH = 0x0910;
   static const unsigned short RESET_ERR = 0x0109;
   static const unsigned short SV3_BRO_ID = 0xFF;
+
+  static const unsigned short DIGITAL_IN = 0x0A14;
+  static const unsigned short DIGITAL_OUT = 0x0A15;
+  static const unsigned short ANALOG_IO1 = 0x0A16;
+  static const unsigned short ANALOG_IO2 = 0x0A17;
 };
 
 #endif

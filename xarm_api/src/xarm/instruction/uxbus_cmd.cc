@@ -304,7 +304,7 @@ int UxbusCmd::gripper_addr_r16(u8 id, u16 addr, fp32 *value) {
   if (0 != ret) return UXBUS_STATE::ERR_NOTTCP;
 
   ret = send_pend(UXBUS_RG::GRIPP_R16B, 4, UXBUS_CONF::GET_TIMEOUT, rx_data);
-  *value = bin8_to_16(rx_data);
+  *value = bin8_to_32(rx_data);
   return ret;
 }
 
@@ -364,6 +364,50 @@ int UxbusCmd::gripper_clean_err() {
   return gripper_addr_w16(UXBUS_CONF::GRIPPER_ID, SERVO3_RG::RESET_ERR, 1);
 }
 
+
+int UxbusCmd::gpio_get_digital(int *io1, int *io2) {
+  float tmp;
+  int ret = gripper_addr_r16(UXBUS_CONF::GPIO_ID, SERVO3_RG::DIGITAL_IN, &tmp);
+
+  *io1 = (int)tmp & 0x0001;
+  *io2 = ((int)tmp & 0x0002) >> 1;
+  return ret;
+}
+
+int UxbusCmd::gpio_set_digital(int ionum, int value) {
+  int tmp = 0;
+  if (ionum == 1)
+  {
+    tmp = tmp | 0x0100;
+    if (value)
+      tmp = tmp | 0x0001;
+  }
+  else if (ionum == 2)
+  {    
+    tmp = tmp | 0x0200;
+    if (value)
+      tmp = tmp | 0x0002;
+  }
+  else
+    return -1;
+  return gripper_addr_w16(UXBUS_CONF::GPIO_ID, SERVO3_RG::DIGITAL_OUT, tmp);
+}
+
+int UxbusCmd::gpio_get_analog1(float *value) {
+  float tmp;
+  int ret = gripper_addr_r16(UXBUS_CONF::GPIO_ID, SERVO3_RG::ANALOG_IO1, &tmp);
+  *value = tmp * 3.3 / 4096.0;
+  return ret;
+}
+
+int UxbusCmd::gpio_get_analog2(float *value) {
+  float tmp;
+  int ret = gripper_addr_r16(UXBUS_CONF::GPIO_ID, SERVO3_RG::ANALOG_IO2, &tmp);
+  // printf("tmp = %f\n", tmp);
+  *value = tmp * 3.3 / 4096.0;
+  return ret;
+}
+
 int UxbusCmd::servo_set_zero(u8 id) {
   u8 txdata[1];
   txdata[0] = id;
@@ -396,7 +440,7 @@ int UxbusCmd::servo_addr_r16(u8 id, u16 addr, fp32 *value) {
   if (0 != ret) return UXBUS_STATE::ERR_NOTTCP;
 
   ret = send_pend(UXBUS_RG::SERVO_R16B, 4, UXBUS_CONF::GET_TIMEOUT, rx_data);
-  *value = bin8_to_16(rx_data);
+  *value = bin8_to_32(rx_data);
   return ret;
 }
 

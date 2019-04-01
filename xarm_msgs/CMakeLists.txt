@@ -50,6 +50,7 @@ find_package(catkin REQUIRED COMPONENTS
  add_message_files(
    FILES
    RobotMsg.msg
+   IOState.msg
  )
 
 ## Generate services in the 'srv' folder
@@ -59,6 +60,10 @@ find_package(catkin REQUIRED COMPONENTS
    SetAxis.srv
    SetInt16.srv
    TCPOffset.srv
+   SetDigitalIO.srv
+   GetDigitalIO.srv
+   GetAnalogIO.srv
+   ClearErr.srv
  )
 
 ## Generate actions in the 'action' folder

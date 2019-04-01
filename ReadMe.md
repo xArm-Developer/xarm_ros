@@ -145,6 +145,22 @@ $ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 200 2000 0 0
 $ rosservice call /xarm/go_home [] 0.35 7 0 0
 ```
 
+#### I/O Operations:
+&ensp;&ensp;We provide 2 digital, 2 analog input port and 2 digital output signals at the end I/O connector.  
+##### 1. To get current 2 DIGITAL input states:  
+```bash
+$ rosservice call /xarm/get_digital_in
+```
+##### 2. To get one of the ANALOG input value: 
+```bash
+$ rosservice call /xarm/get_analog_in 1  (last argument: port number, can only be 1 or 2)
+```
+##### 3. To set one of the Digital output:
+```bash
+$ rosservice call /xarm/set_digital_out 2 1  (Setting output 2 to be 1)
+```
+&ensp;&ensp;You have to make sure the operation is successful by checking responding "ret" to be 0.
+
 #### Getting status feedback:
 &ensp;&ensp;Having connected with a real xArm robot by running 'xarm7_server.launch', user can subscribe to the topic ***"/xarm_states"*** for feedback information about current robot states, including joint angles, TCP position, error/warning code, etc. Refer to [RobotMsg.msg](./xarm_msgs/msg/RobotMsg.msg) for content details.  
 &ensp;&ensp;Another option is subscribing to ***"/joint_states"*** topic, which is reporting in [JointState.msg](http://docs.ros.org/jade/api/sensor_msgs/html/msg/JointState.html), however, currently ***only "position" field is valid***; "velocity" is non-filtered numerical differentiation based on 2 adjacent position data, so it is just for reference; and we do not provide "effort" feedback yet.
@@ -158,3 +174,14 @@ $ rosservice call /xarm/go_home [] 0.35 7 0 0
 $ rosservice call /xarm/set_tcp_offset 0 0 20 0 0 0
 ```
 &ensp;&ensp;This is to set tool frame position offset (x = 0 mm, y = 0 mm, z = 20 mm), and orientation (RPY) offset of ( 0, 0, 0 ) radians with respect to initial tool frame (Frame B in picture). ***Remember to set this offset each time the controller box is restarted !*** 
+
+#### Clearing Errors:
+&ensp;&ensp;Sometimes controller may report error or warnings that would affect execution of further commands. The reasons may be power loss, position/speed limit violation, planning errors, etc. It needs additional intervention to clear. User can check error code in the message of topic ***"/xarm_states"*** . 
+```bash
+$ rostopic echo /xarm_states
+```
+&ensp;&ensp;If it is non-zero, the corresponding reason can be found out in the user manual. After solving the problem, this error satus can be removed by calling service ***"/xarm/clear_err"*** with empty argument.
+```bash
+$ rosservice call /xarm/clear_err
+```
+&ensp;&ensp;After calling this service, please ***check the err status again*** in '/xarm_states', if it becomes 0, the clearing is successful. Otherwise, it means the error/exception is not properly solved. If clearing error is successful, remember to ***set robot state to 0*** to make it ready to move again!  

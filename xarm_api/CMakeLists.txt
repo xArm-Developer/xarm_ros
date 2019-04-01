@@ -16,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
 )
 
-set(XARM_API_DIR src/xarm_core)
+set(XARM_API_DIR src/xarm)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -150,6 +150,9 @@ add_library(${PROJECT_NAME}
 add_library(xarm_ros_client
   src/xarm_ros_client.cpp
 )
+# Make sure xarm_msgs header files are generated before building xarm_ros_client
+add_dependencies(xarm_ros_client xarm_msgs_generate_messages_cpp)
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
@@ -179,7 +182,8 @@ add_executable(move_test
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(example1_report_norm_node 

@@ -1,0 +1,11 @@
+# Setting the 2 digital Output port at robot end connector
+
+int16 io_num
+
+int16 value
+
+---
+
+int16 ret
+
+string message
