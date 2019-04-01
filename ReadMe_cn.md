@@ -174,4 +174,15 @@ $ rosservice call /xarm/set_digital_out 2 1  (设定输出端口2的逻辑为1)
 ```bash
 $ rosservice call /xarm/set_tcp_offset 0 0 20 0 0 0
 ```
-&ensp;&ensp;这条命令设置了基于原始工具坐标系(x = 0 mm, y = 0 mm, z = 20 mm)的位置偏移量，还有（0 rad, 0 rad, 0 rad)的RPY姿态偏移量。***如果需要请在每次重新启动/上电控制盒时设定一次正确的偏移量，因为此设定会掉电丢失。***
+&ensp;&ensp;这条命令设置了基于原始工具坐标系(x = 0 mm, y = 0 mm, z = 20 mm)的位置偏移量，还有（0 rad, 0 rad, 0 rad)的RPY姿态偏移量。***如果需要请在每次重新启动/上电控制盒时设定一次正确的偏移量，因为此设定会掉电丢失。***  
+
+#### 清除错误:
+&ensp;&ensp;有时控制器会因为掉电、位置或速度超限、规划失败等原因汇报错误，遇到这一状态需要手动解除。具体的错误代码可以在topic ***"/xarm_states"*** 的信息中找到。 
+```bash
+$ rostopic echo /xarm_states
+```
+&ensp;&ensp;如果'err'字段数据为非零，需要对照用户手册找到原因并设法解决问题。之后，这一错误状态可以通过调用服务 ***"/xarm/clear_err"*** 清除：  
+```bash
+$ rosservice call /xarm/clear_err
+```
+&ensp;&ensp;调用此服务之后 ***务必再次确认err状态信息*** , 如果它变成了0, 说明问题清除成功，否则请再次确认问题是否成功解决。清除成功之后， 记得 ***将robot state设置为0*** 以便使机械臂可以执行后续指令。  

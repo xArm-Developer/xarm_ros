@@ -63,6 +63,7 @@ find_package(catkin REQUIRED COMPONENTS
    SetDigitalIO.srv
    GetDigitalIO.srv
    GetAnalogIO.srv
+   ClearErr.srv
  )
 
 ## Generate actions in the 'action' folder

@@ -17,6 +17,7 @@
   <remap from="/get_digital_in" to="/xarm/get_digital_in" />
   <remap from="/get_analog_in" to="/xarm/get_analog_in" />
   <remap from="/set_digital_out" to="/xarm/set_digital_out" />
+  <remap from="/clear_err" to="/xarm/clear_err" />
 
   <include file="$(find xarm_bringup)/launch/xarm_robot.launch">
     <arg name="robot_ip" value="$(arg robot_ip)" />

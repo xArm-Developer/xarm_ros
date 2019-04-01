@@ -174,3 +174,14 @@ $ rosservice call /xarm/set_digital_out 2 1  (Setting output 2 to be 1)
 $ rosservice call /xarm/set_tcp_offset 0 0 20 0 0 0
 ```
 &ensp;&ensp;This is to set tool frame position offset (x = 0 mm, y = 0 mm, z = 20 mm), and orientation (RPY) offset of ( 0, 0, 0 ) radians with respect to initial tool frame (Frame B in picture). ***Remember to set this offset each time the controller box is restarted !*** 
+
+#### Clearing Errors:
+&ensp;&ensp;Sometimes controller may report error or warnings that would affect execution of further commands. The reasons may be power loss, position/speed limit violation, planning errors, etc. It needs additional intervention to clear. User can check error code in the message of topic ***"/xarm_states"*** . 
+```bash
+$ rostopic echo /xarm_states
+```
+&ensp;&ensp;If it is non-zero, the corresponding reason can be found out in the user manual. After solving the problem, this error satus can be removed by calling service ***"/xarm/clear_err"*** with empty argument.
+```bash
+$ rosservice call /xarm/clear_err
+```
+&ensp;&ensp;After calling this service, please ***check the err status again*** in '/xarm_states', if it becomes 0, the clearing is successful. Otherwise, it means the error/exception is not properly solved. If clearing error is successful, remember to ***set robot state to 0*** to make it ready to move again!  

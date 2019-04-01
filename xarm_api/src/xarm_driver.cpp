@@ -32,11 +32,14 @@ namespace xarm_api
         move_lineb_server_ = nh_.advertiseService("move_lineb", &XARMDriver::MoveLinebCB, this);
         move_line_server_ = nh_.advertiseService("move_line", &XARMDriver::MoveLineCB, this);
         move_servoj_server_ = nh_.advertiseService("move_servoj", &XARMDriver::MoveServoJCB, this);        
+        clear_err_server_ = nh_.advertiseService("clear_err", &XARMDriver::ClearErrCB, this);
 
         // state feedback topics:
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
         robot_rt_state_ = nh_.advertise<xarm_msgs::RobotMsg>("xarm_states", 10, true);
         // end_input_state_ = nh_.advertise<xarm_msgs::IOState>("xarm_input_states", 10, true);
+
+        
 
         nh_.getParam("DOF",dof_);
 
@@ -60,6 +63,24 @@ namespace xarm_api
             }
         }
 
+    }
+
+    bool XARMDriver::ClearErrCB(xarm_msgs::ClearErr::Request& req, xarm_msgs::ClearErr::Response& res)
+    {
+        // First clear controller warning and error:
+        int ret1 = arm_cmd_->clean_war(); 
+        int ret2 = arm_cmd_->clean_err();
+
+        // Then try to enable motor again:
+        res.ret = arm_cmd_->motion_en(8, 1);
+
+        if(res.ret)
+        {
+            res.message = "clear err, ret = "  + std::to_string(res.ret);
+        }
+        return true;
+
+        // After calling this service, user should check '/xarm_states' again to make sure 'err' field is 0, to confirm success.
     }
 
     bool XARMDriver::MotionCtrlCB(xarm_msgs::SetAxis::Request& req, xarm_msgs::SetAxis::Response& res)
