@@ -76,7 +76,7 @@ private:
 void XArmHWInterface::clientInit(const std::string& robot_ip, ros::NodeHandle &root_nh)
 {
 	position_cmd_.resize(dof_);
-	position_cmd_float_.resize(7); // command vector must have 7 dimention!
+	position_cmd_float_.resize(dof_); // command vector must have 7 dimention!
 	position_fdb_.resize(dof_);
 	velocity_cmd_.resize(dof_);
 	velocity_fdb_.resize(dof_);
