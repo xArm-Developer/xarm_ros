@@ -215,7 +215,11 @@ namespace xarm_api
         {
             for(index = 0; index < 7; index++) // should always send 7 joint commands, whatever current DOF is.
             {
-                joint[0][index] = req.pose[index];
+                // joint[0][index] = req.pose[index];
+                if(index<req.pose.size()-1)
+                    joint[0][index] = req.pose[index];
+                else
+                    joint[0][index] = 0;
             }
         }
 
@@ -284,7 +288,10 @@ namespace xarm_api
         {
             for(index = 0; index < 7; index++) // should always send 7 joint commands, whatever current DOF is.
             {
-                pose[0][index] = req.pose[index];
+                if(index<req.pose.size()-1)
+                    pose[0][index] = req.pose[index];
+                else
+                    pose[0][index] = 0;
             }
         }
 
