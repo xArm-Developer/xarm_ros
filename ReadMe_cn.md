@@ -1,3 +1,24 @@
+# 目录:  
+* [1. 简介](#1-简介)
+* [2. 更新记录](#2-更新记录)
+* [3. 准备工作](#3-准备工作)
+* [4. 开始使用'xarm_ros'](#4-开始使用xarm_ros)
+* [5. 代码库介绍及使用说明](#5-代码库介绍及使用说明)
+    * [5.1 xarm_description](#51-xarm_description)  
+    * [5.2 xarm_gazebo](#52-xarm_gazebo)  
+    * [5.3 xarm_controller](#53-xarm_controller)  
+    * [5.4 xarm_bringup](#54-xarm_bringup)  
+    * [5.5 ***xarm7_moveit_config***](#55-xarm7_moveit_config)  
+    * [5.6 xarm_planner](#56-xarm_planner)  
+    * [5.7 ***xarm_api/xarm_msgs***](#57-xarm_apixarm_msgs)  
+        * [5.7.1 使用ROS Service启动 xArm (***后续指令执行的前提***)](#使用ros-service启动-xarm)  
+        * [5.7.2 关节空间和笛卡尔空间运动指令的示例](#关节空间和笛卡尔空间运动指令的示例)
+        * [5.7.3 I/O 操作](##io-操作)  
+        * [5.7.4 获得反馈状态信息](#获得反馈状态信息)  
+        * [5.7.5 关于设定末端工具偏移量](#关于设定末端工具偏移量)  
+        * [5.7.6 清除错误](#清除错误)  
+
+
 # 1. 简介：
    &ensp;&ensp;此代码库包含xArm模型文件以及相关的控制、规划等示例开发包。开发及测试使用的环境为 Ubuntu 16.04 + ROS Kinetic Kame。
    维护者: Jason (jason@ufactory.cc),Jimy (jimy.zhang@ufactory.cc)   
@@ -26,7 +47,7 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
 ## 3.3 如果使用Gazebo: 请提前下载好 'table' 3D 模型
 &ensp;&ensp;这个模型在Gazebo demo中会用到。在Gazebo仿真环境中, 在model database列表里寻找 'table', 并将此模型拖入旁边的3D环境中. 通过这个操作，桌子的模型就会自动下载到本地。
 
-# 4. 'xarm_ros'的使用教程
+# 4. 开始使用'xarm_ros'
    
 ## 4.1 生成catkin workspace. 
    &ensp;&ensp;如果您已经有了自己的catkin工作区，请跳过此步往下进行。
@@ -117,7 +138,7 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 * move_lineb: 圆弧交融的直线运动，给定一系列中间点以及目标位置。 每两个中间点间为直线轨迹，但在中间点处做一个圆弧过渡（需给定半径）来保证速度连续。
 另外需要 ***注意*** 的是，使用以上三种service之前，需要通过service依次将机械臂模式(mode)设置为0，然后状态(state)设置为0。这些运动指令的意义和详情可以参考产品使用指南。除此之外还提供了其他xarm编程API支持的service调用, 对于相关ros service的定义在 [xarm_msgs目录](./xarm_msgs/)中。 
 
-#### 使用 API service call 的示例:
+#### 使用ROS Service启动 xArm:
 
 &ensp;&ensp;首先启动xarm7 service server, 以下ip地址只是举例:  
 ```bash
@@ -133,7 +154,9 @@ $ rosservice call /xarm/set_mode 0
 
 $ rosservice call /xarm/set_state 0
 ```
-&ensp;&ensp;以上三个运动命令使用同类型的srv request: [Move.srv](./xarm_msgs/srv/Move.srv)。 比如，调用关节运动命令，最大速度 0.35 rad/s，加速度 7 rad/s^2:  
+
+#### 关节空间和笛卡尔空间运动指令的示例:
+&ensp;&ensp;以下三个运动命令使用同类型的srv request: [Move.srv](./xarm_msgs/srv/Move.srv)。 比如，调用关节运动命令，最大速度 0.35 rad/s，加速度 7 rad/s^2:  
 ```bash
 $ rosservice call /xarm/move_joint [0,0,0,0,0,0,0] 0.35 7 0 0
 ```
