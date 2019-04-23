@@ -1,3 +1,24 @@
+# Contents:  
+* [1. Introduction](#1-introduction)
+* [2. Update History](#2-update-summary)
+* [3. Preparations](#3-preparations-before-using-this-package)
+* [4. Get Started](#4-getting-started-with-xarm_ros)
+* [5. Package Description & Usage Guidance](#5-package-description--usage-guidance)
+    * [5.1 xarm_description](#51-xarm_description)  
+    * [5.2 xarm_gazebo](#52-xarm_gazebo)  
+    * [5.3 xarm_controller](#53-xarm_controller)  
+    * [5.4 xarm_bringup](#54-xarm_bringup)  
+    * [5.5 ***xarm7_moveit_config***](#55-xarm7_moveit_config)  
+    * [5.6 xarm_planner](#56-xarm_planner)  
+    * [5.7 ***xarm_api/xarm_msgs***](#57-xarm_apixarm_msgs)  
+        * [5.7.1 Starting xArm by ROS service (***priority for the following operations***)](#starting-xarm-by-ros-service)  
+        * [5.7.2 Joint space or Cartesian space command example](#joint-space-or-cartesian-space-command-example)
+        * [5.7.3 I/O Operations](#io-operations)  
+        * [5.7.4 Getting status feedback](#getting-status-feedback)  
+        * [5.7.5 Setting Tool Center Point Offset](#setting-tool-center-point-offset)  
+        * [5.7.6 Clearing Errors](#clearing-errors)  
+
+
 # 1. Introduction
    &ensp;&ensp;This repository contains the 3D model of xArm and demo packages for ROS development and simulations.Developing and testing environment: Ubuntu 16.04 + ROS Kinetic Kame.  
    Maintained by: Jason (jason@ufactory.cc) and Jimy (jimy.zhang@ufactory.cc)   
@@ -27,7 +48,7 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
 ## 3.3 Download the 'table' 3D model
 &ensp;&ensp;In Gazebo simulator, navigate through the model database for 'table' item, drag and place the 3D model inside the virtual environment. It will then be downloaded locally, as 'table' is needed for running the demo.
 
-# 4. Usage of ROS package 'xarm_ros'
+# 4. Getting started with 'xarm_ros'
    
 ## 4.1 Create a catkin workspace. 
    &ensp;&ensp;If you already have a workspace, skip and move on to next part.
@@ -116,7 +137,7 @@ Argument 'robot_dof' specifies the number of joints of your xArm (default is 7).
 * move_lineb: a list of via points followed by target Cartesian point. Each segment is straight-line with Arc blending at the via points, to make velocity continuous.  
 Please ***keep in mind that*** before calling the three motion services above, first set robot mode to be 0, then set robot state to be 0, by calling relavent services. Meaning of the commands are consistent with the descriptions in product ***user manual***, other xarm API supported functions are also available as service call. Refer to [xarm_msgs package](./xarm_msgs/) for more details and usage guidance.
 
-#### Example of using API service calls:
+#### Starting xArm by ROS service:
 
 &ensp;&ensp;First startup the service server for xarm7, ip address is just an example:  
 ```bash
@@ -132,6 +153,9 @@ $ rosservice call /xarm/set_mode 0
 
 $ rosservice call /xarm/set_state 0
 ```
+
+#### Joint space or Cartesian space command example:
+
 &ensp;&ensp;All motion commands use the same type of srv request: [Move.srv](./xarm_msgs/srv/Move.srv). For example, to call joint space motion with max speed 0.35 rad/s and acceleration 7 rad/s^2:  
 ```bash
 $ rosservice call /xarm/move_joint [0,0,0,0,0,0,0] 0.35 7 0 0
@@ -185,3 +209,4 @@ $ rostopic echo /xarm_states
 $ rosservice call /xarm/clear_err
 ```
 &ensp;&ensp;After calling this service, please ***check the err status again*** in '/xarm_states', if it becomes 0, the clearing is successful. Otherwise, it means the error/exception is not properly solved. If clearing error is successful, remember to ***set robot state to 0*** to make it ready to move again!  
+
