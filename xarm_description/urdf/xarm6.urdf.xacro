@@ -26,6 +26,10 @@
       <color rgba="1.0 1.0 1.0 1.0"/>
     </material>
 
+    <material name="Silver">
+      <color rgba="0.753 0.753 0.753 1.0"/>
+    </material>
+
     <link name="${prefix}link_base">
       <visual>
         <geometry>
@@ -268,7 +272,7 @@
           <mesh filename="package://xarm_description/meshes/xarm6/visual/link6.stl"/>
         </geometry>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <material name="White" />
+        <material name="Silver" />
       </visual>
       <collision>
         <geometry>
