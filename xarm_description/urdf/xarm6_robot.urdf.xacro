@@ -15,7 +15,7 @@
   <xacro:include filename="$(find xarm_description)/urdf/xarm6.transmission.xacro" />
   <xacro:include filename="$(find xarm_description)/urdf/xarm6.gazebo.xacro" />
 
-  <!-- arm -->
+  <!-- gazebo_plugin -->
   <xacro:gazebo_ros_control_plugin namespace="$(arg ros_control_namespace)"/>
 
   <xacro:if value="$(arg limited)">

@@ -1,0 +1,1 @@
+controller_joint_names: ['drive_joint', 'left_finger_joint', 'left_inner_knuckle_joint', 'right_outer_knuckle_joint', 'right_finger_joint', 'right_inner_knuckle_joint', ]
