@@ -13,7 +13,7 @@
   <param
     name="robot_description"
     command="$(find xacro)/xacro
-    --inorder '$(find xarm_gripper)/urdf/xarm_gripper_model.xacro'" />
+    --inorder '$(find xarm_gripper)/urdf/xarm_gripper.xacro'" />
   <node 
     name="spawn_gripper_model" 
     pkg="gazebo_ros" type="spawn_model"

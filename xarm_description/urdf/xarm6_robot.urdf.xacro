@@ -10,7 +10,7 @@
   <!-- common stuff -->
   <xacro:include filename="$(find xarm_description)/urdf/common.gazebo.xacro" />
 
-  <!-- xarm6 -->
+  <!-- include xarm6 relative macros: -->
   <xacro:include filename="$(find xarm_description)/urdf/xarm6.urdf.xacro" />
   <xacro:include filename="$(find xarm_description)/urdf/xarm6.transmission.xacro" />
   <xacro:include filename="$(find xarm_description)/urdf/xarm6.gazebo.xacro" />

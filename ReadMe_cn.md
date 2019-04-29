@@ -26,11 +26,12 @@
 
 # 2. 更新记录：
    此代码库仍然处在早期开发阶段，新的功能支持、示例代码，bug修复等等会保持更新。  
-   * 添加xArm 7 描述文档，3D图形文件以及controller示例，用于进行ROS可视化仿真模拟。
+   * 添加xArm 7(旧版)描述文档，3D图形文件以及controller示例，用于进行ROS可视化仿真模拟。
    * 添加MoveIt!规划器支持，用于控制Gazebo/RViz模型或者xArm真机，但二者不可同时启动。
    * 由ROS直接控制xArm真机的相关支持目前还是Beta版本，用户使用时应尽量小心，我们会尽快完善。
    * 添加 xArm hardware interface 并在驱动真实机械臂时使用 ROS position_controllers/JointTrajectoryController。
-   * 添加 xArm 6 初版仿真支持。
+   * 添加 xArm 6 仿真和真机控制支持。
+   * 添加 xArm 机械爪仿真模型。
 
 # 3. 准备工作
 

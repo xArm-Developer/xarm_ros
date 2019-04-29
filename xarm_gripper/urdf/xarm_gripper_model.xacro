@@ -2,10 +2,6 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro"
        name="xarm_gripper" >
 
-  <xacro:arg name="prefix" default=""/>
-  <xacro:arg name="ros_control_namespace" default="xarm"/>
-  <xacro:arg name="effort_control" default="false"/>
-
   <!-- common stuff -->
   <xacro:include filename="$(find xarm_description)/urdf/common.gazebo.xacro" />
 
@@ -14,18 +10,20 @@
   <xacro:include filename="$(find xarm_gripper)/urdf/xarm_gripper.transmission.xacro" />
   <xacro:include filename="$(find xarm_gripper)/urdf/xarm_gripper.gazebo.xacro" />
 
-  <!-- gazebo plugin -->
-  <xacro:gazebo_ros_control_plugin namespace="$(arg ros_control_namespace)"/>
+  <xacro:macro name="load_gripper" params="prefix:='' attach_to:='' ns:='xarm_gripper' xyz:='0 0 0' rpy:='0 0 0' effort_control:='false' ">
+    <!-- gazebo plugin -->
+    <xacro:gazebo_ros_control_plugin namespace="${ns}"/>
 
-  <xacro:xarm_gripper_urdf prefix="$(arg prefix)"/>
+    <xacro:xarm_gripper_urdf prefix="${prefix}" attach_to="${attach_to}" xyz="${xyz}" rpy="${rpy}" />
 
-  <xacro:if value="$(arg effort_control)">
-    <xacro:xarm_gripper_transmission prefix="$(arg prefix)" hard_interface="EffortJointInterface" />
-  </xacro:if>
-  <xacro:unless value="$(arg effort_control)">
-    <xacro:xarm_gripper_transmission prefix="$(arg prefix)" hard_interface="PositionJointInterface" />
-  </xacro:unless>
+    <xacro:if value="${effort_control}">
+      <xacro:xarm_gripper_transmission prefix="${prefix}" hard_interface="EffortJointInterface" />
+    </xacro:if>
+    <xacro:unless value="${effort_control}">
+      <xacro:xarm_gripper_transmission prefix="${prefix}" hard_interface="PositionJointInterface" />
+    </xacro:unless>
 
-  <xacro:xarm_gripper_gazebo prefix="$(arg prefix)" />
+    <xacro:xarm_gripper_gazebo prefix="${prefix}" />
 
+  </xacro:macro>
 </robot>

@@ -27,11 +27,12 @@
 
 # 2. Update Summary
    This package is still in early development, tests, bug fixes and new functions are to be updated regularly in the future. 
-   * Add xArm 7 description files, meshes and sample controller demos for ROS simulation and visualization.
+   * Add xArm 7 (old model) description files, meshes and sample controller demos for ROS simulation and visualization.
    * Add Moveit! planner support to control Gazebo virtual model and real xArm, but the two can not launch together.
    * Direct control of real xArm through Moveit GUI is still in beta version, please use it with special care.
    * Add xArm hardware interface to use ROS position_controllers/JointTrajectoryController on real robot.
-   * Add initial xArm 6 simulation support.
+   * Add xArm 6 simulation/real robot control support.
+   * Add simulation model of xArm Gripper.
 
 # 3. Preparations before using this package
 

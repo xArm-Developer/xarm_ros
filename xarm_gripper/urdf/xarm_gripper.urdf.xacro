@@ -1,18 +1,16 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://ros.org/wiki/xacro">
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="xarm_gripper">
 <!--
   Author: Jason Peng <jason@ufactory.cc>
 -->
-  <xacro:macro name="xarm_gripper_urdf" params="prefix">
-
-    <material name="White">
-      <color rgba="1.0 1.0 1.0 1.0"/>
-    </material>
-
-    <material name="Silver">
-      <color rgba="0.753 0.753 0.753 1.0"/>
-    </material>
-
+  <xacro:macro name="xarm_gripper_urdf" params="prefix:='' attach_to:='' rpy:='0 0 0' xyz:='0 0 0' ">
+  <xacro:unless value="${attach_to == ''}">
+    <joint name="${prefix}gripper_fix" type="fixed">
+      <parent link="${attach_to}"/>
+      <child link="${prefix}xarm_gripper_base_link"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+  </xacro:unless>
   <link
     name="${prefix}xarm_gripper_base_link">
     <inertial>
@@ -42,7 +40,9 @@
         <color
           rgba="0.89804 0.91765 0.92941 1" />
       </material> -->
-      <material name="White" />
+      <material name="White">
+        <color rgba="1.0 1.0 1.0 1.0"/>
+      </material>
     </visual>
     <collision>
       <origin
@@ -78,7 +78,9 @@
         <mesh
           filename="package://xarm_gripper/meshes/left_outer_knuckle.STL" />
       </geometry>
-      <material name="Silver" />
+      <material name="Silver">
+        <color rgba="0.753 0.753 0.753 1.0"/>
+      </material>
     </visual>
     <collision>
       <origin
@@ -132,7 +134,9 @@
         <mesh
           filename="package://xarm_gripper/meshes/left_finger.STL" />
       </geometry>
-      <material name="Silver" />
+      <material name="Silver">
+        <color rgba="0.753 0.753 0.753 1.0"/>
+      </material>
     </visual>
     <collision>
       <origin
@@ -187,7 +191,9 @@
         <mesh
           filename="package://xarm_gripper/meshes/left_inner_knuckle.STL" />
       </geometry>
-      <material name="Silver" />
+      <material name="Silver">
+        <color rgba="0.753 0.753 0.753 1.0"/>
+      </material>
     </visual>
     <collision>
       <origin
@@ -242,7 +248,9 @@
         <mesh
           filename="package://xarm_gripper/meshes/right_outer_knuckle.STL" />
       </geometry>
-      <material name="Silver" />
+      <material name="Silver">
+        <color rgba="0.753 0.753 0.753 1.0"/>
+      </material>
     </visual>
     <collision>
       <origin
@@ -297,7 +305,9 @@
         <mesh
           filename="package://xarm_gripper/meshes/right_finger.STL" />
       </geometry>
-      <material name="Silver" />
+      <material name="Silver">
+        <color rgba="0.753 0.753 0.753 1.0"/>
+      </material>
     </visual>
     <collision>
       <origin
@@ -352,7 +362,9 @@
         <mesh
           filename="package://xarm_gripper/meshes/right_inner_knuckle.STL" />
       </geometry>
-      <material name="Silver" />
+      <material name="Silver">
+        <color rgba="0.753 0.753 0.753 1.0"/>
+      </material>
     </visual>
     <collision>
       <origin
