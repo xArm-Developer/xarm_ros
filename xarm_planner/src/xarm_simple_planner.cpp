@@ -18,16 +18,24 @@
 #include <xarm_planner/pose_plan.h>
 #include <xarm_planner/joint_plan.h>
 #include <xarm_planner/exec_plan.h>
+#include <xarm_planner/single_straight_plan.h>
 
 #define SPINNER_THREAD_NUM 2
 
+/* Used for Cartesian path computation, please modify as needed: */
+const double jump_threshold = 0.0;
+const double eef_step = 0.005;
+const double maxV_scale_factor = 0.3; // check!!
+
+
+namespace rvt = rviz_visual_tools;
 
 class XArmSimplePlanner
 {
   public:
     XArmSimplePlanner(const std::string plan_group_name):spinner(SPINNER_THREAD_NUM), group(plan_group_name){init();};
     XArmSimplePlanner():spinner(SPINNER_THREAD_NUM),group(PLANNING_GROUP){init();};
-    ~XArmSimplePlanner(){};
+    ~XArmSimplePlanner(){ delete visual_tools;};
     void start();
     void stop();
 
@@ -40,16 +48,19 @@ class XArmSimplePlanner
     std::vector<std::string> joint_names;
     moveit::planning_interface::MoveGroupInterface group;
     moveit::planning_interface::MoveGroupInterface::Plan my_xarm_plan;
+    moveit_visual_tools::MoveItVisualTools *visual_tools;
 
     ros::Publisher display_path;
     ros::ServiceServer plan_pose_srv;
     ros::ServiceServer plan_joint_srv;
+    ros::ServiceServer sing_cart_srv;
     ros::Subscriber exec_plan_sub; /* non-blocking*/
     ros::ServiceServer exec_plan_srv; /* blocking with result feedback */
 
     void init();
     bool do_pose_plan(xarm_planner::pose_plan::Request &req, xarm_planner::pose_plan::Response &res);
     bool do_joint_plan(xarm_planner::joint_plan::Request &req, xarm_planner::joint_plan::Response &res);
+    bool do_single_cartesian_plan(xarm_planner::single_straight_plan::Request &req, xarm_planner::single_straight_plan::Response &res);
     bool exec_plan_cb(xarm_planner::exec_plan::Request &req, xarm_planner::exec_plan::Response &res);
     void execute_plan_topic(const std_msgs::Bool::ConstPtr& exec);
 };
@@ -67,9 +78,16 @@ void XArmSimplePlanner::init()
   /* Notice: the correct way to specify member function as callbacks */
   plan_pose_srv = node_handle.advertiseService("xarm_pose_plan", &XArmSimplePlanner::do_pose_plan, this);
   plan_joint_srv = node_handle.advertiseService("xarm_joint_plan", &XArmSimplePlanner::do_joint_plan, this);
+  sing_cart_srv = node_handle.advertiseService("xarm_straight_plan", &XArmSimplePlanner::do_single_cartesian_plan, this);
 
   exec_plan_sub = node_handle.subscribe("xarm_planner_exec", 10, &XArmSimplePlanner::execute_plan_topic, this);
   exec_plan_srv = node_handle.advertiseService("xarm_exec_plan", &XArmSimplePlanner::exec_plan_cb, this);
+
+  // visual_tools = new moveit_visual_tools::MoveItVisualTools("link_base");
+  // Eigen::Affine3d text_pose = Eigen::Affine3d::Identity();
+  // text_pose.translation().z() = 1.75;
+  // visual_tools->publishText(text_pose, "xArm Planner Demo", rvt::WHITE, rvt::XLARGE);
+  // visual_tools->trigger();
 
 }
 
@@ -95,8 +113,39 @@ bool XArmSimplePlanner::do_pose_plan(xarm_planner::pose_plan::Request &req, xarm
   bool success = (group.plan(my_xarm_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
   res.success = success;
   ROS_INFO_NAMED("move_group_planner", "This plan (pose goal) %s", success ? "SUCCEEDED" : "FAILED");
-  
+  // if(success)
+  // {
+  //   ROS_INFO_NAMED("xarm_planner", "Visualizing plan as trajectory line");
+    
+  //   visual_tools->deleteAllMarkers();
+  //   const robot_state::JointModelGroup* joint_model_group = group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
+  //   visual_tools->publishTrajectoryLine(my_xarm_plan.trajectory_, joint_model_group);
+  //   visual_tools->trigger();
+  // }
+
   return success;
+}
+
+bool XArmSimplePlanner::do_single_cartesian_plan(xarm_planner::single_straight_plan::Request &req, xarm_planner::single_straight_plan::Response &res)
+{
+  std::vector<geometry_msgs::Pose> waypoints;
+  waypoints.push_back(req.target);
+  group.setMaxVelocityScalingFactor(maxV_scale_factor);
+  moveit_msgs::RobotTrajectory trajectory;
+  
+  double fraction = group.computeCartesianPath(waypoints, eef_step, jump_threshold, trajectory);
+  bool success = true;
+  if(fraction<0.9)
+    success = false;
+  else
+  {
+    my_xarm_plan.trajectory_ = trajectory;
+  }
+  fprintf(stderr, "Coverage: %lf\n", fraction);
+
+  res.success = success;
+  return success;
+
 }
 
 bool XArmSimplePlanner::do_joint_plan(xarm_planner::joint_plan::Request &req, xarm_planner::joint_plan::Response &res)
@@ -143,7 +192,6 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "xarm_move_group_planner");
   ros::NodeHandle nh;
   int jnt_num;
-
   nh.getParam("DOF", jnt_num);
   switch(jnt_num)
   {
