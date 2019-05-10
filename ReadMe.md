@@ -36,9 +36,10 @@
 
 # 3. Preparations before using this package
 
-## 3.1 Install the gazebo_ros interface module
-   gazebo_ros_pkgs: <http://gazebosim.org/tutorials?tut=ros_installing>  
+## 3.1 Install dependent package module
+   gazebo_ros_pkgs: <http://gazebosim.org/tutorials?tut=ros_installing> (if use Gazebo)   
    ros_control: <http://wiki.ros.org/ros_control> (remember to select your correct ROS distribution)  
+   moveit_core: <https://moveit.ros.org/install/>  
    
 ## 3.2 Go through the official tutorial documents
 ROS Wiki: <http://wiki.ros.org/>  

@@ -35,9 +35,10 @@
 
 # 3. 准备工作
 
-## 3.1 安装 gazebo_ros interface 模块
-   gazebo_ros_pkgs: <http://gazebosim.org/tutorials?tut=ros_installing>  
+## 3.1 安装依赖的模块
+   gazebo_ros_pkgs: <http://gazebosim.org/tutorials?tut=ros_installing> （如果使用Gazebo模拟器）  
    ros_control: <http://wiki.ros.org/ros_control> (记得选择您使用的 ROS 版本)  
+   moveit_core: <https://moveit.ros.org/install/>  
    
 ## 3.2 完整学习相关的官方教程
 ROS Wiki: <http://wiki.ros.org/>  

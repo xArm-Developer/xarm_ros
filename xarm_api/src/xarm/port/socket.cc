@@ -15,7 +15,7 @@
 
 void SocketPort::recv_proc(void) {
   int num;
-  char recv_data[que_maxlen_];
+  unsigned char recv_data[que_maxlen_];
   while (state_ == 0) {
     bzero(recv_data, que_maxlen_);
     num = recv(fp_, (void *)&recv_data[4], que_maxlen_ - 1, 0);
@@ -44,10 +44,10 @@ SocketPort::SocketPort(char *server_ip, int server_port, int que_num,
   state_ = -1;
   rx_que_ = new QueueMemcpy(que_num_, que_maxlen_);
   fp_ = socket_init((char *)" ", 0, 0);
-  if (fp_ == -1) return;
+  if (fp_ == -1) { return; }
 
   int ret = socket_connect_server(&fp_, server_ip, server_port);
-  if (ret == -1) return;
+  if (ret == -1) { return; }
 
   state_ = 0;
   flush();
@@ -63,16 +63,16 @@ int SocketPort::is_ok(void) { return state_; }
 
 void SocketPort::flush(void) { rx_que_->flush(); }
 
-int SocketPort::read_frame(u8 *data) {
-  if (state_ != 0) return -1;
+int SocketPort::read_frame(unsigned char *data) {
+  if (state_ != 0) { return -1; }
 
-  if (rx_que_->size() == 0) return -1;
+  if (rx_que_->size() == 0) { return -1; }
 
   rx_que_->pop(data);
   return 0;
 }
 
-int SocketPort::write_frame(u8 *data, int len) {
+int SocketPort::write_frame(unsigned char *data, int len) {
   int ret = socket_send_data(fp_, data, len);
   return ret;
 }

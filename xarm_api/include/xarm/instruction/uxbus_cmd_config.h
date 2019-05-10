@@ -7,11 +7,12 @@
 #ifndef INSTRUCTION_UXBUS_CMD_CONFIG_H_
 #define INSTRUCTION_UXBUS_CMD_CONFIG_H_
 class UXBUS_RG {
-public:
+ public:
   UXBUS_RG(void) {}
   ~UXBUS_RG(void) {}
 
   static const unsigned char GET_VERSION = 1;
+  static const unsigned char SHUTDOWN_SYSTEM = 10;
 
   static const unsigned char MOTION_EN = 11;
   static const unsigned char SET_STATE = 12;
@@ -28,6 +29,7 @@ public:
   static const unsigned char MOVE_JOINT = 23;
   static const unsigned char MOVE_HOME = 25;
   static const unsigned char SLEEP_INSTT = 26;
+  static const unsigned char MOVE_CIRCLE = 27;
   static const unsigned char MOVE_SERVOJ = 29;
 
   static const unsigned char SET_TCP_JERK = 31;
@@ -35,8 +37,12 @@ public:
   static const unsigned char SET_JOINT_JERK = 33;
   static const unsigned char SET_JOINT_MAXACC = 34;
   static const unsigned char SET_TCP_OFFSET = 35;
+  static const unsigned char SET_LOAD_PARAM = 36;
+  static const unsigned char SET_COLLIS_SENS = 37;
+  static const unsigned char SET_TEACH_SENS = 38;
   static const unsigned char CLEAN_CONF = 39;
   static const unsigned char SAVE_CONF = 40;
+  static const unsigned char SET_GRAVITY_DIR = 51;
 
   static const unsigned char GET_TCP_POSE = 41;
   static const unsigned char GET_JOINT_POS = 42;
@@ -57,10 +63,20 @@ public:
   static const unsigned char GRIPP_R16B = 128;
   static const unsigned char GRIPP_W32B = 129;
   static const unsigned char GRIPP_R32B = 130;
+
+  static const unsigned char CGPIO_GET_DIGIT = 131;
+  static const unsigned char CGPIO_GET_ANALOG1 = 132;
+  static const unsigned char CGPIO_GET_ANALOG2 = 133;
+  static const unsigned char CGPIO_SET_DIGIT = 134;
+  static const unsigned char CGPIO_SET_ANALOG1 = 135;
+  static const unsigned char CGPIO_SET_ANALOG2 = 136;
+  static const unsigned char CGPIO_SET_IN_FUN = 137;
+  static const unsigned char CGPIO_SET_OUT_FUN = 138;
+  static const unsigned char CGPIO_GET_STATE = 139;
 };
 
 class UXBUS_STATE {
-public:
+ public:
   UXBUS_STATE(void) {}
   ~UXBUS_STATE(void) {}
   static const int ERR_CODE = 1;
@@ -75,7 +91,7 @@ public:
 };
 
 class UXBUS_CONF {
-public:
+ public:
   UXBUS_CONF(void) {}
   ~UXBUS_CONF(void) {}
 
@@ -88,7 +104,7 @@ public:
 };
 
 class XARM_MODE {
-public:
+ public:
   XARM_MODE(void) {}
   ~XARM_MODE(void) {}
 
@@ -99,7 +115,7 @@ public:
 };
 
 class XARM_STATE {
-public:
+ public:
   XARM_STATE(void) {}
   ~XARM_STATE(void) {}
 

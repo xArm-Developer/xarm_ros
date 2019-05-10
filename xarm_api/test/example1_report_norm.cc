@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
   int rxcnt = 0;
   ReportDataNorm *norm_data = new ReportDataNorm();
 
-  u8 rx_data[1280];
+  unsigned char rx_data[1280];
   int ret;
   int err_num = 0;
   while (1) {

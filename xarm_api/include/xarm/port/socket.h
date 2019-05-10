@@ -19,8 +19,8 @@ class SocketPort {
   int is_ok(void);
   void flush(void);
   void recv_proc(void);
-  int write_frame(u8 *data, int len);
-  int read_frame(u8 *data);
+  int write_frame(unsigned char *data, int len);
+  int read_frame(unsigned char *data);
   void close_port(void);
   int que_maxlen_;
 

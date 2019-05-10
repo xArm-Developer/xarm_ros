@@ -15,9 +15,9 @@ class UxbusCmdTcp : public UxbusCmd {
   UxbusCmdTcp(SocketPort *arm_port);
   ~UxbusCmdTcp(void);
 
-  int check_xbus_prot(u8 *datas, u8 funcode);
-  int send_pend(u8 funcode, int num, int timeout, u8 *ret_data);
-  int send_xbus(u8 funcode, u8 *datas, int num);
+  int check_xbus_prot(unsigned char *datas, int funcode);
+  int send_pend(int funcode, int num, int timeout, unsigned char *ret_data);
+  int send_xbus(int funcode, unsigned char *datas, int num);
   void close(void);
 
  private:

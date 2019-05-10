@@ -10,11 +10,10 @@
 #include "xarm/common/data_type.h"
 
 void print_log(const char *format, ...);
-void print_nvect(const char *str, fp64 vect[], u8 n);
-void print_nvect(const char *str, float *vect, u8 n);
-void print_nvect(const char *str, u8 vect[], u8 n);
-void print_nvect(const char *str, u16 vect[], u8 n);
-void print_nvect(const char *str, u32 vect[], u8 n);
-void print_hex(const char *str, u8 *hex, u8 len);
+void print_nvect(const char *str, double vect[], int n);
+void print_nvect(const char *str, float *vect, int n);
+void print_nvect(const char *str, unsigned char vect[], int n);
+void print_nvect(const char *str, int vect[], int n);
+void print_hex(const char *str, unsigned char *hex, int len);
 
 #endif

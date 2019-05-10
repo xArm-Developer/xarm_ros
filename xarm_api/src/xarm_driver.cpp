@@ -50,7 +50,7 @@ namespace xarm_api
             ROS_ERROR("Xarm Connection Failed!");
         else // clear unimportant errors
         {
-            unsigned char dbg_msg[16] = {0};
+            int dbg_msg[16] = {0};
             arm_cmd_->servo_get_dbmsg(dbg_msg);
 
             for(int i=0; i<dof_; i++)
@@ -163,14 +163,14 @@ namespace xarm_api
 
     bool XARMDriver::SetDigitalIOCB(xarm_msgs::SetDigitalIO::Request &req, xarm_msgs::SetDigitalIO::Response &res)
     {
-        res.ret = arm_cmd_->gpio_set_digital(req.io_num, req.value);
+        res.ret = arm_cmd_->tgpio_set_digital(req.io_num, req.value);
         res.message = "set Digital port "+ std::to_string(req.io_num) +" to "+ std::to_string(req.value) + " : ret = " + std::to_string(res.ret); 
         return true;
     }
 
     bool XARMDriver::GetDigitalIOCB(xarm_msgs::GetDigitalIO::Request &req, xarm_msgs::GetDigitalIO::Response &res)
     {
-        res.ret = arm_cmd_->gpio_get_digital(&res.digital_1, &res.digital_2);
+        res.ret = arm_cmd_->tgpio_get_digital(&res.digital_1, &res.digital_2);
         res.message = "get Digital port ret = " + std::to_string(res.ret); 
         return true;
     }
@@ -180,10 +180,10 @@ namespace xarm_api
         switch (req.port_num)
         {
             case 1:
-                res.ret = arm_cmd_->gpio_get_analog1(&res.analog_value);
+                res.ret = arm_cmd_->tgpio_get_analog1(&res.analog_value);
                 break;
             case 2:
-                res.ret = arm_cmd_->gpio_get_analog2(&res.analog_value);
+                res.ret = arm_cmd_->tgpio_get_analog2(&res.analog_value);
                 break;
 
             default:
@@ -312,9 +312,9 @@ namespace xarm_api
 
     void XARMDriver::pub_io_state()
     {
-        arm_cmd_->gpio_get_digital(&io_msg.digital_1, &io_msg.digital_2);
-        arm_cmd_->gpio_get_analog1(&io_msg.analog_1);
-        arm_cmd_->gpio_get_analog2(&io_msg.analog_2);
+        arm_cmd_->tgpio_get_digital(&io_msg.digital_1, &io_msg.digital_2);
+        arm_cmd_->tgpio_get_analog1(&io_msg.analog_1);
+        arm_cmd_->tgpio_get_analog2(&io_msg.analog_2);
 
         end_input_state_.publish(io_msg);
     }

@@ -19,8 +19,8 @@ class SerialPort {
   int is_ok(void);
   void flush(void);
   void recv_proc(void);
-  int write_frame(u8 *data, int len);
-  int read_frame(u8 *data);
+  int write_frame(unsigned char *data, int len);
+  int read_frame(unsigned char *data);
   void close_port(void);
   int que_maxlen_;
   int que_num_;
@@ -31,10 +31,10 @@ class SerialPort {
   pthread_t thread_id_;
   QueueMemcpy *rx_que_;
   int init_serial(const char *port, int baud);
-  int read_char(u8 *ch);
-  int read_str(u8 *data, char eol, u8 len);
-  int write_char(u8 ch);
-  void parse_put(u8 *data, u16 len);
+  int read_char(unsigned char *ch);
+  int read_str(unsigned char *data, char eol, int len);
+  int write_char(unsigned char ch);
+  void parse_put(unsigned char *data, int len);
 
   typedef enum _UXBUS_RECV_STATE {
     UXBUS_START_FROMID = 0,
@@ -45,13 +45,13 @@ class SerialPort {
     UXBUS_STATE_CRC2 = 5,
   } UXBUS_RECV_STATE;
 
-  u8 UXBUS_PROT_FROMID_;
-  u8 UXBUS_PROT_TOID_;
+  unsigned char UXBUS_PROT_FROMID_;
+  unsigned char UXBUS_PROT_TOID_;
 
-  u16 rx_data_idx_;
-  u8 rx_state_;
-  u8 rx_buf_[128];
-  u16 rx_length_;
+  int rx_data_idx_;
+  int rx_state_;
+  unsigned char rx_buf_[128];
+  int rx_length_;
 };
 
 #endif

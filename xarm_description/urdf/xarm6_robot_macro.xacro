@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="xarm6" >
+  <xacro:macro name="xarm6_robot" params="prefix:='' namespace:='xarm' limited:='false' effort_control:='false' 
+    attach_to:='world' xyz:='0 0 0' rpy:='0 0 0' ">
+
+    <!-- common stuff -->
+    <xacro:include filename="$(find xarm_description)/urdf/common.gazebo.xacro" />
+
+    <!-- include xarm6 relative macros: -->
+    <xacro:include filename="$(find xarm_description)/urdf/xarm6.urdf.xacro" />
+    <xacro:include filename="$(find xarm_description)/urdf/xarm6.transmission.xacro" />
+    <xacro:include filename="$(find xarm_description)/urdf/xarm6.gazebo.xacro" />
+
+    <!-- gazebo_plugin -->
+    <xacro:gazebo_ros_control_plugin namespace="${namespace}"/>
+
+    <!-- add one world link if no 'attach_to' specified  -->
+    <xacro:if value="${attach_to == 'world'}">
+      <link name="world" />
+    </xacro:if>
+
+    <joint name="world_joint" type="fixed">
+      <parent link="${attach_to}" />
+      <child link = "${prefix}link_base" />
+      <origin xyz="${xyz}" rpy="${rpy}" />
+    </joint>
+
+    <xacro:if value="${limited}">
+      <xacro:xarm6_urdf prefix="${prefix}"
+        joint1_lower_limit="${-pi*0.99}" joint1_upper_limit="${pi*0.99}"
+        joint2_lower_limit="${-2.18}" joint2_upper_limit="${2.18}"
+        joint3_lower_limit="${-pi*0.99}" joint3_upper_limit="${0.11}"
+        joint4_lower_limit="${-pi*0.99}" joint4_upper_limit="${pi*0.99}"
+        joint5_lower_limit="${-1.75}" joint5_upper_limit="${pi*0.99}"
+        joint6_lower_limit="${-pi*0.99}" joint6_upper_limit="${pi*0.99}"/>
+    </xacro:if>
+    <xacro:unless value="${limited}">
+      <xacro:xarm6_urdf prefix="${prefix}"/>
+    </xacro:unless>
+
+    <xacro:if value="${effort_control}">
+      <xacro:xarm6_transmission prefix="${prefix}" hard_interface="EffortJointInterface" />
+    </xacro:if>
+    <xacro:unless value="${effort_control}">
+      <xacro:xarm6_transmission prefix="${prefix}" hard_interface="PositionJointInterface" />
+    </xacro:unless>
+
+    <xacro:xarm6_gazebo prefix="${prefix}" />
+
+  </xacro:macro>
+
+</robot>
