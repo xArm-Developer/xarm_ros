@@ -141,7 +141,7 @@ bool XArmSimplePlanner::do_single_cartesian_plan(xarm_planner::single_straight_p
   {
     my_xarm_plan.trajectory_ = trajectory;
   }
-  fprintf(stderr, "Coverage: %lf\n", fraction);
+  fprintf(stderr, "[XArmSimplePlanner::do_single_cartesian_plan(): ] Coverage: %lf\n", fraction);
 
   res.success = success;
   return success;

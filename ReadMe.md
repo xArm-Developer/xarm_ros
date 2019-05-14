@@ -62,13 +62,23 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
    $ cd ~/catkin_ws/src
    $ git clone https://github.com/xArm-Developer/xarm_ros.git
    ```
+## 4.3 Install other dependent packages:
+   ```bash
+   $ rosdep update
+   $ rosdep check --from-paths . --ignore-src --rosdistro kinetic
+   ```
+   Please change 'kinetic' to the ROS distribution you use. If there are any missing dependencies listed. Run the following command to install:  
+   ```bash
+   $ rosdep install --from-paths . --ignore-src --rosdistro kinetic -y
+   ```
+   And chane 'kinetic' to the ROS distribution you use.  
 
-## 4.3 Build the code
+## 4.4 Build the code
    ```bash
    $ cd ~/catkin_ws
    $ catkin_make
    ```
-## 4.4 Source the setup script
+## 4.5 Source the setup script
 ```bash
 $ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 ```
@@ -76,12 +86,12 @@ Skip above operation if you already have that inside your ~/.bashrc. Then do:
 ```bash
 $ source ~/.bashrc
 ```
-## 4.5 First try out in RViz:
+## 4.6 First try out in RViz:
 ```bash
 $ roslaunch xarm_description xarm7_rviz_display.launch
 ```
 
-## 4.6 Run the demo in Gazebo simulator
+## 4.7 Run the demo in Gazebo simulator
    ```bash
    $ roslaunch xarm_gazebo xarm7_beside_table.launch [run_demo:=true]
    ```

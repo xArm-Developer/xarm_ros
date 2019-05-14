@@ -1,0 +1,8 @@
+controller_list:
+  - name: fake_xarm5_controller
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5

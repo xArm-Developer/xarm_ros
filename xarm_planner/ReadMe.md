@@ -21,12 +21,20 @@ Argument 'robot_dof' specifies the number of joints of your xArm (default is 7).
 ```
 The target elements in this case correspond to each joint target angle in radians, number of elements is same with the DOF.  
 
-## For Cartesian-space planning request:  
+## For Cartesian-space point-to-point planning request:  
 ```bash
    $ rosservice call xarm_pose_plan 'target: [[0.28, 0.2, 0.2], [1.0, 0.0, 0.0, 0.0]]'
 ```
 The separated fields for Cartesian target correspond to tool frame position (x, y, z) in ***meters*** and orientation ***Quaternions*** (x, y, z, w).  
-After calling the two services, a boolean result named 'success' will be returned.  
+Note that this motion is still point-to-point, meaning the trajectory is NOT a straight line.  
+
+## For Cartesian straight line planning request:
+```bash
+   $ rosservice call xarm_straight_plan 'target: [[0.28, 0.2, 0.2], [1.0, 0.0, 0.0, 0.0]]'
+```
+Command data units are the same with above Cartesian pose command. If planned succesfully, end-effector trajectory will be a straight-line in space. Note that the velocity change may not be as expected during execution. Please refer to MoveGroupInterface documentation to make your modifications to the code if necessary.  
+
+After calling the above planning services, a boolean result named 'success' will be returned.  
 
 ### Quaternion calculation tips:
 If you are not familiar with conversion from (roll, pitch, yaw) to quaternions, refer to [this page](http://wiki.ros.org/tf2/Tutorials/Quaternions#Think_in_RPY_then_convert_to_quaternion).

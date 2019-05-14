@@ -62,12 +62,23 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
    $ git clone https://github.com/xArm-Developer/xarm_ros.git
    ```
 
-## 4.3 编译代码
+## 4.3 安装其他依赖包:
+   ```bash
+   $ rosdep update
+   $ rosdep check --from-paths . --ignore-src --rosdistro kinetic
+   ```
+   请将 'kinetic' 修改为您在使用的ROS版本。如有任何未安装的依赖包列出，请执行以下命令自动安装:  
+   ```bash
+   $ rosdep install --from-paths . --ignore-src --rosdistro kinetic -y
+   ```
+   同样的，请将 'kinetic' 修改为您在使用的ROS版本。  
+
+## 4.4 编译代码
    ```bash
    $ cd ~/catkin_ws
    $ catkin_make
    ```
-## 4.4 执行配置脚本
+## 4.5 执行配置脚本
 ```bash
 $ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 ```
@@ -75,11 +86,11 @@ $ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 ```bash
 $ source ~/.bashrc
 ```
-## 4.5 在RViz环境试用:
+## 4.6 在RViz环境试用:
 ```bash
 $ roslaunch xarm_description xarm7_rviz_display.launch
 ```
-## 4.6 如果已安装Gazebo,可以执行demo查看效果
+## 4.7 如果已安装Gazebo,可以执行demo查看效果
    ```bash
    $ roslaunch xarm_gazebo xarm7_beside_table.launch [run_demo:=true]
    ```
