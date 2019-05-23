@@ -2,7 +2,7 @@
 
   <arg name="robot_ip" />
   
-  <arg name="robot_dof" default="7" />
+  <arg name="robot_dof" />
   <!-- load the default move_group planner (not xarm_simple_planner) -->
   <arg name="show_rviz" default="true" />
   <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
@@ -17,6 +17,14 @@
   </include>
 
   <include if="$(eval arg('robot_dof')==6 )" file="$(find xarm6_moveit_config)/launch/realMove_exec.launch">
+    <arg name="robot_ip" value="$(arg robot_ip)" />
+    <!-- load the default move_group planner (not xarm_simple_planner) -->
+    <arg name="show_rviz" value="$(arg show_rviz)" />
+    <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
+    <arg name="no_gui_plan" value="$(arg no_gui_plan)" />
+  </include>
+
+  <include if="$(eval arg('robot_dof')==5 )" file="$(find xarm5_moveit_config)/launch/realMove_exec.launch">
     <arg name="robot_ip" value="$(arg robot_ip)" />
     <!-- load the default move_group planner (not xarm_simple_planner) -->
     <arg name="show_rviz" value="$(arg show_rviz)" />

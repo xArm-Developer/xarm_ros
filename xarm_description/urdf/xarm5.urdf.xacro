@@ -106,14 +106,14 @@
       type="revolute">
       <origin
         xyz="0 0 0.267"
-        rpy="-1.5708 0 0" />
+        rpy="0 0 0" />
       <parent
         link="${prefix}link_base" />
       <child
         link="${prefix}link1" />
       <axis
-        xyz="0 1 0" />
-      <limit
+        xyz="0 0 1" />
+     <limit
         lower="${joint1_lower_limit}"
         upper="${joint1_upper_limit}"
         effort="50"
@@ -163,7 +163,7 @@
       type="revolute">
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="-1.5708 0 0" />
       <parent
         link="${prefix}link1" />
       <child
