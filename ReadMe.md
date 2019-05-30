@@ -27,17 +27,19 @@
 
 # 2. Update Summary
    This package is still in early development, tests, bug fixes and new functions are to be updated regularly in the future. 
-   * Add xArm 7 description files, meshes and sample controller demos for ROS simulation and visualization.
+   * Add xArm 7 (old model) description files, meshes and sample controller demos for ROS simulation and visualization.
    * Add Moveit! planner support to control Gazebo virtual model and real xArm, but the two can not launch together.
    * Direct control of real xArm through Moveit GUI is still in beta version, please use it with special care.
    * Add xArm hardware interface to use ROS position_controllers/JointTrajectoryController on real robot.
-   * Add initial xArm 6 simulation support.
+   * Add xArm 6 simulation/real robot control support.
+   * Add simulation model of xArm Gripper.
 
 # 3. Preparations before using this package
 
-## 3.1 Install the gazebo_ros interface module
-   gazebo_ros_pkgs: <http://gazebosim.org/tutorials?tut=ros_installing>  
+## 3.1 Install dependent package module
+   gazebo_ros_pkgs: <http://gazebosim.org/tutorials?tut=ros_installing> (if use Gazebo)   
    ros_control: <http://wiki.ros.org/ros_control> (remember to select your correct ROS distribution)  
+   moveit_core: <https://moveit.ros.org/install/>  
    
 ## 3.2 Go through the official tutorial documents
 ROS Wiki: <http://wiki.ros.org/>  
@@ -60,13 +62,23 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
    $ cd ~/catkin_ws/src
    $ git clone https://github.com/xArm-Developer/xarm_ros.git
    ```
+## 4.3 Install other dependent packages:
+   ```bash
+   $ rosdep update
+   $ rosdep check --from-paths . --ignore-src --rosdistro kinetic
+   ```
+   Please change 'kinetic' to the ROS distribution you use. If there are any missing dependencies listed. Run the following command to install:  
+   ```bash
+   $ rosdep install --from-paths . --ignore-src --rosdistro kinetic -y
+   ```
+   And chane 'kinetic' to the ROS distribution you use.  
 
-## 4.3 Build the code
+## 4.4 Build the code
    ```bash
    $ cd ~/catkin_ws
    $ catkin_make
    ```
-## 4.4 Source the setup script
+## 4.5 Source the setup script
 ```bash
 $ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 ```
@@ -74,12 +86,12 @@ Skip above operation if you already have that inside your ~/.bashrc. Then do:
 ```bash
 $ source ~/.bashrc
 ```
-## 4.5 First try out in RViz:
+## 4.6 First try out in RViz:
 ```bash
 $ roslaunch xarm_description xarm7_rviz_display.launch
 ```
 
-## 4.6 Run the demo in Gazebo simulator
+## 4.7 Run the demo in Gazebo simulator
    ```bash
    $ roslaunch xarm_gazebo xarm7_beside_table.launch [run_demo:=true]
    ```

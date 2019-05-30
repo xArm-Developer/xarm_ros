@@ -26,17 +26,19 @@
 
 # 2. 更新记录：
    此代码库仍然处在早期开发阶段，新的功能支持、示例代码，bug修复等等会保持更新。  
-   * 添加xArm 7 描述文档，3D图形文件以及controller示例，用于进行ROS可视化仿真模拟。
+   * 添加xArm 7(旧版)描述文档，3D图形文件以及controller示例，用于进行ROS可视化仿真模拟。
    * 添加MoveIt!规划器支持，用于控制Gazebo/RViz模型或者xArm真机，但二者不可同时启动。
    * 由ROS直接控制xArm真机的相关支持目前还是Beta版本，用户使用时应尽量小心，我们会尽快完善。
    * 添加 xArm hardware interface 并在驱动真实机械臂时使用 ROS position_controllers/JointTrajectoryController。
-   * 添加 xArm 6 初版仿真支持。
+   * 添加 xArm 6 仿真和真机控制支持。
+   * 添加 xArm 机械爪仿真模型。
 
 # 3. 准备工作
 
-## 3.1 安装 gazebo_ros interface 模块
-   gazebo_ros_pkgs: <http://gazebosim.org/tutorials?tut=ros_installing>  
+## 3.1 安装依赖的模块
+   gazebo_ros_pkgs: <http://gazebosim.org/tutorials?tut=ros_installing> （如果使用Gazebo模拟器）  
    ros_control: <http://wiki.ros.org/ros_control> (记得选择您使用的 ROS 版本)  
+   moveit_core: <https://moveit.ros.org/install/>  
    
 ## 3.2 完整学习相关的官方教程
 ROS Wiki: <http://wiki.ros.org/>  
@@ -60,12 +62,23 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
    $ git clone https://github.com/xArm-Developer/xarm_ros.git
    ```
 
-## 4.3 编译代码
+## 4.3 安装其他依赖包:
+   ```bash
+   $ rosdep update
+   $ rosdep check --from-paths . --ignore-src --rosdistro kinetic
+   ```
+   请将 'kinetic' 修改为您在使用的ROS版本。如有任何未安装的依赖包列出，请执行以下命令自动安装:  
+   ```bash
+   $ rosdep install --from-paths . --ignore-src --rosdistro kinetic -y
+   ```
+   同样的，请将 'kinetic' 修改为您在使用的ROS版本。  
+
+## 4.4 编译代码
    ```bash
    $ cd ~/catkin_ws
    $ catkin_make
    ```
-## 4.4 执行配置脚本
+## 4.5 执行配置脚本
 ```bash
 $ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 ```
@@ -73,11 +86,11 @@ $ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 ```bash
 $ source ~/.bashrc
 ```
-## 4.5 在RViz环境试用:
+## 4.6 在RViz环境试用:
 ```bash
 $ roslaunch xarm_description xarm7_rviz_display.launch
 ```
-## 4.6 如果已安装Gazebo,可以执行demo查看效果
+## 4.7 如果已安装Gazebo,可以执行demo查看效果
    ```bash
    $ roslaunch xarm_gazebo xarm7_beside_table.launch [run_demo:=true]
    ```
