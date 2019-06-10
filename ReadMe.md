@@ -181,7 +181,7 @@ $ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 200 2000 0 0
 $ rosservice call /xarm/go_home [] 0.35 7 0 0
 ```
 
-#### I/O Operations:
+#### Tool I/O Operations:
 &ensp;&ensp;We provide 2 digital, 2 analog input port and 2 digital output signals at the end I/O connector.  
 ##### 1. To get current 2 DIGITAL input states:  
 ```bash
