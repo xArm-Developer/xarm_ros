@@ -1,3 +1,6 @@
+## Important Notice:
+&ensp;&ensp;Due to robot communication data format change, ***early users*** (xArm shipped ***before June 2019***) are encouraged to ***upgrade*** their controller firmware immediately to drive the robot normally in future updates as well as to use newly developed functions. Please contact our staff to get instructions of the upgrade process. The old version robot driver can still be available in ***'legacy'*** branch, however, it will not be updated any more.   
+
 # Contents:  
 * [1. Introduction](#1-introduction)
 * [2. Update History](#2-update-summary)
@@ -21,7 +24,6 @@
 
 # 1. Introduction
    &ensp;&ensp;This repository contains the 3D model of xArm and demo packages for ROS development and simulations.Developing and testing environment: Ubuntu 16.04 + ROS Kinetic Kame.  
-   Maintained by: Jason (jason@ufactory.cc) and Jimy (jimy.zhang@ufactory.cc)   
    ***Instructions below is based on xArm7, other model user can replace 'xarm7' with 'xarm6' or 'xarm5' where applicable.***
    For simplified Chinese instructions: [简体中文版](./ReadMe_cn.md)    
 
