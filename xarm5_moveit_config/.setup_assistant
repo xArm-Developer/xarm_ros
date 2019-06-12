@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: xarm_description
+    relative_path: urdf/xarm5_robot.urdf.xacro
+    xacro_args: "--inorder "
+  SRDF:
+    relative_path: config/xarm5.srdf
+  CONFIG:
+    author_name: Jason Peng
+    author_email: penglongxiang1988@126.com
+    generated_timestamp: 1557833911

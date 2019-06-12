@@ -102,8 +102,10 @@ int main(int argc, char **argv)
 	      	case 7:
 	      	{
 		      	// Give J2 and J4 same angle_cmd from calculation
+                msg.data = -msg.data;
 		        angle4_pub.publish(msg);
-
+                msg.data = -msg.data;
+                
 		        angle2_pub.publish(msg);
 
 		        // Give J1 and J5 twice as angle_cmd from calculation
@@ -147,6 +149,28 @@ int main(int argc, char **argv)
 
 		        break;
 	    	}
+            case 5:
+            {
+                // Give J2 and J3 same angle_cmd from calculation
+                angle3_pub.publish(msg);
+
+                angle2_pub.publish(msg);
+
+                // Give J1 and J4 twice as angle_cmd from calculation
+                msg.data = msg.data * 2;
+
+                angle1_pub.publish(msg);
+
+                // Other joint command fixed to zero
+                msg.data = 0.0;
+
+                angle4_pub.publish(msg);
+
+                angle5_pub.publish(msg);
+
+                break;
+            }
+
 	    	default:
 	    	{
 	    		ROS_ERROR("DOF parameter not correct, please check!");

@@ -27,7 +27,7 @@
   \
 }
 
-int socket_init(char *local_ip, int port, u8 is_server) {
+int socket_init(char *local_ip, int port, int is_server) {
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
   PERRNO(sockfd, DB_FLG, "error: socket");
 
@@ -39,7 +39,7 @@ int socket_init(char *local_ip, int port, u8 is_server) {
   struct timeval timeout = {2, 0};
 
   int ret =
-      setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (void *)&on, sizeof(on));
+    setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (void *)&on, sizeof(on));
   PERRNO(ret, DB_FLG, "error: setsockopt");
   ret = setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE, (void *)&keepAlive,
                    sizeof(keepAlive));
@@ -71,19 +71,19 @@ int socket_init(char *local_ip, int port, u8 is_server) {
   return sockfd;
 }
 
-s8 socket_connect_server(int *socket, char server_ip[], int server_port) {
+int socket_connect_server(int *socket, char server_ip[], int server_port) {
   struct sockaddr_in server_addr;
   server_addr.sin_family = AF_INET;
   server_addr.sin_port = htons(server_port);
   inet_aton(server_ip, &server_addr.sin_addr);
   int ret =
-      connect(*socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
+    connect(*socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
   PERRNO(ret, DB_FLG, "error: connect");
   return 0;
 }
 
-s8 socket_send_data(int client_fp, u8 *data, u16 len) {
-  s8 ret = send(client_fp, (void *)data, len, 0);
-  if (ret == -1) PRINT_ERR(DB_FLG "error: socket_send_data\n");
+int socket_send_data(int client_fp, unsigned char *data, int len) {
+  int ret = send(client_fp, (void *)data, len, 0);
+  if (ret == -1) { PRINT_ERR(DB_FLG "error: socket_send_data\n"); }
   return ret;
 }

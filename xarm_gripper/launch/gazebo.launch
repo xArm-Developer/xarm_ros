@@ -1,0 +1,27 @@
+<launch>
+  <arg name="paused" default="true" doc="Starts gazebo in paused mode" />
+  
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="paused" value="$(arg paused)"/>
+  </include>
+
+  <node
+    name="tf_footprint_base"
+    pkg="tf"
+    type="static_transform_publisher"
+    args="0 0 0 0 0 0 base_link base_footprint 40" />
+  <param
+    name="robot_description"
+    command="$(find xacro)/xacro
+    --inorder '$(find xarm_gripper)/urdf/xarm_gripper.xacro'" />
+  <node 
+    name="spawn_gripper_model" 
+    pkg="gazebo_ros" type="spawn_model"
+    respawn="false" output="screen"
+    args="-z 0.02 -urdf -model xarm_gripper -param robot_description"/>
+  <node
+    name="fake_joint_calibration"
+    pkg="rostopic"
+    type="rostopic"
+    args="pub /calibrated std_msgs/Bool true" />
+</launch>

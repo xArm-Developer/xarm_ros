@@ -9,6 +9,6 @@
 
 #include "xarm/common/data_type.h"
 
-u16 modbus_crc(u8 *data, u16 len);
+int modbus_crc(unsigned char *data, int len);
 
 #endif

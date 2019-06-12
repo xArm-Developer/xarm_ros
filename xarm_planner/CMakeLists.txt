@@ -66,6 +66,7 @@ add_service_files(
   pose_plan.srv
   joint_plan.srv
   exec_plan.srv
+  single_straight_plan.srv
 )
 
 ## Generate actions in the 'action' folder

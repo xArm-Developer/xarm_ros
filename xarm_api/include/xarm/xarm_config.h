@@ -16,5 +16,5 @@ public:
   static const int TCP_PORT_CONTROL = 502;
   static const int TCP_PORT_REPORT_NORM = 30001;
   static const int TCP_PORT_REPORT_RICH = 30002;
-  static const int TCP_PORT_REPORT_REAL = 30003;
+  static const int TCP_PORT_REPORT_DEVL = 30003;
 };

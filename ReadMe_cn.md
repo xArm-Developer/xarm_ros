@@ -1,3 +1,6 @@
+## 重要提示:
+&ensp;&ensp;由于机械臂通信格式修改, 建议在***2019年6月前发货***的xArm 早期用户尽早 ***升级*** 控制器固件程序，这样才能在以后的更新中正常驱动机械臂运动以及使用最新开发的各种功能。请联系我们获得升级的详细指示。 当前ROS库主要的分支已不支持旧版本，先前版本的ROS驱动包还保留在 ***'legacy'*** 分支中, 但不会再有更新。    
+
 # 目录:  
 * [1. 简介](#1-简介)
 * [2. 更新记录](#2-更新记录)
@@ -21,22 +24,23 @@
 
 # 1. 简介：
    &ensp;&ensp;此代码库包含xArm模型文件以及相关的控制、规划等示例开发包。开发及测试使用的环境为 Ubuntu 16.04 + ROS Kinetic Kame。
-   维护者: Jason (jason@ufactory.cc),Jimy (jimy.zhang@ufactory.cc)   
    ***以下的指令说明是基于xArm7, 其他型号用户可以在对应位置将'xarm7'替换成'xarm6'或'xarm5'***
 
 # 2. 更新记录：
    此代码库仍然处在早期开发阶段，新的功能支持、示例代码，bug修复等等会保持更新。  
-   * 添加xArm 7 描述文档，3D图形文件以及controller示例，用于进行ROS可视化仿真模拟。
+   * 添加xArm 7(旧版)描述文档，3D图形文件以及controller示例，用于进行ROS可视化仿真模拟。
    * 添加MoveIt!规划器支持，用于控制Gazebo/RViz模型或者xArm真机，但二者不可同时启动。
    * 由ROS直接控制xArm真机的相关支持目前还是Beta版本，用户使用时应尽量小心，我们会尽快完善。
    * 添加 xArm hardware interface 并在驱动真实机械臂时使用 ROS position_controllers/JointTrajectoryController。
-   * 添加 xArm 6 初版仿真支持。
+   * 添加 xArm 6 仿真和真机控制支持。
+   * 添加 xArm 机械爪仿真模型。
 
 # 3. 准备工作
 
-## 3.1 安装 gazebo_ros interface 模块
-   gazebo_ros_pkgs: <http://gazebosim.org/tutorials?tut=ros_installing>  
+## 3.1 安装依赖的模块
+   gazebo_ros_pkgs: <http://gazebosim.org/tutorials?tut=ros_installing> （如果使用Gazebo模拟器）  
    ros_control: <http://wiki.ros.org/ros_control> (记得选择您使用的 ROS 版本)  
+   moveit_core: <https://moveit.ros.org/install/>  
    
 ## 3.2 完整学习相关的官方教程
 ROS Wiki: <http://wiki.ros.org/>  
@@ -60,12 +64,23 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
    $ git clone https://github.com/xArm-Developer/xarm_ros.git
    ```
 
-## 4.3 编译代码
+## 4.3 安装其他依赖包:
+   ```bash
+   $ rosdep update
+   $ rosdep check --from-paths . --ignore-src --rosdistro kinetic
+   ```
+   请将 'kinetic' 修改为您在使用的ROS版本。如有任何未安装的依赖包列出，请执行以下命令自动安装:  
+   ```bash
+   $ rosdep install --from-paths . --ignore-src --rosdistro kinetic -y
+   ```
+   同样的，请将 'kinetic' 修改为您在使用的ROS版本。  
+
+## 4.4 编译代码
    ```bash
    $ cd ~/catkin_ws
    $ catkin_make
    ```
-## 4.4 执行配置脚本
+## 4.5 执行配置脚本
 ```bash
 $ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 ```
@@ -73,11 +88,11 @@ $ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 ```bash
 $ source ~/.bashrc
 ```
-## 4.5 在RViz环境试用:
+## 4.6 在RViz环境试用:
 ```bash
 $ roslaunch xarm_description xarm7_rviz_display.launch
 ```
-## 4.6 如果已安装Gazebo,可以执行demo查看效果
+## 4.7 如果已安装Gazebo,可以执行demo查看效果
    ```bash
    $ roslaunch xarm_gazebo xarm7_beside_table.launch [run_demo:=true]
    ```
@@ -169,7 +184,7 @@ $ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 200 2000 0 0
 $ rosservice call /xarm/go_home [] 0.35 7 0 0
 ```
 
-#### I/O 操作:
+#### 工具 I/O 操作:
 &ensp;&ensp;我们在机械臂末端提供了两路数字、两路模拟输入信号接口，以及两路数字输出信号接口。  
 ##### 1. 同时获得2个数字输入信号状态的方法:  
 ```bash
