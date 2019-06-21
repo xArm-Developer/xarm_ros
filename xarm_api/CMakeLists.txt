@@ -109,7 +109,7 @@ set(XARM_API_DIR src/xarm)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES xarm_api
+  LIBRARIES xarm_api xarm_ros_client
   CATKIN_DEPENDS roscpp std_msgs
 #  DEPENDS system_lib
 )
