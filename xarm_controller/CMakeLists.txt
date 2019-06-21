@@ -215,4 +215,4 @@ add_executable(sample_motion src/sample_motion.cpp)
 target_link_libraries(sample_motion ${catkin_LIBRARIES})
 
 add_executable(xarm_traj_controller src/xarm_hardware_interface.cpp)
-target_link_libraries(xarm_traj_controller xarm_ros_client ${catkin_LIBRARIES})
+target_link_libraries(xarm_traj_controller ${catkin_LIBRARIES})
