@@ -116,7 +116,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include 
+#  INCLUDE_DIRS include
 #  LIBRARIES xarm7_control
 #  CATKIN_DEPENDS controller_manager joint_state_controller robot_state_publisher
 #  DEPENDS system_lib
@@ -216,4 +216,3 @@ target_link_libraries(sample_motion ${catkin_LIBRARIES})
 
 add_executable(xarm_traj_controller src/xarm_hardware_interface.cpp)
 target_link_libraries(xarm_traj_controller xarm_ros_client ${catkin_LIBRARIES})
-
