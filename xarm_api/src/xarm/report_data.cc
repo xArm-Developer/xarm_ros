@@ -84,7 +84,8 @@ int ReportDataNorm::flush_data(unsigned char *rx_data) {
   }
 
   total_num_ = bin8_to_32(data_fp);
-  if (total_num_ != 133) { return -2; }
+  // 133: legacy bug, actuall total number (data part) is 145 bytes 
+  if (total_num_ != 133 && total_num_ != 145) { return -2; }
 
   runing_ = data_fp[4] & 0x0F;
   mode_ = data_fp[4] >> 4;
@@ -97,11 +98,14 @@ int ReportDataNorm::flush_data(unsigned char *rx_data) {
   mt_able_ = data_fp[88];
   err_ = data_fp[89];
   war_ = data_fp[90];
+
   hex_to_nfp32(&data_fp[91], tcp_offset_, 6);
   hex_to_nfp32(&data_fp[115], tcp_load_, 4);
+
   collis_sens_ = data_fp[131];
   teach_sens_ = data_fp[132];
-  hex_to_nfp32(&data_fp[133], gravity_dir_, 3);
+  hex_to_nfp32(&data_fp[133], gravity_dir_, 3); // length is 12, not taken into account in legacy version.(before firmware v1.1)
+  
   return 0;
 }
 

@@ -219,7 +219,7 @@
       name="${prefix}joint3"
       type="revolute">
       <origin
-        xyz="0.053316 -0.28467 0"
+        xyz="0.0535 -0.2845 0"
         rpy="0 0 0" />
       <parent
         link="${prefix}link2" />
@@ -276,8 +276,8 @@
       name="${prefix}joint4"
       type="revolute">
       <origin
-        xyz="0.077752 0.34198 0"
-        rpy="2.6191E-47 0 7.5847E-47" />
+        xyz="0.0775 0.3425 0"
+        rpy="0 0 0" />
       <parent
         link="${prefix}link3" />
       <child
@@ -333,8 +333,8 @@
       name="${prefix}joint5"
       type="revolute">
       <origin
-        xyz="0.076 0.09702 0"
-        rpy="-1.5708 0 7.5847E-47" />
+        xyz="0.076 0.097 0"
+        rpy="-1.5708 0 0" />
       <parent
         link="${prefix}link4" />
       <child
