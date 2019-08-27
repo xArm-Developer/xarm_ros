@@ -19,14 +19,14 @@
       <link name="world" />
     </xacro:if>
 
-    <joint name="world_joint" type="fixed">
+    <joint name="${prefix}world_joint" type="fixed">
       <parent link="${attach_to}" />
       <child link = "${prefix}link_base" />
       <origin xyz="${xyz}" rpy="${rpy}" />
     </joint>
 
     <xacro:if value="$(arg limited)">
-      <xacro:xarm7_urdf prefix="$(arg prefix)"
+      <xacro:xarm7_urdf prefix="${prefix}"
         joint1_lower_limit="${-pi*0.99}" joint1_upper_limit="${pi*0.99}"
         joint2_lower_limit="${-2.18}" joint2_upper_limit="${2.18}"
         joint3_lower_limit="${-pi*0.99}" joint3_upper_limit="${pi*0.99}"
@@ -36,17 +36,17 @@
         joint7_lower_limit="${-pi*0.99}" joint7_upper_limit="${pi*0.99}"/>
     </xacro:if>
     <xacro:unless value="$(arg limited)">
-      <xacro:xarm7_urdf prefix="$(arg prefix)"/>
+      <xacro:xarm7_urdf prefix="${prefix}"/>
     </xacro:unless>
 
     <xacro:if value="$(arg effort_control)">
-      <xacro:xarm7_transmission prefix="$(arg prefix)" hard_interface="EffortJointInterface" />
+      <xacro:xarm7_transmission prefix="${prefix}" hard_interface="EffortJointInterface" />
     </xacro:if>
     <xacro:unless value="$(arg effort_control)">
-      <xacro:xarm7_transmission prefix="$(arg prefix)" hard_interface="PositionJointInterface" />
+      <xacro:xarm7_transmission prefix="${prefix}" hard_interface="PositionJointInterface" />
     </xacro:unless>
 
-    <xacro:xarm7_gazebo prefix="$(arg prefix)" />
+    <xacro:xarm7_gazebo prefix="${prefix}" />
 
   </xacro:macro>
 
