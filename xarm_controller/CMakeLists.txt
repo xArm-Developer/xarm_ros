@@ -116,7 +116,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include 
+#  INCLUDE_DIRS include 
 #  LIBRARIES xarm7_control
   CATKIN_DEPENDS controller_manager joint_state_controller robot_state_publisher xarm_api
 #  DEPENDS system_lib
