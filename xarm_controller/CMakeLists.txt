@@ -118,7 +118,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include 
 #  LIBRARIES xarm7_control
-#  CATKIN_DEPENDS controller_manager joint_state_controller robot_state_publisher
+  CATKIN_DEPENDS controller_manager joint_state_controller robot_state_publisher xarm_api
 #  DEPENDS system_lib
 )
 
@@ -215,5 +215,5 @@ add_executable(sample_motion src/sample_motion.cpp)
 target_link_libraries(sample_motion ${catkin_LIBRARIES})
 
 add_executable(xarm_traj_controller src/xarm_hardware_interface.cpp)
-target_link_libraries(xarm_traj_controller xarm_ros_client ${catkin_LIBRARIES})
+target_link_libraries(xarm_traj_controller ${catkin_LIBRARIES})
 
