@@ -20,7 +20,9 @@
         * [5.7.4 Getting status feedback](#getting-status-feedback)  
         * [5.7.5 Setting Tool Center Point Offset](#setting-tool-center-point-offset)  
         * [5.7.6 Clearing Errors](#clearing-errors)  
-
+* [6. Mode Change (***new***)](#6-mode-change)
+    * [6.1 Mode Explanation](#61-mode-explanation)
+    * [6.2 Proper way to change modes](#62-proper-way-to-change-modes)
 
 # 1. Introduction
    &ensp;&ensp;This repository contains the 3D model of xArm and demo packages for ROS development and simulations.Developing and testing environment: Ubuntu 16.04 + ROS Kinetic Kame.  
@@ -33,7 +35,7 @@
    * Add Moveit! planner support to control Gazebo virtual model and real xArm, but the two can not launch together.
    * Direct control of real xArm through Moveit GUI is still in beta version, please use it with special care.
    * Add xArm hardware interface to use ROS position_controllers/JointTrajectoryController on real robot.
-   * Add xArm 6 simulation/real robot control support.
+   * Add xArm 6 and xArm 5 simulation/real robot control support.
    * Add simulation model of xArm Gripper.
 
 # 3. Preparations before using this package
@@ -222,5 +224,31 @@ $ rostopic echo /xarm_states
 ```bash
 $ rosservice call /xarm/clear_err
 ```
-&ensp;&ensp;After calling this service, please ***check the err status again*** in '/xarm_states', if it becomes 0, the clearing is successful. Otherwise, it means the error/exception is not properly solved. If clearing error is successful, remember to ***set robot state to 0*** to make it ready to move again!  
+&ensp;&ensp;After calling this service, please ***check the err status again*** in '/xarm_states', if it becomes 0, the clearing is successful. Otherwise, it means the error/exception is not properly solved. If clearing error is successful, remember to ***set robot state to 0*** to make it ready to move again!   
 
+# 6. Mode Change
+&ensp;&ensp;xArm may operate under different modes depending on different controling methods. Current mode can be checked in the message of topic "/xarm_states". And there are circumstances that demand user to switch between operation modes. 
+
+### 6.1 Mode Explanation
+
+&ensp;&ensp; ***Mode 0*** : xArm controller (Position) Mode.  
+&ensp;&ensp; ***Mode 1*** : External trajectory planner (position) Mode.  
+&ensp;&ensp; ***Mode 2*** : Free-Drive (zero gravity) Mode.  
+
+&ensp;&ensp;***Mode 0*** is the default when system initiates, and when error occurs(collision, overload, overspeed, etc), system will automatically switch to Mode 0. Also, all the motion plan services in [xarm_api](./xarm_api/) package or the [SDK](https://github.com/xArm-Developer/xArm-Python-SDK) motion functions demand xArm to operate in Mode 0. ***Mode 1*** is for external trajectory planner like Moveit! to bypass the integrated xArm planner to control the robot. ***Mode 2*** is to enable free-drive operation, robot will enter Gravity compensated mode, however, be sure the mounting direction and payload are properly configured before setting to mode 2.
+
+### 6.2 Proper way to change modes:  
+&ensp;&ensp;If collision or other error happens during the execution of a Moveit! planned trajectory, Mode will automatically switch from 1 to default mode 0 for safety purpose, and robot state will change to 4 (error state). The robot will not be able to execute any Moveit command again unless the mode is set back to 1. The following are the steps to switch back and enable Moveit control again:  
+
+&ensp;&ensp;(1) Make sure the objects causing the collision are removed.  
+&ensp;&ensp;(2) clear the error:  
+```bash
+$ rosservice call /xarm/clear_err
+```
+&ensp;&ensp;(3) switch to the desired mode (Mode 2 for example), and set state to 0 for ready:
+```bash
+$ rosservice call /xarm/set_mode 2
+
+$ rosservice call /xarm/set_state 0
+```
+&ensp;&ensp;The above operations can also be done by calling relavant xArm SDK functions.

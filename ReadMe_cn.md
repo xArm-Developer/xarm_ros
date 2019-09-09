@@ -20,6 +20,9 @@
         * [5.7.4 获得反馈状态信息](#获得反馈状态信息)  
         * [5.7.5 关于设定末端工具偏移量](#关于设定末端工具偏移量)  
         * [5.7.6 清除错误](#清除错误)  
+* [6. 模式切换(***new***)](#6-模式切换)
+    * [6.1 模式介绍](#61-模式介绍)
+    * [6.2 切换模式的正确方法](#62-切换模式的正确方法)
 
 
 # 1. 简介：
@@ -224,3 +227,30 @@ $ rostopic echo /xarm_states
 $ rosservice call /xarm/clear_err
 ```
 &ensp;&ensp;调用此服务之后 ***务必再次确认err状态信息*** , 如果它变成了0, 说明问题清除成功，否则请再次确认问题是否成功解决。清除成功之后， 记得 ***将robot state设置为0*** 以便使机械臂可以执行后续指令。  
+
+# 6. 模式切换
+&ensp;&ensp;xArm 在不同的控制方式下可能会工作在不同的模式中，当前的模式可以通过topic "/xarm_states" 的内容查看。在某些情况下，需要用户主动切换模式以达到继续正常工作的目的。
+
+### 6.1 模式介绍
+
+&ensp;&ensp; ***Mode 0*** : 基于xArm controller规划的位置模式；   
+&ensp;&ensp; ***Mode 1*** : 基于外部轨迹规划器的位置模式；  
+&ensp;&ensp; ***Mode 2*** : 自由拖动(零重力)模式。  
+
+&ensp;&ensp;***Mode 0*** 是系统初始化的默认模式，当机械臂发生错误(碰撞、过载、超速等等),系统也会自动切换到模式0。并且对于[xarm_api](./xarm_api/)包和[SDK](https://github.com/xArm-Developer/xArm-Python-SDK)中提供的运动指令都要求xArm工作在模式0来执行。***Mode 1*** 是为了方便像 Moveit! 一样的第三方规划器绕过xArm控制器的规划去执行轨迹。 ***Mode 2*** 可以打开自由拖动模式, 机械臂会进入零重力状态方便拖动示教, 但需注意在进入模式2之前确保机械臂安装方式和负载均已正确设置。
+
+### 6.2 切换模式的正确方法:  
+&ensp;&ensp;如果在执行Moveit!规划的轨迹期间发生碰撞等错误, 为了安全考虑，当前模式将被自动从1切换到0, 同时robot state将变为 4 (错误状态)。这时即使碰撞已经解除，机械臂在重新回到模式1之前也无法执行任何Moveit!或者servoj指令。请依次按照下列指示切换模式:  
+
+&ensp;&ensp;(1) 确认引发碰撞的物体已经被移除；  
+&ensp;&ensp;(2) 清除错误:  
+```bash
+$ rosservice call /xarm/clear_err
+```
+&ensp;&ensp;(3) 切换回想要的模式 (以Mode 2为例), 之后 set state 为0（Ready状态）:
+```bash
+$ rosservice call /xarm/set_mode 2
+
+$ rosservice call /xarm/set_state 0
+```
+&ensp;&ensp;以上操作同样可用相关的xArm SDK函数实现.

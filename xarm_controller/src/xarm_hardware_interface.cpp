@@ -28,6 +28,10 @@ namespace xarm_control
 {
 
 const std::string jnt_state_topic = "joint_states";
+const std::string xarm_state_topic = "xarm_states";
+
+static int curr_state;
+static int curr_err;
 
 class XArmHWInterface : public hardware_interface::RobotHW
 {
@@ -59,6 +63,7 @@ private:
 	std::vector<double> velocity_fdb_;
 	std::vector<double> effort_fdb_;
 
+
 	xarm_api::XArmROSClient xarm;
 
 	hardware_interface::JointStateInterface    js_interface_;
@@ -66,10 +71,11 @@ private:
   	hardware_interface::PositionJointInterface pj_interface_;
   	hardware_interface::VelocityJointInterface vj_interface_;
 
-	ros::Subscriber pos_sub_, vel_sub_, effort_sub_;
+	ros::Subscriber pos_sub_, vel_sub_, effort_sub_, state_sub_;
 
 	void clientInit(const std::string& robot_ip, ros::NodeHandle &root_nh);
 	void pos_fb_cb(const sensor_msgs::JointState::ConstPtr& data);
+	void state_fb_cb(const xarm_msgs::RobotMsg::ConstPtr& data);
 
 };
 
@@ -83,7 +89,11 @@ void XArmHWInterface::clientInit(const std::string& robot_ip, ros::NodeHandle &r
 	effort_cmd_.resize(dof_);
 	effort_fdb_.resize(dof_);
 
+	curr_err = 0;
+	curr_state = 0;
+
 	pos_sub_ = root_nh.subscribe(jnt_state_topic, 100, &XArmHWInterface::pos_fb_cb, this);
+	state_sub_ = root_nh.subscribe(xarm_state_topic, 100, &XArmHWInterface::state_fb_cb, this);
 
 	for(unsigned int j=0; j < dof_; j++)
   	{
@@ -120,13 +130,18 @@ XArmHWInterface::~XArmHWInterface()
 
 void XArmHWInterface::pos_fb_cb(const sensor_msgs::JointState::ConstPtr& data)
 {
-
 	for(int j=0; j<dof_; j++)
 	{
 		position_fdb_[j] = data->position[j];
 		velocity_fdb_[j] = data->velocity[j];
 		effort_fdb_[j] = data->effort[j];
 	}
+}
+
+void XArmHWInterface::state_fb_cb(const xarm_msgs::RobotMsg::ConstPtr& data)
+{
+	curr_state = data->state;
+	curr_err = data->err;
 }
 
 void XArmHWInterface::read()
@@ -136,12 +151,14 @@ void XArmHWInterface::read()
 
 void XArmHWInterface::write()
 {
+
 	for(int k=0; k<dof_; k++)
 	{
 		position_cmd_float_[k] = (float)position_cmd_[k];
 	}
 
 	xarm.setServoJ(position_cmd_float_);
+
 }
 
 } // namespace xarm_control
@@ -189,7 +206,11 @@ int main(int argc, char**argv)
 	   ros::Duration elapsed = ros::Time::now() - ts;
 	   ts = ros::Time::now();
 	   // xarm_hw.read();
-	   cm.update(ts, elapsed);
+	   if(xarm_control::curr_state != 4)
+	   	cm.update(ts, elapsed);
+	   else
+	   	cm.update(ts, elapsed, true); //reset_controllers=true: preempt and cancel current goal
+	   
 	   xarm_hw.write();
 	   r.sleep();
 	}

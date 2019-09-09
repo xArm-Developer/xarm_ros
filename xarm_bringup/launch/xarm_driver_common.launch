@@ -27,6 +27,7 @@
 
   <!-- run the driver for real xarm7 motion cmd sending -->
   <remap from="/xarm/joint_states" to="/joint_states"/>
+  <remap from="/xarm/xarm_states" to="/xarm_states"/>
   <remap from="/xarm/xarm_robot_ip" to="/xarm_robot_ip" />
   <node if="$(arg use_moveit)" name="xarm_traj_controller" pkg="xarm_controller" type="xarm_traj_controller" args="ip=$(arg robot_ip)" ns="/xarm" respawn="false" output="screen" />
 
