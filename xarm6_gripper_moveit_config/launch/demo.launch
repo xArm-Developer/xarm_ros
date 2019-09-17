@@ -1,6 +1,6 @@
 <launch>
 
-  <include file="$(find xarm6_moveit_config)/launch/moveit_rviz_common.launch">
+  <include file="$(find xarm6_gripper_moveit_config)/launch/moveit_rviz_common.launch">
     <arg name="jnt_stat_source" value="[/move_group/fake_controller_joint_states]" />
     <!-- option to launch move_group node or not -->
     <arg name="load_move_group" value="true" />
