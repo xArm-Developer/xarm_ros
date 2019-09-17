@@ -11,7 +11,7 @@
     * [5.2 xarm_gazebo](#52-xarm_gazebo)  
     * [5.3 xarm_controller](#53-xarm_controller)  
     * [5.4 xarm_bringup](#54-xarm_bringup)  
-    * [5.5 ***xarm7_moveit_config***](#55-xarm7_moveit_config)  
+    * [5.5 ***xarm7_moveit_config (Updated)***](#55-xarm7_moveit_config)  
     * [5.6 xarm_planner](#56-xarm_planner)  
     * [5.7 ***xarm_api/xarm_msgs***](#57-xarm_apixarm_msgs)  
         * [5.7.1 使用ROS Service启动 xArm (***后续指令执行的前提***)](#使用ros-service启动-xarm)  
@@ -139,7 +139,14 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
    ```bash
    $ roslaunch xarm7_moveit_config realMove_exec.launch robot_ip:=<控制盒的局域网IP地址>
    ```
-   检查terminal中的输出看看有无错误信息。如果启动无误，您可以将RViz中通过Moveit规划好的轨迹通过'Execute'按钮下发给机械臂执行。***但一定确保它不会与周围环境发生碰撞！***
+   检查terminal中的输出看看有无错误信息。如果启动无误，您可以将RViz中通过Moveit规划好的轨迹通过'Execute'按钮下发给机械臂执行。***但一定确保它不会与周围环境发生碰撞！***  
+
+#### Moveit!图形控制界面 + 安装了UFACTORY机械爪的xArm6真实机械臂:  
+   首先, 检查并确认xArm电源和控制器已上电开启, 然后运行:  
+   ```bash
+   $ roslaunch xarm6_gripper_moveit_config realMove_exec.launch robot_ip:=<your controller box LAN IP address>
+   ```
+   如果使用了我们配套的机械爪(xArm gripper), 最好可以使用这个package，因为其中的配置会让Moveit在规划无碰撞轨迹时将机械爪考虑在内。 
   
 
 ## 5.6 xarm_planner:

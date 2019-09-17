@@ -11,7 +11,7 @@
     * [5.2 xarm_gazebo](#52-xarm_gazebo)  
     * [5.3 xarm_controller](#53-xarm_controller)  
     * [5.4 xarm_bringup](#54-xarm_bringup)  
-    * [5.5 ***xarm7_moveit_config***](#55-xarm7_moveit_config)  
+    * [5.5 ***xarm7_moveit_config (Updated)***](#55-xarm7_moveit_config)  
     * [5.6 xarm_planner](#56-xarm_planner)  
     * [5.7 ***xarm_api/xarm_msgs***](#57-xarm_apixarm_msgs)  
         * [5.7.1 Starting xArm by ROS service (***priority for the following operations***)](#starting-xarm-by-ros-service)  
@@ -138,6 +138,14 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
    $ roslaunch xarm7_moveit_config realMove_exec.launch robot_ip:=<your controller box LAN IP address>
    ```
    Examine the terminal output and see if any error occured during the launch. If not, just play with the robot in Rviz and you can execute the sucessfully planned trajectory on real arm. But be sure it will not hit any surroundings before execution!  
+
+#### To run Moveit! motion planner to control the real ***xArm6*** with xArm Gripper attached:  
+   First make sure the xArm and the controller box are powered on, then execute:  
+   ```bash
+   $ roslaunch xarm6_gripper_moveit_config realMove_exec.launch robot_ip:=<your controller box LAN IP address>
+   ```
+   It is better to use this package with real xArm gripper, since Moveit planner will take the gripper into account for collision detection.  
+
 
 ## 5.6 xarm_planner:
 &ensp;&ensp;This implemented simple planner interface is based on move_group from Moveit! and provide ros service for users to do planning & execution based on the requested target, user can find detailed instructions on how to use it inside [***xarm_planner package***](./xarm_planner/).  
