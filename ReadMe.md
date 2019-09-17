@@ -20,6 +20,7 @@
         * [5.7.4 Getting status feedback](#getting-status-feedback)  
         * [5.7.5 Setting Tool Center Point Offset](#setting-tool-center-point-offset)  
         * [5.7.6 Clearing Errors](#clearing-errors)  
+        * [5.7.7 Gripper Control (***new***)](#gripper-control)
 * [6. Mode Change (***new***)](#6-mode-change)
     * [6.1 Mode Explanation](#61-mode-explanation)
     * [6.2 Proper way to change modes](#62-proper-way-to-change-modes)
@@ -225,6 +226,25 @@ $ rostopic echo /xarm_states
 $ rosservice call /xarm/clear_err
 ```
 &ensp;&ensp;After calling this service, please ***check the err status again*** in '/xarm_states', if it becomes 0, the clearing is successful. Otherwise, it means the error/exception is not properly solved. If clearing error is successful, remember to ***set robot state to 0*** to make it ready to move again!   
+
+#### Gripper Control:
+&ensp;&ensp; If xArm Gripper (from UFACTORY) is attached to the tool end, the following services can be called to operate or check the gripper.  
+1. First enable the griper and configure the grasp speed:  
+```bash
+$ rosservice call /xarm/gripper_config 1500
+```
+&ensp;&ensp; Proper range of the speed is ***from 1 to 5000***. 1500 is used as an example. 'ret' value is 0 for success.  
+2. Give position command (open distance) to xArm gripper:  
+```bash
+$ rosservice call /xarm/gripper_move 500
+```
+&ensp;&ensp; Proper range of the open distance is ***from 0 to 850***. 0 is closed, 850 is fully open. 500 is used as an example. 'ret' value is 0 for success.  
+
+3. To get the current status (position and error_code) of xArm gripper:
+```bash
+$ rosservice call /xarm/gripper_status
+```
+&ensp;&ensp; If error code is non-zero, please refer to user manual for the cause of error, the "/xarm/clear_err" service can still be used to clear the error code of xArm Gripper.  
 
 # 6. Mode Change
 &ensp;&ensp;xArm may operate under different modes depending on different controling methods. Current mode can be checked in the message of topic "/xarm_states". And there are circumstances that demand user to switch between operation modes. 

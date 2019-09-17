@@ -12,6 +12,9 @@
 #include <xarm_msgs/GetDigitalIO.h>
 #include <xarm_msgs/GetAnalogIO.h>
 #include <xarm_msgs/ClearErr.h>
+#include <xarm_msgs/GripperConfig.h>
+#include <xarm_msgs/GripperMove.h>
+#include <xarm_msgs/GripperState.h>
 #include <sensor_msgs/JointState.h>
 #include <xarm/common/data_type.h>
 #include <xarm/linux/thread.h>
@@ -40,6 +43,9 @@ namespace xarm_api
             bool MoveLinebCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveLineCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveServoJCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
+            bool GripperConfigCB(xarm_msgs::GripperConfig::Request &req, xarm_msgs::GripperConfig::Response &res);
+            bool GripperMoveCB(xarm_msgs::GripperMove::Request &req, xarm_msgs::GripperMove::Response &res);
+            bool GripperStateCB(xarm_msgs::GripperState::Request &req, xarm_msgs::GripperState::Response &res);
 
             void pub_robot_msg(xarm_msgs::RobotMsg rm_msg);
             void pub_joint_state(sensor_msgs::JointState js_msg);
@@ -73,6 +79,9 @@ namespace xarm_api
             ros::ServiceServer get_digital_in_server_;
             ros::ServiceServer get_analog_in_server_;
             ros::ServiceServer clear_err_server_;
+            ros::ServiceServer gripper_config_server_;
+            ros::ServiceServer gripper_move_server_;
+            ros::ServiceServer gripper_state_server_;
 
             ros::Publisher joint_state_;
             ros::Publisher robot_rt_state_; 

@@ -1,0 +1,13 @@
+xarm_gripper:
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50
+
+  gripper_controller:
+    type: position_controllers/GripperActionController
+    joint: drive_joint
+    action_monitor_rate: 20
+    goal_tolerance: 0.005
+    max_effort: 100
+    stall_velocity_threshold: 0.001
+    stall_timeout: 1.0

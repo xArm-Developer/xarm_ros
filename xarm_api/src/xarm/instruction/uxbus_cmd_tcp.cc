@@ -56,8 +56,13 @@ int UxbusCmdTcp::send_pend(int funcode, int num, int timeout, unsigned char *ret
     times -= 1;
     ret = arm_port_->read_frame(rx_data);
     if (ret != -1) {
+      // print_hex("recv:", rx_data, arm_port_->que_maxlen_);
       ret = check_xbus_prot(rx_data, funcode);
-      for (i = 0; i < num; i++) { ret_data[i] = rx_data[i + 8 + 4]; }
+      int n = num;
+      if (num == -1) {
+        n = rx_data[9] - 2;
+      }
+      for (i = 0; i < n; i++) { ret_data[i] = rx_data[i + 8 + 4]; }
       // print_hex(" 3", rx_data, num + 8 + 4);
       return ret;
     }
@@ -76,6 +81,7 @@ int UxbusCmdTcp::send_xbus(int funcode, unsigned char *datas, int num) {
 
   for (int i = 0; i < num; i++) { send_data[7 + i] = datas[i]; }
   arm_port_->flush();
+  // print_hex("send:", send_data, num + 7);
   int ret = arm_port_->write_frame(send_data, len);
   if (ret != len) { return -1; }
 

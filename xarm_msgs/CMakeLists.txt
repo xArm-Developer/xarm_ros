@@ -64,6 +64,9 @@ find_package(catkin REQUIRED COMPONENTS
    GetDigitalIO.srv
    GetAnalogIO.srv
    ClearErr.srv
+   GripperConfig.srv
+   GripperMove.srv
+   GripperState.srv
  )
 
 ## Generate actions in the 'action' folder

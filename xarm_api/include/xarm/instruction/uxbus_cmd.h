@@ -4,8 +4,8 @@
  *
  * Author: Jimy Zhang <jimy92@163.com>
  ============================================================================*/
-#ifndef INSTRUCTION_UXBUS_CMD_H_
-#define INSTRUCTION_UXBUS_CMD_H_
+#ifndef CORE_INSTRUCTION_UXBUS_CMD_H_
+#define CORE_INSTRUCTION_UXBUS_CMD_H_
 
 #include "xarm/common/data_type.h"
 
@@ -15,12 +15,13 @@ class UxbusCmd {
   ~UxbusCmd(void);
 
   int get_version(unsigned char rx_data[40]);
+  int get_robot_sn(unsigned char rx_data[40]);
   int shutdown_system(int value);
   int motion_en(int id, int value);
   int set_state(int value);
   int get_state(int *rx_data);
   int get_cmdnum(int *rx_data);
-  int get_errcode(int *rx_data);
+  int get_err_code(int *rx_data);
   int clean_err(void);
   int clean_war(void);
   int set_brake(int axis, int en);
@@ -51,10 +52,10 @@ class UxbusCmd {
   int get_fk(float angles[7], float pose[6]);
   int is_joint_limit(float joint[7], int *value);
   int is_tcp_limit(float pose[6], int *value);
-  int gripper_addr_w16(int id, int addr, float value);
-  int gripper_addr_r16(int id, int addr, float *value);
-  int gripper_addr_w32(int id, int addr, float value);
-  int gripper_addr_r32(int id, int addr, float *value);
+  int gripper_addr_w16(int addr, float value);
+  int gripper_addr_r16(int addr, float *value);
+  int gripper_addr_w32(int addr, float value);
+  int gripper_addr_r32(int addr, float *value);
   int gripper_set_en(int value);
   int gripper_set_mode(int value);
   int gripper_set_zero(void);
@@ -64,10 +65,26 @@ class UxbusCmd {
   int gripper_get_errcode(int rx_data[2]);
   int gripper_clean_err(void);
 
+  int tgpio_addr_w16(int addr, float value);
+  int tgpio_addr_r16(int addr, float *value);
+  int tgpio_addr_w32(int addr, float value);
+  int tgpio_addr_r32(int addr, float *value);
   int tgpio_get_digital(int *io1, int *io2);
   int tgpio_set_digital(int ionum, int value);
   int tgpio_get_analog1(float *value);
   int tgpio_get_analog2(float *value);
+
+  int tgpio_set_modbus(unsigned char *modbus_t, int len_t, unsigned char *ret_data);
+  int gripper_modbus_w16s(int addr, float value, int len);
+  int gripper_modbus_r16s(int addr, int len, unsigned char *rx_data);
+  int gripper_modbus_set_en(int value);
+  int gripper_modbus_set_mode(int value);
+  int gripper_modbus_set_zero(void);
+  int gripper_modbus_get_pos(float *pulse);
+  int gripper_modbus_set_pos(float pulse);
+  int gripper_modbus_set_posspd(float speed);
+  int gripper_modbus_get_errcode(int *err);
+  int gripper_modbus_clean_err(void);
 
   int servo_set_zero(int id);
   int servo_get_dbmsg(int rx_data[16]);

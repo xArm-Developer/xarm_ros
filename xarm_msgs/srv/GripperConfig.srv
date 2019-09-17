@@ -1,0 +1,7 @@
+# Grip velocity configuration: range is from 1 to 5000
+float32 pulse_vel
+
+---
+
+int16 ret
+string message

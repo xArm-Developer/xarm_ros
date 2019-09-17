@@ -3,6 +3,7 @@
   <arg name="run_demo_traj" default="false"/>
   <arg name="effort_control" default="false"/>
   <arg name="namespace" default="xarm"/>
+  <arg name="add_gripper" default="false" />
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
   <rosparam unless="$(arg run_demo_traj)" file="$(find xarm_controller)/config/xarm6_traj_controller.yaml" command="load"/>

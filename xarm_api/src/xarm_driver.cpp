@@ -34,11 +34,14 @@ namespace xarm_api
         move_servoj_server_ = nh_.advertiseService("move_servoj", &XARMDriver::MoveServoJCB, this);        
         clear_err_server_ = nh_.advertiseService("clear_err", &XARMDriver::ClearErrCB, this);
 
+        gripper_config_server_ = nh_.advertiseService("gripper_config", &XARMDriver::GripperConfigCB, this);
+        gripper_move_server_ = nh_.advertiseService("gripper_move", &XARMDriver::GripperMoveCB, this);
+        gripper_state_server_ = nh_.advertiseService("gripper_state", &XARMDriver::GripperStateCB, this);
+
         // state feedback topics:
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
         robot_rt_state_ = nh_.advertise<xarm_msgs::RobotMsg>("xarm_states", 10, true);
         // end_input_state_ = nh_.advertise<xarm_msgs::IOState>("xarm_input_states", 10, true);
-
         
 
         nh_.getParam("DOF",dof_);
@@ -70,9 +73,10 @@ namespace xarm_api
         // First clear controller warning and error:
         int ret1 = arm_cmd_->clean_war(); 
         int ret2 = arm_cmd_->clean_err();
-
+        int ret3 = arm_cmd_->gripper_modbus_clean_err();
         // Then try to enable motor again:
         res.ret = arm_cmd_->motion_en(8, 1);
+
 
         if(res.ret)
         {
@@ -297,6 +301,58 @@ namespace xarm_api
 
         res.ret = arm_cmd_->move_servoj(pose[0], req.mvvelo, req.mvacc, req.mvtime);
         res.message = "move servoj, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XARMDriver::GripperConfigCB(xarm_msgs::GripperConfig::Request &req, xarm_msgs::GripperConfig::Response &res)
+    {
+        if(req.pulse_vel>5000)
+            req.pulse_vel = 5000;
+        else if(req.pulse_vel<0)
+            req.pulse_vel = 0;
+
+        
+        int ret1 = arm_cmd_->gripper_modbus_set_mode(0);
+        int ret2 = arm_cmd_->gripper_modbus_set_en(1);
+        int ret3 = arm_cmd_->gripper_modbus_set_posspd(req.pulse_vel);
+
+        if(ret1 || ret2 || ret3)
+        {
+            res.ret = ret3;
+        }
+        else
+        {
+            res.ret = 0;
+        }
+        res.message = "gripper_config, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XARMDriver::GripperMoveCB(xarm_msgs::GripperMove::Request &req, xarm_msgs::GripperMove::Response &res)
+    {
+        if(req.pulse_pos>850)
+            req.pulse_pos = 850;
+        else if(req.pulse_pos<-100)
+            req.pulse_pos = -100;
+
+        res.ret = arm_cmd_->gripper_modbus_set_pos(req.pulse_pos);
+        res.message = "gripper_move, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XARMDriver::GripperStateCB(xarm_msgs::GripperState::Request &req, xarm_msgs::GripperState::Response &res)
+    {   
+        int err_code = 0;
+        float pos_now = 0;     
+        if(arm_cmd_->gripper_modbus_get_errcode(&err_code))
+            return false;
+
+        if(arm_cmd_->gripper_modbus_get_pos(&pos_now))
+            return false;
+        
+        res.err_code = err_code;
+        res.curr_pos = pos_now;
+        // fprintf(stderr, "gripper_pos: %f, gripper_err: %d\n", res.curr_pos, res.err_code);
         return true;
     }
 

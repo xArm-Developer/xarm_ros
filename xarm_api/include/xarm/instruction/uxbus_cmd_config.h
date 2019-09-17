@@ -4,14 +4,16 @@
  *
  * Author: Jimy Zhang <jimy92@163.com>
  ============================================================================*/
-#ifndef INSTRUCTION_UXBUS_CMD_CONFIG_H_
-#define INSTRUCTION_UXBUS_CMD_CONFIG_H_
+#ifndef CORE_INSTRUCTION_UXBUS_CMD_CONFIG_H_
+#define CORE_INSTRUCTION_UXBUS_CMD_CONFIG_H_
+
 class UXBUS_RG {
  public:
   UXBUS_RG(void) {}
   ~UXBUS_RG(void) {}
 
   static const unsigned char GET_VERSION = 1;
+  static const unsigned char GET_ROBOT_SN = 2;
   static const unsigned char SHUTDOWN_SYSTEM = 10;
 
   static const unsigned char MOTION_EN = 11;
@@ -42,7 +44,6 @@ class UXBUS_RG {
   static const unsigned char SET_TEACH_SENS = 38;
   static const unsigned char CLEAN_CONF = 39;
   static const unsigned char SAVE_CONF = 40;
-  static const unsigned char SET_GRAVITY_DIR = 51;
 
   static const unsigned char GET_TCP_POSE = 41;
   static const unsigned char GET_JOINT_POS = 42;
@@ -51,6 +52,8 @@ class UXBUS_RG {
   static const unsigned char IS_JOINT_LIMIT = 45;
   static const unsigned char IS_TCP_LIMIT = 46;
 
+  static const unsigned char SET_GRAVITY_DIR = 51;
+
   static const unsigned char SERVO_W16B = 101;
   static const unsigned char SERVO_R16B = 102;
   static const unsigned char SERVO_W32B = 103;
@@ -58,11 +61,12 @@ class UXBUS_RG {
   static const unsigned char SERVO_ZERO = 105;
   static const unsigned char SERVO_DBMSG = 106;
 
-  static const unsigned char GPGET_ERR = 125;
-  static const unsigned char GRIPP_W16B = 127;
-  static const unsigned char GRIPP_R16B = 128;
-  static const unsigned char GRIPP_W32B = 129;
-  static const unsigned char GRIPP_R32B = 130;
+  static const unsigned char TGPIO_MODBUS = 124;
+  static const unsigned char TGPIO_ERR = 125;
+  static const unsigned char TGPIO_W16B = 127;
+  static const unsigned char TGPIO_R16B = 128;
+  static const unsigned char TGPIO_W32B = 129;
+  static const unsigned char TGPIO_R32B = 130;
 
   static const unsigned char CGPIO_GET_DIGIT = 131;
   static const unsigned char CGPIO_GET_ANALOG1 = 132;
@@ -98,7 +102,7 @@ class UXBUS_CONF {
   static const int SET_TIMEOUT = 1000;  // ms
   static const int GET_TIMEOUT = 1000;  // ms
   static const int GRIPPER_ID = 8;
-  static const int GPIO_ID = 9;
+  static const int TGPIO_ID = 9;
   static const int MASTER_ID = 0xAA;
   static const int SLAVE_ID = 0x55;
 };

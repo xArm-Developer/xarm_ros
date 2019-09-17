@@ -1,11 +1,13 @@
+
 /* Copyright 2017 UFACTORY Inc. All Rights Reserved.
  *
  * Software License Agreement (BSD License)
  *
  * Author: Jimy Zhang <jimy92@163.com>
  ============================================================================*/
-#ifndef INSTRUCTION_SERVO3_CONFIG_H_
-#define INSTRUCTION_SERVO3_CONFIG_H_
+#ifndef CORE_INSTRUCTION_SERVO3_CONFIG_H_
+#define CORE_INSTRUCTION_SERVO3_CONFIG_H_
+
 class SERVO3_RG {
 public:
   static const unsigned short CON_EN = 0x0100;
@@ -17,6 +19,7 @@ public:
   static const unsigned short SV3_SAVE = 0x1000;
   static const unsigned short BRAKE = 0x0104;
   static const unsigned short GET_TEMP = 0x000E;
+  static const unsigned short ERR_CODE = 0x000F;
   static const unsigned short OVER_TEMP = 0x0108;
   static const unsigned short CURR_CURR = 0x0001;
   static const unsigned short POS_KP = 0x0200;
