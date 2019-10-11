@@ -29,7 +29,7 @@ namespace xarm_api
             XARMDriver():spinner(4){spinner.start();};
             ~XARMDriver();
             void XARMDriverInit(ros::NodeHandle& root_nh, char *server_ip);
-
+            void Heartbeat(void);
             bool MotionCtrlCB(xarm_msgs::SetAxis::Request &req, xarm_msgs::SetAxis::Response &res);
             bool SetModeCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
             bool SetStateCB(xarm_msgs::SetInt16::Request &req, xarm_msgs::SetInt16::Response &res);

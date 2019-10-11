@@ -8,7 +8,8 @@
         <robotNamespace>/${namespace}</robotNamespace>
         <!-- <controlPeriod>0.0001</controlPeriod> -->
         <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-		<legacyModeNS>true</legacyModeNS>
+		    <legacyModeNS>true</legacyModeNS>
+        <!-- <preserveWorldVelocity>true</preserveWorldVelocity> -->
       </plugin>
     </gazebo>
 

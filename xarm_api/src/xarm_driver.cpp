@@ -6,11 +6,26 @@
  ============================================================================*/
 #include <xarm_driver.h>
 #include "xarm/instruction/uxbus_cmd_config.h"
+#include "xarm/linux/thread.h"
+
+#define CMD_HEARTBEAT_US 3e7 // 30s
+
+void* cmd_heart_beat(void* args)
+{
+    xarm_api::XARMDriver *my_driver = (xarm_api::XARMDriver *) args;
+    while(true)
+    {
+        usleep(CMD_HEARTBEAT_US); // non-realtime
+        my_driver->Heartbeat();
+    }
+    pthread_exit(0);
+}
 
 namespace xarm_api
 {   
     XARMDriver::~XARMDriver()
-    {
+    {   
+        // pthread_cancel(thread_id_);  // heartbeat related
         arm_cmd_->set_mode(XARM_MODE::POSE);
         arm_cmd_->close();
         spinner.stop();
@@ -43,7 +58,6 @@ namespace xarm_api
         robot_rt_state_ = nh_.advertise<xarm_msgs::RobotMsg>("xarm_states", 10, true);
         // end_input_state_ = nh_.advertise<xarm_msgs::IOState>("xarm_input_states", 10, true);
         
-
         nh_.getParam("DOF",dof_);
 
         arm_report_ = connext_tcp_report_norm(server_ip);
@@ -53,6 +67,7 @@ namespace xarm_api
             ROS_ERROR("Xarm Connection Failed!");
         else // clear unimportant errors
         {
+            // thread_id_ = thread_init(cmd_heart_beat, this); // heartbeat related
             int dbg_msg[16] = {0};
             arm_cmd_->servo_get_dbmsg(dbg_msg);
 
@@ -64,8 +79,20 @@ namespace xarm_api
                     ROS_WARN("Cleared low-voltage error of joint %d", i+1);
                 }
             }
+
         }
 
+    }
+
+    void XARMDriver::Heartbeat(void)
+    {   
+        int cmd_num;
+        int ret = arm_cmd_->get_cmdnum(&cmd_num);
+        // if(ret)
+        // {
+        //     ROS_ERROR("xArm Heartbeat error! ret = %d", ret);
+        // }
+        // ROS_INFO("xArm Heartbeat! %d", cmd_num);
     }
 
     bool XARMDriver::ClearErrCB(xarm_msgs::ClearErr::Request& req, xarm_msgs::ClearErr::Response& res)
