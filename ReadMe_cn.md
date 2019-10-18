@@ -24,6 +24,7 @@
 * [6. 模式切换(***new***)](#6-模式切换)
     * [6.1 模式介绍](#61-模式介绍)
     * [6.2 切换模式的正确方法](#62-切换模式的正确方法)
+* [7. 其他示例(***new***)](#7-其他示例)
 
 
 # 1. 简介：
@@ -212,7 +213,7 @@ $ rosservice call /xarm/set_digital_out 2 1  (设定输出端口2的逻辑为1)
 &ensp;&ensp;注意检查这些service返回的"ret"值为0，来确保操作成功。
 
 #### 获得反馈状态信息:
-&ensp;&ensp;如果通过运行'xarm7_server.launch'连接了一台xArm机械臂，用户可以通过订阅 ***"/xarm_states"*** topic 获得机械臂当前的各种状态信息， 包括关节角度、工具坐标点的位置、错误、警告信息等等。具体的信息列表请参考[RobotMsg.msg](./xarm_msgs/msg/RobotMsg.msg).  
+&ensp;&ensp;如果通过运行'xarm7_server.launch'连接了一台xArm机械臂，用户可以通过订阅 ***"xarm/xarm_states"*** topic 获得机械臂当前的各种状态信息， 包括关节角度、工具坐标点的位置、错误、警告信息等等。具体的信息列表请参考[RobotMsg.msg](./xarm_msgs/msg/RobotMsg.msg).  
 &ensp;&ensp;另一种选择是订阅 ***"/joint_states"*** topic, 它是以[JointState.msg](http://docs.ros.org/jade/api/sensor_msgs/html/msg/JointState.html)格式发布数据的, 但是当前 ***只有 "position" 是有效数据***; "velocity" 是没有经过任何滤波的基于相邻两组位置数据进行的数值微分, 因而只能作为参考，我们目前还不提供 "effort" 的反馈数据.
 &ensp;&ensp;基于运行时性能考虑，目前以上两个topic的数据更新率固定为 ***10Hz***.  
 
@@ -226,9 +227,9 @@ $ rosservice call /xarm/set_tcp_offset 0 0 20 0 0 0
 &ensp;&ensp;这条命令设置了基于原始工具坐标系(x = 0 mm, y = 0 mm, z = 20 mm)的位置偏移量，还有（0 rad, 0 rad, 0 rad)的RPY姿态偏移量。***如果需要请在每次重新启动/上电控制盒时设定一次正确的偏移量，因为此设定会掉电丢失。***  
 
 #### 清除错误:
-&ensp;&ensp;有时控制器会因为掉电、位置或速度超限、规划失败等原因汇报错误，遇到这一状态需要手动解除。具体的错误代码可以在topic ***"/xarm_states"*** 的信息中找到。 
+&ensp;&ensp;有时控制器会因为掉电、位置或速度超限、规划失败等原因汇报错误，遇到这一状态需要手动解除。具体的错误代码可以在topic ***"xarm/xarm_states"*** 的信息中找到。 
 ```bash
-$ rostopic echo /xarm_states
+$ rostopic echo /xarm/xarm_states
 ```
 &ensp;&ensp;如果'err'字段数据为非零，需要对照用户手册找到原因并设法解决问题。之后，这一错误状态可以通过调用服务 ***"/xarm/clear_err"*** 清除：  
 ```bash
@@ -253,7 +254,7 @@ $ rosservice call /xarm/gripper_status
 &ensp;&ensp;如果错误码不为0，请参考使用说明书查询错误原因，清除错误同样可使用上一节的clear_err service。
 
 # 6. 模式切换
-&ensp;&ensp;xArm 在不同的控制方式下可能会工作在不同的模式中，当前的模式可以通过topic "/xarm_states" 的内容查看。在某些情况下，需要用户主动切换模式以达到继续正常工作的目的。
+&ensp;&ensp;xArm 在不同的控制方式下可能会工作在不同的模式中，当前的模式可以通过topic "xarm/xarm_states" 的内容查看。在某些情况下，需要用户主动切换模式以达到继续正常工作的目的。
 
 ### 6.1 模式介绍
 
@@ -278,3 +279,6 @@ $ rosservice call /xarm/set_mode 2
 $ rosservice call /xarm/set_state 0
 ```
 &ensp;&ensp;以上操作同样可用相关的xArm SDK函数实现.
+
+# 7. 其他示例
+&ensp;&ensp;[在examples路径下](./examples)会陆续更新一些其他应用的demo例程，欢迎前去探索研究。

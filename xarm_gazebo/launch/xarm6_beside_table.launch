@@ -5,7 +5,7 @@
   <arg name="gui" default="true" doc="Starts gazebo gui" />
   <arg name="effort_control" default="false"/>
   <arg name="add_gripper" default="false" />
-
+  
   <rosparam file="$(find xarm6_moveit_config)/config/xarm6_params.yaml" command="load"/>
   <!-- startup simulated world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -35,5 +35,6 @@
     <arg name="run_demo_traj" value="$(arg run_demo)"/>
     <arg name="effort_control" value="$(arg effort_control)"/>
   </include>
+
 
 </launch>

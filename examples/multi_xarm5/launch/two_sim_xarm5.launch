@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="ns" default="" doc="namespace as a group"/>
+  <!-- load the default move_group planner (not xarm_simple_planner) -->
+  <arg name="show_rviz" default="true" />
+  <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
+  <arg name="no_gui_plan" default="false" />
+
+  <!-- startup 2 xarm5s in Moveit RVIZ simulation -->
+
+  <group ns="$(arg ns)">
+    <remap from="/tf" to="$(arg ns)/tf" />
+    <remap from="/tf_static" to="$(arg ns)/tf_static" />
+    <include file="$(find xarm5_moveit_config)/launch/demo.launch">
+      <arg name="ns" value="$(arg ns)" />
+    </include>
+  </group>
+
+  <group ns="$(arg ns)_2">
+    <remap from="/tf" to="$(arg ns)_2/tf" />
+    <remap from="/tf_static" to="$(arg ns)_2/tf_static" />
+    <include file="$(find xarm5_moveit_config)/launch/demo.launch">
+      <arg name="ns" value="$(arg ns)_2" />
+    </include>
+  </group>
+
+  <!-- <remap from="$(arg ns)/world" to="/world" /> -->
+  <!-- <param name="tf_prefix" value="$(arg ns)" /> -->
+
+
+</launch>

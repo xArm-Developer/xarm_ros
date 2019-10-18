@@ -185,6 +185,8 @@ int main(int argc, char**argv)
 	nh.getParam("xarm_robot_ip", ip);
 	nh.getParam("joint_names", jnt_names);
 
+	// ROS_INFO("xarm_traj_controller: DOF=%d, xarm_robot_ip=%s, joint_names: %s\n", xarm_dof, ip.c_str(), jnt_names[0].c_str());
+
 	ros::service::waitForService("motion_ctrl");
   	ros::service::waitForService("set_state");
   	ros::service::waitForService("set_mode");

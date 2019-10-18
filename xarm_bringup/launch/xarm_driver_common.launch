@@ -2,36 +2,19 @@
   <arg name="robot_ip" />
   <arg name="dof" default="7"/>
   <arg name="use_moveit" default="false" />
+  <arg name="namespace" default="" />
 
-  <remap from="/motion_ctrl" to="/xarm/motion_ctrl"/>
-  <remap from="/set_mode" to="/xarm/set_mode"/>
-  <remap from="/set_state" to="/xarm/set_state"/>
-  <remap from="/set_tcp_offset" to="/xarm/set_tcp_offset"/>
-  <remap from="/move_servoj" to="/xarm/move_servoj"/>
-  <remap from="/go_home" to="/xarm/go_home"/>
-  <remap from="/move_joint" to="/xarm/move_joint"/>
-  <remap from="/move_line" to="/xarm/move_line"/>
-  <remap from="/move_lineb" to="/xarm/move_lineb"/>
-  <remap from="/DOF" to="/xarm/DOF" />
-  <remap from="/joint_names" to="/xarm/joint_names" />
-  <remap from="/get_digital_in" to="/xarm/get_digital_in" />
-  <remap from="/get_analog_in" to="/xarm/get_analog_in" />
-  <remap from="/set_digital_out" to="/xarm/set_digital_out" />
-  <remap from="/clear_err" to="/xarm/clear_err" />
-  <remap from="/gripper_config" to="/xarm/gripper_config" />
-  <remap from="/gripper_move" to="/xarm/gripper_move" />
-  <remap from="/gripper_state" to="/xarm/gripper_state" />
+  <remap from="xarm/joint_states" to="joint_states"/>
+  <remap from="xarm/xarm_states" to="xarm_states" />
 
+  <!-- run xarm driver -->
   <include file="$(find xarm_bringup)/launch/xarm_robot.launch">
     <arg name="robot_ip" value="$(arg robot_ip)" />
     <arg name="load_urdf" value="false" />
     <arg name="publish_tf" value="false"/>
   </include>
 
-  <!-- run the driver for real xarm7 motion cmd sending -->
-  <remap from="/xarm/joint_states" to="/joint_states"/>
-  <remap from="/xarm/xarm_states" to="/xarm_states"/>
-  <remap from="/xarm/xarm_robot_ip" to="/xarm_robot_ip" />
-  <node if="$(arg use_moveit)" name="xarm_traj_controller" pkg="xarm_controller" type="xarm_traj_controller" args="ip=$(arg robot_ip)" ns="/xarm" respawn="false" output="screen" />
+  <!-- run xarm_traj_controller from HW interface -->  
+  <node if="$(arg use_moveit)" name="xarm_traj_controller" pkg="xarm_controller" type="xarm_traj_controller" args="ip=$(arg robot_ip)" ns="xarm" respawn="false" output="screen" />
 
 </launch>

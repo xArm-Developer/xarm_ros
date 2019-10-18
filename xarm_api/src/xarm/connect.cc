@@ -38,7 +38,7 @@ SocketPort *connext_tcp_report_norm(char *server_ip) {
   SocketPort *arm_report =
     new SocketPort(server_ip, XARM_CONF::TCP_PORT_REPORT_NORM, 3, 512);
   if (arm_report->is_ok() != 0) {
-    printf("Error: Tcp Report Norm connection failed\n");
+    printf("Error: Tcp Report Norm connection failed, ip: %s\n", server_ip);
     return NULL;
   }
   printf("Tcp Report Norm connection successful\n");

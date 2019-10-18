@@ -24,6 +24,7 @@
 * [6. Mode Change (***new***)](#6-mode-change)
     * [6.1 Mode Explanation](#61-mode-explanation)
     * [6.2 Proper way to change modes](#62-proper-way-to-change-modes)
+* [7. Other Examples  (***new***)](#7-other-examples)
 
 # 1. Introduction
    &ensp;&ensp;This repository contains the 3D model of xArm and demo packages for ROS development and simulations.Developing and testing environment: Ubuntu 16.04 + ROS Kinetic Kame.  
@@ -211,7 +212,7 @@ $ rosservice call /xarm/set_digital_out 2 1  (Setting output 2 to be 1)
 &ensp;&ensp;You have to make sure the operation is successful by checking responding "ret" to be 0.
 
 #### Getting status feedback:
-&ensp;&ensp;Having connected with a real xArm robot by running 'xarm7_server.launch', user can subscribe to the topic ***"/xarm_states"*** for feedback information about current robot states, including joint angles, TCP position, error/warning code, etc. Refer to [RobotMsg.msg](./xarm_msgs/msg/RobotMsg.msg) for content details.  
+&ensp;&ensp;Having connected with a real xArm robot by running 'xarm7_server.launch', user can subscribe to the topic ***"xarm/xarm_states"*** for feedback information about current robot states, including joint angles, TCP position, error/warning code, etc. Refer to [RobotMsg.msg](./xarm_msgs/msg/RobotMsg.msg) for content details.  
 &ensp;&ensp;Another option is subscribing to ***"/joint_states"*** topic, which is reporting in [JointState.msg](http://docs.ros.org/jade/api/sensor_msgs/html/msg/JointState.html), however, currently ***only "position" field is valid***; "velocity" is non-filtered numerical differentiation based on 2 adjacent position data, so it is just for reference; and we do not provide "effort" feedback yet.
 &ensp;&ensp;In consideration of performance, current update rate of above two topics are set at ***10Hz***.  
 
@@ -225,15 +226,15 @@ $ rosservice call /xarm/set_tcp_offset 0 0 20 0 0 0
 &ensp;&ensp;This is to set tool frame position offset (x = 0 mm, y = 0 mm, z = 20 mm), and orientation (RPY) offset of ( 0, 0, 0 ) radians with respect to initial tool frame (Frame B in picture). ***Remember to set this offset each time the controller box is restarted !*** 
 
 #### Clearing Errors:
-&ensp;&ensp;Sometimes controller may report error or warnings that would affect execution of further commands. The reasons may be power loss, position/speed limit violation, planning errors, etc. It needs additional intervention to clear. User can check error code in the message of topic ***"/xarm_states"*** . 
+&ensp;&ensp;Sometimes controller may report error or warnings that would affect execution of further commands. The reasons may be power loss, position/speed limit violation, planning errors, etc. It needs additional intervention to clear. User can check error code in the message of topic ***"xarm/xarm_states"*** . 
 ```bash
-$ rostopic echo /xarm_states
+$ rostopic echo /xarm/xarm_states
 ```
 &ensp;&ensp;If it is non-zero, the corresponding reason can be found out in the user manual. After solving the problem, this error satus can be removed by calling service ***"/xarm/clear_err"*** with empty argument.
 ```bash
 $ rosservice call /xarm/clear_err
 ```
-&ensp;&ensp;After calling this service, please ***check the err status again*** in '/xarm_states', if it becomes 0, the clearing is successful. Otherwise, it means the error/exception is not properly solved. If clearing error is successful, remember to ***set robot state to 0*** to make it ready to move again!   
+&ensp;&ensp;After calling this service, please ***check the err status again*** in 'xarm/xarm_states', if it becomes 0, the clearing is successful. Otherwise, it means the error/exception is not properly solved. If clearing error is successful, remember to ***set robot state to 0*** to make it ready to move again!   
 
 #### Gripper Control:
 &ensp;&ensp; If xArm Gripper (from UFACTORY) is attached to the tool end, the following services can be called to operate or check the gripper.  
@@ -255,7 +256,7 @@ $ rosservice call /xarm/gripper_status
 &ensp;&ensp; If error code is non-zero, please refer to user manual for the cause of error, the "/xarm/clear_err" service can still be used to clear the error code of xArm Gripper.  
 
 # 6. Mode Change
-&ensp;&ensp;xArm may operate under different modes depending on different controling methods. Current mode can be checked in the message of topic "/xarm_states". And there are circumstances that demand user to switch between operation modes. 
+&ensp;&ensp;xArm may operate under different modes depending on different controling methods. Current mode can be checked in the message of topic "xarm/xarm_states". And there are circumstances that demand user to switch between operation modes. 
 
 ### 6.1 Mode Explanation
 
@@ -280,3 +281,6 @@ $ rosservice call /xarm/set_mode 2
 $ rosservice call /xarm/set_state 0
 ```
 &ensp;&ensp;The above operations can also be done by calling relavant xArm SDK functions.
+
+# 7. Other Examples
+&ensp;&ensp;There are some other application demo examples in the [example package](./examples), which will be updated in the future, feel free to explore it.

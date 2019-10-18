@@ -140,6 +140,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "xarm_driver_node");
     
+    // with namespace (ns) specified in the calling launch file (xarm by default)
     ros::NodeHandle n;
 
     xarm_api::XARMDriver driver;
@@ -148,15 +149,15 @@ int main(int argc, char **argv)
     std::string robot_ip = "192.168.1.121";
     if (!n.hasParam("xarm_robot_ip"))
     {
-        ROS_INFO("No param named 'xarm_robot_ip'");
-        ROS_INFO("Use default robot ip = 192.168.1.121");
+        ROS_ERROR("No param named 'xarm_robot_ip'");
+        ROS_ERROR("Use default robot ip = 192.168.1.121");
     }
     else
     {
         n.getParam("xarm_robot_ip", robot_ip);
     }
 
-    char server_ip[20];
+    char server_ip[20]={0};
     strcpy(server_ip,robot_ip.c_str());
     XarmRTConnection rt_connect(n, server_ip, driver);
 

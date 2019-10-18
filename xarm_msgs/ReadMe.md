@@ -34,4 +34,4 @@
 
 # Feedback Status Message
 
-Refer to [RobotMsg](./msg/RobotMsg.msg) for robot feedback information contents published through topic "/xarm_states".  
+Refer to [RobotMsg](./msg/RobotMsg.msg) for robot feedback information contents published through topic "/xarm/xarm_states".  
