@@ -24,11 +24,11 @@ xarm:
     action_monitor_rate: 10
 
   # No Pid gains specified error fix
-  gazebo_ros_control:
-    pid_gains:
-      joint1: {p: 1200.0, i: 5.0, d: 10.0}
-      joint2: {p: 1400.0, i: 5.0, d: 10.0}
-      joint3: {p: 1200.0, i: 5.0, d: 5.0}
-      joint4: {p: 500.0, i: 3.0, d: 1.0}
-      joint5: {p: 500.0, i: 1.0, d: 1.0}
+  # gazebo_ros_control:
+  #   pid_gains:
+  #     joint1: {p: 1200.0, i: 5.0, d: 10.0}
+  #     joint2: {p: 1400.0, i: 5.0, d: 10.0}
+  #     joint3: {p: 1200.0, i: 5.0, d: 5.0}
+  #     joint4: {p: 500.0, i: 3.0, d: 1.0}
+  #     joint5: {p: 500.0, i: 1.0, d: 1.0}
 

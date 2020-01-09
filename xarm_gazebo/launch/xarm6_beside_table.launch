@@ -34,6 +34,7 @@
   <include file="$(find xarm_controller)/launch/xarm6_control.launch">
     <arg name="run_demo_traj" value="$(arg run_demo)"/>
     <arg name="effort_control" value="$(arg effort_control)"/>
+    <arg name="add_gripper" value="$(arg add_gripper)" />
   </include>
 
 
