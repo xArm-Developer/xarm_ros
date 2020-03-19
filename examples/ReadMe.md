@@ -33,10 +33,10 @@ $ rosservice call /xarm/set_state 0
   
 Suppose current TCP position is at [206, 0, 121, 3.1416, 0, 0]
 ```bash
-$ rosservice call /xarm/move_servo_cart [210,0,127,3.1416,0,0] 0.0 0.0 0.0 0.0
+$ rosservice call /xarm/move_servo_cart [210,0,121,3.1416,0,0] 0.0 0.0 0.0 0.0
 ```
 Now please check the current TCP position, it will execute this target immediately if success. If you want continuous motion alone X axis, you can give the following pose like:
 ```bash
-$ rosservice call /xarm/move_servo_cart [214,0,127,3.1416,0,0] 0.0 0.0 0.0 0.0
+$ rosservice call /xarm/move_servo_cart [214,0,121,3.1416,0,0] 0.0 0.0 0.0 0.0
 ```
 And you can program this service calling procedure in a loop with proper intervals inbetween, the final execution will become smooth.   
