@@ -32,6 +32,7 @@ class UxbusCmd {
   int move_joint(float mvjoint[7], float mvvelo, float mvacc, float mvtime);
   int move_gohome(float mvvelo, float mvacc, float mvtime);
   int move_servoj(float mvjoint[7], float mvvelo, float mvacc, float mvtime);
+  int move_servo_cartesian(float mvpose[6], float mvvelo, float mvacc, float mvtime);
   int sleep_instruction(float sltime);
   int move_circle(float pose1[6], float pose2[6], float mvvelo, float mvacc, float mvtime, float percent);
   int set_tcp_jerk(float jerk);

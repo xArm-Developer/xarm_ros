@@ -4,6 +4,7 @@
 #include "ros/ros.h"
 #include <xarm_msgs/SetInt16.h>
 #include <xarm_msgs/TCPOffset.h>
+#include <xarm_msgs/SetLoad.h>
 #include <xarm_msgs/SetAxis.h>
 #include <xarm_msgs/Move.h>
 #include <xarm_msgs/RobotMsg.h>
@@ -30,10 +31,12 @@ namespace xarm_api
             ~XARMDriver();
             void XARMDriverInit(ros::NodeHandle& root_nh, char *server_ip);
             void Heartbeat(void);
+            // provide a list of services:
             bool MotionCtrlCB(xarm_msgs::SetAxis::Request &req, xarm_msgs::SetAxis::Response &res);
             bool SetModeCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
             bool SetStateCB(xarm_msgs::SetInt16::Request &req, xarm_msgs::SetInt16::Response &res);
             bool SetTCPOffsetCB(xarm_msgs::TCPOffset::Request &req, xarm_msgs::TCPOffset::Response &res);
+            bool SetLoadCB(xarm_msgs::SetLoad::Request &req, xarm_msgs::SetLoad::Response &res);
             bool SetDigitalIOCB(xarm_msgs::SetDigitalIO::Request &req, xarm_msgs::SetDigitalIO::Response &res);
             bool GetDigitalIOCB(xarm_msgs::GetDigitalIO::Request &req, xarm_msgs::GetDigitalIO::Response &res);
             bool GetAnalogIOCB(xarm_msgs::GetAnalogIO::Request &req, xarm_msgs::GetAnalogIO::Response &res);
@@ -43,6 +46,7 @@ namespace xarm_api
             bool MoveLinebCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveLineCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveServoJCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
+            bool MoveServoCartCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool GripperConfigCB(xarm_msgs::GripperConfig::Request &req, xarm_msgs::GripperConfig::Response &res);
             bool GripperMoveCB(xarm_msgs::GripperMove::Request &req, xarm_msgs::GripperMove::Response &res);
             bool GripperStateCB(xarm_msgs::GripperState::Request &req, xarm_msgs::GripperState::Response &res);
@@ -74,7 +78,9 @@ namespace xarm_api
             ros::ServiceServer move_lineb_server_;
             ros::ServiceServer move_line_server_;
             ros::ServiceServer move_servoj_server_;
+            ros::ServiceServer move_servo_cart_server_;
             ros::ServiceServer set_tcp_offset_server_;
+            ros::ServiceServer set_load_server_;
             ros::ServiceServer set_end_io_server_;
             ros::ServiceServer get_digital_in_server_;
             ros::ServiceServer get_analog_in_server_;

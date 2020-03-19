@@ -29,8 +29,8 @@ int servoj_test(xarm_msgs::Move srv, ros::ServiceClient client)
     std::vector<float> joint[2] = {{0, 0, 0, 0, 0, 0, 0}, 
                                  {0, -0.3, 0, 0, 0, 0, 0}};
 
-    srv.request.mvvelo = 50;
-    srv.request.mvacc = 100;
+    srv.request.mvvelo = 0;
+    srv.request.mvacc = 0;
     srv.request.mvtime = 0;
     for (int i = 0; i < 2; i++) 
     {
@@ -41,7 +41,7 @@ int servoj_test(xarm_msgs::Move srv, ros::ServiceClient client)
         }
         else
         {
-            ROS_ERROR("Failed to call service move_lineb");
+            ROS_ERROR("Failed to call service move_servoj");
             return 1;
         }
         sleep(2);

@@ -234,6 +234,15 @@ int UxbusCmd::move_servoj(float mvjoint[7], float mvvelo, float mvacc, float mvt
   return set_nfp32(UXBUS_RG::MOVE_SERVOJ, txdata, 10);
 }
 
+int UxbusCmd::move_servo_cartesian(float mvpose[6], float mvvelo, float mvacc, float mvtime) {
+  float txdata[9] = { 0 };
+  for (int i = 0; i < 6; i++) { txdata[i] = mvpose[i]; }
+  txdata[6] = mvvelo;
+  txdata[7] = mvacc;
+  txdata[8] = mvtime;
+  return set_nfp32(UXBUS_RG::MOVE_SERVO_CART, txdata, 9);
+}
+
 int UxbusCmd::sleep_instruction(float sltime) {
   float txdata[1] = {sltime};
   return set_nfp32(UXBUS_RG::SLEEP_INSTT, txdata, 1);

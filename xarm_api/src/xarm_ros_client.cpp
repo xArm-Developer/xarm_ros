@@ -15,12 +15,13 @@ XArmROSClient::XArmROSClient(ros::NodeHandle& nh)
 	set_mode_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_mode");
 	set_state_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_state");
     set_tcp_offset_client_ = nh_.serviceClient<xarm_msgs::TCPOffset>("set_tcp_offset");
+    set_load_client_ = nh_.serviceClient<xarm_msgs::SetLoad>("set_load");
   	go_home_client_ = nh_.serviceClient<xarm_msgs::Move>("go_home");
 	move_lineb_client_ = nh_.serviceClient<xarm_msgs::Move>("move_lineb");
     move_line_client_ = nh_.serviceClient<xarm_msgs::Move>("move_line");
     move_joint_client_ = nh_.serviceClient<xarm_msgs::Move>("move_joint");
 	move_servoj_client_ = nh_.serviceClient<xarm_msgs::Move>("move_servoj",true); // persistent connection for servoj
-
+    move_servo_cart_client_ = nh_.serviceClient<xarm_msgs::Move>("move_servo_cart",true); // persistent connection for servo_cartesian
 }
 
 int XArmROSClient::motionEnable(short en)
@@ -90,6 +91,26 @@ int XArmROSClient::setServoJ(const std::vector<float>& joint_cmd)
     }
 }
 
+int XArmROSClient::setServoCartisian(const std::vector<float>& cart_cmd)
+{
+    servo_cart_msg_.request.mvvelo = 0;
+    servo_cart_msg_.request.mvacc = 0;
+    servo_cart_msg_.request.mvtime = 0;
+    servo_cart_msg_.request.pose = cart_cmd;
+
+
+    if(move_servo_cart_client_.call(servo_cart_msg_))
+    {
+        // ROS_INFO("%s\n", servo_cart_msg_.response.message.c_str());
+        return servo_cart_msg_.response.ret;
+    }
+    else
+    {
+        ROS_ERROR("Failed to call service move_servo_cart");
+        return 1;
+    }
+}
+
 int XArmROSClient::setTCPOffset(const std::vector<float>& tcp_offset)
 {
     if(tcp_offset.size() != 6)
@@ -115,6 +136,24 @@ int XArmROSClient::setTCPOffset(const std::vector<float>& tcp_offset)
         return 1;
     }
 
+}
+
+int XArmROSClient::setLoad(float mass, const std::vector<float>& center_of_mass)
+{
+    set_load_srv_.request.mass = mass;
+    set_load_srv_.request.xc = center_of_mass[0];
+    set_load_srv_.request.yc = center_of_mass[1];
+    set_load_srv_.request.zc = center_of_mass[2];
+
+    if(set_load_client_.call(set_load_srv_))
+    {
+       return set_load_srv_.response.ret;
+    }
+    else
+    {
+        ROS_ERROR("Failed to call service set_load");
+        return 1;
+    }
 }
 
 int XArmROSClient::goHome(float jnt_vel_rad, float jnt_acc_rad)

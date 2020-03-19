@@ -33,6 +33,7 @@ class UXBUS_RG {
   static const unsigned char SLEEP_INSTT = 26;
   static const unsigned char MOVE_CIRCLE = 27;
   static const unsigned char MOVE_SERVOJ = 29;
+  static const unsigned char MOVE_SERVO_CART = 30;
 
   static const unsigned char SET_TCP_JERK = 31;
   static const unsigned char SET_TCP_MAXACC = 32;

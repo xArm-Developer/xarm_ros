@@ -39,6 +39,7 @@ namespace xarm_api
         set_mode_server_ = nh_.advertiseService("set_mode", &XARMDriver::SetModeCB, this);
         set_state_server_ = nh_.advertiseService("set_state", &XARMDriver::SetStateCB, this);
         set_tcp_offset_server_ = nh_.advertiseService("set_tcp_offset", &XARMDriver::SetTCPOffsetCB, this);
+        set_load_server_ = nh_.advertiseService("set_load", &XARMDriver::SetLoadCB, this);
         set_end_io_server_ = nh_.advertiseService("set_digital_out", &XARMDriver::SetDigitalIOCB, this);
         get_digital_in_server_ = nh_.advertiseService("get_digital_in", &XARMDriver::GetDigitalIOCB, this);
         get_analog_in_server_ = nh_.advertiseService("get_analog_in", &XARMDriver::GetAnalogIOCB, this);
@@ -46,7 +47,8 @@ namespace xarm_api
         move_joint_server_ = nh_.advertiseService("move_joint", &XARMDriver::MoveJointCB, this);
         move_lineb_server_ = nh_.advertiseService("move_lineb", &XARMDriver::MoveLinebCB, this);
         move_line_server_ = nh_.advertiseService("move_line", &XARMDriver::MoveLineCB, this);
-        move_servoj_server_ = nh_.advertiseService("move_servoj", &XARMDriver::MoveServoJCB, this);        
+        move_servoj_server_ = nh_.advertiseService("move_servoj", &XARMDriver::MoveServoJCB, this);
+        move_servo_cart_server_ = nh_.advertiseService("move_servo_cart", &XARMDriver::MoveServoCartCB, this);        
         clear_err_server_ = nh_.advertiseService("clear_err", &XARMDriver::ClearErrCB, this);
 
         gripper_config_server_ = nh_.advertiseService("gripper_config", &XARMDriver::GripperConfigCB, this);
@@ -192,6 +194,15 @@ namespace xarm_api
         return true;
     }
 
+    bool XARMDriver::SetLoadCB(xarm_msgs::SetLoad::Request &req, xarm_msgs::SetLoad::Response &res)
+    {   
+        float Mass = req.mass;
+        float CoM[3] = {req.xc, req.yc, req.zc};
+        res.ret = arm_cmd_->set_tcp_load(Mass, CoM);
+        res.message = "set load: ret = " + std::to_string(res.ret); 
+        return true;
+    }
+
     bool XARMDriver::SetDigitalIOCB(xarm_msgs::SetDigitalIO::Request &req, xarm_msgs::SetDigitalIO::Response &res)
     {
         res.ret = arm_cmd_->tgpio_set_digital(req.io_num, req.value);
@@ -328,6 +339,29 @@ namespace xarm_api
 
         res.ret = arm_cmd_->move_servoj(pose[0], req.mvvelo, req.mvacc, req.mvtime);
         res.message = "move servoj, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XARMDriver::MoveServoCartCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
+    {
+        float pose[1][6];
+        int index = 0;
+        if(req.pose.size() != 6)
+        {
+            res.ret = -1;
+            res.message = "MoveServoCartCB parameters incorrect!";
+            return true;
+        }
+        else
+        {
+            for(index = 0; index < 6; index++)
+            {
+                pose[0][index] = req.pose[index];
+            }
+        }
+
+        res.ret = arm_cmd_->move_servo_cartesian(pose[0], req.mvvelo, req.mvacc, req.mvtime);
+        res.message = "move servo_cartesian, ret = " + std::to_string(res.ret);
         return true;
     }
 

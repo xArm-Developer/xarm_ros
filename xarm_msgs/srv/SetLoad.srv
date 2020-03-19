@@ -1,0 +1,13 @@
+# to set robot load parameters, based on initial Tool Frame located at flange center.
+# Load mass (kg)
+float32 mass
+
+# Load Center of Mass (mm), with respect to intial Tool Frame
+float32 xc
+float32 yc
+float32 zc
+
+-----
+
+int16 ret
+string message

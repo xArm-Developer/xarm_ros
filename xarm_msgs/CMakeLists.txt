@@ -67,6 +67,7 @@ find_package(catkin REQUIRED COMPONENTS
    GripperConfig.srv
    GripperMove.srv
    GripperState.srv
+   SetLoad.srv
  )
 
 ## Generate actions in the 'action' folder
