@@ -35,7 +35,10 @@ int UxbusCmd::set_nu8(int funcode, int *datas, int num) {
 
   int ret = send_xbus(funcode, send_data, num);
   if (ret != 0) { return UXBUS_STATE::ERR_NOTTCP; }
-  ret = send_pend(funcode, 0, UXBUS_CONF::SET_TIMEOUT, NULL);
+  if(funcode == UXBUS_RG::MOTION_EN)
+    ret = send_pend(funcode, 0, UXBUS_CONF::SET_TIMEOUT*2, NULL);
+  else
+    ret = send_pend(funcode, 0, UXBUS_CONF::SET_TIMEOUT, NULL);
 
   return ret;
 }
