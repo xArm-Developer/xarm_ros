@@ -112,7 +112,7 @@ void XArmHWInterface::clientInit(const std::string& robot_ip, ros::NodeHandle &r
   	int ret2 = xarm.setMode(XARM_MODE::SERVO);
   	int ret3 = xarm.setState(XARM_STATE::START);
 
-  	if(ret1 || ret2 || ret3)
+  	if(ret3)
   	{
   		ROS_ERROR("The Xarm may not be properly connected or hardware error exists, PLEASE CHECK or RESTART HARDWARE!!!");
   		ROS_ERROR(" ");
