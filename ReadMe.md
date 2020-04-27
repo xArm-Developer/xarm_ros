@@ -11,7 +11,7 @@
     * [5.2 xarm_gazebo](#52-xarm_gazebo)  
     * [5.3 xarm_controller](#53-xarm_controller)  
     * [5.4 xarm_bringup](#54-xarm_bringup)  
-    * [5.5 ***xarm7_moveit_config (Updated)***](#55-xarm7_moveit_config)  
+    * [5.5 ***xarm7_moveit_config***](#55-xarm7_moveit_config)  
     * [5.6 xarm_planner](#56-xarm_planner)  
     * [5.7 ***xarm_api/xarm_msgs***](#57-xarm_apixarm_msgs)  
         * [5.7.1 Starting xArm by ROS service (***priority for the following operations***)](#starting-xarm-by-ros-service)  
@@ -20,11 +20,15 @@
         * [5.7.4 Getting status feedback](#getting-status-feedback)  
         * [5.7.5 Setting Tool Center Point Offset](#setting-tool-center-point-offset)  
         * [5.7.6 Clearing Errors](#clearing-errors)  
-        * [5.7.7 Gripper Control (***new***)](#gripper-control)
-* [6. Mode Change (***new***)](#6-mode-change)
+        * [5.7.7 Gripper Control](#gripper-control)
+* [6. Mode Change](#6-mode-change)
     * [6.1 Mode Explanation](#61-mode-explanation)
     * [6.2 Proper way to change modes](#62-proper-way-to-change-modes)
-* [7. Other Examples  (***new***)](#7-other-examples)
+* [7. Other Examples  (***Updated***)](#7-other-examples)
+    * [7.1 Multi-xArm5 (separate control)](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#1-multi_xarm5-controled-separately)
+    * [7.2 Servo_Cartesian](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
+    * [7.3 Servo_Joint](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#3-servo_joint-streamed-joint-space-trajectory)
+    * [7.4 Dual xArm6 controled with one moveGroup node](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#4-dual-xarm6-controled-with-one-movegroup-node)
 
 # 1. Introduction
    &ensp;&ensp;This repository contains the 3D model of xArm and demo packages for ROS development and simulations.Developing and testing environment: Ubuntu 16.04 + ROS Kinetic Kame.  
