@@ -24,7 +24,6 @@
   <!-- option to show rviz or not -->
   <arg name="show_rviz" default="true" />
 
-
   <!-- Load the URDF, SRDF and other .yaml configuration files on the param server, limit joint range within [-pi, pi] -->
   <include file="$(find xarm6_moveit_config)/launch/planning_context.launch">
     <arg name="load_robot_description" value="true"/>

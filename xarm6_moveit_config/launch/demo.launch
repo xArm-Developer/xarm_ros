@@ -8,7 +8,6 @@
     <arg name="load_move_group" value="true" />
     <!-- whether to use fake_execution controller to drive the motion -->
     <arg name="fake_execution" value="true" />
-    
   </include>
 
 </launch>

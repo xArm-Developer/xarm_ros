@@ -19,7 +19,7 @@
       <link name="world" />
     </xacro:if>
 
-    <joint name="world_joint" type="fixed">
+    <joint name="${prefix}world_joint" type="fixed">
       <parent link="${attach_to}" />
       <child link = "${prefix}link_base" />
       <origin xyz="${xyz}" rpy="${rpy}" />

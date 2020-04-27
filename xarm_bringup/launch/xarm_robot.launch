@@ -1,13 +1,11 @@
 <launch>
 	<arg name="robot_ip" doc="User must properly specify robot ip address"/>
-	<arg name="load_urdf" default="true" />
 	<arg name="publish_tf" default="true" />
+	<arg name="hw_ns" default="xarm" />
     
-	<param name = "xarm/xarm_robot_ip" type="str" value = "$(arg robot_ip)"/>
-    <!-- send robot urdf to param server, joint limit may be overwritten if use moveit planner -->
-	<param name="robot_description" if="$(arg load_urdf)" command="$(find xacro)/xacro --inorder '$(find xarm_description)/urdf/xarm7_robot.urdf.xacro' "/>
+	<param name = "$(arg hw_ns)/xarm_robot_ip" type="str" value = "$(arg robot_ip)"/>
 
     <node name="robot_state_publisher" if="$(arg publish_tf)" pkg="robot_state_publisher" type="state_publisher" />
 
-	<node name="xarm_driver" pkg="xarm_api" ns="xarm" type="xarm_driver_node" output="screen" />
+	<node name="xarm_driver" pkg="xarm_api" ns="$(arg hw_ns)" type="xarm_driver_node" output="screen" />
 </launch>

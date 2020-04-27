@@ -9,7 +9,8 @@ namespace xarm_api{
 class XArmROSClient
 {
 public:
-	XArmROSClient(ros::NodeHandle& nh);
+	XArmROSClient(){};
+	void init(ros::NodeHandle& nh);
 	~XArmROSClient(){};
 
 	int motionEnable(short en);

@@ -1,0 +1,25 @@
+robot_hardware:
+  - L_xarm6
+  - R_xarm6
+
+L_xarm6:
+  type: xarm_control/XArmHW
+  DOF: 6
+  joint_names: 
+  - L_joint1
+  - L_joint2
+  - L_joint3
+  - L_joint4
+  - L_joint5
+  - L_joint6
+
+R_xarm6:
+  type: xarm_control/XArmHW
+  DOF: 6
+  joint_names: 
+  - R_joint1
+  - R_joint2
+  - R_joint3
+  - R_joint4
+  - R_joint5
+  - R_joint6

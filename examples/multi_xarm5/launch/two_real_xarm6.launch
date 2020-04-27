@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="ns_1" default="" doc="namespace as a group"/>
+  <arg name="ns_2" default="" doc="namespace as a group"/>
+  <arg name="robot_ip_1" />
+  <arg name="robot_ip_2" />
+  <!-- load the default move_group planner (not xarm_simple_planner) -->
+  <arg name="show_rviz" default="true" />
+  <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
+  <arg name="no_gui_plan" default="false" />
+
+    <!-- startup 2 xarm6s in moveit -->
+  <group ns="$(arg ns_1)">
+    <remap from="/tf" to="$(arg ns_1)/tf" />
+    <remap from="/tf_static" to="$(arg ns_1)/tf_static" />
+    <include file="$(find xarm6_moveit_config)/launch/realMove_exec.launch">
+      <arg name="robot_ip" value="$(arg robot_ip_1)"/>
+      <arg name="show_rviz" value="$(arg show_rviz)"/>
+      <arg name="no_gui_plan" value="$(arg no_gui_plan)"/>
+      <arg name="ext_ns" value="$(arg ns_1)" />
+    </include>
+  </group>
+
+  <group ns="$(arg ns_2)">
+    <remap from="/tf" to="$(arg ns_2)/tf" />
+    <remap from="/tf_static" to="$(arg ns_2)/tf_static" />
+    <include file="$(find xarm6_moveit_config)/launch/realMove_exec.launch">
+      <arg name="robot_ip" value="$(arg robot_ip_2)"/>
+      <arg name="show_rviz" value="$(arg show_rviz)"/>
+      <arg name="no_gui_plan" value="$(arg no_gui_plan)"/>
+      <arg name="ext_ns" value="$(arg ns_2)" />
+    </include>
+  </group>
+
+
+</launch>

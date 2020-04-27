@@ -2,19 +2,16 @@
   <arg name="robot_ip" />
   <arg name="dof" default="7"/>
   <arg name="use_moveit" default="false" />
-  <arg name="namespace" default="" />
-
-  <remap from="xarm/joint_states" to="joint_states"/>
-  <remap from="xarm/xarm_states" to="xarm_states" />
+  <arg name="namespace" default="xarm" />
 
   <!-- run xarm driver -->
   <include file="$(find xarm_bringup)/launch/xarm_robot.launch">
     <arg name="robot_ip" value="$(arg robot_ip)" />
-    <arg name="load_urdf" value="false" />
+    <arg name="hw_ns" value="$(arg namespace)" />
     <arg name="publish_tf" value="false"/>
   </include>
 
-  <!-- run xarm_traj_controller from HW interface -->  
-  <node if="$(arg use_moveit)" name="xarm_traj_controller" pkg="xarm_controller" type="xarm_traj_controller" args="ip=$(arg robot_ip)" ns="xarm" respawn="false" output="screen" />
+  <!-- run xarm_traj_controller from HW interface, enable direct command to real robot arm -->  
+  <node if="$(arg use_moveit)" name="xarm_traj_controller" pkg="xarm_controller" type="xarm_traj_controller" args="ip=$(arg robot_ip)" ns="$(arg namespace)" respawn="false" output="screen" />
 
 </launch>

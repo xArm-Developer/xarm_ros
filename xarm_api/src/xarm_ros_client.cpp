@@ -8,7 +8,7 @@
 
 namespace xarm_api{
 
-XArmROSClient::XArmROSClient(ros::NodeHandle& nh)
+void XArmROSClient::init(ros::NodeHandle& nh)
 {   
     nh_ = nh;
 	motion_ctrl_client_ = nh_.serviceClient<xarm_msgs::SetAxis>("motion_ctrl");

@@ -1,0 +1,13 @@
+<launch>
+  <arg name="ns" default="" />
+
+  <remap from="$(arg ns)/source_list" to="/source_list" />
+  <include file="$(find dual_xarm6_moveit_config)/launch/moveit_rviz_common.launch">
+    <arg name="jnt_stat_source" value="[move_group/fake_controller_joint_states]" />
+    <!-- option to launch move_group node or not -->
+    <arg name="load_move_group" value="true" />
+    <!-- whether to use fake_execution controller to drive the motion -->
+    <arg name="fake_execution" value="true" />
+  </include>
+
+</launch>

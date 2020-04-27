@@ -1,7 +1,7 @@
 <launch>
 
   <arg name="robot_ip" />	
-  <arg name="ns" default="" />
+  <arg name="ns" default="xarm" />
   <!-- Important: currently real xArm can be either controlled by API service or Moveit planner, but not at the same time! -->
   <!-- If you use moveit, use the launch file in xarm*_moveit_config package for startup! -->
   <arg name="use_moveit" default="false" />

@@ -7,15 +7,21 @@
   <license>BSD</license>
 
   <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>combined_robot_hw</build_depend>
   <build_depend>controller_manager</build_depend>
   <build_depend>joint_state_controller</build_depend>
   <build_depend>robot_state_publisher</build_depend>
   <build_depend>hardware_interface</build_depend>
   <build_depend>sensor_msgs</build_depend>
   <build_depend>xarm_api</build_depend>
+  
+  <build_export_depend>combined_robot_hw</build_export_depend>
   <build_export_depend>controller_manager</build_export_depend>
   <build_export_depend>joint_state_controller</build_export_depend>
   <build_export_depend>robot_state_publisher</build_export_depend>
+  <build_export_depend>xarm_api</build_export_depend>
+
+  <exec_depend>combined_robot_hw</exec_depend>
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>joint_state_controller</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
@@ -23,4 +29,7 @@
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>xarm_api</exec_depend>
 
+  <export>
+      <hardware_interface plugin="${prefix}/xarm_hw_plugin.xml"/>
+  </export>
 </package>

@@ -1,0 +1,48 @@
+xarm:
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50
+  
+  L_xarm6_traj_controller:
+    type: position_controllers/JointTrajectoryController
+    joints:
+       - L_joint1
+       - L_joint2
+       - L_joint3
+       - L_joint4
+       - L_joint5
+       - L_joint6
+    constraints:
+        goal_time: 0.5
+        stopped_velocity_tolerance: 0.05
+        L_joint1: {trajectory: 1, goal: 0.01}
+        L_joint2: {trajectory: 1, goal: 0.01}
+        L_joint3: {trajectory: 1, goal: 0.01}
+        L_joint4: {trajectory: 1, goal: 0.01}
+        L_joint5: {trajectory: 1, goal: 0.01}
+        L_joint6: {trajectory: 1, goal: 0.01}
+    stop_trajectory_duration: 0.2
+    state_publish_rate:  25
+    action_monitor_rate: 10
+
+  R_xarm6_traj_controller:
+    type: position_controllers/JointTrajectoryController
+    joints:
+       - R_joint1
+       - R_joint2
+       - R_joint3
+       - R_joint4
+       - R_joint5
+       - R_joint6
+    constraints:
+        goal_time: 0.5
+        stopped_velocity_tolerance: 0.05
+        R_joint1: {trajectory: 1, goal: 0.01}
+        R_joint2: {trajectory: 1, goal: 0.01}
+        R_joint3: {trajectory: 1, goal: 0.01}
+        R_joint4: {trajectory: 1, goal: 0.01}
+        R_joint5: {trajectory: 1, goal: 0.01}
+        R_joint6: {trajectory: 1, goal: 0.01}
+    stop_trajectory_duration: 0.2
+    state_publish_rate:  25
+    action_monitor_rate: 10

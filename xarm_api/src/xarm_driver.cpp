@@ -106,7 +106,6 @@ namespace xarm_api
         // Then try to enable motor again:
         res.ret = arm_cmd_->motion_en(8, 1);
 
-
         if(res.ret)
         {
             res.message = "clear err, ret = "  + std::to_string(res.ret);

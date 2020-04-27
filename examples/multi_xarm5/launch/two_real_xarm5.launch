@@ -17,7 +17,7 @@
       <arg name="robot_ip" value="$(arg robot_ip_1)"/>
       <arg name="show_rviz" value="$(arg show_rviz)"/>
       <arg name="no_gui_plan" value="$(arg no_gui_plan)"/>
-      <arg name="ns" value="$(arg ns_1)" />
+      <arg name="ext_ns" value="$(arg ns_1)" />
     </include>
   </group>
 
@@ -28,7 +28,7 @@
       <arg name="robot_ip" value="$(arg robot_ip_2)"/>
       <arg name="show_rviz" value="$(arg show_rviz)"/>
       <arg name="no_gui_plan" value="$(arg no_gui_plan)"/>
-      <arg name="ns" value="$(arg ns_2)" />
+      <arg name="ext_ns" value="$(arg ns_2)" />
     </include>
   </group>
 

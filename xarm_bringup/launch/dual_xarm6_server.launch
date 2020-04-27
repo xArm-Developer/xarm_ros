@@ -1,0 +1,28 @@
+<launch>
+
+  <arg name="robot_ip_1" />	
+  <arg name="robot_ip_2" />
+  <arg name="hw_ns_1" default="L_xarm6" />
+  <arg name="hw_ns_2" default="R_xarm6" />
+  <!-- Important: currently real xArm can be either controlled by API service or Moveit planner, but not at the same time! -->
+  <!-- If you use moveit, use the launch file in xarm*_moveit_config package for startup! -->
+  <arg name="use_moveit" default="false" />
+
+  <rosparam file="$(find dual_xarm6_moveit_config)/config/xarm6_combined_control_config.yaml" command="load"/>
+
+  <!-- common: bring up node to collect robot feedback -->
+  <include file="$(find xarm_bringup)/launch/xarm_driver_common.launch">
+    <arg name="robot_ip" value="$(arg robot_ip_1)" />
+    <arg name="dof" value="6" />
+    <arg name="use_moveit" value="$(arg use_moveit)" />
+    <arg name="namespace" value="$(arg hw_ns_1)" />
+  </include>
+
+  <include file="$(find xarm_bringup)/launch/xarm_driver_common.launch">
+    <arg name="robot_ip" value="$(arg robot_ip_2)" />
+    <arg name="dof" value="6" />
+    <arg name="use_moveit" value="$(arg use_moveit)" />
+    <arg name="namespace" value="$(arg hw_ns_2)" />
+  </include>
+
+</launch>
