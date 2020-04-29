@@ -1,4 +1,4 @@
-# 1. multi_xarm5 (controled separately)
+# 1. multi_xarm5 (controlled separately)
 This package might give you a hint about how to launch and control two or more xArms (same model), while avoiding name clashes. Here xArm5 is used as an example, you can edit the launch files to control xarm6 or xarm7.      
 
 (1) For a simulation, run:
@@ -32,7 +32,7 @@ $ rosservice call /xarm/set_state 0
 **(1) the Cartesian pose representation is the same with xarm SDK here. which is [X(mm), Y(mm), Z(mm), Roll(rad), Pitch(rad), Yaw(rad)]**  
 **(2) the path must start from current tool center point(TCP) position and the command can not be too far away, or the execution will fail or act strange. PLEASE CHECK the correctness of command before sending it.**  
 **(3) service argument format is like: "pose: [214, 0, 121, 3.1416, 0, 0]	mvvelo: 0.0	mvacc: 0.0	mvtime: 0.0	mvradii: 0.0"**    
-**(4) the arguments mvvelo, mvacc, mvtime, and mvradii are not effective now, so just give them all 0.**  
+**(4) For Base Coordinate motion, the arguments mvvelo, mvacc, mvtime, and mvradii are not effective now, so just give them all 0.**  
   
 Suppose current TCP position is at [206, 0, 121, 3.1416, 0, 0]
 ```bash
@@ -44,6 +44,14 @@ $ rosservice call /xarm/move_servo_cart [214,0,121,3.1416,0,0] 0.0 0.0 0.0 0.0
 ```
 And you can program this service calling procedure in a loop with proper intervals inbetween, the final execution will become smooth.   
 
+**Notice: Servo_cartisian in TOOL coordinate:**
+Please update the controller Firmware to version >= 1.5.0. If servo_cartesian in Tool Coordinate is needed, **put 1 to the previous "mvtime" argument**, the resulted motion will base on current Tool coordinate. For example:  
+```bash
+$ rosservice call /xarm/move_servo_cart [0,0,2,0,0,0] 0.0 0.0 1 0.0
+```
+This will make tool to move 2 mm immediately along +Z Axis in **TOOL Coordinate**.  
+
+
 # 3. Servo_Joint (streamed joint-space trajectory)
 There is also a similar service called "**/xarm/move_servoj**", you can use this service to control joint motion in the **same mode (1)** with Servo_Cartesian. It receives **absolute** joint positions as command.  Before calling it, please check the current joint position in "/xarm/joint_states" topic, and increase the target joint position **little by little** just like calling /xarm/move_servo_cart.
 
@@ -53,7 +61,7 @@ $ rosservice call /xarm/move_servoj [0.25,-0.47,0.0,-0.28,0.0,0.76,0.25] 0.0 0.0
 ```
 Which will move joint7 by 0.01 rad **immediately**. Keep calling it and increase the joint positions a small step each time, it will move smoothly. **Be careful not to give a target too far away in one single update**.  
 
-# 4. Dual xArm6 controled with one moveGroup node:
+# 4. Dual xArm6 controlled with one moveGroup node:
 Unlike example 1, This example will bring up only one Rviz and move_group node to control 2 xArm6 arms, which can be used for a dual-arm application.  
 To launch the application, run the following with your correct xArm controller IP addresses: 
 ```bash

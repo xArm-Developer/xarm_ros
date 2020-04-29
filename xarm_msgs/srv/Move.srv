@@ -7,15 +7,24 @@
 # pose： target coordinate. 
 #	For Joint Space target，pose dimention is the number of joints. element as each target joint position.
 #	For Cartesian target: pose dimention is 6 for (x, y, z, roll, pitch, yaw)
+
 float32[] pose
 
 # mvvelo: specified maximum velocity during execution. linear or angular velocity 
+
 float32 mvvelo
+
 # mvacc: specified maximum acceleration during execution. linear or angular acceleration.
+
 float32 mvacc
-# mvtime: currently do not have any special meaning, please just give it 0.
+
+# mvtime: currently do not have any special meaning, please just give it 0. 
+# PLEASE NOTE: after firmware version 1.5, For servo_cartesian motion, mvtime will be used as indicator of coordinate system. (0 for BASE coordinate, non-zero for TOOL coordinate)  
+
 float32 mvtime
+
 # mvradii: this is special for move_ineb service, meaning the blending radius between 2 straight path trajectories, 0 for no blend.
+
 float32 mvradii
 
 ---
@@ -25,4 +34,5 @@ float32 mvradii
 #	message is a string returned by function, indicating execution status.
 
 int16 ret
+
 string message

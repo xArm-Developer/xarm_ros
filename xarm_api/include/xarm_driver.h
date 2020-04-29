@@ -45,6 +45,7 @@ namespace xarm_api
             bool MoveJointCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveLinebCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveLineCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
+            bool MoveLineToolCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveServoJCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveServoCartCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool GripperConfigCB(xarm_msgs::GripperConfig::Request &req, xarm_msgs::GripperConfig::Response &res);
@@ -77,6 +78,7 @@ namespace xarm_api
             ros::ServiceServer set_mode_server_;
             ros::ServiceServer move_lineb_server_;
             ros::ServiceServer move_line_server_;
+            ros::ServiceServer move_line_tool_server_;
             ros::ServiceServer move_servoj_server_;
             ros::ServiceServer move_servo_cart_server_;
             ros::ServiceServer set_tcp_offset_server_;

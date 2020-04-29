@@ -25,20 +25,24 @@
     * [6.1 模式介绍](#61-模式介绍)
     * [6.2 切换模式的正确方法](#62-切换模式的正确方法)
 * [7. 其他示例(***new***)](#7-其他示例)
-
+	* [7.1 两台xArm5 (两进程独立控制)](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#1-multi_xarm5-controlled-separately)
+    * [7.2 Servo_Cartesian 笛卡尔位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
+    * [7.3 Servo_Joint 关节位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#3-servo_joint-streamed-joint-space-trajectory)
+    * [7.4 使用同一个moveGroup节点控制xArm6双臂](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#4-dual-xarm6-controlled-with-one-movegroup-node)
 
 # 1. 简介：
    &ensp;&ensp;此代码库包含xArm模型文件以及相关的控制、规划等示例开发包。开发及测试使用的环境为 Ubuntu 16.04 + ROS Kinetic Kame。
    ***以下的指令说明是基于xArm7, 其他型号用户可以在对应位置将'xarm7'替换成'xarm6'或'xarm5'***
 
 # 2. 更新记录：
-   此代码库仍然处在早期开发阶段，新的功能支持、示例代码，bug修复等等会保持更新。  
-   * 添加xArm 7(旧版)描述文档，3D图形文件以及controller示例，用于进行ROS可视化仿真模拟。
+   此代码库仍然处在开发阶段，新的功能支持、示例代码，bug修复等等会保持更新。  
+   * 添加xArm 7 描述文档，3D图形文件以及controller示例，用于进行ROS可视化仿真模拟。
    * 添加MoveIt!规划器支持，用于控制Gazebo/RViz模型或者xArm真机，但二者不可同时启动。
-   * 由ROS直接控制xArm真机的相关支持目前还是Beta版本，用户使用时应尽量小心，我们会尽快完善。
+   * 添加 ROS直接控制xArm真机的相关支持，用户使用时应尽量小心。
    * 添加 xArm hardware interface 并在驱动真实机械臂时使用 ROS position_controllers/JointTrajectoryController。
-   * 添加 xArm 6 仿真和真机控制支持。
+   * 添加 xArm6 和 xArm5 仿真和真机控制支持。
    * 添加 xArm 机械爪仿真模型。
+   * 添加 xArm6 双臂控制示例。
 
 # 3. 准备工作
 
@@ -159,11 +163,14 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 'robot_dof'参数指的是xArm的关节数目 (默认值为7)。  
 
 ## 5.7 xarm_api/xarm_msgs:
-&ensp;&ensp;这两个package提供给用户不需要自己进行轨迹规划(通过Moveit!或xarm_planner)就可以控制真实xArm机械臂的ros服务, xarm自带的控制盒会进行轨迹规划。 请 ***注意*** 这些service的执行并不通过面向'JointTrajectoryController'的hardware interface。当前支持三种运动命令（ros service同名）:  
-* move_joint: 关节空间的点到点运动, 用户仅需要给定目标关节位置，运动过程最大关节速度/加速度即可。 
-* move_line: 笛卡尔空间的直线轨迹运动，用户需要给定工具中心点（TCP）目标位置以及笛卡尔速度、加速度。  
-* move_lineb: 圆弧交融的直线运动，给定一系列中间点以及目标位置。 每两个中间点间为直线轨迹，但在中间点处做一个圆弧过渡（需给定半径）来保证速度连续。
-另外需要 ***注意*** 的是，使用以上三种service之前，需要通过service依次将机械臂模式(mode)设置为0，然后状态(state)设置为0。这些运动指令的意义和详情可以参考产品使用指南。除此之外还提供了其他xarm编程API支持的service调用, 对于相关ros service的定义在 [xarm_msgs目录](./xarm_msgs/)中。 
+&ensp;&ensp;这两个package提供给用户封装了xArm SDK功能的ros服务, xarm自带的控制盒会进行轨迹规划。当前支持六种运动命令（ros service同名）:  
+* move_joint: 关节空间的点到点运动, 用户仅需要给定目标关节位置，运动过程最大关节速度/加速度即可， 对应SDK里的set_servo_angle()函数。 
+* move_line: 笛卡尔空间的直线轨迹运动，用户需要给定工具中心点（TCP）目标位置以及笛卡尔速度、加速度，对应SDK里的set_position()函数【不指定交融半径】。  
+* move_lineb: 圆弧交融的直线运动，给定一系列中间点以及目标位置。 每两个中间点间为直线轨迹，但在中间点处做一个圆弧过渡（需给定半径）来保证速度连续，对应SDK里的set_position()函数【指定了交融半径】。  
+* move_line_tool: 基于工具坐标系（而不是基坐标系）的直线运动。对应SDK里的set_tool_position()函数。  
+另外需要 ***注意*** 的是，使用以上三种service之前，需要通过service依次将机械臂模式(mode)设置为0，然后状态(state)设置为0。这些运动指令的意义和详情可以参考产品使用指南。除此之外还提供了其他xarm编程API支持的service调用, 对于相关ros service的定义在 [xarm_msgs目录](./xarm_msgs/)中。  
+
+* move_servo_cart/move_servoj: （固定）高频率的笛卡尔或关节轨迹指令，分别对应SDK里的set_servo_cartesian()和set_servo_angle_j()，需要机械臂工作在**模式1**，可以间接实现速度控制。在使用这两个服务功能之前，务必做好**风险评估**并且仔细阅读第[7.2-7.3节](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)的使用方法。  
 
 #### 使用ROS Service启动 xArm:
 
@@ -183,17 +190,25 @@ $ rosservice call /xarm/set_state 0
 ```
 
 #### 关节空间和笛卡尔空间运动指令的示例:
-&ensp;&ensp;以下三个运动命令使用同类型的srv request: [Move.srv](./xarm_msgs/srv/Move.srv)。 比如，调用关节运动命令，最大速度 0.35 rad/s，加速度 7 rad/s^2:  
+&ensp;&ensp;请注意角度应全部使用**radian**作为单位。以下运动命令都使用同类型的srv request: [Move.srv](./xarm_msgs/srv/Move.srv)。  
+##### 1. 关节空间运动:
+&ensp;&ensp;调用关节运动命令，最大速度 0.35 rad/s，加速度 7 rad/s^2:  
 ```bash
 $ rosservice call /xarm/move_joint [0,0,0,0,0,0,0] 0.35 7 0 0
-```
-&ensp;&ensp;调用笛卡尔空间指令，最大线速度 200 mm/s，加速度为 2000 mm/s^2:
-```bash
-$ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 200 2000 0 0
 ```
 &ensp;&ensp;调用回原点服务 (各关节回到0角度)，最大角速度 0.35 rad/s，角加速度 7 rad/s^2:  
 ```bash
 $ rosservice call /xarm/go_home [] 0.35 7 0 0
+```
+##### 2. 基坐标系笛卡尔空间运动:
+&ensp;&ensp;调用笛卡尔空间指令，目标位置表示在机械臂基坐标系中，最大线速度 200 mm/s，加速度为 2000 mm/s^2:  
+```bash
+$ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 200 2000 0 0
+```
+##### 3. 工具坐标系笛卡尔空间运动:
+&ensp;&ensp;调用笛卡尔空间指令，目标位置表示在机械臂当前工具坐标系中，最大线速度 200 mm/s，加速度为 2000 mm/s^2，以下指令将基于当前工具坐标系做**相对移动**(delta_x=50mm, delta_y=100mm, delta_z=100mm), 没有姿态的相对变化：  
+```bash
+$ rosservice call /xarm/move_line_tool [50,100,100,0,0,0] 200 2000 0 0
 ```
 
 #### 工具 I/O 操作:

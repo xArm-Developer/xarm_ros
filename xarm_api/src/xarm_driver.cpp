@@ -47,6 +47,7 @@ namespace xarm_api
         move_joint_server_ = nh_.advertiseService("move_joint", &XARMDriver::MoveJointCB, this);
         move_lineb_server_ = nh_.advertiseService("move_lineb", &XARMDriver::MoveLinebCB, this);
         move_line_server_ = nh_.advertiseService("move_line", &XARMDriver::MoveLineCB, this);
+        move_line_tool_server_ = nh_.advertiseService("move_line_tool", &XARMDriver::MoveLineToolCB, this);
         move_servoj_server_ = nh_.advertiseService("move_servoj", &XARMDriver::MoveServoJCB, this);
         move_servo_cart_server_ = nh_.advertiseService("move_servo_cart", &XARMDriver::MoveServoCartCB, this);        
         clear_err_server_ = nh_.advertiseService("clear_err", &XARMDriver::ClearErrCB, this);
@@ -289,6 +290,29 @@ namespace xarm_api
 
         res.ret = arm_cmd_->move_line(pose[0], req.mvvelo, req.mvacc, req.mvtime);
         res.message = "move line, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XARMDriver::MoveLineToolCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
+    {
+        float pose[1][6];
+        int index = 0;
+        if(req.pose.size() != 6)
+        {
+            res.ret = -1;
+            res.message = "parameters incorrect!";
+            return true;
+        }
+        else
+        {
+            for(index = 0; index < 6; index++)
+            {
+                pose[0][index] = req.pose[index];
+            }
+        }
+
+        res.ret = arm_cmd_->move_line_tool(pose[0], req.mvvelo, req.mvacc, req.mvtime);
+        res.message = "move line tool, ret = " + std::to_string(res.ret);
         return true;
     }
 

@@ -25,24 +25,25 @@
     * [6.1 Mode Explanation](#61-mode-explanation)
     * [6.2 Proper way to change modes](#62-proper-way-to-change-modes)
 * [7. Other Examples  (***Updated***)](#7-other-examples)
-    * [7.1 Multi-xArm5 (separate control)](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#1-multi_xarm5-controled-separately)
+    * [7.1 Multi-xArm5 (separate control)](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#1-multi_xarm5-controlled-separately)
     * [7.2 Servo_Cartesian](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
     * [7.3 Servo_Joint](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#3-servo_joint-streamed-joint-space-trajectory)
-    * [7.4 Dual xArm6 controled with one moveGroup node](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#4-dual-xarm6-controled-with-one-movegroup-node)
+    * [7.4 Dual xArm6 controlled with one moveGroup node](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#4-dual-xarm6-controlled-with-one-movegroup-node)
 
 # 1. Introduction
-   &ensp;&ensp;This repository contains the 3D model of xArm and demo packages for ROS development and simulations.Developing and testing environment: Ubuntu 16.04 + ROS Kinetic Kame.  
+   &ensp;&ensp;This repository contains the 3D models of xArm series and demo packages for ROS development and simulations.Developing and testing environment: Ubuntu 16.04 + ROS Kinetic Kame.  
    ***Instructions below is based on xArm7, other model user can replace 'xarm7' with 'xarm6' or 'xarm5' where applicable.***
    For simplified Chinese instructions: [简体中文版](./ReadMe_cn.md)    
 
 # 2. Update Summary
-   This package is still in early development, tests, bug fixes and new functions are to be updated regularly in the future. 
-   * Add xArm 7 (old model) description files, meshes and sample controller demos for ROS simulation and visualization.
+   This package is still under development and improvement, tests, bug fixes and new functions are to be updated regularly in the future. 
+   * Add xArm 7 description files, meshes and sample controller demos for ROS simulation and visualization.
    * Add Moveit! planner support to control Gazebo virtual model and real xArm, but the two can not launch together.
-   * Direct control of real xArm through Moveit GUI is still in beta version, please use it with special care.
+   * Add Direct control of real xArm through Moveit GUI, please use it with special care.
    * Add xArm hardware interface to use ROS position_controllers/JointTrajectoryController on real robot.
    * Add xArm 6 and xArm 5 simulation/real robot control support.
    * Add simulation model of xArm Gripper.
+   * Add demo to control dual xArm6 through Moveit.
 
 # 3. Preparations before using this package
 
@@ -110,7 +111,7 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 # 5. Package description & Usage Guidance
    
 ## 5.1 xarm_description
-   &ensp;&ensp;xArm7 description files, mesh files and gazebo plugin configurations, etc. It's not recommended to change the xarm description file since other packages depend on it. 
+   &ensp;&ensp;xArm description files, mesh files and gazebo plugin configurations, etc. It's not recommended to change the xarm description file since other packages depend on it. 
 
 ## 5.2 xarm_gazebo
    &ensp;&ensp;Gazebo world description files and simulation launch files. User can add or build their own models in the simulation world file.
@@ -161,11 +162,14 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 Argument 'robot_dof' specifies the number of joints of your xArm (default is 7).  
 
 ## 5.7 xarm_api/xarm_msgs:
-&ensp;&ensp;These two packages provide user with the ros services to control xArm without self-trajectory planning (through Moveit! or xarm_planner), the controller box computer will do the planning work. Note that these services ***does not*** use xarm hardware interface, which is for Moveit and 'JointTrajectoryController' interface. There are three types of motion command (service names) supported:  
-* move_joint: joint space point to point command, given target joint angles, max joint velocity and acceleration.  
-* move_line: straight-line motion to the specified Cartesian Tool Centre Point(TCP) target.  
-* move_lineb: a list of via points followed by target Cartesian point. Each segment is straight-line with Arc blending at the via points, to make velocity continuous.  
-Please ***keep in mind that*** before calling the three motion services above, first set robot mode to be 0, then set robot state to be 0, by calling relavent services. Meaning of the commands are consistent with the descriptions in product ***user manual***, other xarm API supported functions are also available as service call. Refer to [xarm_msgs package](./xarm_msgs/) for more details and usage guidance.
+&ensp;&ensp;These two packages provide user with the ros service wrapper of the functions in xArm SDK. There are 6 types of motion command (service names) supported:  
+* <font color=blue>move_joint:</font> joint space point to point command, given target joint angles, max joint velocity and acceleration. Corresponding function in SDK is "set_servo_angle()".  
+* <font color=blue>move_line:</font> straight-line motion to the specified Cartesian Tool Centre Point(TCP) target. Corresponding function in SDK is "set_position()"[blending radius not specified].  
+* <font color=blue>move_lineb:</font> a list of via points followed by target Cartesian point. Each segment is straight-line with Arc blending at the via points, to make velocity continuous. Corresponding function in SDK is "set_position()"[blending radius specified].  
+* <font color=blue>move_line_tool:</font> straight-line motion based on the **Tool coordinate system** rather than the base system. Corresponding function in SDK is "set_tool_position()".  
+Please ***keep in mind that*** before calling the three motion services above, first set robot mode to be 0, then set robot state to be 0, by calling relavent services. Meaning of the commands are consistent with the descriptions in product ***user manual***, other xarm API supported functions are also available as service call. Refer to [xarm_msgs package](./xarm_msgs/) for more details and usage guidance.  
+
+* <font color=blue>move_servo_cart/move_servoj:</font> streamed high-frequency trajectory command execution in Cartesian space or joint space. Corresponding functions in SDK are set_servo_cartesian() and set_servo_angle_j(). An alternative way to implement <font color=red>velocity control</font>. These two services operate the robot in mode 1. Special **RISK ASSESMENT** is required before using them. Please read the guidance carefully at [chapter 7.2-7.3](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
 
 #### Starting xArm by ROS service:
 
@@ -185,18 +189,26 @@ $ rosservice call /xarm/set_state 0
 ```
 
 #### Joint space or Cartesian space command example:
+&ensp;&ensp;Please note that all the angles must use the unit of ***radian***. All motion commands use the same type of srv request: [Move.srv](./xarm_msgs/srv/Move.srv).   
 
-&ensp;&ensp;All motion commands use the same type of srv request: [Move.srv](./xarm_msgs/srv/Move.srv). For example, to call joint space motion with max speed 0.35 rad/s and acceleration 7 rad/s^2:  
+##### 1. Joint space motion:
+&ensp;&ensp;To call joint space motion with max speed 0.35 rad/s and acceleration 7 rad/s^2:   
 ```bash
 $ rosservice call /xarm/move_joint [0,0,0,0,0,0,0] 0.35 7 0 0
-```
-&ensp;&ensp;To call Cartesian spece motion with max speed 200 mm/s and acceleration 2000 mm/s^2:
-```bash
-$ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 200 2000 0 0
 ```
 &ensp;&ensp;To go back to home (all joints at 0 rad) position with max speed 0.35 rad/s and acceleration 7 rad/s^2:  
 ```bash
 $ rosservice call /xarm/go_home [] 0.35 7 0 0
+```
+##### 2. Cartesian space motion in Base coordinate:
+&ensp;&ensp;To call Cartesian motion to the target expressed in robot BASE Coordinate, with max speed 200 mm/s and acceleration 2000 mm/s^2:
+```bash
+$ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 200 2000 0 0
+```
+##### 3. Cartesian space motion in Tool coordinate:
+&ensp;&ensp;To call Cartesian motion expressed in robot TOOL Coordinate, with max speed 200 mm/s and acceleration 2000 mm/s^2, the following will move a **relative motion** (delta_x=50mm, delta_y=100mm, delta_z=100mm) along the current Tool coordinate, no orientation change:
+```bash
+$ rosservice call /xarm/move_line_tool [50,100,100,0,0,0] 200 2000 0 0
 ```
 
 #### Tool I/O Operations:

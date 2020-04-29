@@ -38,9 +38,9 @@ int UxbusCmdTcp::check_xbus_prot(unsigned char *datas, int funcode) {
   else
   { bus_flag -= 1; }
 
-  if (num != bus_flag) { fprintf(stderr, "expect flag: %d, recv: %d\n", bus_flag, num); return UXBUS_STATE::ERR_NUM; }
+  if (num != bus_flag) { /*fprintf(stderr, "expect flag: %d, recv: %d\n", bus_flag, num);*/ return UXBUS_STATE::ERR_NUM; }
   if (prot != TX2_PROT_CON_) { return UXBUS_STATE::ERR_PROT; }
-  if (fun != funcode) { fprintf(stderr, "expect funcode: %d, recv: %d\n", funcode, fun); return UXBUS_STATE::ERR_FUN; }
+  if (fun != funcode) { /*fprintf(stderr, "expect funcode: %d, recv: %d\n", funcode, fun);*/ return UXBUS_STATE::ERR_FUN; }
   if (state & 0x40) { return UXBUS_STATE::ERR_CODE; }
   if (state & 0x20) { return UXBUS_STATE::WAR_CODE; }
   if (sizeof_data != len + 6) { return UXBUS_STATE::ERR_LENG; }
