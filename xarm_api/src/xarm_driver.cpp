@@ -81,6 +81,11 @@ namespace xarm_api
                     arm_cmd_->clean_err();
                     ROS_WARN("Cleared low-voltage error of joint %d", i+1);
                 }
+                else if((dbg_msg[i*2]==1))
+                {
+                    arm_cmd_->clean_err();
+                    ROS_WARN("There is servo error code:(0x%x) in joint %d, trying to clear it..", dbg_msg[i*2+1], i+1);
+                }
             }
 
         }

@@ -44,7 +44,7 @@ namespace xarm_control
 
 	  	if(ret3)
 	  	{
-	  		ROS_ERROR("The Xarm may not be properly connected or hardware error exists, PLEASE CHECK or RESTART HARDWARE!!!");
+	  		ROS_ERROR("The Xarm may not be properly connected (ret = 3) or hardware Error/Warning (ret = 1 or 2) exists, PLEASE CHECK or RESTART HARDWARE!!!");
 	  		ROS_ERROR(" ");
 	  		ROS_ERROR("Did you specify the correct ros param xarm_robot_ip ? Exitting...");
 	  		ros::shutdown();
