@@ -13,6 +13,6 @@
         <mechanicalReduction>${reduction}</mechanicalReduction>
       </actuator>
     </transmission>
-    
+
   </xacro:macro>
 </robot>

@@ -22,6 +22,10 @@ void XArmROSClient::init(ros::NodeHandle& nh)
     move_joint_client_ = nh_.serviceClient<xarm_msgs::Move>("move_joint");
 	move_servoj_client_ = nh_.serviceClient<xarm_msgs::Move>("move_servoj",true); // persistent connection for servoj
     move_servo_cart_client_ = nh_.serviceClient<xarm_msgs::Move>("move_servo_cart",true); // persistent connection for servo_cartesian
+
+    //tool modbus:
+    config_modbus_client_ = nh_.serviceClient<xarm_msgs::ConfigToolModbus>("config_tool_modbus");
+    send_modbus_client_ = nh_.serviceClient<xarm_msgs::SetToolModbus>("set_tool_modbus");
 }
 
 int XArmROSClient::motionEnable(short en)
@@ -235,5 +239,48 @@ int XArmROSClient::moveLineB(int num_of_pnts, const std::vector<float> cart_cmds
     return 0;
 }
 
-
+int XArmROSClient::config_tool_modbus(int baud_rate, int time_out_ms)
+{
+    cfg_modbus_msg_.request.baud_rate = baud_rate;
+    cfg_modbus_msg_.request.timeout_ms = time_out_ms;
+    if(config_modbus_client_.call(cfg_modbus_msg_))
+    {
+        return cfg_modbus_msg_.response.ret;
+    }
+    else
+    {
+        ROS_ERROR("Failed to call service config_tool_modbus");
+        return 1;
+    }
 }
+
+int XArmROSClient::send_tool_modbus(unsigned char* data, int send_len, unsigned char* recv_data, int recv_len)
+{
+    std::vector<unsigned char> tx_d(send_len);
+    for(int i=0; i<send_len; i++)
+    {
+        tx_d.push_back(data[i]);
+    }
+
+    set_modbus_msg_.request.send_data = tx_d;
+    set_modbus_msg_.request.respond_len = recv_len;
+    if(send_modbus_client_.call(set_modbus_msg_))
+    {   
+        if(recv_len)
+        {
+           for(int j=0; j<recv_len; j++)
+           {
+             recv_data[j] = set_modbus_msg_.response.respond_data[j];
+           }
+        }
+
+        return 0;
+    }
+    else
+    {
+        ROS_ERROR("Failed to call service send_tool_modbus");
+        return 1;
+    }
+}
+
+}// namespace xarm_api

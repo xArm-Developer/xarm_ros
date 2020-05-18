@@ -40,6 +40,7 @@ public:
   static const unsigned short POS_SPD = 0x0303;
   static const unsigned short MT_ID = 0x1600;
   static const unsigned short BAUDRATE = 0x0601;
+  static const unsigned short SOFT_REBOOT = 0x0607;
   static const unsigned short TAGET_TOQ = 0x050a;
   static const unsigned short CURR_TOQ = 0x050c;
   static const unsigned short TOQ_SPD = 0x050e;
@@ -55,6 +56,7 @@ public:
   static const unsigned short RESET_ERR = 0x0109;
   static const unsigned short SV3_BRO_ID = 0xFF;
 
+  static const unsigned short MODBUS_BAUDRATE = 0x0A0B;
   static const unsigned short DIGITAL_IN = 0x0A14;
   static const unsigned short DIGITAL_OUT = 0x0A15;
   static const unsigned short ANALOG_IO1 = 0x0A16;

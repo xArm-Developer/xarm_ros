@@ -24,6 +24,8 @@ public:
 	int moveJoint(const std::vector<float>& joint_cmd, float jnt_vel_rad, float jnt_acc_rad=15);
 	int moveLine(const std::vector<float>& cart_cmd, float cart_vel_mm, float cart_acc_mm=500);
 	int moveLineB(int num_of_pnts, const std::vector<float> cart_cmds[], float cart_vel_mm, float cart_acc_mm=500, float radii=0);
+	int config_tool_modbus(int baud_rate, int time_out_ms);
+	int send_tool_modbus(unsigned char* data, int send_len, unsigned char* recv_data=NULL, int recv_len=0);
 
 private:
 	ros::ServiceClient motion_ctrl_client_;
@@ -37,6 +39,8 @@ private:
 	ros::ServiceClient move_joint_client_;
 	ros::ServiceClient set_tcp_offset_client_;
 	ros::ServiceClient set_load_client_;
+	ros::ServiceClient config_modbus_client_;
+	ros::ServiceClient send_modbus_client_;
 
     xarm_msgs::SetAxis set_axis_srv_;
     xarm_msgs::SetInt16 set_int16_srv_;
@@ -45,6 +49,8 @@ private:
     xarm_msgs::Move move_srv_;
     xarm_msgs::Move servoj_msg_;
     xarm_msgs::Move servo_cart_msg_;
+    xarm_msgs::ConfigToolModbus cfg_modbus_msg_;
+    xarm_msgs::SetToolModbus set_modbus_msg_;
 
     ros::NodeHandle nh_;
 };

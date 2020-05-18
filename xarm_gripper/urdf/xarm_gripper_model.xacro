@@ -10,7 +10,7 @@
   <xacro:include filename="$(find xarm_gripper)/urdf/xarm_gripper.transmission.xacro" />
   <xacro:include filename="$(find xarm_gripper)/urdf/xarm_gripper.gazebo.xacro" />
 
-  <xacro:macro name="load_gripper" params="prefix:='' attach_to:='' ns:='xarm_gripper' xyz:='0 0 0' rpy:='0 0 0' effort_control:='false' ">
+  <xacro:macro name="load_gripper" params="prefix:='' attach_to:='' ns:='xarm' xyz:='0 0 0' rpy:='0 0 0' effort_control:='false' ">
     <!-- gazebo plugin -->
     <!-- <xacro:gazebo_ros_control_plugin namespace="${ns}"/> -->
 
@@ -24,6 +24,27 @@
     </xacro:unless>
 
     <xacro:xarm_gripper_gazebo prefix="${prefix}" />
+
+    <!-- mimic_joint_plugin has to be installed: -->
+    <xacro:mimic_joint_plugin_gazebo name_prefix="left_finger_joint"
+    following_joint="drive_joint" mimic_joint="left_finger_joint"
+    has_pid="true" multiplier="1.0" max_effort="10.0" />
+
+    <xacro:mimic_joint_plugin_gazebo name_prefix="left_inner_knuckle_joint"
+    following_joint="drive_joint" mimic_joint="left_inner_knuckle_joint"
+    has_pid="true" multiplier="1.0" max_effort="10.0" />
+
+    <xacro:mimic_joint_plugin_gazebo name_prefix="right_outer_knuckle_joint"
+    following_joint="drive_joint" mimic_joint="right_outer_knuckle_joint"
+    has_pid="true" multiplier="1.0" max_effort="10.0" />
+
+    <xacro:mimic_joint_plugin_gazebo name_prefix="right_finger_joint"
+    following_joint="drive_joint" mimic_joint="right_finger_joint"
+    has_pid="true" multiplier="1.0" max_effort="10.0" />
+
+    <xacro:mimic_joint_plugin_gazebo name_prefix="right_inner_knuckle_joint"
+    following_joint="drive_joint" mimic_joint="right_inner_knuckle_joint"
+    has_pid="true" multiplier="1.0" max_effort="10.0" />
 
   </xacro:macro>
 </robot>

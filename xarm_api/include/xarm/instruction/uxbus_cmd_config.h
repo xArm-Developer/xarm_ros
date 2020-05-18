@@ -92,6 +92,7 @@ public:
 	static const unsigned char SERVO_ZERO = 105;
 	static const unsigned char SERVO_DBMSG = 106;
 
+	static const unsigned char TGPIO_MB_TIOUT = 123;
 	static const unsigned char TGPIO_MODBUS = 124;
 	static const unsigned char TGPIO_ERR = 125;
 	static const unsigned char TGPIO_W16B = 127;

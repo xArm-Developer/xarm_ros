@@ -4,10 +4,14 @@
  *
  * Author: Jimy Zhang <jimy92@163.com>
  ============================================================================*/
+#include <unistd.h>
 #include "xarm/instruction/uxbus_cmd.h"
 #include "xarm/instruction/servo3_config.h"
 #include "xarm/instruction/uxbus_cmd_config.h"
 #include "xarm/debug/debug_print.h"
+
+static const int BAUDRATES[13]= {4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600,
+                 1000000, 1500000, 2000000, 2500000};
 
 UxbusCmd::UxbusCmd(void) {}
 
@@ -697,6 +701,38 @@ int UxbusCmd::tgpio_set_modbus(unsigned char *modbus_t, int len_t, unsigned char
 
 	ret = send_pend(UXBUS_RG::TGPIO_MODBUS, -1, UXBUS_CONF::GET_TIMEOUT, rx_data);
 	return ret;
+}
+
+int UxbusCmd::set_modbus_timeout(int value)
+{
+	return set_nu16(UXBUS_RG::TGPIO_MB_TIOUT, &value, 1);
+}
+
+int UxbusCmd::set_modbus_baudrate(int baudrate)
+{
+	int index = -1;
+	for(int i=0; i<sizeof(BAUDRATES)/sizeof(int); i++)
+	{
+		if(baudrate==BAUDRATES[i])
+		{
+			index = i;
+			break;
+		}
+	}
+	if(index==-1)
+		return -1;
+
+	float curr_ind;
+	if(tgpio_addr_r16(SERVO3_RG::MODBUS_BAUDRATE & 0x0FFF, &curr_ind))
+		return -1;
+	if(((int)curr_ind!=index))
+	{
+		tgpio_addr_w16(SERVO3_RG::MODBUS_BAUDRATE, index);
+		tgpio_addr_w16((0x1000 | SERVO3_RG::MODBUS_BAUDRATE), index);
+		usleep(1e4); // 10 ms
+		return tgpio_addr_w16(SERVO3_RG::SOFT_REBOOT, 1);
+	}
+	return 0;
 }
 
 int UxbusCmd::gripper_modbus_w16s(int addr, float value, int len) {

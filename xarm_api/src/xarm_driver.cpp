@@ -40,9 +40,7 @@ namespace xarm_api
         set_state_server_ = nh_.advertiseService("set_state", &XARMDriver::SetStateCB, this);
         set_tcp_offset_server_ = nh_.advertiseService("set_tcp_offset", &XARMDriver::SetTCPOffsetCB, this);
         set_load_server_ = nh_.advertiseService("set_load", &XARMDriver::SetLoadCB, this);
-        set_end_io_server_ = nh_.advertiseService("set_digital_out", &XARMDriver::SetDigitalIOCB, this);
-        get_digital_in_server_ = nh_.advertiseService("get_digital_in", &XARMDriver::GetDigitalIOCB, this);
-        get_analog_in_server_ = nh_.advertiseService("get_analog_in", &XARMDriver::GetAnalogIOCB, this);
+
         go_home_server_ = nh_.advertiseService("go_home", &XARMDriver::GoHomeCB, this);
         move_joint_server_ = nh_.advertiseService("move_joint", &XARMDriver::MoveJointCB, this);
         move_lineb_server_ = nh_.advertiseService("move_lineb", &XARMDriver::MoveLinebCB, this);
@@ -51,6 +49,13 @@ namespace xarm_api
         move_servoj_server_ = nh_.advertiseService("move_servoj", &XARMDriver::MoveServoJCB, this);
         move_servo_cart_server_ = nh_.advertiseService("move_servo_cart", &XARMDriver::MoveServoCartCB, this);        
         clear_err_server_ = nh_.advertiseService("clear_err", &XARMDriver::ClearErrCB, this);
+
+        // tool io:
+        set_end_io_server_ = nh_.advertiseService("set_digital_out", &XARMDriver::SetDigitalIOCB, this);
+        get_digital_in_server_ = nh_.advertiseService("get_digital_in", &XARMDriver::GetDigitalIOCB, this);
+        get_analog_in_server_ = nh_.advertiseService("get_analog_in", &XARMDriver::GetAnalogIOCB, this);
+        config_modbus_server_ = nh_.advertiseService("config_tool_modbus", &XARMDriver::ConfigModbusCB, this);
+        set_modbus_server_ = nh_.advertiseService("set_tool_modbus", &XARMDriver::SetModbusCB, this);
 
         gripper_config_server_ = nh_.advertiseService("gripper_config", &XARMDriver::GripperConfigCB, this);
         gripper_move_server_ = nh_.advertiseService("gripper_move", &XARMDriver::GripperMoveCB, this);
@@ -106,9 +111,10 @@ namespace xarm_api
     bool XARMDriver::ClearErrCB(xarm_msgs::ClearErr::Request& req, xarm_msgs::ClearErr::Response& res)
     {
         // First clear controller warning and error:
-        int ret1 = arm_cmd_->clean_war(); 
-        int ret2 = arm_cmd_->clean_err();
-        int ret3 = arm_cmd_->gripper_modbus_clean_err();
+        int ret1 = arm_cmd_->gripper_modbus_clean_err();
+        int ret2 = arm_cmd_->clean_war(); 
+        int ret3 = arm_cmd_->clean_err();
+
         // Then try to enable motor again:
         res.ret = arm_cmd_->motion_en(8, 1);
 
@@ -238,6 +244,51 @@ namespace xarm_api
                 return false;
         }
         res.message = "get analog port ret = " + std::to_string(res.ret); 
+        return true;
+    }
+
+    bool XARMDriver::SetModbusCB(xarm_msgs::SetToolModbus::Request &req, xarm_msgs::SetToolModbus::Response &res)
+    {
+        int send_len = req.send_data.size();
+        int recv_len = req.respond_len;
+        unsigned char tx_data[send_len], rx_data[recv_len];
+
+        for(int i=0; i<send_len; i++)
+        {
+            tx_data[i] = req.send_data[i];
+        }
+        res.ret = arm_cmd_->tgpio_set_modbus(tx_data, send_len, rx_data);
+        for(int i=0; i<recv_len; i++)
+        {
+           res.respond_data[i] = rx_data[i];
+        }
+
+        return true;
+    }
+
+    bool XARMDriver::ConfigModbusCB(xarm_msgs::ConfigToolModbus::Request &req, xarm_msgs::ConfigToolModbus::Response &res)
+    {
+        res.message = "";
+        int ret = arm_cmd_->set_modbus_baudrate(req.baud_rate);
+        if(ret)
+        {
+            res.message = "set baud_rate, ret = "+ std::to_string(ret);
+            if(ret==1)
+                res.message += " controller error exists, please check and run clear_err service first!";
+        }
+        ret = arm_cmd_->set_modbus_timeout(req.timeout_ms);
+        if(ret)
+        {
+            res.message += (std::string(" set baud_rate, ret = ") + std::to_string(ret));
+            if(ret==1)
+                res.message += " controller error exists, please check and run clear_err service first!";
+        }
+        
+        if(res.message.size())
+            res.ret = -1;
+        else
+            res.message = "Modbus configuration OK";
+
         return true;
     }
 

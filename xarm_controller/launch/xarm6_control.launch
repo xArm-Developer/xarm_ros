@@ -6,6 +6,7 @@
   <arg name="add_gripper" default="false" />
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
+  <!-- Load trajectory controller for xArm by default -->
   <rosparam unless="$(arg run_demo_traj)" file="$(find xarm_controller)/config/xarm6_traj_controller.yaml" command="load"/>
   <node unless="$(arg run_demo_traj)"
     name="traj_controller_spawner"
@@ -16,10 +17,9 @@
     ns="/$(arg namespace)"
     args="spawn xarm6_traj_controller joint_state_controller"/>
 
+  <!-- run_demo: load the position controllers -->
   <rosparam if="$(arg run_demo_traj)"
     file="$(find xarm_controller)/config/xarm6_position_controllers.yaml" command="load"/>
-
-  <!-- run_demo: load the position controllers -->
   <node if="$(arg run_demo_traj)" name="position_controller_spawner"
     pkg="controller_manager"
     type="spawner"
@@ -30,6 +30,16 @@
           joint3_position_controller joint4_position_controller
           joint5_position_controller joint6_position_controller
           joint_state_controller"/>
+
+  <rosparam if="$(arg add_gripper)"
+    file="$(find xarm_controller)/config/gripper_traj_controller.yaml" command="load"/>
+  <node if="$(arg add_gripper)" name="gripper_controller_spawner"
+    pkg="controller_manager"
+    type="spawner"
+    respawn="false"
+    output="screen"
+    ns="/$(arg namespace)"
+    args="gripper_trajectory_controller "/>
 
   <!-- convert joint states to TF transforms for rviz, etc -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"

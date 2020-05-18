@@ -21,6 +21,7 @@
         * [5.7.5 关于设定末端工具偏移量](#关于设定末端工具偏移量)  
         * [5.7.6 清除错误](#清除错误)  
 		* [5.7.7 机械爪控制(***new***)](#机械爪控制)  
+		* [5.7.8 末端工具Modbus通信 (***new***)](#末端工具modbus通信)
 * [6. 模式切换(***new***)](#6-模式切换)
     * [6.1 模式介绍](#61-模式介绍)
     * [6.2 切换模式的正确方法](#62-切换模式的正确方法)
@@ -58,7 +59,10 @@ Gazebo ROS Control: <http://gazebosim.org/tutorials/?tut=ros_control>
 Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>  
 
 ## 3.3 如果使用Gazebo: 请提前下载好 'table' 3D 模型
-&ensp;&ensp;这个模型在Gazebo demo中会用到。在Gazebo仿真环境中, 在model database列表里寻找 'table', 并将此模型拖入旁边的3D环境中. 通过这个操作，桌子的模型就会自动下载到本地。
+&ensp;&ensp;这个模型在Gazebo demo中会用到。在Gazebo仿真环境中, 在model database列表里寻找 'table', 并将此模型拖入旁边的3D环境中. 通过这个操作，桌子的模型就会自动下载到本地。  
+
+## 3.4 安装"mimic_joint_plugin"用于xArm Gripper的Gazebo仿真
+&ensp;&ensp;如果xArm Gripper需要在Gazebo环境中仿真, 为了使物理引擎中的 mimic joints 并联机构可以正常运作，需要安装来自Konstantinos Chatzilygeroudis (@costashatz) 的 [**mimic_joint_plugin**](https://github.com/roboticsgroup/roboticsgroup_gazebo_plugins)。关于这个插件的使用参考了@mintar的[这个教程](https://github.com/mintar/mimic_joint_gazebo_tutorial) 。
 
 # 4. 开始使用'xarm_ros'
    
@@ -266,7 +270,20 @@ $ rosservice call /xarm/gripper_move 500
 ```bash
 $ rosservice call /xarm/gripper_status
 ```
-&ensp;&ensp;如果错误码不为0，请参考使用说明书查询错误原因，清除错误同样可使用上一节的clear_err service。
+&ensp;&ensp;如果错误码不为0，请参考使用说明书查询错误原因，清除错误同样可使用上一节的clear_err service。  
+
+#### 末端工具Modbus通信:
+如果需要与末端工具进行modbus通讯, 需要先通过"xarm/config_tool_modbus"服务设置正确的通信波特率和超时时间 (ms) (参考 [ConfigToolModbus.srv](/xarm_msgs/srv/ConfigToolModbus.srv)). 例如: 
+```bash
+$ rosservice call /xarm/config_tool_modbus 115200 20
+```
+以上命令会设置末端modbus通信波特率为 115200 bps，接收超时时间为 20**毫秒**。 如果之后这些参数没有改变就不需要重新设置。 **请注意** 设置一个新的波特率可能会返回1（报错误码28）而不是0, 实际上如果设备已正确连接且没有其他导致通信错误的因素，设置是已经正确执行的。您可以清除错误后重新调用一次这个服务确定是否返回0。当前仅支持如下波特率设置 (单位bps): [4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600, 1000000, 1500000, 2000000, 2500000].  
+
+设置完成后，modbus通信可以这样通过rosservice进行 (参考 [SetToolModbus.srv](/xarm_msgs/srv/SetToolModbus.srv)):  
+```bash
+$ rosservice call /xarm/set_tool_modbus [0x01,0x06,0x00,0x0A,0x00,0x03] 0
+```
+第一个参数是要发送的通讯字节序列, 第二个参数是需要接收的回复字节数量. **请确保这个数字是正确的，否则会触发段错误而导致xarm driver节点进程退出**.  
 
 # 6. 模式切换
 &ensp;&ensp;xArm 在不同的控制方式下可能会工作在不同的模式中，当前的模式可以通过topic "xarm/xarm_states" 的内容查看。在某些情况下，需要用户主动切换模式以达到继续正常工作的目的。

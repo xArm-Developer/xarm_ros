@@ -16,6 +16,8 @@
 #include <xarm_msgs/GripperConfig.h>
 #include <xarm_msgs/GripperMove.h>
 #include <xarm_msgs/GripperState.h>
+#include <xarm_msgs/SetToolModbus.h>
+#include <xarm_msgs/ConfigToolModbus.h>
 #include <sensor_msgs/JointState.h>
 #include <xarm/common/data_type.h>
 #include <xarm/linux/thread.h>
@@ -51,6 +53,8 @@ namespace xarm_api
             bool GripperConfigCB(xarm_msgs::GripperConfig::Request &req, xarm_msgs::GripperConfig::Response &res);
             bool GripperMoveCB(xarm_msgs::GripperMove::Request &req, xarm_msgs::GripperMove::Response &res);
             bool GripperStateCB(xarm_msgs::GripperState::Request &req, xarm_msgs::GripperState::Response &res);
+            bool SetModbusCB(xarm_msgs::SetToolModbus::Request &req, xarm_msgs::SetToolModbus::Response &res);
+            bool ConfigModbusCB(xarm_msgs::ConfigToolModbus::Request &req, xarm_msgs::ConfigToolModbus::Response &res);
 
             void pub_robot_msg(xarm_msgs::RobotMsg rm_msg);
             void pub_joint_state(sensor_msgs::JointState js_msg);
@@ -90,6 +94,8 @@ namespace xarm_api
             ros::ServiceServer gripper_config_server_;
             ros::ServiceServer gripper_move_server_;
             ros::ServiceServer gripper_state_server_;
+            ros::ServiceServer set_modbus_server_;
+            ros::ServiceServer config_modbus_server_;
 
             ros::Publisher joint_state_;
             ros::Publisher robot_rt_state_; 

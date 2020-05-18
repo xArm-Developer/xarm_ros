@@ -68,6 +68,8 @@ find_package(catkin REQUIRED COMPONENTS
    GripperMove.srv
    GripperState.srv
    SetLoad.srv
+   SetToolModbus.srv
+   ConfigToolModbus.srv
  )
 
 ## Generate actions in the 'action' folder

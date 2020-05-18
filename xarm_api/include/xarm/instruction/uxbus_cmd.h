@@ -102,6 +102,8 @@ public:
 	int tgpio_get_analog2(float *value);
 
 	int tgpio_set_modbus(unsigned char *modbus_t, int len_t, unsigned char *ret_data);
+	int set_modbus_timeout(int value);
+	int set_modbus_baudrate(int baudrate);
 	int gripper_modbus_w16s(int addr, float value, int len);
 	int gripper_modbus_r16s(int addr, int len, unsigned char *rx_data);
 	int gripper_modbus_set_en(int value);
