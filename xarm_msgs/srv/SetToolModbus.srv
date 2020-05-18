@@ -1,0 +1,10 @@
+# unsigned char data to be sent to tool device through modbus
+uint8[] send_data
+
+# Specify the anticipated maximum respond data length in bytes
+int16 respond_len
+
+---
+
+int16 ret
+uint8[] respond_data
