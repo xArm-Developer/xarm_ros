@@ -251,7 +251,7 @@ namespace xarm_api
     {
         int send_len = req.send_data.size();
         int recv_len = req.respond_len;
-        unsigned char tx_data[send_len], rx_data[recv_len];
+        unsigned char tx_data[send_len]={0}, rx_data[recv_len]={0};
 
         for(int i=0; i<send_len; i++)
         {
@@ -260,7 +260,7 @@ namespace xarm_api
         res.ret = arm_cmd_->tgpio_set_modbus(tx_data, send_len, rx_data);
         for(int i=0; i<recv_len; i++)
         {
-           res.respond_data[i] = rx_data[i];
+           res.respond_data.push_back(rx_data[i]);
         }
 
         return true;

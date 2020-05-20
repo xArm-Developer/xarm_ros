@@ -285,9 +285,14 @@ The above command will configure the tool modbus baudrate to be 115200 bps and t
 
 Then the communication can be conducted like (refer to [SetToolModbus.srv](/xarm_msgs/srv/SetToolModbus.srv)):  
 ```bash
-$ rosservice call /xarm/set_tool_modbus [0x01,0x06,0x00,0x0A,0x00,0x03] 0
+$ rosservice call /xarm/set_tool_modbus [0x01,0x06,0x00,0x0A,0x00,0x03] 7
 ```
-First argument would be the uint8(unsigned char) data array to be sent to the modbus tool device, and second is the number of characters to be received as a response from the device. **Be sure this number is correct, or it will cause a segmentation fault and crash the xarm driver node**.  
+First argument would be the uint8(unsigned char) data array to be sent to the modbus tool device, and second is the number of characters to be received as a response from the device. **This number should be the expected data byte length +1 (without CRC bytes)**. A byte with value of **0x09** would always be attached to the head if received from tool modbus, and the rest bytes are response data from the device. For example, with some testing device the above instruction would reply:  
+```bash
+ret: 0
+respond_data: [9, 1, 6, 0, 10, 0, 3]
+```
+and actual feedback data frame is: [0x01, 0x06, 0x00, 0x0A, 0x00, 0x03], with the length of 6 bytes.   
 
 
 # 6. Mode Change

@@ -281,9 +281,14 @@ $ rosservice call /xarm/config_tool_modbus 115200 20
 
 设置完成后，modbus通信可以这样通过rosservice进行 (参考 [SetToolModbus.srv](/xarm_msgs/srv/SetToolModbus.srv)):  
 ```bash
-$ rosservice call /xarm/set_tool_modbus [0x01,0x06,0x00,0x0A,0x00,0x03] 0
+$ rosservice call /xarm/set_tool_modbus [0x01,0x06,0x00,0x0A,0x00,0x03] 7
 ```
-第一个参数是要发送的通讯字节序列, 第二个参数是需要接收的回复字节数量. **请确保这个数字是正确的，否则会触发段错误而导致xarm driver节点进程退出**.  
+第一个参数是要发送的通讯字节序列, 第二个参数是需要接收的回复字节数量. **这个数字应该是期望收到的数据字节数+1 (不含CRC校验字符)**. 来自末端modbus返回的数据会在最前面添加值为**0x09**的一个字节, 剩余的即为设备返回的数据。 举例来说，对于某个测试设备，上面的指令可能返回:  
+```bash
+ret: 0
+respond_data: [9, 1, 6, 0, 10, 0, 3]
+```
+其中实际收到的数据帧为: [0x01, 0x06, 0x00, 0x0A, 0x00, 0x03]，长度为6.  
 
 # 6. 模式切换
 &ensp;&ensp;xArm 在不同的控制方式下可能会工作在不同的模式中，当前的模式可以通过topic "xarm/xarm_states" 的内容查看。在某些情况下，需要用户主动切换模式以达到继续正常工作的目的。
