@@ -174,6 +174,10 @@ add_executable(move_test
    test/move_test.cpp
 )
 
+add_executable(test_tool_modbus
+   test/test_tool_modbus.cpp
+)
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -199,6 +203,12 @@ add_executable(move_test
 target_link_libraries(move_test 
    ${PROJECT_NAME}
    ${catkin_LIBRARIES}
+ )
+
+target_link_libraries(test_tool_modbus 
+   ${PROJECT_NAME}
+   ${catkin_LIBRARIES}
+   xarm_ros_client
  )
 
 #############
