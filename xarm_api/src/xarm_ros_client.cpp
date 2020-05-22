@@ -256,14 +256,13 @@ int XArmROSClient::config_tool_modbus(int baud_rate, int time_out_ms)
 
 int XArmROSClient::send_tool_modbus(unsigned char* data, int send_len, unsigned char* recv_data, int recv_len)
 {
-    std::vector<unsigned char> tx_d(send_len);
     for(int i=0; i<send_len; i++)
     {
-        tx_d.push_back(data[i]);
+        set_modbus_msg_.request.send_data.push_back(data[i]);
     }
 
-    set_modbus_msg_.request.send_data = tx_d;
     set_modbus_msg_.request.respond_len = recv_len;
+
     if(send_modbus_client_.call(set_modbus_msg_))
     {   
         if(recv_len)
