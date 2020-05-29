@@ -16,12 +16,18 @@ int main(int argc, char **argv)
 	
 	xarm_msgs::SetToolModbus set_modbus_msg_;
 
-	int ret = client.send_tool_modbus(send_data, 6, recv_data, recv_bytes);
+	int ret = 0;
+	ros::Rate rate(10);
+
+	ret = client.send_tool_modbus(send_data, 6, recv_data, recv_bytes);
 	fprintf(stderr, "ret = %d, recv_data: ", ret);
+
 	for(int i=0; i<recv_bytes; i++)
 	{
 		fprintf(stderr, "%x\t", recv_data[i]);
 	}
 	fprintf(stderr, "\n");
+	rate.sleep();
+
 	return 0;
 }

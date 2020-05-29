@@ -215,6 +215,13 @@ $ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 200 2000 0 0
 $ rosservice call /xarm/move_line_tool [50,100,100,0,0,0] 200 2000 0 0
 ```
 
+##### 运动服务返回值:
+&ensp;&ensp;请注意以上的运动服务调用在默认情况下会**立刻返回**，如果希望等待运动结束之后再返回, 需要提前设置 ros parameter **"/xarm/wait_for_finish"** 为 **true**. 即:  
+```bash
+$ rosparam set /xarm/wait_for_finish true
+```   
+&ensp;&ensp;如果成功会返回 0，发生错误则会返回1.  
+
 #### 工具 I/O 操作:
 &ensp;&ensp;我们在机械臂末端提供了两路数字、两路模拟输入信号接口，以及两路数字输出信号接口。  
 ##### 1. 同时获得2个数字输入信号状态的方法:  

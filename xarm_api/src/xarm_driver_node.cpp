@@ -2,7 +2,7 @@
  *
  * Software License Agreement (BSD License)
  *
- * Author: waylon <weile.wang@ufactory.cc>
+ * Author: Jason Peng <jason@ufactory.cc>
  ============================================================================*/
 #include <xarm_driver.h>
 #include <xarm/linux/thread.h>

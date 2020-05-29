@@ -2,7 +2,7 @@
  *
  * Software License Agreement (BSD License)
  *
- * Author: waylon <weile.wang@ufactory.cc>
+ * Author: Jason Peng <jason@ufactory.cc>
  ============================================================================*/
 #include <xarm_driver.h>
 #include "xarm/instruction/uxbus_cmd_config.h"
@@ -269,6 +269,12 @@ namespace xarm_api
     bool XARMDriver::ConfigModbusCB(xarm_msgs::ConfigToolModbus::Request &req, xarm_msgs::ConfigToolModbus::Response &res)
     {
         res.message = "";
+        if(curr_err_)
+        {
+            arm_cmd_->set_state(0);
+            ROS_WARN("Cleared Existing Error Code %d", curr_err_);
+        }
+
         int ret = arm_cmd_->set_modbus_baudrate(req.baud_rate);
         if(ret)
         {
@@ -295,6 +301,10 @@ namespace xarm_api
     bool XARMDriver::GoHomeCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
     {
         res.ret = arm_cmd_->move_gohome(req.mvvelo, req.mvacc, req.mvtime);
+        if(!res.ret)
+        {
+            res.ret = wait_for_finish();
+        }
         res.message = "go home, ret = " + std::to_string(res.ret);
         return true;
     }
@@ -322,6 +332,10 @@ namespace xarm_api
         }
 
         res.ret = arm_cmd_->move_joint(joint[0], req.mvvelo, req.mvacc, req.mvtime);
+        if(!res.ret)
+        {
+            res.ret = wait_for_finish();
+        }
         res.message = "move joint, ret = " + std::to_string(res.ret);
         return true;
     }
@@ -345,6 +359,10 @@ namespace xarm_api
         }
 
         res.ret = arm_cmd_->move_line(pose[0], req.mvvelo, req.mvacc, req.mvtime);
+        if(!res.ret)
+        {
+            res.ret = wait_for_finish();
+        }
         res.message = "move line, ret = " + std::to_string(res.ret);
         return true;
     }
@@ -368,6 +386,10 @@ namespace xarm_api
         }
 
         res.ret = arm_cmd_->move_line_tool(pose[0], req.mvvelo, req.mvacc, req.mvtime);
+        if(!res.ret)
+        {
+            res.ret = wait_for_finish();
+        }
         res.message = "move line tool, ret = " + std::to_string(res.ret);
         return true;
     }
@@ -498,6 +520,8 @@ namespace xarm_api
 
     void XARMDriver::pub_robot_msg(xarm_msgs::RobotMsg rm_msg)
     {
+        curr_err_ = rm_msg.err;
+        curr_state_ = rm_msg.state;
         robot_rt_state_.publish(rm_msg);
     }
     
@@ -529,4 +553,42 @@ namespace xarm_api
         norm_data = norm_data_;
         return ret;
     }
+
+    int XARMDriver::wait_for_finish()
+    {
+        bool wait;
+        int ret = 0;
+
+        nh_.getParam("wait_for_finish", wait);
+
+        if(!wait)
+            return ret;
+
+        ros::Duration(0.2).sleep(); // delay 0.2s, for 5Hz state update
+        ros::Rate sleep_rate(10); // 10Hz
+
+        while(curr_state_== 1) // in MOVE state
+        {
+            if(curr_err_)
+            {
+                ret = UXBUS_STATE::ERR_CODE;
+                break;
+            }
+            sleep_rate.sleep();
+        }
+
+        if(!ret)
+        {
+            int err = 0;
+            arm_cmd_->get_err_code(&err);
+            if(err)
+            {
+                ROS_ERROR("XARM ERROR CODE: %d ", err);
+                ret = UXBUS_STATE::ERR_CODE;
+            }
+        }
+
+        return ret;
+    }
+
 }

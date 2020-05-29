@@ -216,6 +216,13 @@ $ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 200 2000 0 0
 $ rosservice call /xarm/move_line_tool [50,100,100,0,0,0] 200 2000 0 0
 ```
 
+#### Motion service Return:
+&ensp;&ensp;Please Note the above motion services will **return immediately** by default. If you wish to return until actual motion is finished, set the ros parameter **"/xarm/wait_for_finish"** to be **true** in advance. That is:  
+```bash
+$ rosparam set /xarm/wait_for_finish true
+```   
+&ensp;&ensp;Upon success, 0 will be returned. If any error occurs, 1 will be returned.
+
 #### Tool I/O Operations:
 &ensp;&ensp;We provide 2 digital, 2 analog input port and 2 digital output signals at the end I/O connector.  
 ##### 1. To get current 2 DIGITAL input states:  

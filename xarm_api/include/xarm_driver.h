@@ -72,6 +72,8 @@ namespace xarm_api
             pthread_t thread_id_;
             ros::AsyncSpinner spinner;
             int dof_;
+            int curr_state_;
+            int curr_err_;
             xarm_msgs::IOState io_msg;
 
             ros::NodeHandle nh_;
@@ -100,6 +102,8 @@ namespace xarm_api
             ros::Publisher joint_state_;
             ros::Publisher robot_rt_state_; 
             ros::Publisher end_input_state_;
+
+            int wait_for_finish();
     };
 }
 

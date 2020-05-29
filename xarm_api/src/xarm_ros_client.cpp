@@ -2,7 +2,7 @@
  *
  * Software License Agreement (BSD License)
  *
- * Author: Jason <jason@ufactory.cc>
+ * Author: Jason Peng <jason@ufactory.cc>
  ============================================================================*/
 #include <xarm_ros_client.h>
 
@@ -273,11 +273,16 @@ int XArmROSClient::send_tool_modbus(unsigned char* data, int send_len, unsigned 
            }
         }
 
+        set_modbus_msg_.request.send_data.clear();
+        set_modbus_msg_.response.respond_data.clear();
+        
         return 0;
     }
     else
     {
         ROS_ERROR("Failed to call service send_tool_modbus");
+        set_modbus_msg_.request.send_data.clear();
+        set_modbus_msg_.response.respond_data.clear();
         return 1;
     }
 }
