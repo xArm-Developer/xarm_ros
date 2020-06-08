@@ -138,8 +138,8 @@ include_directories(
 add_library(xarm_hw
   src/xarm_hw.cpp
 )
-add_dependencies(xarm_hw xarm_ros_client ${catkin_EXPORTED_TARGETS})
-target_link_libraries(xarm_hw xarm_ros_client)
+add_dependencies(xarm_hw ${catkin_EXPORTED_TARGETS})
+target_link_libraries(xarm_hw ${catkin_LIBRARIES})
 
 
 add_library(xarm_combined_hw
