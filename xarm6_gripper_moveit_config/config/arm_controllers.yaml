@@ -1,5 +1,5 @@
 controller_list:
-  - name: ""
+  - name: arm_controller
     action_ns: follow_joint_trajectory
     type: FollowJointTrajectory
     joints:
@@ -9,4 +9,3 @@ controller_list:
       - joint4
       - joint5
       - joint6
-

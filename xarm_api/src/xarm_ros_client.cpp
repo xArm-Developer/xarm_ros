@@ -16,12 +16,19 @@ void XArmROSClient::init(ros::NodeHandle& nh)
 	set_state_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_state");
     set_tcp_offset_client_ = nh_.serviceClient<xarm_msgs::TCPOffset>("set_tcp_offset");
     set_load_client_ = nh_.serviceClient<xarm_msgs::SetLoad>("set_load");
+    clear_err_client_ = nh_.serviceClient<xarm_msgs::ClearErr>("clear_err");
+    get_err_client_ = nh_.serviceClient<xarm_msgs::GetErr>("get_err");
   	go_home_client_ = nh_.serviceClient<xarm_msgs::Move>("go_home");
 	move_lineb_client_ = nh_.serviceClient<xarm_msgs::Move>("move_lineb");
     move_line_client_ = nh_.serviceClient<xarm_msgs::Move>("move_line");
     move_joint_client_ = nh_.serviceClient<xarm_msgs::Move>("move_joint");
 	move_servoj_client_ = nh_.serviceClient<xarm_msgs::Move>("move_servoj",true); // persistent connection for servoj
     move_servo_cart_client_ = nh_.serviceClient<xarm_msgs::Move>("move_servo_cart",true); // persistent connection for servo_cartesian
+
+    //xarm gripper:
+    gripper_move_client_ = nh_.serviceClient<xarm_msgs::GripperMove>("gripper_move");
+    gripper_config_client_ = nh_.serviceClient<xarm_msgs::GripperConfig>("gripper_config");
+    gripper_state_client_ = nh_.serviceClient<xarm_msgs::GripperState>("gripper_state");
 
     //tool modbus:
     config_modbus_client_ = nh_.serviceClient<xarm_msgs::ConfigToolModbus>("config_tool_modbus");
@@ -73,6 +80,36 @@ int XArmROSClient::setMode(short mode)
         ROS_ERROR("Failed to call service set_mode");
         return 1;
     }  
+
+}
+
+int XArmROSClient::clearErr()
+{
+    if(clear_err_client_.call(clear_err_srv_))
+    {
+        ROS_INFO("%s\n", clear_err_srv_.response.message.c_str());
+        return clear_err_srv_.response.ret;
+    }
+    else
+    {
+        ROS_ERROR("Failed to call service clear_err");
+        return 1;
+    }
+
+}
+
+int XArmROSClient::getErr()
+{
+    if(get_err_client_.call(get_err_srv_))
+    {
+        ROS_INFO("%s\n", get_err_srv_.response.message.c_str());
+        return get_err_srv_.response.err;
+    }
+    else
+    {
+        ROS_ERROR("Failed to call service get_err");
+        return 1;
+    }
 
 }
 
@@ -202,7 +239,7 @@ int XArmROSClient::moveLine(const std::vector<float>& cart_cmd, float cart_vel_m
     move_srv_.request.mvtime = 0;
     move_srv_.request.pose = cart_cmd;
 
-    if(move_joint_client_.call(move_srv_))
+    if(move_line_client_.call(move_srv_))
     {
         return move_srv_.response.ret;
     }
@@ -224,7 +261,7 @@ int XArmROSClient::moveLineB(int num_of_pnts, const std::vector<float> cart_cmds
     {
         move_srv_.request.pose = cart_cmds[i];
 
-        if(move_joint_client_.call(move_srv_))
+        if(move_lineb_client_.call(move_srv_))
         {
             if(move_srv_.response.ret)
                 return 1; // move_lineb() returns non-zero value.
@@ -285,6 +322,54 @@ int XArmROSClient::send_tool_modbus(unsigned char* data, int send_len, unsigned 
         set_modbus_msg_.response.respond_data.clear();
         return 1;
     }
+}
+
+int XArmROSClient::gripperMove(float pulse)
+{
+    gripper_move_msg_.request.pulse_pos = pulse;
+    if(gripper_move_client_.call(gripper_move_msg_))
+    {
+        ROS_INFO("gripper_move: %f\n", pulse);
+        return gripper_move_msg_.response.ret;
+    }
+    else
+    {
+        ROS_ERROR("Failed to call service gripper_move");
+        return 1;
+    }
+
+}
+
+int XArmROSClient::gripperConfig(float pulse_vel)
+{
+    gripper_config_msg_.request.pulse_vel = pulse_vel;
+    if(gripper_config_client_.call(gripper_config_msg_))
+    {
+        // ROS_INFO("gripper_vel: %f\n", pulse_vel);
+        return gripper_config_msg_.response.ret;
+    }
+    else
+    {
+        ROS_ERROR("Failed to call service gripper_move");
+        return 1;
+    }
+
+}
+
+int XArmROSClient::getGripperState(float *curr_pulse, int *curr_err)
+{
+    if(gripper_state_client_.call(gripper_state_msg_))
+    {
+        *curr_pulse = gripper_state_msg_.response.curr_pos;
+        *curr_err = gripper_state_msg_.response.err_code;
+        return 0;
+    }
+    else
+    {
+        ROS_ERROR("Failed to call service gripper_move");
+        return 1;
+    }
+
 }
 
 }// namespace xarm_api

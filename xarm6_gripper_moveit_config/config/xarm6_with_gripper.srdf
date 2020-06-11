@@ -19,6 +19,7 @@
         <joint name="joint6" />
     </group>
     <group name="xarm_gripper">
+        <joint name="drive_joint" />
         <link name="xarm_gripper_base_link" />
         <link name="left_outer_knuckle" />
         <link name="left_finger" />
@@ -43,6 +44,12 @@
         <joint name="joint4" value="0" />
         <joint name="joint5" value="-1.5708" />
         <joint name="joint6" value="0" />
+    </group_state>
+    <group_state name="open" group="xarm_gripper">
+        <joint name="drive_joint" value="0" />
+    </group_state>
+    <group_state name="close" group="xarm_gripper">
+        <joint name="drive_joint" value="0.85" />
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="xarm_gripper" parent_link="link6" group="xarm_gripper" />

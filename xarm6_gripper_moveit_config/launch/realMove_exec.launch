@@ -26,7 +26,7 @@
     ns="xarm"
     args="xarm6_traj_controller"/>
 
-  <remap from="/follow_joint_trajectory" to="xarm/xarm6_traj_controller/follow_joint_trajectory"/>
+  <remap from="arm_controller/follow_joint_trajectory" to="xarm/xarm6_traj_controller/follow_joint_trajectory"/>
 
   <!-- common part -->
   <remap from="/tf" to="$(arg ext_ns)/tf" />
@@ -36,6 +36,7 @@
     <arg name="jnt_stat_source" value="[$(arg xarm_hw_ns)/joint_states]" />
     <arg name="show_rviz" value="$(arg show_rviz)" />
     <arg name="NO_GUI_CTRL" value="$(arg no_gui_plan)"/>
+    <arg name="gripper_controller" value="false" />
   </include>
 
 </launch>

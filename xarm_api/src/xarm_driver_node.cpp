@@ -32,7 +32,7 @@ class XarmRTConnection
             int first_cycle = 1;
             double d, prev_angle[joint_num_];
 
-            ros::Rate r(REPORT_RATE_HZ); // 50Hz
+            ros::Rate r(REPORT_RATE_HZ); // 10Hz
 
             while(true)
             {

@@ -7,6 +7,7 @@
 #ifndef CORE_INSTRUCTION_UXBUS_CMD_H_
 #define CORE_INSTRUCTION_UXBUS_CMD_H_
 
+#include <mutex>
 #include "xarm/common/data_type.h"
 
 class UxbusCmd {
@@ -101,9 +102,9 @@ public:
 	int tgpio_get_analog1(float *value);
 	int tgpio_get_analog2(float *value);
 
-	int tgpio_set_modbus(unsigned char *modbus_t, int len_t, unsigned char *ret_data);
 	int set_modbus_timeout(int value);
-	int set_modbus_baudrate(int baudrate);
+	int set_modbus_baudrate(int baud);
+	int tgpio_set_modbus(unsigned char *send_data, int length, unsigned char *recv_data);
 	int gripper_modbus_w16s(int addr, float value, int len);
 	int gripper_modbus_r16s(int addr, int len, unsigned char *rx_data);
 	int gripper_modbus_set_en(int value);
@@ -129,9 +130,20 @@ public:
 	int cgpio_set_auxdigit(int ionum, int value);
 	int cgpio_set_analog1(int value);
 	int cgpio_set_analog2(int value);
-	int cgpio_set_infun(int num, int fun);
-	int cgpio_set_outfun(int num, int fun);
+	int cgpio_set_infun(int ionum, int fun);
+	int cgpio_set_outfun(int ionum, int fun);
 	int cgpio_get_state(int *state, int *digit_io, float *analog, int *input_conf, int *output_conf);
+
+	int get_pose_offset(float pose1[6], float pose2[6], float offset[6], int orient_type_in=0, int orient_type_out=0);
+	int get_position_aa(float pose[6]);
+	int move_line_aa(float mvpose[6], float mvvelo, float mvacc, float mvtime, int mvcoord=0, int relative=0);
+	int move_servo_cart_aa(float mvpose[6], float mvvelo, float mvacc, int tool_coord=0, int relative=0);
+
+	int tgpio_delay_set_digital(int ionum, int value, float delay_sec);
+	int cgpio_delay_set_digital(int ionum, int value, float delay_sec);
+	int tgpio_position_set_digital(int ionum, int value, float xyz[3], float tol_r);
+	int cgpio_position_set_digital(int ionum, int value, float xyz[3], float tol_r);
+	int config_io_stop_reset(int io_type, int val);
 
 	virtual void close(void);
 
@@ -149,6 +161,9 @@ private:
 	int get_nfp32(int funcode, float *rx_data, int num);
 	int swop_nfp32(int funcode, float tx_datas[], int txn, float *rx_data, int rxn);
 	int is_nfp32(int funcode, float datas[], int txn, int *value);
-};
+	int set_nfp32_with_bytes(int funcode, float *datas, int num, char *additional, int n);
 
+private:
+	std::mutex mutex_;
+};
 #endif

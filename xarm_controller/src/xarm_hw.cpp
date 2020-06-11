@@ -64,6 +64,7 @@ namespace xarm_control
 		std::string robot_ip;
 		std::vector<std::string> jnt_names;
 		int xarm_dof = 0;
+		double ctrl_rate = 100;
 
 		if(!robot_hw_nh.hasParam("DOF"))
 		{
@@ -75,13 +76,22 @@ namespace xarm_control
 			ROS_ERROR("ROS Parameter xarm_robot_ip not specified!");
 			return false;
 		}
+		if(!robot_hw_nh.hasParam("control_rate"))
+		{
+			ROS_ERROR("ROS Parameter control_rate not specified!");
+			return false;
+		}
 
 		/* getParam forbids to change member */
 		robot_hw_nh.getParam("DOF", xarm_dof);
 		robot_hw_nh.getParam("xarm_robot_ip", robot_ip);
 		robot_hw_nh.getParam("joint_names", jnt_names);
+		robot_hw_nh.getParam("control_rate", ctrl_rate);
+
 		dof_ = xarm_dof;
 		jnt_names_ = jnt_names;
+		control_rate_ = ctrl_rate;
+		initial_write_ = true;
 
 		clientInit(robot_ip, robot_hw_nh);
 		return true;
@@ -94,6 +104,7 @@ namespace xarm_control
 
 	void XArmHW::pos_fb_cb(const sensor_msgs::JointState::ConstPtr& data)
 	{
+		std::lock_guard<std::mutex> locker(mutex_);
 		for(int j=0; j<dof_; j++)
 		{
 			position_fdb_[j] = data->position[j];
@@ -116,14 +127,31 @@ namespace xarm_control
 
 	void XArmHW::write(const ros::Time& time, const ros::Duration& period)
 	{
+		if(need_reset())
+		{
+			std::lock_guard<std::mutex> locker(mutex_);
+			for(int k=0; k<dof_; k++)
+			{
+				position_cmd_float_[k] = (float)position_fdb_[k];
+			}
+			return;
+		}
 
 		for(int k=0; k<dof_; k++)
 		{
+			// make sure no abnormal command will be written into joints, check if cmd velocity > [180 deg/sec * (1+10%)]
+			if(fabs(position_cmd_float_[k]-(float)position_cmd_[k])*control_rate_ > 3.14*1.1  && !initial_write_)
+			{
+				ROS_ERROR("joint %d abnormal command! previous: %f, this: %f\n", k+1, position_cmd_float_[k], (float)position_cmd_[k]);
+				return;
+			}
+
 			position_cmd_float_[k] = (float)position_cmd_[k];
 		}
 
 		xarm.setServoJ(position_cmd_float_);
 
+		initial_write_ = false;
 	}
 
 	void XArmHW::get_status(int state_mode_err[3])

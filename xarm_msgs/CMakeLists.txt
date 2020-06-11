@@ -64,6 +64,7 @@ find_package(catkin REQUIRED COMPONENTS
    GetDigitalIO.srv
    GetAnalogIO.srv
    ClearErr.srv
+   GetErr.srv
    GripperConfig.srv
    GripperMove.srv
    GripperState.srv

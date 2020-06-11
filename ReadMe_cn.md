@@ -1,10 +1,10 @@
 ## 重要提示:
 &ensp;&ensp;由于机械臂通信格式修改, 建议在***2019年6月前发货***的xArm 早期用户尽早 ***升级*** 控制器固件程序，这样才能在以后的更新中正常驱动机械臂运动以及使用最新开发的各种功能。请联系我们获得升级的详细指示。 当前ROS库主要的分支已不支持旧版本，先前版本的ROS驱动包还保留在 ***'legacy'*** 分支中, 但不会再有更新。    
-
+&ensp;&ensp;在使用xarm_ros之前，请务必按照第3节**准备工作**的指示安装必要的第三方支持库，否则使用时会出现错误。  
 # 目录:  
 * [1. 简介](#1-简介)
 * [2. 更新记录](#2-更新记录)
-* [3. 准备工作](#3-准备工作)
+* [3. 准备工作(***必须***)](#3-准备工作)
 * [4. 开始使用'xarm_ros'](#4-开始使用xarm_ros)
 * [5. 代码库介绍及使用说明](#5-代码库介绍及使用说明)
     * [5.1 xarm_description](#51-xarm_description)  
@@ -172,7 +172,7 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 * move_line: 笛卡尔空间的直线轨迹运动，用户需要给定工具中心点（TCP）目标位置以及笛卡尔速度、加速度，对应SDK里的set_position()函数【不指定交融半径】。  
 * move_lineb: 圆弧交融的直线运动，给定一系列中间点以及目标位置。 每两个中间点间为直线轨迹，但在中间点处做一个圆弧过渡（需给定半径）来保证速度连续，对应SDK里的set_position()函数【指定了交融半径】。  
 * move_line_tool: 基于工具坐标系（而不是基坐标系）的直线运动。对应SDK里的set_tool_position()函数。  
-另外需要 ***注意*** 的是，使用以上三种service之前，需要通过service依次将机械臂模式(mode)设置为0，然后状态(state)设置为0。这些运动指令的意义和详情可以参考产品使用指南。除此之外还提供了其他xarm编程API支持的service调用, 对于相关ros service的定义在 [xarm_msgs目录](./xarm_msgs/)中。  
+另外需要 ***注意*** 的是，使用以上4种service之前，需要通过service依次将机械臂模式(mode)设置为0，然后状态(state)设置为0。这些运动指令的意义和详情可以参考产品使用指南。除此之外还提供了其他xarm编程API支持的service调用, 对于相关ros service的定义在 [xarm_msgs目录](./xarm_msgs/)中。  
 
 * move_servo_cart/move_servoj: （固定）高频率的笛卡尔或关节轨迹指令，分别对应SDK里的set_servo_cartesian()和set_servo_angle_j()，需要机械臂工作在**模式1**，可以间接实现速度控制。在使用这两个服务功能之前，务必做好**风险评估**并且仔细阅读第[7.2-7.3节](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)的使用方法。  
 
@@ -275,7 +275,7 @@ $ rosservice call /xarm/gripper_move 500
 ```
 3. 获取当前xArm机械爪的状态（位置和错误码）:
 ```bash
-$ rosservice call /xarm/gripper_status
+$ rosservice call /xarm/gripper_state
 ```
 &ensp;&ensp;如果错误码不为0，请参考使用说明书查询错误原因，清除错误同样可使用上一节的clear_err service。  
 

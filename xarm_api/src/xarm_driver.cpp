@@ -49,6 +49,7 @@ namespace xarm_api
         move_servoj_server_ = nh_.advertiseService("move_servoj", &XARMDriver::MoveServoJCB, this);
         move_servo_cart_server_ = nh_.advertiseService("move_servo_cart", &XARMDriver::MoveServoCartCB, this);        
         clear_err_server_ = nh_.advertiseService("clear_err", &XARMDriver::ClearErrCB, this);
+        get_err_server_ = nh_.advertiseService("get_err", &XARMDriver::GetErrCB, this);
 
         // tool io:
         set_end_io_server_ = nh_.advertiseService("set_digital_out", &XARMDriver::SetDigitalIOCB, this);
@@ -125,6 +126,12 @@ namespace xarm_api
         return true;
 
         // After calling this service, user should check '/xarm_states' again to make sure 'err' field is 0, to confirm success.
+    }
+    
+    bool XARMDriver::GetErrCB(xarm_msgs::GetErr::Request & req, xarm_msgs::GetErr::Response & res)
+    {
+        res.err = curr_err_;
+        res.message = "current error code = "  + std::to_string(res.err);
     }
 
     bool XARMDriver::MotionCtrlCB(xarm_msgs::SetAxis::Request& req, xarm_msgs::SetAxis::Response& res)
@@ -518,14 +525,14 @@ namespace xarm_api
         return true;
     }
 
-    void XARMDriver::pub_robot_msg(xarm_msgs::RobotMsg rm_msg)
+    void XARMDriver::pub_robot_msg(xarm_msgs::RobotMsg &rm_msg)
     {
         curr_err_ = rm_msg.err;
         curr_state_ = rm_msg.state;
         robot_rt_state_.publish(rm_msg);
     }
     
-    void XARMDriver::pub_joint_state(sensor_msgs::JointState js_msg)
+    void XARMDriver::pub_joint_state(sensor_msgs::JointState &js_msg)
     {
         joint_state_.publish(js_msg);
     }
@@ -579,11 +586,11 @@ namespace xarm_api
 
         if(!ret)
         {
-            int err = 0;
-            arm_cmd_->get_err_code(&err);
-            if(err)
+            int err_warn[2] = {0};
+            arm_cmd_->get_err_code(err_warn);
+            if(err_warn[0])
             {
-                ROS_ERROR("XARM ERROR CODE: %d ", err);
+                ROS_ERROR("XARM ERROR CODE: %d ", err_warn[0]);
                 ret = UXBUS_STATE::ERR_CODE;
             }
         }

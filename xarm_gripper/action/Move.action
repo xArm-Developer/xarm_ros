@@ -1,0 +1,13 @@
+float32 target_pulse
+
+float32 pulse_speed
+
+---
+
+bool success 
+
+int16 err_code
+
+---
+
+float32 current_pulse

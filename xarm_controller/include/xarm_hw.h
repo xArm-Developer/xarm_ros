@@ -21,6 +21,7 @@
 #include <sensor_msgs/JointState.h>
 // for mutex
 #include <pthread.h>
+#include <mutex>
 // xarm
 #include "xarm/instruction/uxbus_cmd_config.h"
 #include "xarm_ros_client.h"
@@ -67,13 +68,14 @@ namespace xarm_control
 		std::vector<double> velocity_fdb_;
 		std::vector<double> effort_fdb_;
 
-
+		double control_rate_;
+		bool initial_write_;
+		std::mutex mutex_;
+		
 		xarm_api::XArmROSClient xarm;
 
 		hardware_interface::JointStateInterface    js_interface_;
-	  	hardware_interface::EffortJointInterface   ej_interface_;
 	  	hardware_interface::PositionJointInterface pj_interface_;
-	  	hardware_interface::VelocityJointInterface vj_interface_;
 
 		ros::Subscriber pos_sub_, vel_sub_, effort_sub_, state_sub_;
 

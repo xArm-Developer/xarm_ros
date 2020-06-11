@@ -147,7 +147,7 @@ xarm6:
     - SPARS
     - SPARStwo
 xarm_gripper:
-  default_planner_config: ""
+  default_planner_config: RRTConnect
   planner_configs:
     - SBL
     - EST

@@ -38,9 +38,9 @@ int UxbusCmdTcp::check_xbus_prot(unsigned char *datas, int funcode) {
   else
   { bus_flag -= 1; }
 
-  if (num != bus_flag) { /*fprintf(stderr, "expect flag: %d, recv: %d\n", bus_flag, num);*/ return UXBUS_STATE::ERR_NUM; }
+  if (num != bus_flag) { /*fprintf(stderr, "expect flag: %d, recv: %d, tar_fun: %d\n", bus_flag, num, funcode);*/ return UXBUS_STATE::ERR_NUM; }
   if (prot != TX2_PROT_CON_) { return UXBUS_STATE::ERR_PROT; }
-  if (fun != funcode) { /*fprintf(stderr, "expect funcode: %d, recv: %d\n", funcode, fun);*/ return UXBUS_STATE::ERR_FUN; }
+  if (fun != funcode) { /*fprintf(stderr, "expect funcode: %d, recv: %d, tar_flag: %d\n", funcode, fun, bus_flag);*/ return UXBUS_STATE::ERR_FUN; }
   if (state & 0x40) { return UXBUS_STATE::ERR_CODE; }
   if (state & 0x20) { return UXBUS_STATE::WAR_CODE; }
   if (sizeof_data != len + 6) { return UXBUS_STATE::ERR_LENG; }
@@ -56,8 +56,8 @@ int UxbusCmdTcp::send_pend(int funcode, int num, int timeout, unsigned char *ret
     times -= 1;
     ret = arm_port_->read_frame(rx_data);
     if (ret != -1) {
-      // print_hex("recv:", rx_data, 0.25*arm_port_->que_maxlen_);
       ret = check_xbus_prot(rx_data, funcode);
+      
       int n = num;
       if (num == -1) {
         n = rx_data[9] - 2;

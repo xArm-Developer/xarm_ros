@@ -178,6 +178,7 @@ add_executable(test_tool_modbus
    test/test_tool_modbus.cpp
 )
 
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -210,6 +211,7 @@ target_link_libraries(test_tool_modbus
    ${catkin_LIBRARIES}
    xarm_ros_client
  )
+
 
 #############
 ## Install ##

@@ -11,10 +11,15 @@ for xarm_gripper robot</p>
   <license>BSD</license>
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roslaunch</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
+  <build_depend>xarm_api</build_depend>
   <run_depend>robot_state_publisher</run_depend>
   <run_depend>rviz</run_depend>
   <run_depend>joint_state_publisher</run_depend>
   <run_depend>gazebo</run_depend>
+  <run_depend>message_generation</run_depend>
+  <run_depend>actionlib_msgs</run_depend>
+  <run_depend>xarm_api</run_depend>
   <export>
     <architecture_independent />
   </export>

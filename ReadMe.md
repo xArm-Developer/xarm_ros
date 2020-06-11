@@ -1,10 +1,12 @@
 ## Important Notice:
 &ensp;&ensp;Due to robot communication data format change, ***early users*** (xArm shipped ***before June 2019***) are encouraged to ***upgrade*** their controller firmware immediately to drive the robot normally in future updates as well as to use newly developed functions. Please contact our staff to get instructions of the upgrade process. The old version robot driver can still be available in ***'legacy'*** branch, however, it will not be updated any more.   
 
+&ensp;&ensp;You MUST follow **chapter 3** to install additional packages needed before any usage of xarm_ros packages. Otherwise, unexpected errors may occur.
+
 # Contents:  
 * [1. Introduction](#1-introduction)
 * [2. Update History](#2-update-summary)
-* [3. Preparations](#3-preparations-before-using-this-package)
+* [3. Preparations (**MUST DO**)](#3-preparations-before-using-this-package)
 * [4. Get Started](#4-getting-started-with-xarm_ros)
 * [5. Package Description & Usage Guidance](#5-package-description--usage-guidance)
     * [5.1 xarm_description](#51-xarm_description)  
@@ -172,7 +174,7 @@ Argument 'robot_dof' specifies the number of joints of your xArm (default is 7).
 * <font color=blue>move_line:</font> straight-line motion to the specified Cartesian Tool Centre Point(TCP) target. Corresponding function in SDK is "set_position()"[blending radius not specified].  
 * <font color=blue>move_lineb:</font> a list of via points followed by target Cartesian point. Each segment is straight-line with Arc blending at the via points, to make velocity continuous. Corresponding function in SDK is "set_position()"[blending radius specified].  
 * <font color=blue>move_line_tool:</font> straight-line motion based on the **Tool coordinate system** rather than the base system. Corresponding function in SDK is "set_tool_position()".  
-Please ***keep in mind that*** before calling the three motion services above, first set robot mode to be 0, then set robot state to be 0, by calling relavent services. Meaning of the commands are consistent with the descriptions in product ***user manual***, other xarm API supported functions are also available as service call. Refer to [xarm_msgs package](./xarm_msgs/) for more details and usage guidance.  
+Please ***keep in mind that*** before calling the 4 motion services above, first set robot mode to be 0, then set robot state to be 0, by calling relavent services. Meaning of the commands are consistent with the descriptions in product ***user manual***, other xarm API supported functions are also available as service call. Refer to [xarm_msgs package](./xarm_msgs/) for more details and usage guidance.  
 
 * <font color=blue>move_servo_cart/move_servoj:</font> streamed high-frequency trajectory command execution in Cartesian space or joint space. Corresponding functions in SDK are set_servo_cartesian() and set_servo_angle_j(). An alternative way to implement <font color=red>velocity control</font>. These two services operate the robot in mode 1. Special **RISK ASSESMENT** is required before using them. Please read the guidance carefully at [chapter 7.2-7.3](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
 
@@ -279,7 +281,7 @@ $ rosservice call /xarm/gripper_move 500
 
 3. To get the current status (position and error_code) of xArm gripper:
 ```bash
-$ rosservice call /xarm/gripper_status
+$ rosservice call /xarm/gripper_state
 ```
 &ensp;&ensp; If error code is non-zero, please refer to user manual for the cause of error, the "/xarm/clear_err" service can still be used to clear the error code of xArm Gripper.  
 
