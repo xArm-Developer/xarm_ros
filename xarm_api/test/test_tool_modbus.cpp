@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 	client.init(nh);
 
 	int recv_bytes = 7;
-	unsigned char send_data_close[6] = {0x01,0x06,0x00,0x0A,0x00,0x03}, send_data_open[6] = {0x01, 0x06, 0x00, 0x0A, 0x03, 0x60}, recv_data[recv_bytes]={0};
+	unsigned char send_data[6] = {0x01,0x06,0x00,0x0A,0x00,0x03}, recv_data[recv_bytes]={0};
 	
 	int ret = 0;
 	ros::Rate rate(10);
