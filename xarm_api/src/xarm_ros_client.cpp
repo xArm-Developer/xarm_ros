@@ -11,6 +11,11 @@ namespace xarm_api{
 void XArmROSClient::init(ros::NodeHandle& nh)
 {   
     nh_ = nh;
+	ros::service::waitForService("motion_ctrl");
+  	ros::service::waitForService("set_state");
+  	ros::service::waitForService("set_mode");
+  	ros::service::waitForService("move_servoj");
+
 	motion_ctrl_client_ = nh_.serviceClient<xarm_msgs::SetAxis>("motion_ctrl");
 	set_mode_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_mode");
 	set_state_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_state");

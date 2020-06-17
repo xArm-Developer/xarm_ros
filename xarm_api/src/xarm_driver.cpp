@@ -49,6 +49,7 @@ namespace xarm_api
         move_servoj_server_ = nh_.advertiseService("move_servoj", &XARMDriver::MoveServoJCB, this);
         move_servo_cart_server_ = nh_.advertiseService("move_servo_cart", &XARMDriver::MoveServoCartCB, this);        
         clear_err_server_ = nh_.advertiseService("clear_err", &XARMDriver::ClearErrCB, this);
+        moveit_clear_err_server_ = nh_.advertiseService("moveit_clear_err", &XARMDriver::MoveitClearErrCB, this);
         get_err_server_ = nh_.advertiseService("get_err", &XARMDriver::GetErrCB, this);
 
         // tool io:
@@ -124,6 +125,22 @@ namespace xarm_api
             res.message = "clear err, ret = "  + std::to_string(res.ret);
         }
         return true;
+
+        // After calling this service, user should check '/xarm_states' again to make sure 'err' field is 0, to confirm success.
+    }
+
+    bool XARMDriver::MoveitClearErrCB(xarm_msgs::ClearErr::Request& req, xarm_msgs::ClearErr::Response& res)
+    {
+        if(ClearErrCB(req, res))
+        {
+            arm_cmd_->set_mode(1);
+            int ret = arm_cmd_->set_state(0);
+            
+            if(!ret)
+                return true;
+            return false;
+        }
+        return false;
 
         // After calling this service, user should check '/xarm_states' again to make sure 'err' field is 0, to confirm success.
     }

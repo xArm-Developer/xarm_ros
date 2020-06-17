@@ -20,7 +20,7 @@
         * [5.7.4 获得反馈状态信息](#获得反馈状态信息)  
         * [5.7.5 关于设定末端工具偏移量](#关于设定末端工具偏移量)  
         * [5.7.6 清除错误](#清除错误)  
-		* [5.7.7 机械爪控制(***new***)](#机械爪控制)  
+		* [5.7.7 机械爪控制(***updated***)](#机械爪控制)  
 		* [5.7.8 末端工具Modbus通信 (***new***)](#末端工具modbus通信)
 * [6. 模式切换(***new***)](#6-模式切换)
     * [6.1 模式介绍](#61-模式介绍)
@@ -261,23 +261,54 @@ $ rostopic echo /xarm/xarm_states
 ```bash
 $ rosservice call /xarm/clear_err
 ```
+&ensp;&ensp;如果正在使用 Moveit!, 可以调用 "**/xarm/moveit_clear_err**", 这样可以省去再次手动设置模式1.   
+```bash
+$ rosservice call /xarm/moveit_clear_err
+```
 &ensp;&ensp;调用此服务之后 ***务必再次确认err状态信息*** , 如果它变成了0, 说明问题清除成功，否则请再次确认问题是否成功解决。清除成功之后， 记得 ***将robot state设置为0*** 以便使机械臂可以执行后续指令。  
 
 #### 机械爪控制:
-&ensp;&ensp;如果已将xArm Gripper (UFACTORY出品) 安装至机械臂末端，则可以使用如下的service来操作和检视机械爪:  
-1. 首先使能xArm机械爪并设置抓取速度, 如果成功，'ret'返回值为0。正确的速度范围是在***1到5000之间***，以1500为例:  
+&ensp;&ensp;如果已将xArm Gripper (UFACTORY出品) 安装至机械臂末端，则可以使用如下的service或action来操作和检视机械爪:  
+
+##### 1. Gripper services:  
+(1) 首先使能xArm机械爪并设置抓取速度, 如果成功，'ret'返回值为0。正确的速度范围是在***1到5000之间***，以1500为例:  
 ```bash
 $ rosservice call /xarm/gripper_config 1500
 ```
-2. 给定xArm机械爪位置（打开幅度）指令执行，如果成功，'ret'返回值为0。正确的位置范围是***0到850之间***, 0为关闭，850为完全打开，以500为例:  
+(2) 给定xArm机械爪位置（打开幅度）指令执行，如果成功，'ret'返回值为0。正确的位置范围是***0到850之间***, 0为关闭，850为完全打开，以500为例:  
 ```bash
 $ rosservice call /xarm/gripper_move 500
 ```
-3. 获取当前xArm机械爪的状态（位置和错误码）:
+(3) 获取当前xArm机械爪的状态（位置和错误码）:
 ```bash
 $ rosservice call /xarm/gripper_state
 ```
 &ensp;&ensp;如果错误码不为0，请参考使用说明书查询错误原因，清除错误同样可使用上一节的clear_err service。  
+
+##### 2. Gripper action:
+&ensp;&ensp; gripper move action 定义在 [Move.action](/xarm_gripper/action/Move.action). 目标包括期望的机械爪脉冲位置和脉冲速度. 可以通过设置xarm_bringup/launch/xarm7_server.launch 文件中的 "**use_gripper_action**" 参数来启动 action 服务器. Gripper action 可以这样调用:  
+```bash
+$ rostopic pub -1 /xarm/gripper_move/goal xarm_gripper/MoveActionGoal "header:
+  seq: 0
+  stamp:
+    secs: 0
+    nsecs: 0
+  frame_id: ''
+goal_id:
+  stamp:
+    secs: 0
+    nsecs: 0
+  id: ''
+goal:
+  target_pulse: 500.0
+  pulse_speed: 1500.0"
+
+```
+&ensp;&ensp; 或者通过以下方法调用:
+```bash
+$ export ROS_NAMESPACE=/xarm
+$ rosrun xarm_gripper gripper_client 500 1500 
+```
 
 #### 末端工具Modbus通信:
 如果需要与末端工具进行modbus通讯, 需要先通过"xarm/config_tool_modbus"服务设置正确的通信波特率和超时时间 (ms) (参考 [ConfigToolModbus.srv](/xarm_msgs/srv/ConfigToolModbus.srv)). 例如: 

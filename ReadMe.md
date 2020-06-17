@@ -22,7 +22,7 @@
         * [5.7.4 Getting status feedback](#getting-status-feedback)  
         * [5.7.5 Setting Tool Center Point Offset](#setting-tool-center-point-offset)  
         * [5.7.6 Clearing Errors](#clearing-errors)  
-        * [5.7.7 Gripper Control](#gripper-control)
+        * [5.7.7 Gripper Control(***Updated***)](#gripper-control)
         * [5.7.8 Tool Modbus communication (***new***)](#tool-modbus-communication)
 * [6. Mode Change](#6-mode-change)
     * [6.1 Mode Explanation](#61-mode-explanation)
@@ -264,26 +264,58 @@ $ rostopic echo /xarm/xarm_states
 ```bash
 $ rosservice call /xarm/clear_err
 ```
+&ensp;&ensp;If using Moveit!, call "**/xarm/moveit_clear_err**" instead to avoid the need of setting mode 1 again manually. 
+```bash
+$ rosservice call /xarm/moveit_clear_err
+```
+
 &ensp;&ensp;After calling this service, please ***check the err status again*** in 'xarm/xarm_states', if it becomes 0, the clearing is successful. Otherwise, it means the error/exception is not properly solved. If clearing error is successful, remember to ***set robot state to 0*** to make it ready to move again!   
 
 #### Gripper Control:
-&ensp;&ensp; If xArm Gripper (from UFACTORY) is attached to the tool end, the following services can be called to operate or check the gripper.  
-1. First enable the griper and configure the grasp speed:  
+&ensp;&ensp; If xArm Gripper (from UFACTORY) is attached to the tool end, the following services/actions can be called to operate or check the gripper.  
+
+##### 1. Gripper services:  
+(1) First enable the griper and configure the grasp speed:  
 ```bash
 $ rosservice call /xarm/gripper_config 1500
 ```
 &ensp;&ensp; Proper range of the speed is ***from 1 to 5000***. 1500 is used as an example. 'ret' value is 0 for success.  
-2. Give position command (open distance) to xArm gripper:  
+(2) Give position command (open distance) to xArm gripper:  
 ```bash
 $ rosservice call /xarm/gripper_move 500
 ```
 &ensp;&ensp; Proper range of the open distance is ***from 0 to 850***. 0 is closed, 850 is fully open. 500 is used as an example. 'ret' value is 0 for success.  
 
-3. To get the current status (position and error_code) of xArm gripper:
+(3) To get the current status (position and error_code) of xArm gripper:
 ```bash
 $ rosservice call /xarm/gripper_state
 ```
 &ensp;&ensp; If error code is non-zero, please refer to user manual for the cause of error, the "/xarm/clear_err" service can still be used to clear the error code of xArm Gripper.  
+
+##### 2. Gripper action:
+&ensp;&ensp; The xArm gripper move action is defined in [Move.action](/xarm_gripper/action/Move.action). The goal consists of target pulse position and the pulse speed. By setting true of "**use_gripper_action**" argument in xarm_bringup/launch/xarm7_server.launch, the action server will be started. Gripper action can be called by:  
+```bash
+$ rostopic pub -1 /xarm/gripper_move/goal xarm_gripper/MoveActionGoal "header:
+  seq: 0
+  stamp:
+    secs: 0
+    nsecs: 0
+  frame_id: ''
+goal_id:
+  stamp:
+    secs: 0
+    nsecs: 0
+  id: ''
+goal:
+  target_pulse: 500.0
+  pulse_speed: 1500.0"
+
+```
+&ensp;&ensp; Alternatively:
+```bash
+$ export ROS_NAMESPACE=/xarm
+$ rosrun xarm_gripper gripper_client 500 1500 
+```
 
 #### Tool Modbus communication:
 If modbus communication with the tool device is needed, please first set the proper baud rate and timeout parameters through the "xarm/config_tool_modbus" service (refer to [ConfigToolModbus.srv](/xarm_msgs/srv/ConfigToolModbus.srv)). For example: 

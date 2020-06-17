@@ -13,6 +13,7 @@
     <arg name="robot_ip" value="$(arg robot_ip)" />
     <arg name="use_moveit" value="true" />
     <arg name="ns" value="$(arg xarm_hw_ns)" />
+    <arg name="use_gripper_action" value="true" />
   </include>
 
   <!-- load the joint trajectory controller specified in yaml -->

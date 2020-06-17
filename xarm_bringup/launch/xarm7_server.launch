@@ -5,7 +5,8 @@
   <!-- Important: currently real xArm can be either controlled by API service or Moveit planner, but not at the same time! -->
   <!-- If you use moveit, use the launch file in xarm*_moveit_config package for startup! -->
   <arg name="use_moveit" default="false" />
-
+  <arg name="use_gripper_action" default="false" />
+  
   <rosparam file="$(find xarm7_moveit_config)/config/xarm7_params.yaml" command="load"/>
 
   <!-- common: bring up node to collect robot feedback -->
@@ -15,5 +16,14 @@
     <arg name="use_moveit" value="$(arg use_moveit)" />
     <arg name="namespace" value="$(arg ns)" />
   </include>
+
+  <!-- the node for xarm gripper action server -->
+  <node if="$(arg use_gripper_action)"
+    name="gripper_action_server"
+    pkg="xarm_gripper"
+    type="xarm_gripper_node"
+    respawn="false"
+    output="screen"
+    ns="$(arg ns)"/>
 
 </launch>

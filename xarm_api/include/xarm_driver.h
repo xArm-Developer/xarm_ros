@@ -44,6 +44,7 @@ namespace xarm_api
             bool GetDigitalIOCB(xarm_msgs::GetDigitalIO::Request &req, xarm_msgs::GetDigitalIO::Response &res);
             bool GetAnalogIOCB(xarm_msgs::GetAnalogIO::Request &req, xarm_msgs::GetAnalogIO::Response &res);
             bool ClearErrCB(xarm_msgs::ClearErr::Request& req, xarm_msgs::ClearErr::Response& res);
+            bool MoveitClearErrCB(xarm_msgs::ClearErr::Request& req, xarm_msgs::ClearErr::Response& res);
             bool GetErrCB(xarm_msgs::GetErr::Request & req, xarm_msgs::GetErr::Response & res);
             bool GoHomeCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveJointCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
@@ -95,6 +96,7 @@ namespace xarm_api
             ros::ServiceServer get_digital_in_server_;
             ros::ServiceServer get_analog_in_server_;
             ros::ServiceServer clear_err_server_;
+            ros::ServiceServer moveit_clear_err_server_;
             ros::ServiceServer get_err_server_;
             ros::ServiceServer gripper_config_server_;
             ros::ServiceServer gripper_move_server_;
