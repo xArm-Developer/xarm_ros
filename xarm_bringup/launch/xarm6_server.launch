@@ -21,7 +21,7 @@
   <node if="$(arg use_gripper_action)"
     name="gripper_action_server"
     pkg="xarm_gripper"
-    type="xarm_gripper_node"
+    type="gripper_action_server"
     respawn="false"
     output="screen"
     ns="$(arg ns)"/>

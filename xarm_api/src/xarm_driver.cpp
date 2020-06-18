@@ -34,6 +34,35 @@ namespace xarm_api
     void XARMDriver::XARMDriverInit(ros::NodeHandle& root_nh, char *server_ip)
     {   
         nh_ = root_nh;
+        nh_.getParam("DOF",dof_);
+
+        arm_report_ = connext_tcp_report_norm(server_ip);
+        // ReportDataNorm norm_data_;
+        arm_cmd_ = connect_tcp_control(server_ip);  
+        if (arm_cmd_ == NULL)
+            ROS_ERROR("Xarm Connection Failed!");
+        else // clear unimportant errors
+        {
+            // thread_id_ = thread_init(cmd_heart_beat, this); // heartbeat related
+            int dbg_msg[16] = {0};
+            arm_cmd_->servo_get_dbmsg(dbg_msg);
+
+            for(int i=0; i<dof_; i++)
+            {
+                if((dbg_msg[i*2]==1)&&(dbg_msg[i*2+1]==40))
+                {
+                    arm_cmd_->clean_err();
+                    ROS_WARN("Cleared low-voltage error of joint %d", i+1);
+                }
+                else if((dbg_msg[i*2]==1))
+                {
+                    arm_cmd_->clean_err();
+                    ROS_WARN("There is servo error code:(0x%x) in joint %d, trying to clear it..", dbg_msg[i*2+1], i+1);
+                }
+            }
+
+        }
+
         // api command services:
         motion_ctrl_server_ = nh_.advertiseService("motion_ctrl", &XARMDriver::MotionCtrlCB, this);
         set_mode_server_ = nh_.advertiseService("set_mode", &XARMDriver::SetModeCB, this);
@@ -67,35 +96,6 @@ namespace xarm_api
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
         robot_rt_state_ = nh_.advertise<xarm_msgs::RobotMsg>("xarm_states", 10, true);
         // end_input_state_ = nh_.advertise<xarm_msgs::IOState>("xarm_input_states", 10, true);
-        
-        nh_.getParam("DOF",dof_);
-
-        arm_report_ = connext_tcp_report_norm(server_ip);
-        // ReportDataNorm norm_data_;
-        arm_cmd_ = connect_tcp_control(server_ip);  
-        if (arm_cmd_ == NULL)
-            ROS_ERROR("Xarm Connection Failed!");
-        else // clear unimportant errors
-        {
-            // thread_id_ = thread_init(cmd_heart_beat, this); // heartbeat related
-            int dbg_msg[16] = {0};
-            arm_cmd_->servo_get_dbmsg(dbg_msg);
-
-            for(int i=0; i<dof_; i++)
-            {
-                if((dbg_msg[i*2]==1)&&(dbg_msg[i*2+1]==40))
-                {
-                    arm_cmd_->clean_err();
-                    ROS_WARN("Cleared low-voltage error of joint %d", i+1);
-                }
-                else if((dbg_msg[i*2]==1))
-                {
-                    arm_cmd_->clean_err();
-                    ROS_WARN("There is servo error code:(0x%x) in joint %d, trying to clear it..", dbg_msg[i*2+1], i+1);
-                }
-            }
-
-        }
 
     }
 

@@ -140,10 +140,10 @@ namespace xarm_control
 		for(int k=0; k<dof_; k++)
 		{
 			// make sure no abnormal command will be written into joints, check if cmd velocity > [180 deg/sec * (1+10%)]
-			if(fabs(position_cmd_float_[k]-(float)position_cmd_[k])*control_rate_ > 3.14*1.1  && !initial_write_)
+			if(fabs(position_cmd_float_[k]-(float)position_cmd_[k])*control_rate_ > 3.14*1.25  && !initial_write_)
 			{
-				ROS_ERROR("joint %d abnormal command! previous: %f, this: %f\n", k+1, position_cmd_float_[k], (float)position_cmd_[k]);
-				return;
+				ROS_WARN("joint %d abnormal command! previous: %f, this: %f\n", k+1, position_cmd_float_[k], (float)position_cmd_[k]);
+				// return;
 			}
 
 			position_cmd_float_[k] = (float)position_cmd_[k];
