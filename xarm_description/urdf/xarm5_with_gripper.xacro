@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="xarm5_with_gripper">
+  <xacro:arg name="prefix" default=""/>
+  <xacro:arg name="ros_namespace" default="xarm"/>
+  <xacro:arg name="limited" default="false"/>
+  <xacro:arg name="effort_control" default="false"/>
+
+  <!-- load xarm5 robot -->
+  <xacro:include filename="$(find xarm_description)/urdf/xarm5_robot_macro.xacro" />
+  
+  <!-- Attach gripper --> 
+  <xacro:include filename="$(find xarm_gripper)/urdf/xarm_gripper_model.xacro" />
+  <!-- <xacro:load_gripper attach_to="$(arg prefix)link5" /> -->
+
+  <xacro:xarm5_robot prefix="$(arg prefix)" namespace="$(arg ros_namespace)" limited="$(arg limited)" effort_control="$(arg effort_control)"/>
+  <xacro:load_gripper attach_to="$(arg prefix)link5" />
+</robot>

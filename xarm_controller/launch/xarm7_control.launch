@@ -3,13 +3,21 @@
   <arg name="run_demo_traj" default="false"/>
   <arg name="effort_control" default="false"/>
   <arg name="namespace" default="xarm"/>
+  <arg name="add_gripper" default="false" />
+
+  <!-- if don't run the demo, load the joint trajectory controller instead -->
+  <rosparam unless="$(arg run_demo_traj)" file="$(find xarm_controller)/config/xarm7_traj_controller.yaml" command="load"/>
+  <node unless="$(arg run_demo_traj)"
+    name="traj_controller_spawner"
+    pkg="controller_manager"
+    type="controller_manager"
+    respawn="false"
+    output="screen"
+    ns="/$(arg namespace)"
+    args="spawn xarm7_traj_controller joint_state_controller"/>
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
-  <rosparam if="$(arg run_demo_traj)"
-    file="$(find xarm_controller)/config/xarm7_effort_controllers.yaml" command="load"/>
-  <rosparam if="$(arg run_demo_traj)"
-    file="$(find xarm_controller)/config/xarm7_position_controllers.yaml" command="load"/>
-
+  <rosparam if="$(arg run_demo_traj)" file="$(find xarm_controller)/config/xarm7_position_controllers.yaml" command="load"/>
   <!-- run_demo: load the position controllers -->
   <node if="$(arg run_demo_traj)" name="position_controller_spawner"
     pkg="controller_manager"
@@ -22,28 +30,15 @@
           joint5_position_controller joint6_position_controller
           joint7_position_controller joint_state_controller"/>
 
-  <!-- run_demo: load the effort controllers, but not starting them -->
-  <node if="$(eval arg('run_demo_traj') and arg('effort_control'))" name="effort_controller_loader"
+  <rosparam if="$(arg add_gripper)"
+    file="$(find xarm_controller)/config/gripper_traj_controller.yaml" command="load"/>
+  <node if="$(arg add_gripper)" name="gripper_controller_spawner"
     pkg="controller_manager"
     type="spawner"
     respawn="false"
     output="screen"
     ns="/$(arg namespace)"
-    args="--stopped joint1_effort_controller joint2_effort_controller
-          joint3_effort_controller joint4_effort_controller
-          joint5_effort_controller joint6_effort_controller
-          joint7_effort_controller"/>
-
-  <!-- if don't run the demo, load the joint trajectory controller instead -->
-  <rosparam unless="$(arg run_demo_traj)" file="$(find xarm_controller)/config/xarm7_traj_controller.yaml" command="load"/>
-  <node unless="$(arg run_demo_traj)"
-    name="traj_controller_spawner"
-    pkg="controller_manager"
-    type="controller_manager"
-    respawn="false"
-    output="screen"
-    ns="/$(arg namespace)"
-    args="spawn xarm7_traj_controller joint_state_controller"/>
+    args="gripper_trajectory_controller "/>
 
   <!-- convert joint states to TF transforms for rviz, etc -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"

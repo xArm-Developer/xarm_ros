@@ -10,7 +10,7 @@ int main (int argc, char **argv)
 
   // create the action client
   // true causes the client to spin its own thread
-  actionlib::SimpleActionClient<xarm_gripper::MoveAction> ac("gripper_move", true);
+  actionlib::SimpleActionClient<xarm_gripper::MoveAction> ac("xarm/gripper_move", true);
 
   ROS_INFO("Waiting for action server to start.");
   // wait for the action server to start

@@ -44,6 +44,8 @@
    * 添加 xArm6 和 xArm5 仿真和真机控制支持。
    * 添加 xArm 机械爪仿真模型。
    * 添加 xArm6 双臂控制示例。
+   * 添加 xArm Gripper action 控制。
+   * 添加 xArm-with-gripper Moveit 开发包。
 
 # 3. 准备工作
 
@@ -107,9 +109,10 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 ```
 ## 4.7 如果已安装Gazebo,可以执行demo查看效果
    ```bash
-   $ roslaunch xarm_gazebo xarm7_beside_table.launch [run_demo:=true]
+   $ roslaunch xarm_gazebo xarm7_beside_table.launch [run_demo:=true] [add_gripper:=true]
    ```
-&ensp;&ensp;指定'run_demo'为true时Gazebo环境启动后机械臂会自动执行一套编好的循环动作。 这套简单的command trajectory写在xarm_controller\src\sample_motion.cpp. 这个demo加载的控制器使用position interface（纯位置控制）。
+&ensp;&ensp;指定'run_demo'为true时Gazebo环境启动后机械臂会自动执行一套编好的循环动作。 这套简单的command trajectory写在xarm_controller\src\sample_motion.cpp. 这个demo加载的控制器使用position interface（纯位置控制）。  
+&ensp;&ensp;指定'add_gripper'为true时, 会加载带有xarm 夹爪的模型。
 
 # 5. 代码库介绍及使用说明
    
@@ -133,13 +136,21 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
    ```
 
 #### Moveit!图形控制界面 + Gazebo 仿真环境:  
-   首先执行:  
+   1. 如果不需要带有xArm Gripper，首先执行:  
    ```bash
    $ roslaunch xarm_gazebo xarm7_beside_table.launch
    ```
    然后在另一个终端运行:
    ```bash
    $ roslaunch xarm7_moveit_config xarm7_moveit_gazebo.launch
+   ```
+   2. 如果**需要带有xArm Gripper**，首先执行:  
+   ```bash
+   $ roslaunch xarm_gazebo xarm7_beside_table.launch add_gripper:=true
+   ```
+   然后在另一个终端运行:
+   ```bash
+   $ roslaunch xarm7_gripper_moveit_config xarm7_gripper_moveit_gazebo.launch
    ```
    如果您在Moveit界面中规划了一条满意的轨迹, 点按"Execute"会使Gazebo中的虚拟机械臂同步执行此轨迹。
 
@@ -150,10 +161,10 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
    ```
    检查terminal中的输出看看有无错误信息。如果启动无误，您可以将RViz中通过Moveit规划好的轨迹通过'Execute'按钮下发给机械臂执行。***但一定确保它不会与周围环境发生碰撞！***  
 
-#### Moveit!图形控制界面 + 安装了UFACTORY机械爪的xArm6真实机械臂:  
+#### Moveit!图形控制界面 + 安装了UFACTORY机械爪的xArm真实机械臂:  
    首先, 检查并确认xArm电源和控制器已上电开启, 然后运行:  
    ```bash
-   $ roslaunch xarm6_gripper_moveit_config realMove_exec.launch robot_ip:=<your controller box LAN IP address>
+   $ roslaunch xarm7_gripper_moveit_config realMove_exec.launch robot_ip:=<your controller box LAN IP address>
    ```
    如果使用了我们配套的机械爪(xArm gripper), 最好可以使用这个package，因为其中的配置会让Moveit在规划无碰撞轨迹时将机械爪考虑在内。 
   
@@ -306,7 +317,6 @@ goal:
 ```
 &ensp;&ensp; 或者通过以下方法调用:
 ```bash
-$ export ROS_NAMESPACE=/xarm
 $ rosrun xarm_gripper gripper_client 500 1500 
 ```
 

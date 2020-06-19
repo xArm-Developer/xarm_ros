@@ -47,6 +47,8 @@
    * Add xArm 6 and xArm 5 simulation/real robot control support.
    * Add simulation model of xArm Gripper.
    * Add demo to control dual xArm6 through Moveit.
+   * Add xArm Gripper action control.
+   * Add xArm-with-gripper Moveit development packages.
 
 # 3. Preparations before using this package
 
@@ -111,9 +113,10 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 
 ## 4.7 Run the demo in Gazebo simulator
    ```bash
-   $ roslaunch xarm_gazebo xarm7_beside_table.launch [run_demo:=true]
+   $ roslaunch xarm_gazebo xarm7_beside_table.launch [run_demo:=true] [add_gripper:=true]
    ```
-&ensp;&ensp;Add the run_demo option if you wish to see a pre-programed loop motion in action. The command trajectory is written in xarm_controller\src\sample_motion.cpp. And the trajectory in this demo is controlled by pure position interface.
+&ensp;&ensp;Add the "run_demo" option if you wish to see a pre-programed loop motion in action. The command trajectory is written in xarm_controller\src\sample_motion.cpp. And the trajectory in this demo is controlled by pure position interface.   
+&ensp;&ensp;Add the "add_gripper" option if you want to see the xArm Gripper attached at the tool end.
 
 # 5. Package description & Usage Guidance
    
@@ -135,13 +138,21 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
    $ roslaunch xarm7_moveit_config demo.launch
    ```
 #### To run Moveit! motion planner along with Gazebo simulator:  
-   First run:  
+   1. If no xArm gripper needed, first run:  
    ```bash
    $ roslaunch xarm_gazebo xarm7_beside_table.launch
    ```
    Then in another terminal:
    ```bash
    $ roslaunch xarm7_moveit_config xarm7_moveit_gazebo.launch
+   ```
+   2. If **xArm gripper needs to be attached**, first run:  
+   ```bash
+   $ roslaunch xarm_gazebo xarm7_beside_table.launch add_gripper:=true
+   ```
+   Then in another terminal:
+   ```bash
+   $ roslaunch xarm7_gripper_moveit_config xarm7_gripper_moveit_gazebo.launch
    ```
    If you have a satisfied motion planned in Moveit!, hit the "Execute" button and the virtual arm in Gazebo will execute the trajectory.
 
@@ -152,10 +163,10 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
    ```
    Examine the terminal output and see if any error occured during the launch. If not, just play with the robot in Rviz and you can execute the sucessfully planned trajectory on real arm. But be sure it will not hit any surroundings before execution!  
 
-#### To run Moveit! motion planner to control the real ***xArm6*** with xArm Gripper attached:  
+#### To run Moveit! motion planner to control the real xArm with xArm Gripper attached:  
    First make sure the xArm and the controller box are powered on, then execute:  
    ```bash
-   $ roslaunch xarm6_gripper_moveit_config realMove_exec.launch robot_ip:=<your controller box LAN IP address>
+   $ roslaunch xarm7_gripper_moveit_config realMove_exec.launch robot_ip:=<your controller box LAN IP address>
    ```
    It is better to use this package with real xArm gripper, since Moveit planner will take the gripper into account for collision detection.  
 
@@ -293,7 +304,7 @@ $ rosservice call /xarm/gripper_state
 &ensp;&ensp; If error code is non-zero, please refer to user manual for the cause of error, the "/xarm/clear_err" service can still be used to clear the error code of xArm Gripper.  
 
 ##### 2. Gripper action:
-&ensp;&ensp; The xArm gripper move action is defined in [Move.action](/xarm_gripper/action/Move.action). The goal consists of target pulse position and the pulse speed. By setting true of "**use_gripper_action**" argument in xarm_bringup/launch/xarm7_server.launch, the action server will be started. Gripper action can be called by:  
+&ensp;&ensp; The xArm gripper move action is defined in [Move.action](/xarm_gripper/action/Move.action). The goal consists of target pulse position and the pulse speed. By setting "true" of "**use_gripper_action**" argument in xarm_bringup/launch/xarm7_server.launch, the action server will be started. Gripper action can be called by:  
 ```bash
 $ rostopic pub -1 /xarm/gripper_move/goal xarm_gripper/MoveActionGoal "header:
   seq: 0
@@ -313,7 +324,6 @@ goal:
 ```
 &ensp;&ensp; Alternatively:
 ```bash
-$ export ROS_NAMESPACE=/xarm
 $ rosrun xarm_gripper gripper_client 500 1500 
 ```
 

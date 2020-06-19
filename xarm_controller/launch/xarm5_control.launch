@@ -3,6 +3,7 @@
   <arg name="run_demo_traj" default="false"/>
   <arg name="effort_control" default="false"/>
   <arg name="namespace" default="xarm"/>
+  <arg name="add_gripper" default="false" />
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
   <rosparam unless="$(arg run_demo_traj)" file="$(find xarm_controller)/config/xarm5_traj_controller.yaml" command="load"/>
@@ -28,6 +29,16 @@
     args="joint1_position_controller joint2_position_controller
           joint3_position_controller joint4_position_controller
           joint5_position_controller joint_state_controller"/>
+
+  <rosparam if="$(arg add_gripper)"
+    file="$(find xarm_controller)/config/gripper_traj_controller.yaml" command="load"/>
+  <node if="$(arg add_gripper)" name="gripper_controller_spawner"
+    pkg="controller_manager"
+    type="spawner"
+    respawn="false"
+    output="screen"
+    ns="/$(arg namespace)"
+    args="gripper_trajectory_controller "/>
 
   <!-- convert joint states to TF transforms for rviz, etc -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
