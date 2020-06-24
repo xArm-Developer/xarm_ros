@@ -3,7 +3,7 @@
   <name>xarm_controller</name>
   <version>0.0.0</version>
   <description>The xarm_controller package</description>
-  <maintainer email="jason@ufactory.cc">jason</maintainer>
+  <maintainer email="jason@ufactory.cc">Jason Peng</maintainer>
   <license>BSD</license>
 
   <buildtool_depend>catkin</buildtool_depend>

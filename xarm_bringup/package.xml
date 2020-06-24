@@ -4,7 +4,7 @@
   <version>0.0.0</version>
   <description>The xarm_bringup package</description>
 
-  <maintainer email="waylon@todo.todo">waylon</maintainer>
+  <maintainer email="jason@ufactory.cc">Jason Peng</maintainer>
   <license>BSD</license>
 
   <buildtool_depend>catkin</buildtool_depend>

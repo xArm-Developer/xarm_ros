@@ -7,7 +7,7 @@
 for xarm_gripper robot</p>
   </description>
   <author>jason_peng</author>
-  <maintainer email="jason@ufactory.cc" />
+  <maintainer email="jason@ufactory.cc">Jason Peng</maintainer>
   <license>BSD</license>
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roslaunch</build_depend>
