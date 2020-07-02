@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
   xarm_api
+  xarm_msgs
 )
 
 include_directories(
@@ -31,7 +32,7 @@ generate_messages(
 )
 
 catkin_package(
-  CATKIN_DEPENDS actionlib_msgs xarm_api
+  CATKIN_DEPENDS actionlib_msgs xarm_api xarm_msgs
 )
 
 find_package(roslaunch)
