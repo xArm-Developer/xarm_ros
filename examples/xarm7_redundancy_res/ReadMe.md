@@ -49,7 +49,7 @@ $ source your_ws/devel/setup.bash
 $ source  ros_py27/bin/activate
 (your-venv)$ rosrun examples robot_jogging.py
 ```
-Alternatively, robot_jogging.py can be run within a python shell, allowing you to make function calls from the shell to the jog and redundancy_resolution functions defined wihtin robot_jogging.py. To do this alternative method, open the third terminal and run:
+Alternatively, robot_jogging.py can be run within a python shell, allowing you to make function calls from the shell to the jog and redundancy_resolution functions defined within robot_jogging.py. To do this alternative method, open the third terminal and run:
 ```sh
 $ source /opt/ros/your_ros_version/setup.bash
 $ source your_ws/devel/setup.bash
