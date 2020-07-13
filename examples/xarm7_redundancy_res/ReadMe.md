@@ -47,9 +47,11 @@ Using the Rviz move_it interface, move the xarm to a position you are happy with
 $ source /opt/ros/your_ros_version/setup.bash
 $ source your_ws/devel/setup.bash
 $ source  ros_py27/bin/activate
-(your-venv)$ rosrun examples robot_jogging.py
+(your-venv)$ rosrun examples robot_jogging.py -q 30.0 -i 1 -a -1.1
 ```
-Alternatively, robot_jogging.py can be run within a python shell, allowing you to make function calls from the shell to the jog and redundancy_resolution functions defined wihtin robot_jogging.py. To do this alternative method, open the third terminal and run:
+In the above command line, the -q option is the desired angle change, the -i option indicates the ith joint, and the -a option is the stepsize alpha.
+
+Alternatively, robot_jogging.py can be run within a python shell, allowing you to make function calls from the shell to the jog and redundancy_resolution functions defined within robot_jogging.py. To do this alternative method, open the third terminal and run:
 ```sh
 $ source /opt/ros/your_ros_version/setup.bash
 $ source your_ws/devel/setup.bash
@@ -57,7 +59,7 @@ $ source  ros_py27/bin/activate
 (your-venv)$ python
 >>> execfile('PATH_TO_YOUR_WS/src/xarm_ros/examples/xarm7_redundancy_res/scripts/robot_jogging.py')
 >>> jog(0.05, 0, 0, 0, 0, 0, client)
->>> redundancy_resolution(3.14/3, -1, client)
+>>> redundancy_resolution(3.14/6, 1, -1.0, client)
 ```
 
 # Creating the requirements.txt file for new packages
