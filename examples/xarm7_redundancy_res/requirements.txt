@@ -1,0 +1,17 @@
+catkin-pkg==0.4.22
+distro==1.5.0
+docutils==0.16
+numpy==1.16.6
+pyassimp==4.1.4
+pyparsing==2.4.7
+python-dateutil==2.8.1
+PyYAML==5.3.1
+rosdep==0.19.0
+rosdistro==0.8.2
+rosinstall==0.7.8
+rosinstall-generator==0.1.22
+rospkg==1.2.8
+six==1.15.0
+vcstools==0.1.42
+wstool==0.1.17
+defusedxml>=0.5.0
