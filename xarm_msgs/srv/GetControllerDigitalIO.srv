@@ -1,0 +1,11 @@
+# Getting the controller DIGITAL input port status, io_num: from 1 to 8
+
+int16 io_num
+
+---
+
+int16 ret
+
+int16 value
+
+string message

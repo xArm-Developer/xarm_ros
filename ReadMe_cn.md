@@ -16,7 +16,7 @@
     * [5.7 ***xarm_api/xarm_msgs***](#57-xarm_apixarm_msgs)  
         * [5.7.1 使用ROS Service启动 xArm (***后续指令执行的前提***)](#使用ros-service启动-xarm)  
         * [5.7.2 关节空间和笛卡尔空间运动指令的示例](#关节空间和笛卡尔空间运动指令的示例)
-        * [5.7.3 I/O 操作](##io-操作)  
+        * [5.7.3 I/O 操作](##工具-io-操作)  
         * [5.7.4 获得反馈状态信息](#获得反馈状态信息)  
         * [5.7.5 关于设定末端工具偏移量](#关于设定末端工具偏移量)  
         * [5.7.6 清除错误](#清除错误)  
@@ -30,6 +30,7 @@
     * [7.2 Servo_Cartesian 笛卡尔位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
     * [7.3 Servo_Joint 关节位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#3-servo_joint-streamed-joint-space-trajectory)
     * [7.4 使用同一个moveGroup节点控制xArm6双臂](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#4-dual-xarm6-controlled-with-one-movegroup-node)
+    * [7.5 用Moveit展示xarm7冗余解的示例](https://github.com/xArm-Developer/xarm_ros/tree/master/examples/xarm7_redundancy_res)
 
 # 1. 简介：
    &ensp;&ensp;此代码库包含xArm模型文件以及相关的控制、规划等示例开发包。开发及测试使用的环境为 Ubuntu 16.04 + ROS Kinetic Kame。
@@ -248,6 +249,24 @@ $ rosservice call /xarm/get_analog_in 1  (最后一个参数：端口号，只�
 $ rosservice call /xarm/set_digital_out 2 1  (设定输出端口2的逻辑为1)
 ```
 &ensp;&ensp;注意检查这些service返回的"ret"值为0，来确保操作成功。
+
+#### 控制器 I/O 操作:
+&ensp;&ensp;我们在控制盒外侧提供了八路数字输入和八路数字输出信号接口。
+
+##### 1. 获得某一数字输入信号状态的方法: 
+```bash
+$ $ rosservice call /xarm/get_controller_din io_num (从1到8)  
+```
+##### 2. 设定某一个输出端口电平的方法:
+```bash
+$ rosservice /xarm/set_controller_dout io_num (从1到8) logic (0或1) 
+```
+&ensp;&ensp;例如:  
+```bash
+$ rosservice call /xarm/set_controller_dout 5 1  (设定输出端口5的逻辑为1)
+```
+&ensp;&ensp;注意检查这些service返回的"ret"值为0，来确保操作成功。
+
 
 #### 获得反馈状态信息:
 &ensp;&ensp;如果通过运行'xarm7_server.launch'连接了一台xArm机械臂，用户可以通过订阅 ***"xarm/xarm_states"*** topic 获得机械臂当前的各种状态信息， 包括关节角度、工具坐标点的位置、错误、警告信息等等。具体的信息列表请参考[RobotMsg.msg](./xarm_msgs/msg/RobotMsg.msg).  

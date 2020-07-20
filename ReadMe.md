@@ -18,7 +18,7 @@
     * [5.7 ***xarm_api/xarm_msgs***](#57-xarm_apixarm_msgs)  
         * [5.7.1 Starting xArm by ROS service (***priority for the following operations***)](#starting-xarm-by-ros-service)  
         * [5.7.2 Joint space or Cartesian space command example](#joint-space-or-cartesian-space-command-example)
-        * [5.7.3 I/O Operations](#io-operations)  
+        * [5.7.3 Tool/Controller I/O Operations](#tool-io-operations)  
         * [5.7.4 Getting status feedback](#getting-status-feedback)  
         * [5.7.5 Setting Tool Center Point Offset](#setting-tool-center-point-offset)  
         * [5.7.6 Clearing Errors](#clearing-errors)  
@@ -32,6 +32,7 @@
     * [7.2 Servo_Cartesian](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
     * [7.3 Servo_Joint](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#3-servo_joint-streamed-joint-space-trajectory)
     * [7.4 Dual xArm6 controlled with one moveGroup node](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#4-dual-xarm6-controlled-with-one-movegroup-node)
+    * [7.5 An example of demonstrating redundancy resolution using MoveIt](https://github.com/xArm-Developer/xarm_ros/tree/master/examples/xarm7_redundancy_res)
 
 # 1. Introduction
    &ensp;&ensp;This repository contains the 3D models of xArm series and demo packages for ROS development and simulations.Developing and testing environment: Ubuntu 16.04 + ROS Kinetic Kame + Gazebo 9.  
@@ -237,6 +238,7 @@ $ rosparam set /xarm/wait_for_finish true
 &ensp;&ensp;Upon success, 0 will be returned. If any error occurs, 1 will be returned.
 
 #### Tool I/O Operations:
+
 &ensp;&ensp;We provide 2 digital, 2 analog input port and 2 digital output signals at the end I/O connector.  
 ##### 1. To get current 2 DIGITAL input states:  
 ```bash
@@ -251,6 +253,25 @@ $ rosservice call /xarm/get_analog_in 1  (last argument: port number, can only b
 $ rosservice call /xarm/set_digital_out 2 1  (Setting output 2 to be 1)
 ```
 &ensp;&ensp;You have to make sure the operation is successful by checking responding "ret" to be 0.
+
+#### Controller I/O Operations:
+
+&ensp;&ensp;We provide 8 digital input and 8 digital output ports at controller box for general usage.  
+
+##### 1. To get one of the controller DIGITAL input state:  
+```bash
+$ rosservice call /xarm/get_controller_din io_num (from 1 to 8)  
+```
+##### 2. To set one of the controller DIGITAL output:
+```bash
+$ rosservice call /xarm/set_controller_dout io_num (from 1 to 8) logic (0 or 1) 
+```
+&ensp;&ensp;For example:  
+```bash
+$ rosservice call /xarm/set_controller_dout 5 1  (Setting output 5 to be 1)
+```
+&ensp;&ensp;You have to make sure the operation is successful by checking responding "ret" to be 0.
+
 
 #### Getting status feedback:
 &ensp;&ensp;Having connected with a real xArm robot by running 'xarm7_server.launch', user can subscribe to the topic ***"xarm/xarm_states"*** for feedback information about current robot states, including joint angles, TCP position, error/warning code, etc. Refer to [RobotMsg.msg](./xarm_msgs/msg/RobotMsg.msg) for content details.  

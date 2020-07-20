@@ -92,6 +92,10 @@ namespace xarm_api
         gripper_move_server_ = nh_.advertiseService("gripper_move", &XARMDriver::GripperMoveCB, this);
         gripper_state_server_ = nh_.advertiseService("gripper_state", &XARMDriver::GripperStateCB, this);
 
+        // controller_io (digital):
+        set_controller_dout_server_ = nh_.advertiseService("set_controller_dout", &XARMDriver::SetControllerDOutCB, this);
+        get_controller_din_server_ = nh_.advertiseService("get_controller_din", &XARMDriver::GetControllerDInCB, this);
+
         // state feedback topics:
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
         robot_rt_state_ = nh_.advertise<xarm_msgs::RobotMsg>("xarm_states", 10, true);
@@ -236,6 +240,32 @@ namespace xarm_api
         res.ret = arm_cmd_->set_tcp_load(Mass, CoM);
         res.message = "set load: ret = " + std::to_string(res.ret); 
         return true;
+    }
+
+    bool XARMDriver::SetControllerDOutCB(xarm_msgs::SetDigitalIO::Request &req, xarm_msgs::SetDigitalIO::Response &res)
+    {
+        if(req.io_num>=1 && req.io_num<=8)
+        {
+            res.ret = arm_cmd_->cgpio_set_auxdigit(req.io_num-1, req.value);
+            res.message = "set Controller digital Output "+ std::to_string(req.io_num) +" to "+ std::to_string(req.value) + " : ret = " + std::to_string(res.ret); 
+            return true;
+        }
+        ROS_WARN("Controller IO io_num: from 1 to 8");
+        return false;
+    }
+
+    bool XARMDriver::GetControllerDInCB(xarm_msgs::GetControllerDigitalIO::Request &req, xarm_msgs::GetControllerDigitalIO::Response &res)
+    {
+        if(req.io_num>=1 && req.io_num<=8)
+        {
+            int all_status;
+            res.ret = arm_cmd_->cgpio_get_auxdigit(&all_status);
+            res.value = (all_status >> (req.io_num - 1)) & 0x0001;
+            res.message = "get Controller digital Input ret = " + std::to_string(res.ret);
+            return true;
+        }
+        ROS_WARN("Controller IO io_num: from 1 to 8");
+        return false;
     }
 
     bool XARMDriver::SetDigitalIOCB(xarm_msgs::SetDigitalIO::Request &req, xarm_msgs::SetDigitalIO::Response &res)

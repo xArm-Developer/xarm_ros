@@ -11,6 +11,7 @@
 #include <xarm_msgs/IOState.h>
 #include <xarm_msgs/SetDigitalIO.h>
 #include <xarm_msgs/GetDigitalIO.h>
+#include <xarm_msgs/GetControllerDigitalIO.h>
 #include <xarm_msgs/GetAnalogIO.h>
 #include <xarm_msgs/ClearErr.h>
 #include <xarm_msgs/GetErr.h>
@@ -58,6 +59,8 @@ namespace xarm_api
             bool GripperStateCB(xarm_msgs::GripperState::Request &req, xarm_msgs::GripperState::Response &res);
             bool SetModbusCB(xarm_msgs::SetToolModbus::Request &req, xarm_msgs::SetToolModbus::Response &res);
             bool ConfigModbusCB(xarm_msgs::ConfigToolModbus::Request &req, xarm_msgs::ConfigToolModbus::Response &res);
+            bool SetControllerDOutCB(xarm_msgs::SetDigitalIO::Request &req, xarm_msgs::SetDigitalIO::Response &res);
+            bool GetControllerDInCB(xarm_msgs::GetControllerDigitalIO::Request &req, xarm_msgs::GetControllerDigitalIO::Response &res);
 
             void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
             void pub_joint_state(sensor_msgs::JointState &js_msg);
@@ -103,6 +106,8 @@ namespace xarm_api
             ros::ServiceServer gripper_state_server_;
             ros::ServiceServer set_modbus_server_;
             ros::ServiceServer config_modbus_server_;
+            ros::ServiceServer set_controller_dout_server_;
+            ros::ServiceServer get_controller_din_server_;
 
             ros::Publisher joint_state_;
             ros::Publisher robot_rt_state_; 

@@ -71,6 +71,7 @@ find_package(catkin REQUIRED COMPONENTS
    SetLoad.srv
    SetToolModbus.srv
    ConfigToolModbus.srv
+   GetControllerDigitalIO.srv
  )
 
 ## Generate actions in the 'action' folder
