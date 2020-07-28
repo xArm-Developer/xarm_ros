@@ -10,7 +10,6 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   message_generation
   message_runtime
-  std_msgs
   actionlib
   actionlib_msgs
   xarm_api

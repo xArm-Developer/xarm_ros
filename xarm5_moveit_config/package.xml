@@ -6,7 +6,7 @@
      An automatically generated package with all the configuration and launch files for using the xarm5 with the MoveIt! Motion Planning Framework
   </description>
   <author email="penglongxiang1988@126.com">Jason Peng</author>
-  <maintainer email="penglongxiang1988@126.com">Jason Peng</maintainer>
+  <maintainer email="jason@ufactory.cc">Jason Peng</maintainer>
 
   <license>BSD</license>
 

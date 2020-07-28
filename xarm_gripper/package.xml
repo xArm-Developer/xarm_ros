@@ -1,4 +1,5 @@
-<package>
+<?xml version="1.0"?>
+<package format="2">
   <name>xarm_gripper</name>
   <version>1.0.0</version>
   <description>
@@ -10,18 +11,22 @@ for xarm_gripper robot</p>
   <maintainer email="jason@ufactory.cc">Jason Peng</maintainer>
   <license>BSD</license>
   <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>message_generation</depend>
+  <depend>actionlib</depend>
+  <depend>actionlib_msgs</depend>
+  <depend>message_runtime</depend>
+  <depend>xarm_api</depend>
+  <depend>xarm_msgs</depend>
+
   <build_depend>roslaunch</build_depend>
-  <build_depend>actionlib_msgs</build_depend>
-  <build_depend>xarm_api</build_depend>
-  <build_depend>xarm_msgs</build_depend>
-  <run_depend>robot_state_publisher</run_depend>
-  <run_depend>rviz</run_depend>
-  <run_depend>joint_state_publisher</run_depend>
-  <run_depend>gazebo</run_depend>
-  <run_depend>message_generation</run_depend>
-  <run_depend>actionlib_msgs</run_depend>
-  <run_depend>xarm_api</run_depend>
-  <run_depend>xarm_msgs</run_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>rviz</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>gazebo</exec_depend>
+  
 <export>
     <architecture_independent />
   </export>
