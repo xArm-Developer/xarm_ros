@@ -255,11 +255,11 @@ $ rosservice call /xarm/set_digital_out 2 1  (设定输出端口2的逻辑为1)
 
 ##### 1. 获得某一数字输入信号状态的方法: 
 ```bash
-$ $ rosservice call /xarm/get_controller_din io_num (从1到8)  
+$ $ rosservice call /xarm/get_controller_din io_num (注意：从1到8, 对应CI0到CI7)  
 ```
 ##### 2. 设定某一个输出端口电平的方法:
 ```bash
-$ rosservice /xarm/set_controller_dout io_num (从1到8) logic (0或1) 
+$ rosservice /xarm/set_controller_dout io_num (注意：从1到8, 对应CO0到CO7) logic (0或1) 
 ```
 &ensp;&ensp;例如:  
 ```bash

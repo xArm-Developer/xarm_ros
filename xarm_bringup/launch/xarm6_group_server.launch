@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="group_name" default="" doc="namespace as a group"/>
+  <arg name="robot_ip" />
+ 
+  <group ns="$(arg group_name)">
+    <remap from="/tf" to="$(arg group_name)/tf" />
+    <remap from="/tf_static" to="$(arg group_name)/tf_static" />
+    <include file="$(find xarm_bringup)/launch/xarm6_server.launch">
+      <arg name="robot_ip" value="$(arg robot_ip)" />
+    </include>
+  </group>
+
+</launch>

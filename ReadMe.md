@@ -260,11 +260,11 @@ $ rosservice call /xarm/set_digital_out 2 1  (Setting output 2 to be 1)
 
 ##### 1. To get one of the controller DIGITAL input state:  
 ```bash
-$ rosservice call /xarm/get_controller_din io_num (from 1 to 8)  
+$ rosservice call /xarm/get_controller_din io_num (Notice: from 1 to 8, for CI0~CI7)  
 ```
 ##### 2. To set one of the controller DIGITAL output:
 ```bash
-$ rosservice call /xarm/set_controller_dout io_num (from 1 to 8) logic (0 or 1) 
+$ rosservice call /xarm/set_controller_dout io_num (Notice: from 1 to 8, for CO0~CO7) logic (0 or 1) 
 ```
 &ensp;&ensp;For example:  
 ```bash
