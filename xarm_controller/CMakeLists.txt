@@ -119,7 +119,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include 
   LIBRARIES xarm_hw
-  CATKIN_DEPENDS combined_robot_hw controller_manager joint_state_controller robot_state_publisher xarm_api
+  CATKIN_DEPENDS combined_robot_hw controller_manager joint_state_controller robot_state_publisher
 #  DEPENDS system_lib
 )
 

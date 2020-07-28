@@ -40,6 +40,9 @@ add_executable(gripper_action_server
    src/gripper_action_server.cpp 
 )
 
+# Make sure xarm_gripper header files are generated before building gripper_action_server
+add_dependencies(gripper_action_server xarm_msgs_generate_messages_cpp xarm_gripper_generate_messages_cpp)
+
 add_dependencies(gripper_action_server ${catkin_EXPORTED_TARGETS})
 target_link_libraries(gripper_action_server 
    ${catkin_LIBRARIES}
@@ -48,6 +51,10 @@ target_link_libraries(gripper_action_server
 add_executable(gripper_client 
    src/gripper_client.cpp 
 )
+
+# Make sure xarm_gripper header files are generated before building gripper_client
+add_dependencies(gripper_client xarm_msgs_generate_messages_cpp xarm_gripper_generate_messages_cpp)
+
 add_dependencies(gripper_client ${catkin_EXPORTED_TARGETS})
 target_link_libraries(gripper_client 
    ${catkin_LIBRARIES}
