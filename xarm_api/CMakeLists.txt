@@ -126,7 +126,7 @@ include_directories(
 )
 
 ## Declare a C++ library
-add_library(${PROJECT_NAME}
+add_library(xarm_api
    ${XARM_API_DIR}/connect.cc
    ${XARM_API_DIR}/report_data.cc
 
@@ -156,7 +156,7 @@ add_dependencies(xarm_ros_client xarm_msgs_generate_messages_cpp)
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(xarm_api ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
@@ -192,22 +192,22 @@ add_executable(test_tool_modbus
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(example1_report_norm_node 
-   ${PROJECT_NAME}
+   xarm_api
    ${catkin_LIBRARIES}
  )
 
  target_link_libraries(xarm_driver_node 
-   ${PROJECT_NAME}
+   xarm_api
    ${catkin_LIBRARIES}
  )
 
 target_link_libraries(move_test 
-   ${PROJECT_NAME}
+   xarm_api
    ${catkin_LIBRARIES}
  )
 
 target_link_libraries(test_tool_modbus 
-   ${PROJECT_NAME}
+   xarm_api
    ${catkin_LIBRARIES}
    xarm_ros_client
  )
@@ -228,18 +228,18 @@ target_link_libraries(test_tool_modbus
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+install(TARGETS xarm_api xarm_ros_client
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(DIRECTORY include/
+  DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+  PATTERN ".svn" EXCLUDE
+ )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
