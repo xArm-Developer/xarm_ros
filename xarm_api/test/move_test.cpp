@@ -165,6 +165,4 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    if(servoj_test(move_srv_, move_servoj_client_) == 1)
-        return 1;
 }

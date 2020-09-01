@@ -23,7 +23,8 @@
         * [5.7.5 Setting Tool Center Point Offset](#setting-tool-center-point-offset)  
         * [5.7.6 Clearing Errors](#clearing-errors)  
         * [5.7.7 Gripper Control(***Updated***)](#gripper-control)
-        * [5.7.8 Tool Modbus communication (***new***)](#tool-modbus-communication)
+        * [5.7.8 Vaccum Gripper Control(***new***)](#vaccum-gripper-control)
+        * [5.7.9 Tool Modbus communication (***new***)](#tool-modbus-communication)
 * [6. Mode Change](#6-mode-change)
     * [6.1 Mode Explanation](#61-mode-explanation)
     * [6.2 Proper way to change modes](#62-proper-way-to-change-modes)
@@ -347,6 +348,20 @@ goal:
 ```bash
 $ rosrun xarm_gripper gripper_client 500 1500 
 ```
+
+#### Vaccum Gripper Control:
+&ensp;&ensp; If Vaccum Gripper (from UFACTORY) is attached to the tool end, the following service can be called to operate the vaccum gripper.  
+
+&ensp;&ensp;To turn on:  
+```bash
+$ rosservice call /xarm/vaccum_gripper_set 1
+```
+&ensp;&ensp;To turn off:  
+```bash
+$ rosservice call /xarm/vaccum_gripper_set 0
+```
+&ensp;&ensp;0 will be returned upon successful execution.  
+
 
 #### Tool Modbus communication:
 If modbus communication with the tool device is needed, please first set the proper baud rate and timeout parameters through the "xarm/config_tool_modbus" service (refer to [ConfigToolModbus.srv](/xarm_msgs/srv/ConfigToolModbus.srv)). For example: 

@@ -20,13 +20,14 @@
         * [5.7.4 获得反馈状态信息](#获得反馈状态信息)  
         * [5.7.5 关于设定末端工具偏移量](#关于设定末端工具偏移量)  
         * [5.7.6 清除错误](#清除错误)  
-		* [5.7.7 机械爪控制(***updated***)](#机械爪控制)  
-		* [5.7.8 末端工具Modbus通信 (***new***)](#末端工具modbus通信)
+        * [5.7.7 机械爪控制(***updated***)](#机械爪控制)  
+        * [5.7.8 真空吸头控制(***new***)](#真空吸头控制)  
+        * [5.7.9 末端工具Modbus通信 (***new***)](#末端工具modbus通信)
 * [6. 模式切换(***new***)](#6-模式切换)
     * [6.1 模式介绍](#61-模式介绍)
     * [6.2 切换模式的正确方法](#62-切换模式的正确方法)
 * [7. 其他示例(***new***)](#7-其他示例)
-	* [7.1 两台xArm5 (两进程独立控制)](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#1-multi_xarm5-controlled-separately)
+  * [7.1 两台xArm5 (两进程独立控制)](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#1-multi_xarm5-controlled-separately)
     * [7.2 Servo_Cartesian 笛卡尔位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
     * [7.3 Servo_Joint 关节位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#3-servo_joint-streamed-joint-space-trajectory)
     * [7.4 使用同一个moveGroup节点控制xArm6双臂](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#4-dual-xarm6-controlled-with-one-movegroup-node)
@@ -338,6 +339,20 @@ goal:
 ```bash
 $ rosrun xarm_gripper gripper_client 500 1500 
 ```
+
+#### 真空吸头控制:
+&ensp;&ensp; 如果已将真空吸头 (UFACTORY出品) 安装至机械臂末端，则可以使用如下的service来操作真空吸头。  
+
+&ensp;&ensp;吸头开启:  
+```bash
+$ rosservice call /xarm/vaccum_gripper_set 1
+```
+&ensp;&ensp;吸头关闭:  
+```bash
+$ rosservice call /xarm/vaccum_gripper_set 0
+```
+&ensp;&ensp;正常执行服务将返回0.  
+
 
 #### 末端工具Modbus通信:
 如果需要与末端工具进行modbus通讯, 需要先通过"xarm/config_tool_modbus"服务设置正确的通信波特率和超时时间 (ms) (参考 [ConfigToolModbus.srv](/xarm_msgs/srv/ConfigToolModbus.srv)). 例如: 

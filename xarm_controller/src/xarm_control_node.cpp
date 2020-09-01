@@ -36,7 +36,6 @@ int main(int argc, char**argv)
 	   ts = ros::Time::now();
 	   // xarm_hw.read(ts, elapsed);
 	   cm.update(ts, elapsed, xarm_hw.need_reset()); // reset_controllers=true: preempt and cancel current goal
-	   
 	   xarm_hw.write(ts, elapsed);
 	   r.sleep();
 	}
