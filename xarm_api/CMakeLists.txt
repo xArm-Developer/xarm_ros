@@ -178,6 +178,9 @@ add_executable(test_tool_modbus
    test/test_tool_modbus.cpp
 )
 
+add_executable(servo_cart_test
+   test/servo_cartesian_test.cpp
+)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -212,6 +215,10 @@ target_link_libraries(test_tool_modbus
    xarm_ros_client
  )
 
+target_link_libraries(servo_cart_test 
+   xarm_api
+   ${catkin_LIBRARIES}
+ )
 
 #############
 ## Install ##
