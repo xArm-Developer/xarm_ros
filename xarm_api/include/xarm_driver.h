@@ -2,6 +2,7 @@
 #define __XARM_DRIVER_H
 
 #include "ros/ros.h"
+#include "std_msgs/Float32.h"
 #include <xarm_msgs/SetInt16.h>
 #include <xarm_msgs/TCPOffset.h>
 #include <xarm_msgs/SetLoad.h>
@@ -62,6 +63,7 @@ namespace xarm_api
             bool ConfigModbusCB(xarm_msgs::ConfigToolModbus::Request &req, xarm_msgs::ConfigToolModbus::Response &res);
             bool SetControllerDOutCB(xarm_msgs::SetDigitalIO::Request &req, xarm_msgs::SetDigitalIO::Response &res);
             bool GetControllerDInCB(xarm_msgs::GetControllerDigitalIO::Request &req, xarm_msgs::GetControllerDigitalIO::Response &res);
+            void SleepTopicCB(const std_msgs::Float32ConstPtr& msg);
 
             void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
             void pub_joint_state(sensor_msgs::JointState &js_msg);
@@ -114,6 +116,8 @@ namespace xarm_api
             ros::Publisher joint_state_;
             ros::Publisher robot_rt_state_; 
             ros::Publisher end_input_state_;
+
+            ros::Subscriber sleep_sub_;
 
             int wait_for_finish();
     };

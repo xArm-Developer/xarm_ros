@@ -103,6 +103,9 @@ namespace xarm_api
         robot_rt_state_ = nh_.advertise<xarm_msgs::RobotMsg>("xarm_states", 10, true);
         // end_input_state_ = nh_.advertise<xarm_msgs::IOState>("xarm_input_states", 10, true);
 
+        // subscribed topics
+        sleep_sub_ = nh_.subscribe("sleep_sec", 1, &XARMDriver::SleepTopicCB, this);
+
     }
 
     void XARMDriver::Heartbeat(void)
@@ -114,6 +117,12 @@ namespace xarm_api
         //     ROS_ERROR("xArm Heartbeat error! ret = %d", ret);
         // }
         // ROS_INFO("xArm Heartbeat! %d", cmd_num);
+    }
+
+    void XARMDriver::SleepTopicCB(const std_msgs::Float32ConstPtr& msg)
+    {
+        if(msg->data>0)
+            arm_cmd_->sleep_instruction(msg->data);
     }
 
     bool XARMDriver::ClearErrCB(xarm_msgs::ClearErr::Request& req, xarm_msgs::ClearErr::Response& res)

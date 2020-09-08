@@ -234,6 +234,10 @@ target_link_libraries(servo_cart_test
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
+catkin_install_python(PROGRAMS scripts/servo_cartesian_test.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 ## Mark executables and/or libraries for installation
 install(TARGETS xarm_api xarm_ros_client
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

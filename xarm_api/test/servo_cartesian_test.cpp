@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "xarm_move_test");
 	ros::NodeHandle nh;
-	
+	nh.setParam("/xarm/wait_for_finish", true); // return after motion service finish
     ros::ServiceClient motion_ctrl_client_ = nh.serviceClient<xarm_msgs::SetAxis>("/xarm/motion_ctrl");
 	ros::ServiceClient set_mode_client_ = nh.serviceClient<xarm_msgs::SetInt16>("/xarm/set_mode");
 	ros::ServiceClient set_state_client_ = nh.serviceClient<xarm_msgs::SetInt16>("/xarm/set_state");
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
     
 
     // STEP 1: Motion Enable
-    set_axis_srv_.request.id = 8; // CHECK!
+    set_axis_srv_.request.id = 8;
     set_axis_srv_.request.data = 1;
     
     if(motion_ctrl_client_.call(set_axis_srv_))
@@ -109,8 +109,6 @@ int main(int argc, char **argv)
     if(go_home_test(move_srv_, go_home_client_) == 1) 
         return 1;
 
-    /*wait for going to home*/
-    sleep(3);
 
     // STEP 5: Set Mode to 1
     set_int16_srv_.request.data = 1;
