@@ -50,6 +50,7 @@ Please update the controller Firmware to version >= 1.5.0. If servo_cartesian in
 $ rosservice call /xarm/move_servo_cart [0,0,2,0,0,0] 0.0 0.0 1 0.0
 ```
 This will make tool to move 2 mm immediately along +Z Axis in **TOOL Coordinate**.  
+There is also **example code** implementing continuous servo_cartesian() in tool coordinate: [c++ version](../xarm_api/test/servo_cartesian_test.cpp) and [python version](../xarm_api/scripts/servo_cartesian_test.py).
 
 
 # 3. Servo_Joint (streamed joint-space trajectory)
