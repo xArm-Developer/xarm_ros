@@ -68,7 +68,7 @@ class XarmRTConnection
                             js_msg.velocity[i] = (js_msg.position[i] - prev_angle[i])*REPORT_RATE_HZ;
                         }
 
-                        js_msg.effort[i] = 0;
+                        js_msg.effort[i] = (double)norm_data.tau_[i];
 
                         prev_angle[i] = d;
                     }
