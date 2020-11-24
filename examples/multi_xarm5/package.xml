@@ -18,4 +18,6 @@
     <!-- Other tools can request additional information be placed here -->
 
   </export>
+  <exec_depend>ros_controllers</exec_depend>
+  <exec_depend>ros_control</exec_depend>
 </package>

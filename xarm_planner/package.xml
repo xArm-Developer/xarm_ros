@@ -32,4 +32,5 @@
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>ros_controllers</exec_depend>
+  <exec_depend>ros_control</exec_depend>
 </package>

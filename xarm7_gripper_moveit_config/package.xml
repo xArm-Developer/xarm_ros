@@ -29,6 +29,7 @@
   <!-- <run_depend>warehouse_ros_mongo</run_depend> -->
   <build_depend>xarm_description</build_depend>
   <run_depend>xarm_description</run_depend>
-
+  <run_depend>ros_controllers</run_depend>
+  <run_depend>ros_control</run_depend>
 
 </package>
