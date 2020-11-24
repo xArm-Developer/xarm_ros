@@ -28,7 +28,7 @@ void SocketPort::recv_proc(void) {
         continue;
       }
 
-      close(fp_);
+      close_port();
       printf("SocketPort::recv_proc exit, %d\n", fp_);
       pthread_exit(0);
     }

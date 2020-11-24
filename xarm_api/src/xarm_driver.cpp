@@ -119,6 +119,11 @@ namespace xarm_api
         // ROS_INFO("xArm Heartbeat! %d", cmd_num);
     }
 
+    bool XARMDriver::isConnectionOK(void)
+    {
+        return !arm_report_->is_ok(); // is_ok will return 0 if connection is normal
+    }
+
     void XARMDriver::SleepTopicCB(const std_msgs::Float32ConstPtr& msg)
     {
         if(msg->data>0)
@@ -239,7 +244,7 @@ namespace xarm_api
     bool XARMDriver::SetTCPOffsetCB(xarm_msgs::TCPOffset::Request &req, xarm_msgs::TCPOffset::Response &res)
     {
         float offsets[6] = {req.x, req.y, req.z, req.roll, req.pitch, req.yaw};
-        res.ret = arm_cmd_->set_tcp_offset(offsets);
+        res.ret = arm_cmd_->set_tcp_offset(offsets) | arm_cmd_->save_conf();
         res.message = "set tcp offset: ret = " + std::to_string(res.ret); 
         return true;
     }
@@ -248,7 +253,7 @@ namespace xarm_api
     {   
         float Mass = req.mass;
         float CoM[3] = {req.xc, req.yc, req.zc};
-        res.ret = arm_cmd_->set_tcp_load(Mass, CoM);
+        res.ret = arm_cmd_->set_tcp_load(Mass, CoM) | arm_cmd_->save_conf();
         res.message = "set load: ret = " + std::to_string(res.ret); 
         return true;
     }

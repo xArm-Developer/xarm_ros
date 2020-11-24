@@ -280,13 +280,13 @@ $ rosservice call /xarm/set_controller_dout 5 1  (Setting output 5 to be 1)
 &ensp;&ensp;In consideration of performance, current update rate of above two topics are set at ***5Hz***.  
 
 #### Setting Tool Center Point Offset:
-&ensp;&ensp;The tool tip point offset values can be set by calling service "/xarm/set_tcp_offset". Refer to the figure below, please note this offset coordinate is expressed with respect to ***initial tool frame*** (Frame B), which is located at flange center, with roll, pitch, yaw rotations of (PI, 0, 0) from base frame (Frame A).   
+&ensp;&ensp;The tool tip point offset values can be set by calling service "/xarm/set_tcp_offset". Refer to the figure below, please note this offset coordinate is expressed with respect to ***default tool frame*** (Frame B), which is located at flange center, with roll, pitch, yaw rotations of (PI, 0, 0) from base frame (Frame A).   
 ![xArmFrames](./doc/xArmFrames.png)  
 &ensp;&ensp;For example:  
 ```bash
 $ rosservice call /xarm/set_tcp_offset 0 0 20 0 0 0
 ```
-&ensp;&ensp;This is to set tool frame position offset (x = 0 mm, y = 0 mm, z = 20 mm), and orientation (RPY) offset of ( 0, 0, 0 ) radians with respect to initial tool frame (Frame B in picture). ***Remember to set this offset each time the controller box is restarted !*** 
+&ensp;&ensp;This is to set tool frame position offset (x = 0 mm, y = 0 mm, z = 20 mm), and orientation (RPY) offset of ( 0, 0, 0 ) radians with respect to initial tool frame (Frame B in picture). ***Note this offset might be overwritten by xArm Stdudio if it is not consistent with the default value set in studio!*** It is recommended to do the same TCP default offset configuration in xArm studio if you want to use it alongside with ros service control.  
 
 #### Clearing Errors:
 &ensp;&ensp;Sometimes controller may report error or warnings that would affect execution of further commands. The reasons may be power loss, position/speed limit violation, planning errors, etc. It needs additional intervention to clear. User can check error code in the message of topic ***"xarm/xarm_states"*** . 

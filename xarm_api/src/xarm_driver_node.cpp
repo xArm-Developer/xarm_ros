@@ -19,6 +19,7 @@ class XarmRTConnection
             ip = server_ip;
             xarm_driver = drv;
             xarm_driver.XARMDriverInit(root_nh, server_ip);
+            ros::Duration(0.5).sleep();
             thread_id = thread_init(thread_proc, (void *)this);
 
         }
@@ -34,9 +35,9 @@ class XarmRTConnection
 
             ros::Rate r(REPORT_RATE_HZ); // 10Hz
 
-            while(true)
+            while(xarm_driver.isConnectionOK())
             {
-                // usleep(5000);
+                r.sleep();
                 ret = xarm_driver.get_frame();
                 if (ret != 0) continue;
 
@@ -111,14 +112,15 @@ class XarmRTConnection
                     err_num++;
                 }
 
-                r.sleep();
             }
+            ROS_ERROR("xArm Connection Failed! Please Shut Down (Ctrl-C) and Retry ...");
         }
 
         static void* thread_proc(void *arg) 
         {
             XarmRTConnection* pThreadTest=(XarmRTConnection*)arg;
             pThreadTest->thread_run();
+            pthread_exit(0);
         }
 
     public:

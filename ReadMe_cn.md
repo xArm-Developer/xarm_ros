@@ -275,13 +275,13 @@ $ rosservice call /xarm/set_controller_dout 5 1  (设定输出端口5的逻辑�
 &ensp;&ensp;基于运行时性能考虑，目前以上两个topic的数据更新率固定为 ***5Hz***.  
 
 #### 关于设定末端工具偏移量:  
-&ensp;&ensp;末端工具的偏移量可以也通过'/xarm/set_tcp_offset'服务来设定,参考下图，请注意这一坐标偏移量是基于 ***原始工具坐标系*** (坐标系B)描述的，它位于末端法兰中心，并且相对基坐标系(坐标系A)有（PI, 0, 0)的RPY旋转偏移。
+&ensp;&ensp;末端工具的偏移量可以也通过'/xarm/set_tcp_offset'服务来设定,参考下图，请注意这一坐标偏移量是基于 ***默认工具坐标系*** (坐标系B)描述的，它位于末端法兰中心，并且相对基坐标系(坐标系A)有（PI, 0, 0)的RPY旋转偏移。
 ![xArmFrames](./doc/xArmFrames.png)  
 &ensp;&ensp;例如：
 ```bash
 $ rosservice call /xarm/set_tcp_offset 0 0 20 0 0 0
 ```
-&ensp;&ensp;这条命令设置了基于原始工具坐标系(x = 0 mm, y = 0 mm, z = 20 mm)的位置偏移量，还有（0 rad, 0 rad, 0 rad)的RPY姿态偏移量。***如果需要请在每次重新启动/上电控制盒时设定一次正确的偏移量，因为此设定会掉电丢失。***  
+&ensp;&ensp;这条命令设置了基于原始工具坐标系(x = 0 mm, y = 0 mm, z = 20 mm)的位置偏移量，还有（0 rad, 0 rad, 0 rad)的RPY姿态偏移量。***请注意：这里设置的TCP偏移在后续xArm Studio的操作中可能被重置（如果这个设定和studio中的默认设置不同）*** 如果需要xArm Studio和ros service配合控制机械臂，建议在xArm Studio中做好相同的默认TCP偏移设置。 
 
 #### 清除错误:
 &ensp;&ensp;有时控制器会因为掉电、位置或速度超限、规划失败等原因汇报错误，遇到这一状态需要手动解除。具体的错误代码可以在topic ***"xarm/xarm_states"*** 的信息中找到。 
