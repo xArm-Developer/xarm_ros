@@ -76,9 +76,9 @@ namespace xarm_control
 			ROS_ERROR("ROS Parameter xarm_robot_ip not specified!");
 			return false;
 		}
-		if(!robot_hw_nh.hasParam("control_rate"))
+		if(!robot_hw_nh.hasParam("/control_rate"))
 		{
-			ROS_ERROR("ROS Parameter control_rate not specified!");
+			ROS_ERROR("ROS Parameter /control_rate not specified!");
 			return false;
 		}
 
@@ -86,7 +86,7 @@ namespace xarm_control
 		robot_hw_nh.getParam("DOF", xarm_dof);
 		robot_hw_nh.getParam("xarm_robot_ip", robot_ip);
 		robot_hw_nh.getParam("joint_names", jnt_names);
-		robot_hw_nh.getParam("control_rate", ctrl_rate);
+		robot_hw_nh.getParam("/control_rate", ctrl_rate); // use Absolute root namespace
 
 		dof_ = xarm_dof;
 		jnt_names_ = jnt_names;
