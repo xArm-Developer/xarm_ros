@@ -19,6 +19,8 @@
   </include>
 
   <!-- run xarm_combined_traj_controller from HW interface, enable direct command to real robot arm -->  
+  <remap from="$(arg hw_ns_1)/control_rate" to="/control_rate"/>
+  <remap from="$(arg hw_ns_2)/control_rate" to="/control_rate"/>
   <node name="xarm_combined_traj_controller" pkg="xarm_controller" type="xarm_combined_traj_controller" respawn="false" output="screen" />
 
   <!-- load the joint trajectory controller specified in yaml -->
