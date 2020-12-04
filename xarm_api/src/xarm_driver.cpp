@@ -92,7 +92,7 @@ namespace xarm_api
         gripper_move_server_ = nh_.advertiseService("gripper_move", &XARMDriver::GripperMoveCB, this);
         gripper_state_server_ = nh_.advertiseService("gripper_state", &XARMDriver::GripperStateCB, this);
 
-        set_vaccum_gripper_server_ = nh_.advertiseService("vaccum_gripper_set", &XARMDriver::VaccumGripperCB, this);
+        set_vacuum_gripper_server_ = nh_.advertiseService("vacuum_gripper_set", &XARMDriver::VacuumGripperCB, this);
 
         // controller_io (digital):
         set_controller_dout_server_ = nh_.advertiseService("set_controller_dout", &XARMDriver::SetControllerDOutCB, this);
@@ -588,7 +588,7 @@ namespace xarm_api
         return true;
     }
 
-    bool XARMDriver::VaccumGripperCB(xarm_msgs::SetInt16::Request &req, xarm_msgs::SetInt16::Response &res)
+    bool XARMDriver::VacuumGripperCB(xarm_msgs::SetInt16::Request &req, xarm_msgs::SetInt16::Response &res)
     {
         if(req.data)
         {
@@ -600,7 +600,7 @@ namespace xarm_api
             res.ret = arm_cmd_->tgpio_set_digital(1, 0);
             res.ret = arm_cmd_->tgpio_set_digital(2, 1);
         }
-        res.message = "set vaccum gripper: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
+        res.message = "set vacuum gripper: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
         return true;
     }
 

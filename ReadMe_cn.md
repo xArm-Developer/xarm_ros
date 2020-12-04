@@ -111,10 +111,11 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 ```
 ## 4.7 如果已安装Gazebo,可以执行demo查看效果
    ```bash
-   $ roslaunch xarm_gazebo xarm7_beside_table.launch [run_demo:=true] [add_gripper:=true]
+   $ roslaunch xarm_gazebo xarm7_beside_table.launch [run_demo:=true] [add_gripper:=true] [add_vacuum_gripper:=true] 
    ```
 &ensp;&ensp;指定'run_demo'为true时Gazebo环境启动后机械臂会自动执行一套编好的循环动作。 这套简单的command trajectory写在xarm_controller\src\sample_motion.cpp. 这个demo加载的控制器使用position interface（纯位置控制）。  
-&ensp;&ensp;指定'add_gripper'为true时, 会加载带有xarm 夹爪的模型。
+&ensp;&ensp;指定'add_gripper'为true时, 会加载带有xarm 夹爪的模型。  
+&ensp;&ensp;指定'add_vacuum_gripper'为true时, 会加载带有xarm 真空吸头的模型。注意：只能加载一款末端器件。  
 
 # 5. 代码库介绍及使用说明
    
@@ -154,7 +155,9 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
    ```bash
    $ roslaunch xarm7_gripper_moveit_config xarm7_gripper_moveit_gazebo.launch
    ```
-   如果您在Moveit界面中规划了一条满意的轨迹, 点按"Execute"会使Gazebo中的虚拟机械臂同步执行此轨迹。
+   如果您在Moveit界面中规划了一条满意的轨迹, 点按"Execute"会使Gazebo中的虚拟机械臂同步执行此轨迹。  
+
+   3. 如果**需要带有xArm 真空吸头**，用"vacuum_gripper"替换掉上面例子中的"gripper"关键字即可。  
 
 #### Moveit!图形控制界面 + xArm 真实机械臂:
    首先, 检查并确认xArm电源和控制器已上电开启, 然后运行:  
@@ -169,6 +172,13 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
    $ roslaunch xarm7_gripper_moveit_config realMove_exec.launch robot_ip:=<your controller box LAN IP address>
    ```
    如果使用了我们配套的机械爪(xArm gripper), 最好可以使用这个package，因为其中的配置会让Moveit在规划无碰撞轨迹时将机械爪考虑在内。 
+
+#### Moveit!图形控制界面 + 安装了UFACTORY真空吸头的xArm真实机械臂:  
+   首先, 检查并确认xArm电源和控制器已上电开启, 然后运行:  
+   ```bash
+   $ roslaunch xarm7_vacuum_gripper_moveit_config realMove_exec.launch robot_ip:=<your controller box LAN IP address>
+   ```
+   如果使用了我们配套的真空吸头(xArm vacuum gripper), 最好可以使用这个package，因为其中的配置会让Moveit在规划无碰撞轨迹时将真空吸头考虑在内。 
   
 
 ## 5.6 xarm_planner:
@@ -345,11 +355,11 @@ $ rosrun xarm_gripper gripper_client 500 1500
 
 &ensp;&ensp;吸头开启:  
 ```bash
-$ rosservice call /xarm/vaccum_gripper_set 1
+$ rosservice call /xarm/vacuum_gripper_set 1
 ```
 &ensp;&ensp;吸头关闭:  
 ```bash
-$ rosservice call /xarm/vaccum_gripper_set 0
+$ rosservice call /xarm/vacuum_gripper_set 0
 ```
 &ensp;&ensp;正常执行服务将返回0.  
 

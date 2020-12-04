@@ -1,0 +1,12 @@
+controller_list:
+  - name: fake_vacuum_gripper_controller
+    joints:
+      []
+  - name: fake_xarm6_controller
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6

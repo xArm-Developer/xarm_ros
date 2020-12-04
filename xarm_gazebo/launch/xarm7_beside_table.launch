@@ -5,6 +5,7 @@
   <arg name="gui" default="true" doc="Starts gazebo gui" />
   <arg name="effort_control" default="false"/>
   <arg name="add_gripper" default="false" />
+  <arg name="add_vacuum_gripper" default="false" />
   
   <rosparam file="$(find xarm7_moveit_config)/config/xarm7_params.yaml" command="load"/>
   <!-- startup simulated world -->
@@ -15,7 +16,7 @@
   </include>
 
   <!-- send robot urdf to param server, joint limit may be overwritten if use moveit planner -->
-  <param unless="$(arg add_gripper)" name="robot_description"
+  <param unless="$(eval arg('add_gripper') or arg('add_vacuum_gripper'))" name="robot_description"
     command="$(find xacro)/xacro
     --inorder '$(find xarm_description)/urdf/xarm7_robot.urdf.xacro'
     effort_control:=$(arg effort_control)" />
@@ -23,6 +24,11 @@
   <param if="$(arg add_gripper)" name="robot_description"
     command="$(find xacro)/xacro
     --inorder '$(find xarm_description)/urdf/xarm7_with_gripper.xacro'
+    effort_control:=$(arg effort_control)" />
+
+  <param if="$(arg add_vacuum_gripper)" name="robot_description"
+    command="$(find xacro)/xacro
+    --inorder '$(find xarm_description)/urdf/xarm7_with_vacuum_gripper.xacro'
     effort_control:=$(arg effort_control)" />
 
   <!-- spawn robot model in gazebo, located on the table -->
