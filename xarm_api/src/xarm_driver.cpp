@@ -169,6 +169,7 @@ namespace xarm_api
     {
         res.err = curr_err_;
         res.message = "current error code = "  + std::to_string(res.err);
+        return true;
     }
 
     bool XARMDriver::MotionCtrlCB(xarm_msgs::SetAxis::Request& req, xarm_msgs::SetAxis::Response& res)

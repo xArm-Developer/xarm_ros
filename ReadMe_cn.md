@@ -48,6 +48,7 @@
    * 添加 xArm6 双臂控制示例。
    * 添加 xArm Gripper action 控制。
    * 添加 xArm-with-gripper Moveit 开发包。
+   * 添加 vacuum gripper（真空吸头）3D模型以及 xArm-with-vacuum-gripper Moveit开发包 (位于 /examples 路径下)。
 
 # 3. 准备工作
 
@@ -66,7 +67,9 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
 &ensp;&ensp;这个模型在Gazebo demo中会用到。在Gazebo仿真环境中, 在model database列表里寻找 'table', 并将此模型拖入旁边的3D环境中. 通过这个操作，桌子的模型就会自动下载到本地。  
 
 ## 3.4 安装"mimic_joint_plugin"用于xArm Gripper的Gazebo仿真
-&ensp;&ensp;如果xArm Gripper需要在Gazebo环境中仿真, 为了使物理引擎中的 mimic joints 并联机构可以正常运作，需要安装来自Konstantinos Chatzilygeroudis (@costashatz) 的 [**mimic_joint_plugin**](https://github.com/roboticsgroup/roboticsgroup_gazebo_plugins)。关于这个插件的使用参考了@mintar的[这个教程](https://github.com/mintar/mimic_joint_gazebo_tutorial) 。
+&ensp;&ensp;如果xArm Gripper需要在Gazebo环境中仿真, 为了使物理引擎中的 mimic joints 并联机构可以正常运作，需要安装来自Konstantinos Chatzilygeroudis (@costashatz) 的 [**mimic_joint_plugin**](https://github.com/roboticsgroup/roboticsgroup_gazebo_plugins)。关于这个插件的使用参考了@mintar的[这个教程](https://github.com/mintar/mimic_joint_gazebo_tutorial) 。  
+
+12/22/2020: 参考issue #53, 请留意最近这个插件已经弃用不再支持, 如果您想要使用[新版本](https://github.com/roboticsgroup/roboticsgroup_upatras_gazebo_plugins), 请将xarm_ros/xarm_gripper/urdf/xarm_gripper.gazebo.xacro 文件中的"libroboticsgroup_gazebo_mimic_joint_plugin.so"替换为"libroboticsgroup_upatras_gazebo_mimic_joint_plugin.so"    
 
 # 4. 开始使用'xarm_ros'
    

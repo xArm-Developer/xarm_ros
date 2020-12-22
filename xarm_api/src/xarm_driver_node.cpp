@@ -6,8 +6,15 @@
  ============================================================================*/
 #include <xarm_driver.h>
 #include <xarm/linux/thread.h>
+#include <signal.h>
 #include "xarm/connect.h"
 #include "xarm/report_data.h"
+
+void exit_sig_handler(int signum)
+{
+    fprintf(stderr, "[xarm_driver] Ctrl-C caught, exit process...\n");
+    exit(-1);
+}
 
 class XarmRTConnection
 {
@@ -21,7 +28,6 @@ class XarmRTConnection
             xarm_driver.XARMDriverInit(root_nh, server_ip);
             ros::Duration(0.5).sleep();
             thread_id = thread_init(thread_proc, (void *)this);
-
         }
 
         void thread_run(void)
@@ -34,7 +40,7 @@ class XarmRTConnection
             double d, prev_angle[joint_num_];
 
             ros::Rate r(REPORT_RATE_HZ); // 10Hz
-
+            
             while(xarm_driver.isConnectionOK())
             {
                 r.sleep();
@@ -163,7 +169,7 @@ int main(int argc, char **argv)
     strcpy(server_ip,robot_ip.c_str());
     XarmRTConnection rt_connect(n, server_ip, driver);
 
-    // ros::spin();
+    signal(SIGINT, exit_sig_handler);
     ros::waitForShutdown();
 
     printf("end");

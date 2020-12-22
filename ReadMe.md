@@ -70,8 +70,9 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
 &ensp;&ensp;In Gazebo simulator, navigate through the model database for 'table' item, drag and place the 3D model inside the virtual environment. It will then be downloaded locally, as 'table' is needed for running the demo.
 
 ## 3.4 Install "mimic_joint_plugin" for xArm Gripper simulation in Gazebo
-&ensp;&ensp;If simulating xArm Gripper in Gazebo is needed, [**mimic_joint_plugin**](https://github.com/roboticsgroup/roboticsgroup_gazebo_plugins) by courtesy of Konstantinos Chatzilygeroudis (@costashatz) needs to be installed in order to make the mimic joints behave normally in Gazebo. Usage of this plugin is inspired by [this tutorial](https://github.com/mintar/mimic_joint_gazebo_tutorial) from @mintar.
+&ensp;&ensp;If simulating xArm Gripper in Gazebo is needed, [**mimic_joint_plugin**](https://github.com/roboticsgroup/roboticsgroup_gazebo_plugins) by courtesy of Konstantinos Chatzilygeroudis (@costashatz) needs to be installed in order to make the mimic joints behave normally in Gazebo. Usage of this plugin is inspired by [this tutorial](https://github.com/mintar/mimic_joint_gazebo_tutorial) from @mintar.   
 
+12/22/2020: Refer to issue #53, Please Note this plugin has recently been **deprecated**, if you plan to use [new version](https://github.com/roboticsgroup/roboticsgroup_upatras_gazebo_plugins), please change "libroboticsgroup_gazebo_mimic_joint_plugin.so" to "libroboticsgroup_upatras_gazebo_mimic_joint_plugin.so" in file: xarm_ros/xarm_gripper/urdf/xarm_gripper.gazebo.xacro  
 
 # 4. Getting started with 'xarm_ros'
    
