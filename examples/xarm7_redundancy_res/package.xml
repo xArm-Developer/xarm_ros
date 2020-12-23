@@ -21,7 +21,7 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>moveit_commander</exec_depend>
   <exec_depend>control_msgs</exec_depend>
-  <exec_depend>trajetory_msgs</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
   <exec_depend>actionlib</exec_depend>
   <exec_depend>actionlib_msgs</exec_depend>
   <exec_depend>python-numpy</exec_depend>
