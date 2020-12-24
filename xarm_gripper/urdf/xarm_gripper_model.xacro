@@ -26,24 +26,24 @@
     <xacro:xarm_gripper_gazebo prefix="${prefix}" />
 
     <!-- mimic_joint_plugin has to be installed: -->
-    <xacro:mimic_joint_plugin_gazebo name_prefix="left_finger_joint"
-    following_joint="drive_joint" mimic_joint="left_finger_joint"
+    <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}left_finger_joint"
+    following_joint="${prefix}drive_joint" mimic_joint="${prefix}left_finger_joint"
     has_pid="true" multiplier="1.0" max_effort="10.0" />
 
-    <xacro:mimic_joint_plugin_gazebo name_prefix="left_inner_knuckle_joint"
-    following_joint="drive_joint" mimic_joint="left_inner_knuckle_joint"
+    <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}left_inner_knuckle_joint"
+    following_joint="${prefix}drive_joint" mimic_joint="${prefix}left_inner_knuckle_joint"
     has_pid="true" multiplier="1.0" max_effort="10.0" />
 
-    <xacro:mimic_joint_plugin_gazebo name_prefix="right_outer_knuckle_joint"
-    following_joint="drive_joint" mimic_joint="right_outer_knuckle_joint"
+    <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}right_outer_knuckle_joint"
+    following_joint="${prefix}drive_joint" mimic_joint="${prefix}right_outer_knuckle_joint"
     has_pid="true" multiplier="1.0" max_effort="10.0" />
 
-    <xacro:mimic_joint_plugin_gazebo name_prefix="right_finger_joint"
-    following_joint="drive_joint" mimic_joint="right_finger_joint"
+    <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}right_finger_joint"
+    following_joint="${prefix}drive_joint" mimic_joint="${prefix}right_finger_joint"
     has_pid="true" multiplier="1.0" max_effort="10.0" />
 
-    <xacro:mimic_joint_plugin_gazebo name_prefix="right_inner_knuckle_joint"
-    following_joint="drive_joint" mimic_joint="right_inner_knuckle_joint"
+    <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}right_inner_knuckle_joint"
+    following_joint="${prefix}drive_joint" mimic_joint="${prefix}right_inner_knuckle_joint"
     has_pid="true" multiplier="1.0" max_effort="10.0" />
 
   </xacro:macro>

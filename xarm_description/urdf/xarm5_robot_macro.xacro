@@ -1,10 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="xarm5" >
   <xacro:macro name="xarm5_robot" params="prefix:='' namespace:='xarm' limited:='false' effort_control:='false' 
-    attach_to:='world' xyz:='0 0 0' rpy:='0 0 0' ">
-
-    <!-- common stuff -->
-    <xacro:include filename="$(find xarm_description)/urdf/common.gazebo.xacro" />
+    attach_to:='world' xyz:='0 0 0' rpy:='0 0 0' load_gazebo_plugin:='true' ">
 
     <!-- include xarm5 relative macros: -->
     <xacro:include filename="$(find xarm_description)/urdf/xarm5.urdf.xacro" />
@@ -12,7 +9,10 @@
     <xacro:include filename="$(find xarm_description)/urdf/xarm5.gazebo.xacro" />
 
     <!-- gazebo_plugin -->
+    <xacro:if value="${load_gazebo_plugin}">
+    <xacro:include filename="$(find xarm_description)/urdf/common.gazebo.xacro" />
     <xacro:gazebo_ros_control_plugin namespace="${namespace}"/>
+    </xacro:if>
 
     <!-- add one world link if no 'attach_to' specified  -->
     <xacro:if value="${attach_to == 'world'}">

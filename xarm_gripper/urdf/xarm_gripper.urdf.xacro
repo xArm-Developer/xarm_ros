@@ -279,7 +279,7 @@
       upper="0.85"
       effort="50"
       velocity="2" />
-    <mimic joint="drive_joint" multiplier="1" offset="0" />
+    <mimic joint="${prefix}drive_joint" multiplier="1" offset="0" />
   </joint>
   <link
     name="${prefix}right_finger">
