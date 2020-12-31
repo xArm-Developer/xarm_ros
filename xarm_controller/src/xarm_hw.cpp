@@ -163,7 +163,7 @@ namespace xarm_control
 
 	bool XArmHW::need_reset()
 	{
-		if(curr_state==4 || curr_state==5 || curr_err)
+		if(curr_mode!=1 || curr_state==4 || curr_state==5 || curr_err)
 			return true;
 		else
 			return false;

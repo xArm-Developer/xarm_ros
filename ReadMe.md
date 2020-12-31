@@ -418,7 +418,10 @@ $ rosservice call /xarm/set_mode 2
 
 $ rosservice call /xarm/set_state 0
 ```
-&ensp;&ensp;The above operations can also be done by calling relavant xArm SDK functions.
+&ensp;&ensp;The above operations can also be done by calling relavant xArm SDK functions.   
+
+***Known issue:*** Due to current controller (v1.6.5 and before) logic, ***it will fail hen switching directly between mode 1 and mode 2, you have to switch to mode 0 first then switch again to another non-zero mode.*** We will try to fix this issue in next controller firmware updates.  
+
 
 # 7. Other Examples
 &ensp;&ensp;There are some other application demo examples in the [example package](./examples), which will be updated in the future, feel free to explore it.
