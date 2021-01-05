@@ -10,8 +10,7 @@
   
   <!-- Attach gripper --> 
   <xacro:include filename="$(find xarm_gripper)/urdf/xarm_gripper_model.xacro" />
-  <!-- <xacro:load_gripper attach_to="$(arg prefix)link6" /> -->
 
   <xacro:xarm6_robot prefix="$(arg prefix)" namespace="$(arg ros_namespace)" limited="$(arg limited)" effort_control="$(arg effort_control)"/>
-  <xacro:load_gripper attach_to="$(arg prefix)link6" />
+  <xacro:load_gripper attach_to="$(arg prefix)link_eef" />
 </robot>

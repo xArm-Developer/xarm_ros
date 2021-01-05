@@ -50,6 +50,20 @@
     </collision>
   </link>
 
+  <link name="${prefix}link_tcp" />
+
+  <joint
+    name="${prefix}joint_tcp"
+    type="fixed">
+    <origin
+      xyz="0 0 0.126"
+      rpy="0 0 0" />
+    <parent
+      link="${prefix}xarm_vacuum_gripper_link" />
+    <child
+      link="${prefix}link_tcp" />
+  </joint>
+
   </xacro:macro>
 
 </robot>

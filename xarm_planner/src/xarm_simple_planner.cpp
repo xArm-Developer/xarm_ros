@@ -63,6 +63,7 @@ class XArmSimplePlanner
     bool do_single_cartesian_plan(xarm_planner::single_straight_plan::Request &req, xarm_planner::single_straight_plan::Response &res);
     bool exec_plan_cb(xarm_planner::exec_plan::Request &req, xarm_planner::exec_plan::Response &res);
     void execute_plan_topic(const std_msgs::Bool::ConstPtr& exec);
+    void show_trail(bool plan_result);
 };
 
 void XArmSimplePlanner::init()
@@ -83,11 +84,11 @@ void XArmSimplePlanner::init()
   exec_plan_sub = node_handle.subscribe("xarm_planner_exec", 10, &XArmSimplePlanner::execute_plan_topic, this);
   exec_plan_srv = node_handle.advertiseService("xarm_exec_plan", &XArmSimplePlanner::exec_plan_cb, this);
 
-  // visual_tools = new moveit_visual_tools::MoveItVisualTools("link_base");
-  // Eigen::Affine3d text_pose = Eigen::Affine3d::Identity();
-  // text_pose.translation().z() = 1.75;
-  // visual_tools->publishText(text_pose, "xArm Planner Demo", rvt::WHITE, rvt::XLARGE);
-  // visual_tools->trigger();
+  visual_tools = new moveit_visual_tools::MoveItVisualTools("link_base");
+  Eigen::Affine3d text_pose = Eigen::Affine3d::Identity();
+  text_pose.translation().z() = 1.75;
+  visual_tools->publishText(text_pose, "xArm Planner Demo", rvt::WHITE, rvt::XLARGE);
+  visual_tools->trigger();
 
 }
 
@@ -102,6 +103,19 @@ void XArmSimplePlanner::stop()
   spinner.stop();
 }
 
+void XArmSimplePlanner::show_trail(bool plan_result)
+{
+  if(plan_result)
+  {
+    ROS_INFO_NAMED("xarm_planner", "Visualizing plan as trajectory line");
+    
+    visual_tools->deleteAllMarkers();
+    const robot_state::JointModelGroup* joint_model_group = group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
+    visual_tools->publishTrajectoryLine(my_xarm_plan.trajectory_, joint_model_group);
+    visual_tools->trigger();
+  }
+}
+
 bool XArmSimplePlanner::do_pose_plan(xarm_planner::pose_plan::Request &req, xarm_planner::pose_plan::Response &res)
 {
   group.setPoseTarget(req.target);
@@ -113,15 +127,8 @@ bool XArmSimplePlanner::do_pose_plan(xarm_planner::pose_plan::Request &req, xarm
   bool success = (group.plan(my_xarm_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
   res.success = success;
   ROS_INFO_NAMED("move_group_planner", "This plan (pose goal) %s", success ? "SUCCEEDED" : "FAILED");
-  // if(success)
-  // {
-  //   ROS_INFO_NAMED("xarm_planner", "Visualizing plan as trajectory line");
-    
-  //   visual_tools->deleteAllMarkers();
-  //   const robot_state::JointModelGroup* joint_model_group = group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
-  //   visual_tools->publishTrajectoryLine(my_xarm_plan.trajectory_, joint_model_group);
-  //   visual_tools->trigger();
-  // }
+  
+  show_trail(success);
 
   return success;
 }
@@ -144,6 +151,8 @@ bool XArmSimplePlanner::do_single_cartesian_plan(xarm_planner::single_straight_p
   fprintf(stderr, "[XArmSimplePlanner::do_single_cartesian_plan(): ] Coverage: %lf\n", fraction);
 
   res.success = success;
+  show_trail(success);
+  
   return success;
 
 }
@@ -156,7 +165,7 @@ bool XArmSimplePlanner::do_joint_plan(xarm_planner::joint_plan::Request &req, xa
   bool success = (group.plan(my_xarm_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
   res.success = success;
   ROS_INFO_NAMED("move_group_planner", "This plan (joint goal) %s", success ? "SUCCEEDED" : "FAILED");
-  
+  show_trail(success);
   return success;
 }
 
