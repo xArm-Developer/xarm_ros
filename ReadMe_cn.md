@@ -1,3 +1,6 @@
+## 更新提示：关于带机械爪、真空吸头的Moveit规划:
+&ensp;&ensp;如果您在使用Moveit对装载机械爪或真空吸头的xArm进行路径规划, 请留意在**2021年1月6日**之后的更新中, 由于moveit configuration的修改，pose指令、反馈会将**工具TCP偏移**计算在内！
+
 ## 重要提示:
 &ensp;&ensp;由于机械臂通信格式修改, 建议在***2019年6月前发货***的xArm 早期用户尽早 ***升级*** 控制器固件程序，这样才能在以后的更新中正常驱动机械臂运动以及使用最新开发的各种功能。请联系我们获得升级的详细指示。 当前ROS库主要的分支已不支持旧版本，先前版本的ROS驱动包还保留在 ***'legacy'*** 分支中, 但不会再有更新。    
 &ensp;&ensp;在使用xarm_ros之前，请务必按照第3节**准备工作**的指示安装必要的第三方支持库，否则使用时会出现错误。  
@@ -11,19 +14,19 @@
     * [5.2 xarm_gazebo](#52-xarm_gazebo)  
     * [5.3 xarm_controller](#53-xarm_controller)  
     * [5.4 xarm_bringup](#54-xarm_bringup)  
-    * [5.5 ***xarm7_moveit_config (Updated)***](#55-xarm7_moveit_config)  
-    * [5.6 xarm_planner](#56-xarm_planner)  
+    * [5.5 ***xarm7_moveit_config***](#55-xarm7_moveit_config)  
+    * [5.6 ***xarm_planner(有更新)***](#56-xarm_planner)  
     * [5.7 ***xarm_api/xarm_msgs***](#57-xarm_apixarm_msgs)  
         * [5.7.1 使用ROS Service启动 xArm (***后续指令执行的前提***)](#使用ros-service启动-xarm)  
-        * [5.7.2 关节空间和笛卡尔空间运动指令的示例](#关节空间和笛卡尔空间运动指令的示例)
+        * [5.7.2 关节空间和笛卡尔空间运动指令的示例(**有更新**)](#关节空间和笛卡尔空间运动指令的示例)
         * [5.7.3 I/O 操作](#工具-io-操作)  
         * [5.7.4 获得反馈状态信息](#获得反馈状态信息)  
         * [5.7.5 关于设定末端工具偏移量](#关于设定末端工具偏移量)  
         * [5.7.6 清除错误](#清除错误)  
-        * [5.7.7 机械爪控制(***updated***)](#机械爪控制)  
-        * [5.7.8 真空吸头控制(***new***)](#真空吸头控制)  
-        * [5.7.9 末端工具Modbus通信 (***new***)](#末端工具modbus通信)
-* [6. 模式切换(***new***)](#6-模式切换)
+        * [5.7.7 机械爪控制](#机械爪控制)  
+        * [5.7.8 真空吸头控制](#真空吸头控制)  
+        * [5.7.9 末端工具Modbus通信](#末端工具modbus通信)
+* [6. 模式切换](#6-模式切换)
     * [6.1 模式介绍](#61-模式介绍)
     * [6.2 切换模式的正确方法](#62-切换模式的正确方法)
 * [7. 其他示例(***new***)](#7-其他示例)
@@ -190,7 +193,7 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 ```bash
    $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<控制盒的局域网IP地址> robot_dof:=<7|6|5>
 ```
-'robot_dof'参数指的是xArm的关节数目 (默认值为7)。  
+'robot_dof'参数指的是xArm的关节数目 (默认值为7)。xarm_planner已经可以支持装载UF机械爪或真空吸头的xArm模型，请根据需要指定"**add_gripper**"或"**add_vacuum_gripper**"为true。   
 
 ## 5.7 xarm_api/xarm_msgs:
 &ensp;&ensp;这两个package提供给用户封装了xArm SDK功能的ros服务, xarm自带的控制盒会进行轨迹规划。当前支持六种运动命令（ros service同名）:  
@@ -199,7 +202,7 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 * move_lineb: 圆弧交融的直线运动，给定一系列中间点以及目标位置。 每两个中间点间为直线轨迹，但在中间点处做一个圆弧过渡（需给定半径）来保证速度连续，对应SDK里的set_position()函数【指定了交融半径】。代码示例请参考[move_test.cpp](./xarm_api/test/move_test.cpp)  
 * move_line_tool: 基于工具坐标系（而不是基坐标系）的直线运动。对应SDK里的set_tool_position()函数。  
 另外需要 ***注意*** 的是，使用以上4种service之前，需要通过service依次将机械臂模式(mode)设置为0，然后状态(state)设置为0。这些运动指令的意义和详情可以参考产品使用指南。除此之外还提供了其他xarm编程API支持的service调用, 对于相关ros service的定义在 [xarm_msgs目录](./xarm_msgs/)中。  
-
+* move_line_aa: 笛卡尔空间的直线轨迹运动，姿态使用**轴-角** 而不是roll-pitch-yaw欧拉角，在使用此命令之前请仔细查阅xArm用户手册关于轴-角的解释。  
 * move_servo_cart/move_servoj: （固定）高频率的笛卡尔或关节轨迹指令，分别对应SDK里的set_servo_cartesian()和set_servo_angle_j()，需要机械臂工作在**模式1**，可以间接实现速度控制。在使用这两个服务功能之前，务必做好**风险评估**并且仔细阅读第[7.2-7.3节](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)的使用方法。  
 
 #### 使用ROS Service启动 xArm:
@@ -240,6 +243,27 @@ $ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 200 2000 0 0
 ```bash
 $ rosservice call /xarm/move_line_tool [50,100,100,0,0,0] 200 2000 0 0
 ```
+##### 4. 轴-角姿态表示的笛卡尔空间运动:
+&ensp;&ensp;轴-角笛卡尔运动对应的服务是[MoveAxisAngle.srv](./xarm_msgs/srv/MoveAxisAngle.srv)。请仔细阅读并留意最后两个参数: "**coord**" 为0代表在手臂基坐标系中运动, 为1代表在末端坐标系中运动。"**relative**" 为0代表给定的目标为指定坐标系下的绝对位置，为1代表给定目标为一个相对位置。 
+&ensp;&ensp;例如: 围绕当前工具坐标系的Z轴旋转 1.0 弧度: 
+```bash
+$ rosservice call /xarm/move_line_aa "pose: [0, 0, 0, 0, 0, 1.0]
+mvvelo: 30.0
+mvacc: 100.0
+mvtime: 0.0
+coord: 1
+relative: 1" 
+ret: 0
+message: "move_line_aa, ret = 0"
+```
+或者：
+```bash
+$ rosservice call /xarm/move_line_aa [0,0,0,0,0,1.0] 30.0 100.0 0.0 1 1
+```   
+&ensp;&ensp;"**mvtime**" 在此命令中无意义，设为0即可。再比如: 在基坐标系下, 沿Y轴方向平移122mm, 同时绕X轴旋转-0.5弧度:  
+```bash
+$ rosservice call /xarm/move_line_aa [0,122,0,-0.5,0,0] 30.0 100.0 0.0 0 1  
+```
 
 ##### 运动服务返回值:
 &ensp;&ensp;请注意以上的运动服务调用在默认情况下会**立刻返回**，如果希望等待运动结束之后再返回, 需要提前设置 ros parameter **"/xarm/wait_for_finish"** 为 **true**. 即:  
@@ -278,6 +302,18 @@ $ rosservice /xarm/set_controller_dout io_num (注意：从1到8, 对应CO0到CO
 &ensp;&ensp;例如:  
 ```bash
 $ rosservice call /xarm/set_controller_dout 5 1  (设定输出端口5的逻辑为1)
+```
+##### 3. 读取某一端口模拟输入量的方法:
+```bash
+$ rosservice call /xarm/get_controller_ain port_num  (注意: 从1到2, 对应 AI0~AI1)
+```
+##### 4. 设定某一端口模拟输出量的方法:
+```bash
+$ rosservice call /xarm/set_controller_aout port_num (注意: 从1到2, 对应 AO0~AO1) analog_value 
+```
+&ensp;&ensp;例如:  
+```bash
+$ rosservice call /xarm/set_controller_aout 2 3.3  (设定输出端口 AO1 为 3.3)
 ```
 &ensp;&ensp;注意检查这些service返回的"ret"值为0，来确保操作成功。
 

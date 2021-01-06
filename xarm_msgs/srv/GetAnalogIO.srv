@@ -1,4 +1,4 @@
-# Getting one of the 2 analog Input port at robot end connector
+# Getting one of the 2 analog Input port at robot end connector or controller
 
 int16 port_num
 

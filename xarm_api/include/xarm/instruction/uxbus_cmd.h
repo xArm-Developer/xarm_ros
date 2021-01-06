@@ -52,10 +52,13 @@ public:
 	int move_lineb(float mvpose[6], float mvvelo, float mvacc, float mvtime,
 		float mvradii);
 	int move_joint(float mvjoint[7], float mvvelo, float mvacc, float mvtime);
+	int move_jointb(float mvjoint[7], float mvvelo, float mvacc, float mvradii);
 	int move_line_tool(float mvpose[6], float mvvelo, float mvacc, float mvtime);
 	int move_gohome(float mvvelo, float mvacc, float mvtime);
 	int move_servoj(float mvjoint[7], float mvvelo, float mvacc, float mvtime);
 	int move_servo_cartesian(float mvpose[6], float mvvelo, float mvacc, float mvtime);
+	int move_line_aa(float mvpose[6], float mvvelo, float mvacc, float mvtime, int mvcoord=0, int relative=0);
+	int move_servo_cart_aa(float mvpose[6], float mvvelo, float mvacc, int tool_coord=0, int relative=0);
 	int set_servot(float jnt_taus[7]);
 	int get_joint_tau(float jnt_taus[7]);
 	int set_safe_level(int level);
@@ -128,16 +131,14 @@ public:
 	int cgpio_get_analog1(float *value);
 	int cgpio_get_analog2(float *value);
 	int cgpio_set_auxdigit(int ionum, int value);
-	int cgpio_set_analog1(int value);
-	int cgpio_set_analog2(int value);
+	int cgpio_set_analog1(float value);
+	int cgpio_set_analog2(float value);
 	int cgpio_set_infun(int ionum, int fun);
 	int cgpio_set_outfun(int ionum, int fun);
 	int cgpio_get_state(int *state, int *digit_io, float *analog, int *input_conf, int *output_conf);
 
 	int get_pose_offset(float pose1[6], float pose2[6], float offset[6], int orient_type_in=0, int orient_type_out=0);
 	int get_position_aa(float pose[6]);
-	int move_line_aa(float mvpose[6], float mvvelo, float mvacc, float mvtime, int mvcoord=0, int relative=0);
-	int move_servo_cart_aa(float mvpose[6], float mvvelo, float mvacc, int tool_coord=0, int relative=0);
 
 	int tgpio_delay_set_digital(int ionum, int value, float delay_sec);
 	int cgpio_delay_set_digital(int ionum, int value, float delay_sec);

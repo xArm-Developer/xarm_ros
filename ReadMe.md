@@ -1,3 +1,6 @@
+## Updates on Moveit with Gripper/Vacuum Gripper:
+&ensp;&ensp;Please pay attention if you are using Moveit motion planning for xArm models with Gripper/Vacuum Gripper attached, in updates since **Jan 6, 2021**, pose command/feedback will count in the **TCP offset** of the tool, as a result in moveit configuration change. 
+
 ## Important Notice:
 &ensp;&ensp;Due to robot communication data format change, ***early users*** (xArm shipped ***before June 2019***) are encouraged to ***upgrade*** their controller firmware immediately to drive the robot normally in future updates as well as to use newly developed functions. Please contact our staff to get instructions of the upgrade process. The old version robot driver can still be available in ***'legacy'*** branch, however, it will not be updated any more.   
 
@@ -14,17 +17,17 @@
     * [5.3 xarm_controller](#53-xarm_controller)  
     * [5.4 xarm_bringup](#54-xarm_bringup)  
     * [5.5 ***xarm7_moveit_config***](#55-xarm7_moveit_config)  
-    * [5.6 xarm_planner](#56-xarm_planner)  
+    * [5.6 ***xarm_planner(Updated)***](#56-xarm_planner)  
     * [5.7 ***xarm_api/xarm_msgs***](#57-xarm_apixarm_msgs)  
         * [5.7.1 Starting xArm by ROS service (***priority for the following operations***)](#starting-xarm-by-ros-service)  
-        * [5.7.2 Joint space or Cartesian space command example](#joint-space-or-cartesian-space-command-example)
+        * [5.7.2 Joint space or Cartesian space command example(**Updated**)](#joint-space-or-cartesian-space-command-example)
         * [5.7.3 Tool/Controller I/O Operations](#tool-io-operations)  
         * [5.7.4 Getting status feedback](#getting-status-feedback)  
         * [5.7.5 Setting Tool Center Point Offset](#setting-tool-center-point-offset)  
         * [5.7.6 Clearing Errors](#clearing-errors)  
-        * [5.7.7 Gripper Control(***Updated***)](#gripper-control)
-        * [5.7.8 Vacuum Gripper Control(***new***)](#vacuum-gripper-control)
-        * [5.7.9 Tool Modbus communication (***new***)](#tool-modbus-communication)
+        * [5.7.7 Gripper Control](#gripper-control)
+        * [5.7.8 Vacuum Gripper Control](#vacuum-gripper-control)
+        * [5.7.9 Tool Modbus communication](#tool-modbus-communication)
 * [6. Mode Change](#6-mode-change)
     * [6.1 Mode Explanation](#61-mode-explanation)
     * [6.2 Proper way to change modes](#62-proper-way-to-change-modes)
@@ -188,9 +191,9 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 &ensp;&ensp;This implemented simple planner interface is based on move_group from Moveit! and provide ros service for users to do planning & execution based on the requested target, user can find detailed instructions on how to use it inside [***xarm_planner package***](./xarm_planner/).  
 #### To launch the xarm simple motion planner together with the real xArm:  
 ```bash
-   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5>
+   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5> add_(vacuum_)gripper:=<true|false>
 ```
-Argument 'robot_dof' specifies the number of joints of your xArm (default is 7).  
+Argument 'robot_dof' specifies the number of joints of your xArm (default is 7). Now xarm_planner supports model with gripper or vacuum_gripper attached. Please specify "**add_gripper**" or "**add_vacuum_gripper**" argument if needed.    
 
 ## 5.7 xarm_api/xarm_msgs:
 &ensp;&ensp;These two packages provide user with the ros service wrapper of the functions in xArm SDK. There are 6 types of motion command (service names) supported:  
@@ -200,7 +203,10 @@ Argument 'robot_dof' specifies the number of joints of your xArm (default is 7).
 * <font color=blue>move_line_tool:</font> straight-line motion based on the **Tool coordinate system** rather than the base system. Corresponding function in SDK is "set_tool_position()".  
 Please ***keep in mind that*** before calling the 4 motion services above, first set robot mode to be 0, then set robot state to be 0, by calling relavent services. Meaning of the commands are consistent with the descriptions in product ***user manual***, other xarm API supported functions are also available as service call. Refer to [xarm_msgs package](./xarm_msgs/) for more details and usage guidance.  
 
-* <font color=blue>move_servo_cart/move_servoj:</font> streamed high-frequency trajectory command execution in Cartesian space or joint space. Corresponding functions in SDK are set_servo_cartesian() and set_servo_angle_j(). An alternative way to implement <font color=red>velocity control</font>. These two services operate the robot in mode 1. Special **RISK ASSESMENT** is required before using them. Please read the guidance carefully at [chapter 7.2-7.3](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
+* <font color=blue>move_line_aa:</font> straight-line motion, with orientation expressed in **Axis-angle** rather than roll-pitch-yaw angles. Please refer to xArm user manual for detailed explanation of axis-angle before using this command.   
+
+* <font color=blue>move_servo_cart/move_servoj:</font> streamed high-frequency trajectory command execution in Cartesian space or joint space. Corresponding functions in SDK are set_servo_cartesian() and set_servo_angle_j(). An alternative way to implement <font color=red>velocity control</font>. These two services operate the robot in mode 1. Special **RISK ASSESMENT** is required before using them. Please read the guidance carefully at [chapter 7.2-7.3](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory).  
+
 
 #### Starting xArm by ROS service:
 
@@ -240,6 +246,27 @@ $ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 200 2000 0 0
 &ensp;&ensp;To call Cartesian motion expressed in robot TOOL Coordinate, with max speed 200 mm/s and acceleration 2000 mm/s^2, the following will move a **relative motion** (delta_x=50mm, delta_y=100mm, delta_z=100mm) along the current Tool coordinate, no orientation change:
 ```bash
 $ rosservice call /xarm/move_line_tool [50,100,100,0,0,0] 200 2000 0 0
+```
+##### 4. Cartesian space motion in Axis-angle orientation:
+&ensp;&ensp;Corresponding service for Axis-angle motion is [MoveAxisAngle.srv](./xarm_msgs/srv/MoveAxisAngle.srv). Please pay attention to the last two arguments: "**coord**" is 0 for motion with respect to (w.r.t.) Arm base coordinate system, and 1 for motion w.r.t. Tool coordinate system. "**relative**" is 0 for absolute target position w.r.t. specified coordinate system, and 1 for relative target position.  
+&ensp;&ensp;For example: to move 1.0 radian relatively around tool-frame Z-axis: 
+```bash
+$ rosservice call /xarm/move_line_aa "pose: [0, 0, 0, 0, 0, 1.0]
+mvvelo: 30.0
+mvacc: 100.0
+mvtime: 0.0
+coord: 1
+relative: 1" 
+ret: 0
+message: "move_line_aa, ret = 0"
+```
+Or
+```bash
+$ rosservice call /xarm/move_line_aa [0,0,0,0,0,1.0] 30.0 100.0 0.0 1 1
+```   
+&ensp;&ensp;"**mvtime**" is not meaningful in this command, just set it to 0. Another example: in base-frame, to move 122mm relatively along Y-axis, and rotate around X-axis for -0.5 radians:  
+```bash
+$ rosservice call /xarm/move_line_aa [0,122,0,-0.5,0,0] 30.0 100.0 0.0 0 1  
 ```
 
 #### Motion service Return:
@@ -282,8 +309,19 @@ $ rosservice call /xarm/set_controller_dout io_num (Notice: from 1 to 8, for CO0
 ```bash
 $ rosservice call /xarm/set_controller_dout 5 1  (Setting output 5 to be 1)
 ```
+##### 3. To get one of the controller ANALOG input:
+```bash
+$ rosservice call /xarm/get_controller_ain port_num  (Notice: from 1 to 2, for AI0~AI1)
+```
+##### 4. To set one of the controller ANALOG output:
+```bash
+$ rosservice call /xarm/set_controller_aout port_num (Notice: from 1 to 2, for AO0~AO1) analog_value
+```
+&ensp;&ensp;For example:  
+```bash
+$ rosservice call /xarm/set_controller_aout 2 3.3  (Setting port AO1 to be 3.3)
+```
 &ensp;&ensp;You have to make sure the operation is successful by checking responding "ret" to be 0.
-
 
 #### Getting status feedback:
 &ensp;&ensp;Having connected with a real xArm robot by running 'xarm7_server.launch', user can subscribe to the topic ***"xarm/xarm_states"*** for feedback information about current robot states, including joint angles, TCP position, error/warning code, etc. Refer to [RobotMsg.msg](./xarm_msgs/msg/RobotMsg.msg) for content details.  

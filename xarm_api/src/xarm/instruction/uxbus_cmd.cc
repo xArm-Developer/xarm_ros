@@ -386,6 +386,15 @@ int UxbusCmd::move_joint(float mvjoint[7], float mvvelo, float mvacc,
 	return set_nfp32(UXBUS_RG::MOVE_JOINT, txdata, 10);
 }
 
+int UxbusCmd::move_jointb(float mvjoint[7], float mvvelo, float mvacc, float mvradii) {
+	float txdata[10] = { 0 };
+	for (int i = 0; i < 7; i++) { txdata[i] = mvjoint[i]; }
+	txdata[7] = mvvelo;
+	txdata[8] = mvacc;
+	txdata[9] = mvradii;
+	return set_nfp32(UXBUS_RG::MOVE_JOINTB, txdata, 10);
+}
+
 int UxbusCmd::move_line_tool(float mvpose[6], float mvvelo, float mvacc, float mvtime) {
 	float txdata[9] = { 0 };
 	for (int i = 0; i < 6; i++) { txdata[i] = mvpose[i]; }
@@ -716,7 +725,7 @@ int UxbusCmd::tgpio_set_digital(int ionum, int value) {
 int UxbusCmd::tgpio_get_analog1(float * value) {
 	float tmp;
 	int ret = tgpio_addr_r16(SERVO3_RG::ANALOG_IO1, &tmp);
-	*value = (float)(tmp * 3.3 / 4096.0);
+	*value = (float)(tmp * 3.3 / 4095.0);
 	return ret;
 }
 
@@ -724,7 +733,7 @@ int UxbusCmd::tgpio_get_analog2(float * value) {
 	float tmp;
 	int ret = tgpio_addr_r16(SERVO3_RG::ANALOG_IO2, &tmp);
 	// printf("tmp = %f\n", tmp);
-	*value = (float)(tmp * 3.3 / 4096.0);
+	*value = (float)(tmp * 3.3 / 4095.0);
 	return ret;
 }
 
@@ -927,13 +936,13 @@ int UxbusCmd::cgpio_get_auxdigit(int *value) {
 int UxbusCmd::cgpio_get_analog1(float *value) {
 	int tmp;
 	int ret = get_nu16(UXBUS_RG::CGPIO_GET_ANALOG1, &tmp, 1);
-	*value = (float)(tmp * 10.0 / 4096.0);
+	*value = (float)(tmp * 10.0 / 4095.0);
 	return ret;
 }
 int UxbusCmd::cgpio_get_analog2(float *value) {
 	int tmp;
 	int ret = get_nu16(UXBUS_RG::CGPIO_GET_ANALOG2, &tmp, 1);
-	*value = (float)(tmp * 10.0 / 4096.0);
+	*value = (float)(tmp * 10.0 / 4095.0);
 	return ret;
 }
 /**
@@ -958,13 +967,13 @@ int UxbusCmd::cgpio_set_auxdigit(int ionum, int value) {
 	}
 	return set_nu16(UXBUS_RG::CGPIO_SET_DIGIT, &tmp, 1);
 }
-int UxbusCmd::cgpio_set_analog1(int value) {
-	value = (int)(value / 10.0 * 4096.0);
-	return set_nu16(UXBUS_RG::CGPIO_SET_ANALOG1, &value, 1);
+int UxbusCmd::cgpio_set_analog1(float value) {
+	int val = (int)(value / 10.0 * 4095.0);
+	return set_nu16(UXBUS_RG::CGPIO_SET_ANALOG1, &val, 1);
 }
-int UxbusCmd::cgpio_set_analog2(int value) {
-	value = (int)(value / 10.0 * 4096.0);
-	return set_nu16(UXBUS_RG::CGPIO_SET_ANALOG2, &value, 1);
+int UxbusCmd::cgpio_set_analog2(float value) {
+	int val = (int)(value / 10.0 * 4095.0);
+	return set_nu16(UXBUS_RG::CGPIO_SET_ANALOG2, &val, 1);
 }
 
 int UxbusCmd::cgpio_set_infun(int num, int fun) {
@@ -1002,7 +1011,7 @@ int UxbusCmd::cgpio_get_state(int *state, int *digit_io, float *analog, int *inp
 	state[1] = rx_data[1];
 	for (int i = 0; i < 4; i++) {
 		digit_io[i] = bin8_to_16(&rx_data[2 + i * 2]);
-		analog[i] = (float)(bin8_to_16(&rx_data[10 + i * 2]) / 4096.0 * 10.0);
+		analog[i] = (float)(bin8_to_16(&rx_data[10 + i * 2]) / 4095.0 * 10.0);
 	}
 	for (int i = 0; i < 8; i++) {
 		input_conf[i] = rx_data[18 + i];
