@@ -72,6 +72,7 @@ namespace xarm_api
 
         go_home_server_ = nh_.advertiseService("go_home", &XARMDriver::GoHomeCB, this);
         move_joint_server_ = nh_.advertiseService("move_joint", &XARMDriver::MoveJointCB, this);
+        move_jointb_server_ = nh_.advertiseService("move_jointb", &XARMDriver::MoveJointbCB, this);
         move_lineb_server_ = nh_.advertiseService("move_lineb", &XARMDriver::MoveLinebCB, this);
         move_line_server_ = nh_.advertiseService("move_line", &XARMDriver::MoveLineCB, this);
         move_line_tool_server_ = nh_.advertiseService("move_line_tool", &XARMDriver::MoveLineToolCB, this);
@@ -80,6 +81,10 @@ namespace xarm_api
         clear_err_server_ = nh_.advertiseService("clear_err", &XARMDriver::ClearErrCB, this);
         moveit_clear_err_server_ = nh_.advertiseService("moveit_clear_err", &XARMDriver::MoveitClearErrCB, this);
         get_err_server_ = nh_.advertiseService("get_err", &XARMDriver::GetErrCB, this);
+
+        // axis-angle motion:
+        move_line_aa_server_ = nh_.advertiseService("move_line_aa", &XARMDriver::MoveLineAACB, this);
+        move_servo_cart_aa_server_ = nh_.advertiseService("move_servo_cart_aa", &XARMDriver::MoveServoCartAACB, this);
 
         // tool io:
         set_end_io_server_ = nh_.advertiseService("set_digital_out", &XARMDriver::SetDigitalIOCB, this);
@@ -97,6 +102,8 @@ namespace xarm_api
         // controller_io (digital):
         set_controller_dout_server_ = nh_.advertiseService("set_controller_dout", &XARMDriver::SetControllerDOutCB, this);
         get_controller_din_server_ = nh_.advertiseService("get_controller_din", &XARMDriver::GetControllerDInCB, this);
+        set_controller_aout_server_ = nh_.advertiseService("set_controller_aout", &XARMDriver::SetControllerAOutCB, this);
+        get_controller_ain_server_= nh_.advertiseService("get_controller_ain", &XARMDriver::GetControllerAInCB, this);
 
         // state feedback topics:
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
@@ -267,7 +274,7 @@ namespace xarm_api
             res.message = "set Controller digital Output "+ std::to_string(req.io_num) +" to "+ std::to_string(req.value) + " : ret = " + std::to_string(res.ret); 
             return true;
         }
-        ROS_WARN("Controller IO io_num: from 1 to 8");
+        ROS_WARN("Controller Digital IO io_num: from 1 to 8");
         return false;
     }
 
@@ -281,8 +288,46 @@ namespace xarm_api
             res.message = "get Controller digital Input ret = " + std::to_string(res.ret);
             return true;
         }
-        ROS_WARN("Controller IO io_num: from 1 to 8");
+        ROS_WARN("Controller Digital IO io_num: from 1 to 8");
         return false;
+    }
+
+    bool XARMDriver::GetControllerAInCB(xarm_msgs::GetAnalogIO::Request &req, xarm_msgs::GetAnalogIO::Response &res)
+    {
+        switch (req.port_num)
+        {
+            case 1:
+                res.ret = arm_cmd_->cgpio_get_analog1(&res.analog_value);
+                break;
+            case 2:
+                res.ret = arm_cmd_->cgpio_get_analog2(&res.analog_value);
+                break;
+
+            default:
+                res.message = "GetAnalogIO Fail: port number incorrect ! Must be 1 or 2";
+                return false;
+        }
+        res.message = "get controller analog port " + std::to_string(req.port_num) + ", ret = " + std::to_string(res.ret); 
+        return true;
+    }
+
+    bool XARMDriver::SetControllerAOutCB(xarm_msgs::SetControllerAnalogIO::Request &req, xarm_msgs::SetControllerAnalogIO::Response &res)
+    {
+        switch (req.port_num)
+        {
+            case 1:
+                res.ret = arm_cmd_->cgpio_set_analog1(req.analog_value);
+                break;
+            case 2:
+                res.ret = arm_cmd_->cgpio_set_analog2(req.analog_value);
+                break;
+
+            default:
+                res.message = "SetAnalogIO Fail: port number incorrect ! Must be 1 or 2";
+                return false;
+        }
+        res.message = "Set controller analog port " + std::to_string(req.port_num) + ", ret = " + std::to_string(res.ret); 
+        return true;
     }
 
     bool XARMDriver::SetDigitalIOCB(xarm_msgs::SetDigitalIO::Request &req, xarm_msgs::SetDigitalIO::Response &res)
@@ -311,10 +356,10 @@ namespace xarm_api
                 break;
 
             default:
-                res.message = "GetAnalogIO Fail: port number incorrect !";
+                res.message = "GetAnalogIO Fail: port number incorrect ! Must be 1 or 2";
                 return false;
         }
-        res.message = "get analog port ret = " + std::to_string(res.ret); 
+        res.message = "get tool analog port " + std::to_string(req.port_num) + ", ret = " + std::to_string(res.ret); 
         return true;
     }
 
@@ -385,7 +430,7 @@ namespace xarm_api
 
     bool XARMDriver::MoveJointCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
     {
-        float joint[1][7]={0};
+        float joint[7]={0};
         int index = 0;
         if(req.pose.size() != dof_)
         {
@@ -399,13 +444,13 @@ namespace xarm_api
             {
                 // joint[0][index] = req.pose[index];
                 if(index<req.pose.size())
-                    joint[0][index] = req.pose[index];
+                    joint[index] = req.pose[index];
                 else
-                    joint[0][index] = 0;
+                    joint[index] = 0;
             }
         }
 
-        res.ret = arm_cmd_->move_joint(joint[0], req.mvvelo, req.mvacc, req.mvtime);
+        res.ret = arm_cmd_->move_joint(joint, req.mvvelo, req.mvacc, req.mvtime);
         if(!res.ret)
         {
             res.ret = wait_for_finish();
@@ -416,23 +461,23 @@ namespace xarm_api
 
     bool XARMDriver::MoveLineCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
     {
-        float pose[1][6];
+        float pose[6];
         int index = 0;
         if(req.pose.size() != 6)
         {
             res.ret = -1;
-            res.message = "parameters incorrect!";
+            res.message = "number of parameters incorrect!";
             return true;
         }
         else
         {
             for(index = 0; index < 6; index++)
             {
-                pose[0][index] = req.pose[index];
+                pose[index] = req.pose[index];
             }
         }
 
-        res.ret = arm_cmd_->move_line(pose[0], req.mvvelo, req.mvacc, req.mvtime);
+        res.ret = arm_cmd_->move_line(pose, req.mvvelo, req.mvacc, req.mvtime);
         if(!res.ret)
         {
             res.ret = wait_for_finish();
@@ -443,23 +488,23 @@ namespace xarm_api
 
     bool XARMDriver::MoveLineToolCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
     {
-        float pose[1][6];
+        float pose[6];
         int index = 0;
         if(req.pose.size() != 6)
         {
             res.ret = -1;
-            res.message = "parameters incorrect!";
+            res.message = "number of parameters incorrect!";
             return true;
         }
         else
         {
             for(index = 0; index < 6; index++)
             {
-                pose[0][index] = req.pose[index];
+                pose[index] = req.pose[index];
             }
         }
 
-        res.ret = arm_cmd_->move_line_tool(pose[0], req.mvvelo, req.mvacc, req.mvtime);
+        res.ret = arm_cmd_->move_line_tool(pose, req.mvvelo, req.mvacc, req.mvtime);
         if(!res.ret)
         {
             res.ret = wait_for_finish();
@@ -470,30 +515,60 @@ namespace xarm_api
 
     bool XARMDriver::MoveLinebCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
     {
-        float pose[1][6];
+        float pose[6];
         int index = 0;
         if(req.pose.size() != 6)
         {
             res.ret = -1;
-            res.message = "parameters incorrect!";
+            res.message = "number of parameters incorrect!";
             return true;
         }
         else
         {
             for(index = 0; index < 6; index++)
             {
-                pose[0][index] = req.pose[index];
+                pose[index] = req.pose[index];
             }
         }
 
-        res.ret = arm_cmd_->move_lineb(pose[0], req.mvvelo, req.mvacc, req.mvtime, req.mvradii);
+        res.ret = arm_cmd_->move_lineb(pose, req.mvvelo, req.mvacc, req.mvtime, req.mvradii);
         res.message = "move lineb, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XARMDriver::MoveJointbCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
+    {
+        float joint[7]={0};
+        int index = 0;
+        if(req.pose.size() != dof_)
+        {
+            res.ret = req.pose.size();
+            res.message = "number of joint parameters incorrect! Expected: "+std::to_string(dof_);
+            return true;
+        }
+        else
+        {
+            for(index = 0; index < 7; index++) // should always send 7 joint commands, whatever current DOF is.
+            {
+                if(index<req.pose.size())
+                    joint[index] = req.pose[index];
+                else
+                    joint[index] = 0;
+            }
+        }
+
+        res.ret = arm_cmd_->move_jointb(joint, req.mvvelo, req.mvacc, req.mvradii);
+        if(!res.ret)
+        {
+            res.ret = wait_for_finish();
+        }
+        res.message = "move jointB, ret = " + std::to_string(res.ret);
         return true;
     }
 
     bool XARMDriver::MoveServoJCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
     {
-        float pose[1][7]={0};
+        float pose[7]={0};
         int index = 0;
         if(req.pose.size() != dof_)
         {
@@ -506,20 +581,20 @@ namespace xarm_api
             for(index = 0; index < 7; index++) // should always send 7 joint commands, whatever current DOF is.
             {
                 if(index<req.pose.size())
-                    pose[0][index] = req.pose[index];
+                    pose[index] = req.pose[index];
                 else
-                    pose[0][index] = 0;
+                    pose[index] = 0;
             }
         }
 
-        res.ret = arm_cmd_->move_servoj(pose[0], req.mvvelo, req.mvacc, req.mvtime);
+        res.ret = arm_cmd_->move_servoj(pose, req.mvvelo, req.mvacc, req.mvtime);
         res.message = "move servoj, ret = " + std::to_string(res.ret);
         return true;
     }
 
     bool XARMDriver::MoveServoCartCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
     {
-        float pose[1][6];
+        float pose[6];
         int index = 0;
         if(req.pose.size() != 6)
         {
@@ -531,12 +606,60 @@ namespace xarm_api
         {
             for(index = 0; index < 6; index++)
             {
-                pose[0][index] = req.pose[index];
+                pose[index] = req.pose[index];
             }
         }
 
-        res.ret = arm_cmd_->move_servo_cartesian(pose[0], req.mvvelo, req.mvacc, req.mvtime);
+        res.ret = arm_cmd_->move_servo_cartesian(pose, req.mvvelo, req.mvacc, req.mvtime);
         res.message = "move servo_cartesian, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XARMDriver::MoveLineAACB(xarm_msgs::MoveAxisAngle::Request &req, xarm_msgs::MoveAxisAngle::Response &res)
+    {
+        float pose[6];
+        int index = 0;
+        if(req.pose.size() != 6)
+        {
+            res.ret = -1;
+            res.message = "MoveServoCartCB parameters incorrect!";
+            return true;
+        }
+        else
+        {
+            for(index = 0; index < 6; index++)
+            {
+                pose[index] = req.pose[index];
+            }
+        }
+        res.ret = arm_cmd_->move_line_aa(pose, req.mvvelo, req.mvacc, req.mvtime, req.coord, req.relative);
+        if(!res.ret)
+        {
+            res.ret = wait_for_finish();
+        }
+        res.message = "move_line_aa, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XARMDriver::MoveServoCartAACB(xarm_msgs::MoveAxisAngle::Request &req, xarm_msgs::MoveAxisAngle::Response &res)
+    {
+        float pose[6];
+        int index = 0;
+        if(req.pose.size() != 6)
+        {
+            res.ret = -1;
+            res.message = "MoveServoCartAACB parameters incorrect!";
+            return true;
+        }
+        else
+        {
+            for(index = 0; index < 6; index++)
+            {
+                pose[index] = req.pose[index];
+            }
+        }
+        res.ret = arm_cmd_->move_servo_cart_aa(pose, req.mvvelo, req.mvacc, req.coord, req.relative);
+        res.message = "move_servo_cart_aa, ret = " + std::to_string(res.ret);
         return true;
     }
 

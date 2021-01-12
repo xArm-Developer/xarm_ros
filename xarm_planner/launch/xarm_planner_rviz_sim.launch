@@ -1,45 +1,13 @@
 <launch>
   <arg name="robot_dof" />
+  <arg name="add_gripper" default="false" />
+  <arg name="add_vacuum_gripper" default="false" />
 
-  <rosparam if="$(eval arg('robot_dof')==7)" file="$(find xarm7_moveit_config)/config/xarm7_params.yaml" command="load"/>
-  <include if="$(eval arg('robot_dof')==7)" file="$(find xarm7_moveit_config)/launch/moveit_rviz_common.launch">
-    <arg name="jnt_stat_source" value="[/move_group/fake_controller_joint_states]" />
-    <!-- whether to use fake_execution controller to drive the motion -->
-    <arg name="fake_execution" value="true" />
-    <!-- option to publish tf topic or not -->
-    <arg name="pub_tf" value="true" />
-    <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
-    <arg name="NO_GUI_CTRL" value="true"/>
-    <!-- option to show rviz or not -->
-    <arg name="show_rviz" value="true" />
+  <include file="$(find xarm_planner)/launch/moveit_sim_configurations.launch">
+    <arg name="arm_dof" value="$(arg robot_dof)" />
+    <arg name="end_effector" value="_gripper" if="$(arg add_gripper)" />
+    <arg name="end_effector" value="_vacuum_gripper" if="$(arg add_vacuum_gripper)" />
   </include>
-
-  <rosparam if="$(eval arg('robot_dof')==6)" file="$(find xarm6_moveit_config)/config/xarm6_params.yaml" command="load"/>
-  <include if="$(eval arg('robot_dof')==6)" file="$(find xarm6_moveit_config)/launch/moveit_rviz_common.launch">
-    <arg name="jnt_stat_source" value="[/move_group/fake_controller_joint_states]" />
-    <!-- whether to use fake_execution controller to drive the motion -->
-    <arg name="fake_execution" value="true" />
-    <!-- option to publish tf topic or not -->
-    <arg name="pub_tf" value="true" />
-    <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
-    <arg name="NO_GUI_CTRL" value="true"/>
-    <!-- option to show rviz or not -->
-    <arg name="show_rviz" value="true" />
-  </include>
-
-  <rosparam if="$(eval arg('robot_dof')==5)" file="$(find xarm5_moveit_config)/config/xarm5_params.yaml" command="load"/>
-  <include if="$(eval arg('robot_dof')==5)" file="$(find xarm5_moveit_config)/launch/moveit_rviz_common.launch">
-    <arg name="jnt_stat_source" value="[/move_group/fake_controller_joint_states]" />
-    <!-- whether to use fake_execution controller to drive the motion -->
-    <arg name="fake_execution" value="true" />
-    <!-- option to publish tf topic or not -->
-    <arg name="pub_tf" value="true" />
-    <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
-    <arg name="NO_GUI_CTRL" value="true"/>
-    <!-- option to show rviz or not -->
-    <arg name="show_rviz" value="true" />
-  </include>
-
   
   <remap from="/DOF" to="/xarm/DOF" />
   <!-- bring up the simple planner (based on move_group) that provide plan service and execution server -->

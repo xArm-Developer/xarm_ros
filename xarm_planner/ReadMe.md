@@ -7,13 +7,15 @@
 ## Launch the simple planner node:
 If you want to try it in simulation, run:
 ```bash
-   $ roslaunch xarm_planner xarm_planner_rviz_sim.launch robot_dof:=<7|6|5>
+   $ roslaunch xarm_planner xarm_planner_rviz_sim.launch robot_dof:=<7|6|5> add_gripper:=<true|false> add_vacuum_gripper:=<true|false>
 ```
 Or, if you would work with real xArm, run:  
 ```bash
-   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5>
+   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5> add_gripper:=<true|false> add_vacuum_gripper:=<true|false>
 ```
-Argument 'robot_dof' specifies the number of joints of your xArm (default is 7).This node can provide services for planning request in Cartesian target and joint space target. Service definition can be found in srv folder. User can call the services to let planner solve the path to specified target point, and retrieve the boolean result as successful or not. Once the node is launched, user can try in command-line first, something like:  
+Argument 'robot_dof' specifies the number of joints of your xArm (default is 7). 'add_gripper' and 'add_vacuum_gripper' are for the cases with UF end-effector attached, only one end-effector can be attached.   
+
+This node can provide services for planning request in Cartesian target and joint space target. Service definition can be found in srv folder. User can call the services to let planner solve the path to specified target point, and retrieve the boolean result as successful or not. Once the node is launched, user can try in command-line first, something like:  
 
 ## For joint-space planning request:  
 ```bash
@@ -63,3 +65,9 @@ To run the test program ( ***for xArm7 only***, user can modify the command list
    $ rosrun xarm_planner xarm_simple_planner_test
 ```
 The program will execute three hard-coded joint space target, ***MAKE SURE THERE ARE PLENTY SURROUNDING SPACES BEFORE EXECUTING THIS!***
+
+### Visualization of planned trajectory
+Refer to issue [#57](https://github.com/xArm-Developer/xarm_ros/issues/57), now xArm and end-effector descriptions are re-configured to enable the visualization of TCP trajectory upon successful planning. As is shown below:   
+
+![VISUAL_TRAJ1](../doc/visual_traj1.png)
+![VISUAL_TRAJ2](../doc/visual_traj2.png)

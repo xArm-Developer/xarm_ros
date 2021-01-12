@@ -6,13 +6,15 @@
 ## 启动simple planner:
 如果希望在仿真环境中使用，运行:
 ```bash
-   $ roslaunch xarm_planner xarm_planner_rviz_sim.launch robot_dof:=<7|6|5>
+   $ roslaunch xarm_planner xarm_planner_rviz_sim.launch robot_dof:=<7|6|5> add_gripper:=<true|false> add_vacuum_gripper:=<true|false>
 ```
 或者如果希望直接控制真机，运行:  
 ```bash
-   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5>
-```
-'robot_dof'参数指的是xArm的关节数目 (默认值为7)，这个节点提供针对笛卡尔或者关节坐标进行轨迹规划的service，Service的定义可以在srv文件夹寻找。 用户可以调用相关service去尝试进行轨迹规划求解, 并会收到成功与否的布尔值。 按以上步骤启动节点之后，可以先尝试命令行方法使用：
+   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5> add_gripper:=<true|false> add_vacuum_gripper:=<true|false>
+```   
+'robot_dof'参数指的是xArm的关节数目 (默认值为7)，'add_gripper'和'add_vacuum_gripper'参数是为了手臂末端安装了UF末端执行器的情况准备的，只能加载一种末端执行器。  
+
+这个节点提供针对笛卡尔或者关节坐标进行轨迹规划的service，Service的定义可以在srv文件夹寻找。 用户可以调用相关service去尝试进行轨迹规划求解, 并会收到成功与否的布尔值。 按以上步骤启动节点之后，可以先尝试命令行方法使用：
 
 ## 关节空间点到点目标规划:  
 ```bash
@@ -63,4 +65,8 @@
 ```
 这个测试程序会运行一些设计好的轨迹, ***执行前请确保机械臂周围有足够的空间!***
 
+### 规划轨迹的可视化
+参考issue [#57](https://github.com/xArm-Developer/xarm_ros/issues/57), xArm和end-effector模型描述文档已经重新修改，使得规划成功的末端轨迹可以在Rviz中显示出来，如下图所示:   
 
+![VISUAL_TRAJ1](../doc/visual_traj1.png)
+![VISUAL_TRAJ2](../doc/visual_traj2.png)

@@ -467,5 +467,19 @@
       friction="1" />
   </joint>
 
+  <link name="${prefix}link_eef" />
+
+  <joint
+    name="${prefix}joint_eef"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="${prefix}link7" />
+    <child
+      link="${prefix}link_eef" />
+  </joint>
+  
   </xacro:macro>
 </robot>

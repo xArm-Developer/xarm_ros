@@ -18,6 +18,10 @@
         <joint name="joint5" />
         <joint name="joint6" />
         <joint name="joint7" />
+        <joint name="joint_eef" />
+        <!-- To count in gripper TCP offset, if no need, please uncomment following 2 lines -->
+        <joint name="vacuum_gripper_fix" />
+        <joint name="joint_tcp" />
     </group>
     <group name="vacuum_gripper">
         <joint name="vacuum_gripper_fix" />
@@ -33,7 +37,7 @@
         <joint name="joint7" value="0" />
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="vacuum_gripper" parent_link="link7" group="vacuum_gripper" />
+    <end_effector name="vacuum_gripper" parent_link="link_tcp" group="vacuum_gripper" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="link1" link2="link2" reason="Adjacent" />
     <disable_collisions link1="link1" link2="link3" reason="Never" />

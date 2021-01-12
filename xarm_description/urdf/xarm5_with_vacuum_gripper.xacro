@@ -12,5 +12,5 @@
   <xacro:include filename="$(find xarm_description)/urdf/xarm_vacuum_gripper.urdf.xacro" />
 
   <xacro:xarm5_robot prefix="$(arg prefix)" namespace="$(arg ros_namespace)" limited="$(arg limited)" effort_control="$(arg effort_control)"/>
-  <xacro:xarm_vacuum_gripper_urdf attach_to="$(arg prefix)link5" />
+  <xacro:xarm_vacuum_gripper_urdf attach_to="$(arg prefix)link_eef" />
 </robot>

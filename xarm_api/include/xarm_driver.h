@@ -13,6 +13,7 @@
 #include <xarm_msgs/SetDigitalIO.h>
 #include <xarm_msgs/GetDigitalIO.h>
 #include <xarm_msgs/GetControllerDigitalIO.h>
+#include <xarm_msgs/SetControllerAnalogIO.h>
 #include <xarm_msgs/GetAnalogIO.h>
 #include <xarm_msgs/ClearErr.h>
 #include <xarm_msgs/GetErr.h>
@@ -21,6 +22,7 @@
 #include <xarm_msgs/GripperState.h>
 #include <xarm_msgs/SetToolModbus.h>
 #include <xarm_msgs/ConfigToolModbus.h>
+#include <xarm_msgs/MoveAxisAngle.h>
 #include <sensor_msgs/JointState.h>
 #include <xarm/common/data_type.h>
 #include <xarm/linux/thread.h>
@@ -52,11 +54,14 @@ namespace xarm_api
             bool GetErrCB(xarm_msgs::GetErr::Request & req, xarm_msgs::GetErr::Response & res);
             bool GoHomeCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveJointCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
+            bool MoveJointbCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveLinebCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveLineCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveLineToolCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveServoJCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
             bool MoveServoCartCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res);
+            bool MoveLineAACB(xarm_msgs::MoveAxisAngle::Request &req, xarm_msgs::MoveAxisAngle::Response &res);
+            bool MoveServoCartAACB(xarm_msgs::MoveAxisAngle::Request &req, xarm_msgs::MoveAxisAngle::Response &res);
             bool GripperConfigCB(xarm_msgs::GripperConfig::Request &req, xarm_msgs::GripperConfig::Response &res);
             bool GripperMoveCB(xarm_msgs::GripperMove::Request &req, xarm_msgs::GripperMove::Response &res);
             bool GripperStateCB(xarm_msgs::GripperState::Request &req, xarm_msgs::GripperState::Response &res);
@@ -65,6 +70,8 @@ namespace xarm_api
             bool ConfigModbusCB(xarm_msgs::ConfigToolModbus::Request &req, xarm_msgs::ConfigToolModbus::Response &res);
             bool SetControllerDOutCB(xarm_msgs::SetDigitalIO::Request &req, xarm_msgs::SetDigitalIO::Response &res);
             bool GetControllerDInCB(xarm_msgs::GetControllerDigitalIO::Request &req, xarm_msgs::GetControllerDigitalIO::Response &res);
+            bool SetControllerAOutCB(xarm_msgs::SetControllerAnalogIO::Request &req, xarm_msgs::SetControllerAnalogIO::Response &res);
+            bool GetControllerAInCB(xarm_msgs::GetAnalogIO::Request &req, xarm_msgs::GetAnalogIO::Response &res);
             void SleepTopicCB(const std_msgs::Float32ConstPtr& msg);
 
             void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
@@ -90,6 +97,7 @@ namespace xarm_api
             ros::NodeHandle nh_;
             ros::ServiceServer go_home_server_;
             ros::ServiceServer move_joint_server_;
+            ros::ServiceServer move_jointb_server_;
             ros::ServiceServer motion_ctrl_server_;
             ros::ServiceServer set_state_server_;
             ros::ServiceServer set_mode_server_;
@@ -98,6 +106,8 @@ namespace xarm_api
             ros::ServiceServer move_line_tool_server_;
             ros::ServiceServer move_servoj_server_;
             ros::ServiceServer move_servo_cart_server_;
+            ros::ServiceServer move_line_aa_server_;
+            ros::ServiceServer move_servo_cart_aa_server_;
             ros::ServiceServer set_tcp_offset_server_;
             ros::ServiceServer set_load_server_;
             ros::ServiceServer set_end_io_server_;
@@ -114,6 +124,8 @@ namespace xarm_api
             ros::ServiceServer config_modbus_server_;
             ros::ServiceServer set_controller_dout_server_;
             ros::ServiceServer get_controller_din_server_;
+            ros::ServiceServer set_controller_aout_server_;
+            ros::ServiceServer get_controller_ain_server_;
 
             ros::Publisher joint_state_;
             ros::Publisher robot_rt_state_; 

@@ -31,6 +31,7 @@ public:
 	static const unsigned char MOVE_LINE = 21;
 	static const unsigned char MOVE_LINEB = 22;
 	static const unsigned char MOVE_JOINT = 23;
+	static const unsigned char MOVE_JOINTB = 24;
 	static const unsigned char MOVE_HOME = 25;
 	static const unsigned char SLEEP_INSTT = 26;
 	static const unsigned char MOVE_CIRCLE = 27;

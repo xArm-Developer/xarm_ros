@@ -1,0 +1,20 @@
+<launch>
+  <arg name="arm_dof" />
+  <arg name="end_effector" default="" />
+
+  <rosparam file="$(eval find('xarm' + str(arg('arm_dof')) + arg('end_effector') + '_moveit_config') + '/config/xarm' + str(arg('arm_dof')) + '_params.yaml')" command="load"/>
+  <include file="$(eval find('xarm' + str(arg('arm_dof')) + arg('end_effector') + '_moveit_config') + '/launch/moveit_rviz_common.launch')">
+    <arg name="jnt_stat_source" value="[/move_group/fake_controller_joint_states]" />
+    <!-- whether to use fake_execution controller to drive the motion -->
+    <arg name="fake_execution" value="true" />
+    <!-- option to publish tf topic or not -->
+    <arg name="pub_tf" value="true" />
+    <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
+    <arg name="NO_GUI_CTRL" value="true"/>
+    <!-- option to show rviz or not -->
+    <arg name="show_rviz" value="true" />
+    <!-- option to load gripper controller in simulation -->
+    <arg name="gripper_controller" value="true" if="$(eval end_effector=='_gripper')" />
+  </include>
+
+</launch>

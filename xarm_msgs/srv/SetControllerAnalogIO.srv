@@ -1,0 +1,11 @@
+# Setting the analog Output port value at robot controller, io_num: from 1 to 2
+
+int16 port_num
+
+float32 analog_value
+
+---
+
+int16 ret
+
+string message
