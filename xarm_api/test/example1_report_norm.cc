@@ -3,13 +3,16 @@
  * Software License Agreement (BSD License)
  *
  * Author: Jimy Zhang <jimy92@163.com>
- ============================================================================*/
+ ============================================================================*/\
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 #include "xarm/connect.h"
 #include "xarm/report_data.h"
 
 int main(int argc, char **argv) {
+  using namespace std::chrono_literals;
   if (argc < 2) {
     printf("Please enter IP address\n");
     return 0;
@@ -25,7 +28,7 @@ int main(int argc, char **argv) {
   int ret;
   int err_num = 0;
   while (1) {
-    usleep(1000);
+    std::this_thread::sleep_for(1ms);
 
     ret = arm_report->read_frame(rx_data);
     if (ret != 0) continue;

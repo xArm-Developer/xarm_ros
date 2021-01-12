@@ -80,7 +80,7 @@ namespace xarm_api
             UxbusCmd *arm_cmd_;
             unsigned char rx_data_[1280];
             std::string ip;
-            pthread_t thread_id_;
+            std::thread::id thread_id_;
             ros::AsyncSpinner spinner;
             int dof_;
             int curr_state_;

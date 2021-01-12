@@ -4,7 +4,7 @@
  *
  * Author: Jimy Zhang <jimy92@163.com>
  ============================================================================*/
-#include "xarm/linux/thread.h"
+/**#include "xarm/linux/thread.h"
 
 #include <stdio.h>
 
@@ -23,3 +23,4 @@ pthread_t thread_init(fun_point_t fun_point, void *arg) {
 }
 
 void thread_delete(pthread_t id) { pthread_cancel(id); }
+**/

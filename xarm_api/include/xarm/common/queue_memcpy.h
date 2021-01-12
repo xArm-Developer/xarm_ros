@@ -7,7 +7,7 @@
 #ifndef COMMON_QUEUE_MEMCPY_H_
 #define COMMON_QUEUE_MEMCPY_H_
 
-#include <pthread.h>
+#include <mutex>
 
 class QueueMemcpy {
  public:
@@ -30,7 +30,7 @@ class QueueMemcpy {
   long head_;
   long tail_;
   char *buf_;
-  pthread_mutex_t mutex_;
+  std::mutex mutex_;
 };
 
 #endif

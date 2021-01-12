@@ -26,6 +26,7 @@ int go_home_test(xarm_msgs::Move &srv, ros::ServiceClient &client)
 
 int servo_cart_test(xarm_msgs::Move &srv, ros::ServiceClient &client)
 {
+    using namespace std::chrono_literals;
     std::vector<float> inc = {0.3, 0, 0, 0, 0, 0}; 
 
     srv.request.mvvelo = 0;
@@ -45,7 +46,7 @@ int servo_cart_test(xarm_msgs::Move &srv, ros::ServiceClient &client)
             ROS_ERROR("Failed to call service move_servoj");
             return 1;
         }
-        usleep(1e4); // 0.01s
+        std::this_thread::sleep_for(10ms); // 0.01s
     }
     return 0;
 }

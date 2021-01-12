@@ -6,12 +6,4 @@
  ============================================================================*/
 #ifndef LINUX_THREAD_H_
 #define LINUX_THREAD_H_
-
-#include <pthread.h>
-
-typedef void *(*fun_point_t)(void *);
-
-void thread_delete(pthread_t id);
-pthread_t thread_init(fun_point_t fun_point, void *arg);
-
 #endif

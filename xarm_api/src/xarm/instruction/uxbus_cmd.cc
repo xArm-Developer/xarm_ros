@@ -4,7 +4,8 @@
  *
  * Author: Jimy Zhang <jimy92@163.com>
  ============================================================================*/
-#include <unistd.h>
+//#include <unistd.h>
+#include "windows.h"
 #include "xarm/instruction/uxbus_cmd.h"
 #include "xarm/instruction/servo3_config.h"
 #include "xarm/instruction/uxbus_cmd_config.h"
@@ -737,6 +738,7 @@ int UxbusCmd::set_modbus_timeout(int value) {
 }
 
 int UxbusCmd::set_modbus_baudrate(int baud) {
+	using namespace std::chrono_literals;
 	float val;
 	int baud_inx = get_baud_inx(baud);
 	if (baud_inx == -1) return -1;
@@ -746,7 +748,7 @@ int UxbusCmd::set_modbus_baudrate(int baud) {
 		if (baud_i != baud_inx) {
 			tgpio_addr_w16(SERVO3_RG::MODBUS_BAUDRATE, baud_inx);
 			tgpio_addr_w16((0x1000 | SERVO3_RG::MODBUS_BAUDRATE), baud_inx);
-			usleep(1e4); // 10ms
+			std::this_thread::sleep_for(10ms);; // 10ms
 			return tgpio_addr_w16(SERVO3_RG::SOFT_REBOOT, 1);
 		}
 	}

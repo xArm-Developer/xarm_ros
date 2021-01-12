@@ -6,7 +6,8 @@
  ============================================================================*/
 #include "xarm/instruction/uxbus_cmd_ser.h"
 
-#include <unistd.h>
+//#include <unistd.h>
+#include "windows.h"
 
 #include "xarm/common/crc16.h"
 #include "xarm/debug/debug_print.h"
@@ -26,8 +27,9 @@ int UxbusCmdSer::check_xbus_prot(unsigned char *datas, int funcode) {
 }
 
 int UxbusCmdSer::send_pend(int funcode, int num, int timeout, unsigned char *ret_data) {
+  using namespace std::chrono_literals;
   int ret;
-  unsigned char rx_data[arm_port_->que_maxlen_] = {0};
+  unsigned char * rx_data = new unsigned char [arm_port_->que_maxlen_] {0};
   int times = timeout;
   while (times) {
     times -= 1;
@@ -35,16 +37,18 @@ int UxbusCmdSer::send_pend(int funcode, int num, int timeout, unsigned char *ret
     if (ret != -1) {
       ret = check_xbus_prot(rx_data, funcode);
       for (int i = 0; i < num; i++) { ret_data[i] = rx_data[i + 4]; }
+      delete [] rx_data;
       return ret;
     }
-    usleep(1000);
+    std::this_thread::sleep_for(1ms);
   }
+  delete [] rx_data;
   return UXBUS_STATE::ERR_TOUT;
 }
 
 int UxbusCmdSer::send_xbus(int funcode, unsigned char *datas, int num) {
   int i;
-  unsigned char send_data[num + 4];
+  unsigned char * send_data = new unsigned char [num + 4];
 
   send_data[0] = UXBUS_CONF::MASTER_ID;
   send_data[1] = UXBUS_CONF::SLAVE_ID;
@@ -58,6 +62,7 @@ int UxbusCmdSer::send_xbus(int funcode, unsigned char *datas, int num) {
 
   arm_port_->flush();
   int ret = arm_port_->write_frame(send_data, num + 6);
+  delete [] send_data;
   return ret;
 }
 
