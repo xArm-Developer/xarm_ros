@@ -6,8 +6,11 @@
  ============================================================================*/
 #include "xarm/instruction/uxbus_cmd_ser.h"
 
-//#include <unistd.h>
+#ifndef WIN32
+#include <unistd.h>
+#else
 #include "windows.h"
+#endif
 
 #include "xarm/common/crc16.h"
 #include "xarm/debug/debug_print.h"

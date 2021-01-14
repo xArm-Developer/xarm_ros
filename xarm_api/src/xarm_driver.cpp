@@ -6,7 +6,6 @@
  ============================================================================*/
 #include <xarm_driver.h>
 #include "xarm/instruction/uxbus_cmd_config.h"
-#include "xarm/linux/thread.h"
 
 using namespace std::chrono_literals;
 #define CMD_HEARTBEAT_US 30s // 30s

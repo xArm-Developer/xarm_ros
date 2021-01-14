@@ -23,7 +23,6 @@
 #include <string.h>
 
 #include "xarm/common/crc16.h"
-#include "xarm/linux/thread.h"
 
 void SerialPort::recv_proc(void) {
   /**

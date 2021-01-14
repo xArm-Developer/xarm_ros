@@ -141,8 +141,7 @@ add_library(xarm_api
    ${XARM_API_DIR}/instruction/uxbus_cmd_ser.cc
    ${XARM_API_DIR}/instruction/uxbus_cmd_tcp.cc
 
-   ${XARM_API_DIR}/linux/network.cc
-   ${XARM_API_DIR}/linux/thread.cc
+   ${XARM_API_DIR}/os/network.cc
 
    ${XARM_API_DIR}/port/serial.cc
    ${XARM_API_DIR}/port/socket.cc

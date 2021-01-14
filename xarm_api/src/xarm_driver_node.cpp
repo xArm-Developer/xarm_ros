@@ -5,7 +5,6 @@
  * Author: Jason Peng <jason@ufactory.cc>
  ============================================================================*/
 #include <xarm_driver.h>
-#include <xarm/linux/thread.h>
 #include <signal.h>
 #include "xarm/connect.h"
 #include "xarm/report_data.h"
@@ -27,7 +26,8 @@ class XarmRTConnection
             xarm_driver = drv;
             xarm_driver.XARMDriverInit(root_nh, server_ip);
             ros::Duration(0.5).sleep();
-             std::thread th(thread_proc, (void *)this);
+            std::thread th(thread_proc, (void *)this);
+            th.detach();
         }
 
         void thread_run(void)

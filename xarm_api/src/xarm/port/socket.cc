@@ -20,8 +20,7 @@ static int close(int fd)
 #endif
 #include <errno.h>
 
-#include "xarm/linux/network.h"
-#include "xarm/linux/thread.h"
+#include "xarm/os/network.h"
 
 void SocketPort::recv_proc(void) {
   int num;
@@ -70,6 +69,7 @@ SocketPort::SocketPort(char *server_ip, int server_port, int que_num,
   state_ = 0;
   flush();
   std::thread th(recv_proc_, this);
+  th.detach();
 }
 
 SocketPort::~SocketPort(void) {

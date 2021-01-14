@@ -25,7 +25,6 @@
 #include <xarm_msgs/MoveAxisAngle.h>
 #include <sensor_msgs/JointState.h>
 #include <xarm/common/data_type.h>
-#include <xarm/linux/thread.h>
 #include "xarm/connect.h"
 #include "xarm/report_data.h"
 
