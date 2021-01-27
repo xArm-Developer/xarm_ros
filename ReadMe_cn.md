@@ -446,9 +446,6 @@ $ rosservice call /xarm/set_mode 2
 
 $ rosservice call /xarm/set_state 0
 ```
-&ensp;&ensp;以上操作同样可用相关的xArm SDK函数实现.  
-
-***已知问题:*** 基于当前控制器(v1.6.5或以前版本)逻辑, ***mode 1 和 mode 2 之间直接转换会失败, 必须先切换 mode 0 才能成功切换到另一个非0模式*** 我们会尝试在后续的控制器固件更新中修复这个问题。  
 
 # 7. 其他示例
 &ensp;&ensp;[在examples路径下](./examples)会陆续更新一些其他应用的demo例程，欢迎前去探索研究。

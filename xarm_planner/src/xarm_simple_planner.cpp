@@ -85,8 +85,8 @@ void XArmSimplePlanner::init()
   exec_plan_srv = node_handle.advertiseService("xarm_exec_plan", &XArmSimplePlanner::exec_plan_cb, this);
 
   visual_tools = new moveit_visual_tools::MoveItVisualTools("link_base");
-  Eigen::Affine3d text_pose = Eigen::Affine3d::Identity();
-  text_pose.translation().z() = 1.75;
+  Eigen::Isometry3d text_pose = Eigen::Isometry3d::Identity();
+  text_pose.translation().z() = 0.8;
   visual_tools->publishText(text_pose, "xArm Planner Demo", rvt::WHITE, rvt::XLARGE);
   visual_tools->trigger();
 
