@@ -128,7 +128,6 @@ class XarmRTConnection
         {
             XarmRTConnection* threadTest=(XarmRTConnection*)arg;
             threadTest->thread_run();
-//            threadTest.join();
         }
 
     public:

@@ -8,11 +8,11 @@
 #include <unistd.h>
 #endif
 
+#include "ros/ros.h"
 #include "xarm/connect.h"
 #include "xarm/report_data.h"
 
 int main(int argc, char **argv) {
-  using namespace std::chrono_literals;
   if (argc < 2) {
     printf("Please enter IP address\n");
     return 0;
@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
   int ret;
   int err_num = 0;
   while (1) {
-    std::this_thread::sleep_for(1ms);
+    ros::Duration(0.001).sleep(); //1ms
 
     ret = arm_report->read_frame(rx_data);
     if (ret != 0) continue;

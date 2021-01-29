@@ -6,9 +6,13 @@
  ============================================================================*/
 #include "xarm/instruction/uxbus_cmd_tcp.h"
 
-//#include <unistd.h>
+#ifndef WIN32
+#include <unistd.h>
+#else
 #include "windows.h"
+#endif
 
+#include "ros/ros.h"
 #include "xarm/debug/debug_print.h"
 #include "xarm/instruction/uxbus_cmd_config.h"
 
@@ -69,7 +73,7 @@ int UxbusCmdTcp::send_pend(int funcode, int num, int timeout, unsigned char *ret
       delete [] rx_data;
       return ret;
     }
-    std::this_thread::sleep_for(1ms);
+    ros::Duration(0.001).sleep(); //1ms
   }
   delete [] rx_data;
   return UXBUS_STATE::ERR_TOUT;

@@ -7,15 +7,14 @@
 #include <xarm_driver.h>
 #include "xarm/instruction/uxbus_cmd_config.h"
 
-using namespace std::chrono_literals;
-#define CMD_HEARTBEAT_US 30s // 30s
+#define CMD_HEARTBEAT_US 30 // 30s
 
 void* cmd_heart_beat(void* args)
 {
     xarm_api::XARMDriver *my_driver = (xarm_api::XARMDriver *) args;
     while(true)
     {
-        std::this_thread::sleep_for(CMD_HEARTBEAT_US); // non-realtime
+        ros::Duration(CMD_HEARTBEAT_US).sleep(); // non-realtime
         my_driver->Heartbeat();
     }
 }

@@ -8,10 +8,7 @@
 
 #ifndef WIN32
 #include <unistd.h>
-#else
-#include "windows.h"
-#endif
-
+#include "ros/ros.h"
 #include "xarm/common/crc16.h"
 #include "xarm/debug/debug_print.h"
 #include "xarm/instruction/uxbus_cmd_config.h"
@@ -30,7 +27,6 @@ int UxbusCmdSer::check_xbus_prot(unsigned char *datas, int funcode) {
 }
 
 int UxbusCmdSer::send_pend(int funcode, int num, int timeout, unsigned char *ret_data) {
-  using namespace std::chrono_literals;
   int ret;
   unsigned char * rx_data = new unsigned char [arm_port_->que_maxlen_] {0};
   int times = timeout;
@@ -43,7 +39,7 @@ int UxbusCmdSer::send_pend(int funcode, int num, int timeout, unsigned char *ret
       delete [] rx_data;
       return ret;
     }
-    std::this_thread::sleep_for(1ms);
+    ros::Duration(0.001).sleep(); //1ms
   }
   delete [] rx_data;
   return UXBUS_STATE::ERR_TOUT;
@@ -70,3 +66,5 @@ int UxbusCmdSer::send_xbus(int funcode, unsigned char *datas, int num) {
 }
 
 void UxbusCmdSer::close(void) { arm_port_->close_port(); }
+
+#endif

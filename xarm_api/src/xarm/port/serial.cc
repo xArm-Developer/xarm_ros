@@ -4,29 +4,23 @@
  *
  * Author: Jimy Zhang <jimy92@163.com>
  ============================================================================*/
+#ifndef WIN32 //serial is not currently supported on Windows as of Jan 2021
 #include "xarm/port/serial.h"
-
-#ifndef WIN32
-#include <sys/shm.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <termios.h>
-#include <unistd.h>
-#else
-#include <ws2tcpip.h>
-#include "windows.h"
-#endif
 
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/shm.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <termios.h>
+#include <unistd.h>
 
 #include "xarm/common/crc16.h"
+#include "xarm/os/thread.h"
 
 void SerialPort::recv_proc(void) {
-  /**
-  using namespace std::chrono_literals;
   unsigned char ch;
   int ret;
   while (state_ == 0) {
@@ -36,24 +30,18 @@ void SerialPort::recv_proc(void) {
       parse_put(&ch, 1);
       continue;
     }
-    std::this_thread::sleep_for(1ms);
+    ros::Duration(1).sleep(); //1s
   }
-  **/
 }
-/*
+
 static void *recv_proc_(void *arg) {
   SerialPort *my_this = (SerialPort *)arg;
 
   my_this->recv_proc();
-
-  //pthread_exit(0);
-  
 }
-*/
 
 SerialPort::SerialPort(const char *port, int baud, int que_num,
                        int que_maxlen) {
-                         /*
   que_num_ = que_num;
   que_maxlen_ = que_maxlen;
   rx_que_ = new QueueMemcpy(que_num_, que_maxlen_);
@@ -69,8 +57,7 @@ SerialPort::SerialPort(const char *port, int baud, int que_num,
   UXBUS_PROT_FROMID_ = 0x55;
   UXBUS_PROT_TOID_ = 0xAA;
   flush();
-  std::thread th(recv_proc_, this);
-  */
+  thread_id_ = thread_init(recv_proc_, this);
 }
 
 SerialPort::~SerialPort(void) {
@@ -86,34 +73,34 @@ void SerialPort::flush(void) {
   rx_state_ = UXBUS_START_FROMID;
 }
 
-int SerialPort::read_char(unsigned char *ch) { return 'a';}//(read(fp_, ch, 1) == 1) ? 0 : -1; }
+int SerialPort::read_char(unsigned char *ch) { return (read(fp_, ch, 1) == 1) ? 0 : -1; }
 
 int SerialPort::read_frame(unsigned char *data) {
   if (state_ != 0) { return -1; }
 
   if (rx_que_->size() == 0) { return -1; }
 
-  //rx_que_->pop(data);
+  rx_que_->pop(data);
   return 0;
 }
 
 int SerialPort::write_char(unsigned char ch) {
-  return 'a'; //((write(fp_, &ch, 1) == 1) ? 0 : -1);
+  return ((write(fp_, &ch, 1) == 1) ? 0 : -1);
 }
 
 int SerialPort::write_frame(unsigned char *data, int len) {
-  //if (write(fp_, data, len) != len) { return -1; }
+  if (write(fp_, data, len) != len) { return -1; }
   return 0;
 }
 
 void SerialPort::close_port(void) {
   state_ = -1;
-  //close(fp_);
+  close(fp_);
   delete rx_que_;
 }
 
 void SerialPort::parse_put(unsigned char *data, int len) {
-/**  unsigned char ch;
+  unsigned char ch;
 
   for (int i = 0; i < len; i++) {
     ch = data[i];
@@ -177,11 +164,10 @@ void SerialPort::parse_put(unsigned char *data, int len) {
       rx_state_ = UXBUS_START_FROMID;
       break;
     }
-  }**/
+  }
 }
 
 int SerialPort::init_serial(const char *port, int baud) {
-  /**
   speed_t speed;
   struct termios options;
 
@@ -238,6 +224,6 @@ int SerialPort::init_serial(const char *port, int baud) {
   options.c_cc[VTIME] = 200;
   options.c_cc[VMIN] = 10;
   tcsetattr(fp_, TCSANOW, &options);
-  **/
   return 0;
 }
+#endif
