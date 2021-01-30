@@ -9,6 +9,7 @@
 
 #include "xarm/common/data_type.h"
 #include "xarm/common/queue_memcpy.h"
+#include <thread>
 
 class SocketPort {
  public:

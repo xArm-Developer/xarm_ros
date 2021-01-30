@@ -3,6 +3,7 @@
 
 #include "ros/ros.h"
 #include "std_msgs/Float32.h"
+#include <thread>
 #include <xarm_msgs/SetInt16.h>
 #include <xarm_msgs/TCPOffset.h>
 #include <xarm_msgs/SetLoad.h>
