@@ -16,9 +16,10 @@
 #include <sys/types.h>
 #include <termios.h>
 #include <unistd.h>
+#include <thread>
+#include "ros/ros.h"
 
 #include "xarm/common/crc16.h"
-#include "xarm/os/thread.h"
 
 void SerialPort::recv_proc(void) {
   unsigned char ch;
@@ -57,7 +58,9 @@ SerialPort::SerialPort(const char *port, int baud, int que_num,
   UXBUS_PROT_FROMID_ = 0x55;
   UXBUS_PROT_TOID_ = 0xAA;
   flush();
-  thread_id_ = thread_init(recv_proc_, this);
+
+  std::thread th(recv_proc_, this);
+  thread_id_ = th.get_id();
 }
 
 SerialPort::~SerialPort(void) {

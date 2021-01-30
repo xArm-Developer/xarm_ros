@@ -53,7 +53,6 @@ int UxbusCmdTcp::check_xbus_prot(unsigned char *datas, int funcode) {
 }
 
 int UxbusCmdTcp::send_pend(int funcode, int num, int timeout, unsigned char *ret_data) {
-  using namespace std::chrono_literals;
   int i;
   int ret;
   unsigned char * rx_data = new unsigned char [arm_port_->que_maxlen_] {0};
