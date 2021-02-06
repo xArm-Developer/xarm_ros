@@ -33,8 +33,8 @@ int socket_init(char *local_ip, int port, int is_server) {
 
   int on = 1;
   int keepAlive = 1;     // Turn on keepalive attribute
-  int keepIdle = 1;      // If there is no data in n seconds, probe
-  int keepInterval = 1;  // Detection interval,5 seconds
+  int keepIdle = 60;      // If there is no data in n seconds, probe
+  int keepInterval = 10;  // Detection interval, unit:seconds
   int keepCount = 3;     // 3 detection attempts
   struct timeval timeout = {2, 0};
 

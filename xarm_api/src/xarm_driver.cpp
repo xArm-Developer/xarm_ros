@@ -43,7 +43,7 @@ namespace xarm_api
             ROS_ERROR("Xarm Connection Failed!");
         else // clear unimportant errors
         {
-            // thread_id_ = thread_init(cmd_heart_beat, this); // heartbeat related
+            thread_id_ = thread_init(cmd_heart_beat, this); // heartbeat related
             int dbg_msg[16] = {0};
             arm_cmd_->servo_get_dbmsg(dbg_msg);
 
