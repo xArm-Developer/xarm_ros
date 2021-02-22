@@ -7,10 +7,9 @@
 #ifndef PORT_SOCKET_H_
 #define PORT_SOCKET_H_
 
-#include <pthread.h>
-
 #include "xarm/common/data_type.h"
 #include "xarm/common/queue_memcpy.h"
+#include <thread>
 
 class SocketPort {
  public:
@@ -29,7 +28,7 @@ class SocketPort {
   int state_;
   int que_num_;
   QueueMemcpy *rx_que_;
-  pthread_t thread_id_;
+  std::thread::id thread_id_;
 };
 
 #endif

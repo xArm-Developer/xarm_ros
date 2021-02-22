@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 2.8.3)
 project(xarm_api)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 11)
+endif()
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -139,8 +141,7 @@ add_library(xarm_api
    ${XARM_API_DIR}/instruction/uxbus_cmd_ser.cc
    ${XARM_API_DIR}/instruction/uxbus_cmd_tcp.cc
 
-   ${XARM_API_DIR}/linux/network.cc
-   ${XARM_API_DIR}/linux/thread.cc
+   ${XARM_API_DIR}/os/network.cc
 
    ${XARM_API_DIR}/port/serial.cc
    ${XARM_API_DIR}/port/socket.cc
@@ -194,31 +195,48 @@ add_executable(servo_cart_test
 
 
 ## Specify libraries to link a library or executable target against
- target_link_libraries(example1_report_norm_node 
-   xarm_api
-   ${catkin_LIBRARIES}
- )
+if(MSVC)
+  target_link_libraries(xarm_api 
+    Ws2_32.lib
+    ${catkin_LIBRARIES}
+  )
 
- target_link_libraries(xarm_driver_node 
-   xarm_api
-   ${catkin_LIBRARIES}
- )
+  target_link_libraries(xarm_ros_client 
+    Ws2_32.lib
+    ${catkin_LIBRARIES}
+  )
+endif()
+
+target_link_libraries(example1_report_norm_node 
+  xarm_api
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(xarm_driver_node 
+  xarm_api
+  ${catkin_LIBRARIES}
+)
 
 target_link_libraries(move_test 
-   xarm_api
-   ${catkin_LIBRARIES}
- )
+  xarm_api
+  ${catkin_LIBRARIES}
+)
 
 target_link_libraries(test_tool_modbus 
-   xarm_api
-   ${catkin_LIBRARIES}
-   xarm_ros_client
- )
+  xarm_api
+  ${catkin_LIBRARIES}
+  xarm_ros_client
+)
 
 target_link_libraries(servo_cart_test 
-   xarm_api
-   ${catkin_LIBRARIES}
- )
+  xarm_api
+  ${catkin_LIBRARIES}
+)
+
+# Causes the visibility macros to use dllexport rather than dllimport,
+# which is appropriate when building the dll but not consuming it.
+target_compile_definitions(xarm_api
+  PRIVATE "XARM_API_BUILDING_LIBRARY")
 
 
 #############

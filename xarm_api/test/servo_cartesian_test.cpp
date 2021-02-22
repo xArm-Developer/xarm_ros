@@ -45,7 +45,8 @@ int servo_cart_test(xarm_msgs::Move &srv, ros::ServiceClient &client)
             ROS_ERROR("Failed to call service move_servoj");
             return 1;
         }
-        usleep(1e4); // 0.01s
+        ros::Duration(0.01).sleep(); //10ms
+
     }
     return 0;
 }

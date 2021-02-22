@@ -5,7 +5,6 @@
  * Author: Jason Peng <jason@ufactory.cc>
  ============================================================================*/
 #include <xarm_driver.h>
-#include <xarm/linux/thread.h>
 #include <signal.h>
 #include "xarm/connect.h"
 #include "xarm/report_data.h"
@@ -27,7 +26,8 @@ class XarmRTConnection
             xarm_driver = drv;
             xarm_driver.XARMDriverInit(root_nh, server_ip);
             ros::Duration(0.5).sleep();
-            thread_id = thread_init(thread_proc, (void *)this);
+            std::thread th(thread_proc, (void *)this);
+            th.detach();
         }
 
         void thread_run(void)
@@ -37,7 +37,8 @@ class XarmRTConnection
             int rxcnt;
             int i;
             int first_cycle = 1;
-            double d, prev_angle[joint_num_];
+            double d;
+            double * prev_angle = new double [joint_num_];
 
             ros::Rate r(REPORT_RATE_HZ); // 10Hz
             
@@ -119,18 +120,18 @@ class XarmRTConnection
                 }
 
             }
+            delete [] prev_angle;
             ROS_ERROR("xArm Connection Failed! Please Shut Down (Ctrl-C) and Retry ...");
         }
 
-        static void* thread_proc(void *arg) 
+        static void thread_proc(void *arg) 
         {
-            XarmRTConnection* pThreadTest=(XarmRTConnection*)arg;
-            pThreadTest->thread_run();
-            pthread_exit(0);
+            XarmRTConnection* threadTest=(XarmRTConnection*)arg;
+            threadTest->thread_run();
         }
 
     public:
-        pthread_t thread_id;
+        std::thread::id thread_id;
         char *ip;
         ros::Time now;
         SocketPort *arm_report;

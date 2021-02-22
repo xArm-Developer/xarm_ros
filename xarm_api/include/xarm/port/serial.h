@@ -7,10 +7,9 @@
 #ifndef PORT_SERIAL_H_
 #define PORT_SERIAL_H_
 
-#include <pthread.h>
-
 #include "xarm/common/data_type.h"
 #include "xarm/common/queue_memcpy.h"
+#include <thread>
 
 class SerialPort {
  public:
@@ -28,7 +27,7 @@ class SerialPort {
  private:
   int fp_;
   int state_;
-  pthread_t thread_id_;
+  std::thread::id thread_id_;
   QueueMemcpy *rx_que_;
   int init_serial(const char *port, int baud);
   int read_char(unsigned char *ch);

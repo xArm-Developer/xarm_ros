@@ -11,6 +11,7 @@
 #include "xarm/instruction/uxbus_cmd_tcp.h"
 #include "xarm/xarm_config.h"
 
+#ifndef WIN32
 UxbusCmdSer *connect_rs485_control(const char *com) {
   SerialPort *arm_port = new SerialPort(com, XARM_CONF::SERIAL_BAUD, 3, 128);
   if (arm_port->is_ok() != 0) {
@@ -21,6 +22,7 @@ UxbusCmdSer *connect_rs485_control(const char *com) {
   printf("Serial RS485 connection successful\n");
   return arm_cmd;
 }
+#endif
 
 UxbusCmdTcp *connect_tcp_control(char *server_ip) {
   SocketPort *arm_port =

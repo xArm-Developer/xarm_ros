@@ -4,6 +4,7 @@
  *
  * Author: Jimy Zhang <jimy92@163.com>
  ============================================================================*/
+#ifndef WIN32 //serial is not currently supported on Windows as of Jan 2021
 #include "xarm/port/serial.h"
 
 #include <fcntl.h>
@@ -15,9 +16,10 @@
 #include <sys/types.h>
 #include <termios.h>
 #include <unistd.h>
+#include <thread>
+#include "ros/ros.h"
 
 #include "xarm/common/crc16.h"
-#include "xarm/linux/thread.h"
 
 void SerialPort::recv_proc(void) {
   unsigned char ch;
@@ -29,7 +31,7 @@ void SerialPort::recv_proc(void) {
       parse_put(&ch, 1);
       continue;
     }
-    usleep(1000);
+    ros::Duration(1).sleep(); //1s
   }
 }
 
@@ -37,8 +39,6 @@ static void *recv_proc_(void *arg) {
   SerialPort *my_this = (SerialPort *)arg;
 
   my_this->recv_proc();
-
-  pthread_exit(0);
 }
 
 SerialPort::SerialPort(const char *port, int baud, int que_num,
@@ -58,7 +58,9 @@ SerialPort::SerialPort(const char *port, int baud, int que_num,
   UXBUS_PROT_FROMID_ = 0x55;
   UXBUS_PROT_TOID_ = 0xAA;
   flush();
-  thread_id_ = thread_init(recv_proc_, this);
+
+  std::thread th(recv_proc_, this);
+  thread_id_ = th.get_id();
 }
 
 SerialPort::~SerialPort(void) {
@@ -227,3 +229,4 @@ int SerialPort::init_serial(const char *port, int baud) {
   tcsetattr(fp_, TCSANOW, &options);
   return 0;
 }
+#endif

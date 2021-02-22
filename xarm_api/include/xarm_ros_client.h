@@ -3,15 +3,16 @@
 
 #include "ros/ros.h"
 #include <xarm_driver.h>
+#include "visibility_control.hpp"
 
 namespace xarm_api{
 
-class XArmROSClient
+class XARM_API_PUBLIC XArmROSClient
 {
 public:
-	XArmROSClient(){};
+	XArmROSClient();
 	void init(ros::NodeHandle& nh);
-	~XArmROSClient(){};
+	~XArmROSClient();
 
 	int motionEnable(short en);
 	int setState(short state);
