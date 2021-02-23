@@ -16,6 +16,7 @@ public:
 	static const unsigned char GET_ROBOT_SN = 2;
 	static const unsigned char CHECK_VERIFY = 3;
 	static const unsigned char RELOAD_DYNAMICS = 4;
+	static const unsigned char GET_REPORT_TAU_OR_I = 5;
 	static const unsigned char SHUTDOWN_SYSTEM = 10;
 
 	static const unsigned char MOTION_EN = 11;
@@ -80,6 +81,7 @@ public:
 	static const unsigned char PLAY_TRAJ = 64;
 	static const unsigned char GET_TRAJ_RW_STATUS = 65;
 
+	static const unsigned char REPORT_TAU_OR_I = 70;
 	static const unsigned char SET_TIMER = 71;
 	static const unsigned char CANCEL_TIMER = 72;
 	static const unsigned char SET_WORLD_OFFSET = 73;
@@ -87,9 +89,17 @@ public:
 	static const unsigned char CNTER_PLUS = 75;
 
 	static const unsigned char CAL_POSE_OFFSET = 76;
-  static const unsigned char GET_TCP_POSE_AA = 91;
-  static const unsigned char MOVE_LINE_AA = 92;
-  static const unsigned char MOVE_SERVO_CART_AA = 93;
+
+	static const unsigned char SET_SELF_COLLIS_CHECK = 77;
+	static const unsigned char SET_COLLIS_TOOL = 78;
+	static const unsigned char SET_SIMULATION_ROBOT = 79;
+
+	static const unsigned char VC_SET_JOINTV = 81;
+	static const unsigned char VC_SET_CARTV = 82;
+
+  	static const unsigned char GET_TCP_POSE_AA = 91;
+  	static const unsigned char MOVE_LINE_AA = 92;
+  	static const unsigned char MOVE_SERVO_CART_AA = 93;
 
 	static const unsigned char SERVO_W16B = 101;
 	static const unsigned char SERVO_R16B = 102;
@@ -190,6 +200,8 @@ public:
 	static const int SERVO = 1;
 	static const int TEACH_JOINT = 2;
 	static const int TEACH_CART = 3;
+	static const int VELO_JOINT = 4;
+	static const int VELO_CART = 5; 
 };
 
 class XARM_STATE {

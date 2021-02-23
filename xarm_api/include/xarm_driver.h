@@ -23,6 +23,7 @@
 #include <xarm_msgs/SetToolModbus.h>
 #include <xarm_msgs/ConfigToolModbus.h>
 #include <xarm_msgs/MoveAxisAngle.h>
+#include <xarm_msgs/MoveVelo.h>
 #include <sensor_msgs/JointState.h>
 #include <xarm/common/data_type.h>
 #include <xarm/linux/thread.h>
@@ -73,6 +74,8 @@ namespace xarm_api
             bool SetControllerAOutCB(xarm_msgs::SetControllerAnalogIO::Request &req, xarm_msgs::SetControllerAnalogIO::Response &res);
             bool GetControllerAInCB(xarm_msgs::GetAnalogIO::Request &req, xarm_msgs::GetAnalogIO::Response &res);
             void SleepTopicCB(const std_msgs::Float32ConstPtr& msg);
+            bool VeloMoveJointCB(xarm_msgs::MoveVelo::Request &req, xarm_msgs::MoveVelo::Response &res);
+            bool VeloMoveLineVCB(xarm_msgs::MoveVelo::Request &req, xarm_msgs::MoveVelo::Response &res);
 
             void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
             void pub_joint_state(sensor_msgs::JointState &js_msg);
@@ -126,6 +129,14 @@ namespace xarm_api
             ros::ServiceServer get_controller_din_server_;
             ros::ServiceServer set_controller_aout_server_;
             ros::ServiceServer get_controller_ain_server_;
+
+            // ros::ServiceServer tgpio_delay_set_digital_server_;
+            // ros::ServiceServer cgpio_delay_set_digital_server_;
+            // ros::ServiceServer tgpio_position_set_digital_server_;
+            // ros::ServiceServer cgpio_position_set_digital_server_;
+            // ros::ServiceServer cgpio_position_set_analog_server_;
+            ros::ServiceServer vc_set_jointv_server_;
+            ros::ServiceServer vc_set_linev_server_;
 
             ros::Publisher joint_state_;
             ros::Publisher robot_rt_state_; 

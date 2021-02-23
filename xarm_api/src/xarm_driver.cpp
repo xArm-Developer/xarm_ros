@@ -103,7 +103,10 @@ namespace xarm_api
         set_controller_dout_server_ = nh_.advertiseService("set_controller_dout", &XARMDriver::SetControllerDOutCB, this);
         get_controller_din_server_ = nh_.advertiseService("get_controller_din", &XARMDriver::GetControllerDInCB, this);
         set_controller_aout_server_ = nh_.advertiseService("set_controller_aout", &XARMDriver::SetControllerAOutCB, this);
-        get_controller_ain_server_= nh_.advertiseService("get_controller_ain", &XARMDriver::GetControllerAInCB, this);
+        get_controller_ain_server_ = nh_.advertiseService("get_controller_ain", &XARMDriver::GetControllerAInCB, this);
+
+        vc_set_jointv_server_ = nh_.advertiseService("vc_set_jointv", &XARMDriver::VeloMoveJointCB, this);
+        vc_set_linev_server_ = nh_.advertiseService("vc_set_linev", &XARMDriver::VeloMoveLineVCB, this);
 
         // state feedback topics:
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
@@ -216,7 +219,15 @@ namespace xarm_api
 			} break;
             case XARM_MODE::TEACH_JOINT:
 			{
-				res.message = "joint teach , ret = " + std::to_string(res.ret);
+				res.message = "joint teach, ret = " + std::to_string(res.ret);
+			} break;
+            case XARM_MODE::VELO_JOINT:
+			{
+				res.message = "joint velocity, ret = " + std::to_string(res.ret);
+			} break;
+            case XARM_MODE::VELO_CART:
+			{
+				res.message = "cartesian velocity, ret = " + std::to_string(res.ret);
 			} break;
             default:
             {
@@ -661,6 +672,56 @@ namespace xarm_api
         }
         res.ret = arm_cmd_->move_servo_cart_aa(pose, req.mvvelo, req.mvacc, req.coord, req.relative);
         res.message = "move_servo_cart_aa, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XARMDriver::VeloMoveJointCB(xarm_msgs::MoveVelo::Request &req, xarm_msgs::MoveVelo::Response &res)
+    {
+        float jnt_v[7]={0};
+        int index = 0;
+        if(req.velocities.size() < dof_)
+        {
+            res.ret = req.velocities.size();
+            res.message = "pose parameters incorrect! Expected: "+std::to_string(dof_);
+            return true;
+        }
+        else
+        {
+            for(index = 0; index < 7; index++) // should always send 7 joint commands, whatever current DOF is.
+            {
+                // jnt_v[0][index] = req.velocities[index];
+                if(index < req.velocities.size())
+                    jnt_v[index] = req.velocities[index];
+                else
+                    jnt_v[index] = 0;
+            }
+        }
+
+        res.ret = arm_cmd_->vc_set_jointv(jnt_v, req.jnt_sync);
+        res.message = "velocity move joint, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XARMDriver::VeloMoveLineVCB(xarm_msgs::MoveVelo::Request &req, xarm_msgs::MoveVelo::Response &res)
+    {
+        float line_v[6];
+        int index = 0;
+        if(req.velocities.size() < 6)
+        {
+            res.ret = -1;
+            res.message = "number of parameters incorrect!";
+            return true;
+        }
+        else
+        {
+            for(index = 0; index < 6; index++)
+            {
+                line_v[index] = req.velocities[index];
+            }
+        }
+
+        res.ret = arm_cmd_->vc_set_linev(line_v, req.coord);
+        res.message = "velocity move line, ret = " + std::to_string(res.ret);
         return true;
     }
 

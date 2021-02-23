@@ -182,6 +182,10 @@ add_executable(servo_cart_test
    test/servo_cartesian_test.cpp
 )
 
+add_executable(velo_move_test
+   test/velo_move_test.cpp
+)
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -194,31 +198,36 @@ add_executable(servo_cart_test
 
 
 ## Specify libraries to link a library or executable target against
- target_link_libraries(example1_report_norm_node 
-   xarm_api
-   ${catkin_LIBRARIES}
- )
+target_link_libraries(example1_report_norm_node 
+  xarm_api
+  ${catkin_LIBRARIES}
+)
 
- target_link_libraries(xarm_driver_node 
-   xarm_api
-   ${catkin_LIBRARIES}
- )
+target_link_libraries(xarm_driver_node 
+  xarm_api
+  ${catkin_LIBRARIES}
+)
 
 target_link_libraries(move_test 
-   xarm_api
-   ${catkin_LIBRARIES}
- )
+  xarm_api
+  ${catkin_LIBRARIES}
+)
 
 target_link_libraries(test_tool_modbus 
-   xarm_api
-   ${catkin_LIBRARIES}
-   xarm_ros_client
- )
+  xarm_api
+  ${catkin_LIBRARIES}
+  xarm_ros_client
+)
 
 target_link_libraries(servo_cart_test 
-   xarm_api
-   ${catkin_LIBRARIES}
- )
+  xarm_api
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(velo_move_test 
+  xarm_api
+  ${catkin_LIBRARIES}
+)
 
 
 #############

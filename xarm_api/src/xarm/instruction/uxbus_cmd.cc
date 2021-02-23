@@ -1113,7 +1113,65 @@ int UxbusCmd::cgpio_position_set_digital(int ionum, int value, float xyz[3], flo
 	return send_pend(UXBUS_RG::POSITION_CGPIO_SET, 0, UXBUS_CONF::SET_TIMEOUT, NULL);
 }
 
+int UxbusCmd::cgpio_position_set_analog(int ionum, float value, float xyz[3], float tol_r) {
+	unsigned char *txdata = new unsigned char[19];
+	txdata[0] = ionum;
+	int val = (int)(value / 10.0 * 4095.0);
+	bin16_to_8(val, &txdata[1]);
+	nfp32_to_hex(xyz, &txdata[3], 3);
+	fp32_to_hex(tol_r, &txdata[15]);
+
+	std::lock_guard<std::mutex> locker(mutex_);
+	int ret = send_xbus(UXBUS_RG::POSITION_CGPIO_SET, txdata, 19);
+	delete txdata;
+	if (0 != ret) { return UXBUS_STATE::ERR_NOTTCP; }
+	return send_pend(UXBUS_RG::POSITION_CGPIO_SET, 0, UXBUS_CONF::SET_TIMEOUT, NULL);
+}
+
 int UxbusCmd::config_io_stop_reset(int io_type, int val) {
 	int txdata[2] = { io_type, val };
 	return set_nu8(UXBUS_RG::SET_IO_STOP_RESET, txdata, 2);
+}
+
+int UxbusCmd::set_report_tau_or_i(int tau_or_i) {
+	int txdata[1] = { tau_or_i };
+	return set_nu8(UXBUS_RG::REPORT_TAU_OR_I, txdata, 1);
+}
+
+int UxbusCmd::get_report_tau_or_i(int *rx_data) {
+	return get_nu8(UXBUS_RG::GET_REPORT_TAU_OR_I, rx_data, 1);
+}
+
+int UxbusCmd::set_self_collision_detection(int on_off) {
+	int txdata[1] = { on_off };
+	return set_nu8(UXBUS_RG::SET_SELF_COLLIS_CHECK, txdata, 1);
+}
+
+int UxbusCmd::set_collision_tool_model(int tool_type, int n, float *argv) {
+	if (n > 0) {
+		char additional[1] = { (char)tool_type };
+		return set_nfp32_with_bytes(UXBUS_RG::SET_COLLIS_TOOL, argv, n, additional, 1);
+	}
+	else {
+		int txdata[1] = { tool_type };
+		return set_nu8(UXBUS_RG::SET_COLLIS_TOOL, txdata, 1);
+	}
+}
+
+int UxbusCmd::set_simulation_robot(int on_off) {
+	return set_nu8(UXBUS_RG::SET_SIMULATION_ROBOT, &on_off, 1);
+}
+
+int UxbusCmd::vc_set_jointv(float jnt_v[7], int jnt_sync) {
+	float txdata[7] = { 0 };
+	for (int i = 0; i < 7; i++) { txdata[i] = jnt_v[i]; }
+	char additional[1] = { (char)jnt_sync };
+	return set_nfp32_with_bytes(UXBUS_RG::VC_SET_JOINTV, txdata, 7, additional, 1);
+}
+
+int UxbusCmd::vc_set_linev(float line_v[6], int coord) {
+	float txdata[6] = { 0 };
+	for (int i = 0; i < 6; i++) { txdata[i] = line_v[i]; }
+	char additional[1] = { (char)coord };
+	return set_nfp32_with_bytes(UXBUS_RG::VC_SET_CARTV, txdata, 6, additional, 1);
 }

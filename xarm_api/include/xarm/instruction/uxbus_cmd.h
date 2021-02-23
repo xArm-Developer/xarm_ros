@@ -144,7 +144,18 @@ public:
 	int cgpio_delay_set_digital(int ionum, int value, float delay_sec);
 	int tgpio_position_set_digital(int ionum, int value, float xyz[3], float tol_r);
 	int cgpio_position_set_digital(int ionum, int value, float xyz[3], float tol_r);
+	int cgpio_position_set_analog(int ionum, float value, float xyz[3], float tol_r);
 	int config_io_stop_reset(int io_type, int val);
+
+	int set_report_tau_or_i(int tau_or_i);
+	int get_report_tau_or_i(int *rx_data);
+
+	int set_self_collision_detection(int on_off);
+	int set_collision_tool_model(int tool_type, int n = 0, float *argv = NULL);
+	int set_simulation_robot(int on_off);
+
+	int vc_set_jointv(float jnt_v[7], int jnt_sync);
+	int vc_set_linev(float line_v[6], int coord);
 
 	virtual void close(void);
 
