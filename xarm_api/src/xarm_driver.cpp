@@ -5,8 +5,8 @@
  * Author: Jason Peng <jason@ufactory.cc>
  ============================================================================*/
 #include <xarm_driver.h>
-#include "xarm/instruction/uxbus_cmd_config.h"
-#include "xarm/linux/thread.h"
+#include "xarm/core/instruction/uxbus_cmd_config.h"
+#include "xarm/core/linux/thread.h"
 
 #define CMD_HEARTBEAT_US 3e7 // 30s
 

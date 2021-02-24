@@ -25,10 +25,10 @@
 #include <xarm_msgs/MoveAxisAngle.h>
 #include <xarm_msgs/MoveVelo.h>
 #include <sensor_msgs/JointState.h>
-#include <xarm/common/data_type.h>
-#include <xarm/linux/thread.h>
-#include "xarm/connect.h"
-#include "xarm/report_data.h"
+#include <xarm/core/common/data_type.h>
+#include <xarm/core/linux/thread.h>
+#include "xarm/core/connect.h"
+#include "xarm/core/report_data.h"
 
 namespace xarm_api
 {

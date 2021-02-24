@@ -17,6 +17,8 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 set(XARM_API_DIR src/xarm)
+set(XARM_CORE_API_DIR src/xarm/core)
+set(SERIAL_API_DIR src/serial)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -127,24 +129,27 @@ include_directories(
 
 ## Declare a C++ library
 add_library(xarm_api
-   ${XARM_API_DIR}/connect.cc
-   ${XARM_API_DIR}/report_data.cc
+  ${XARM_CORE_API_DIR}/connect.cc
+  ${XARM_CORE_API_DIR}/report_data.cc
 
-   ${XARM_API_DIR}/common/crc16.cc
-   ${XARM_API_DIR}/common/queue_memcpy.cc
+  ${XARM_CORE_API_DIR}/common/crc16.cc
+  ${XARM_CORE_API_DIR}/common/queue_memcpy.cc
 
-   ${XARM_API_DIR}/debug/debug_print.cc
+  ${XARM_CORE_API_DIR}/debug/debug_print.cc
 
-   ${XARM_API_DIR}/instruction/uxbus_cmd.cc
-   ${XARM_API_DIR}/instruction/uxbus_cmd_ser.cc
-   ${XARM_API_DIR}/instruction/uxbus_cmd_tcp.cc
+  ${XARM_CORE_API_DIR}/instruction/uxbus_cmd.cc
+  ${XARM_CORE_API_DIR}/instruction/uxbus_cmd_ser.cc
+  ${XARM_CORE_API_DIR}/instruction/uxbus_cmd_tcp.cc
 
-   ${XARM_API_DIR}/linux/network.cc
-   ${XARM_API_DIR}/linux/thread.cc
+  ${XARM_CORE_API_DIR}/linux/network.cc
+  ${XARM_CORE_API_DIR}/linux/thread.cc
 
-   ${XARM_API_DIR}/port/serial.cc
-   ${XARM_API_DIR}/port/socket.cc
+  ${XARM_CORE_API_DIR}/port/ser.cc
+  ${XARM_CORE_API_DIR}/port/socket.cc
 
+  ${SERIAL_API_DIR}/serial.cc
+  ${SERIAL_API_DIR}/impl/unix.cc
+  ${SERIAL_API_DIR}/impl/list_ports/list_ports_linux.cc
  )
 
 add_library(xarm_ros_client

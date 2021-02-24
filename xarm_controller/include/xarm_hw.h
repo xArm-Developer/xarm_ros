@@ -23,7 +23,7 @@
 #include <pthread.h>
 #include <mutex>
 // xarm
-#include "xarm/instruction/uxbus_cmd_config.h"
+#include "xarm/core/instruction/uxbus_cmd_config.h"
 #include "xarm_ros_client.h"
 
 
