@@ -6,26 +6,13 @@
 #
 # Author: Vinman <vinman.wen@ufactory.cc> <vinman.cub@gmail.com>
 */
-#include <sys/timeb.h>
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <unistd.h>
-#endif
+
 #include "xarm/core/instruction/uxbus_cmd.h"
 #include "xarm/core/instruction/servo3_config.h"
 #include "xarm/core/instruction/uxbus_cmd_config.h"
 #include "xarm/core/debug/debug_print.h"
 
 static int BAUDRATES[13] = { 4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600, 1000000, 1500000, 2000000, 2500000 };
-
-inline void sleep_milliseconds(unsigned long milliseconds) {
-#ifdef _WIN32
-	Sleep(milliseconds);
-#else
-	usleep(milliseconds * 1000);
-#endif
-}
 
 static int get_baud_inx(int baud) {
 	for (int i = 0; i < 13; i++) { if (BAUDRATES[i] == baud) return i; }

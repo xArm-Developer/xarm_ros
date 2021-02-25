@@ -81,7 +81,8 @@ namespace xarm_api
             void pub_joint_state(sensor_msgs::JointState &js_msg);
             void pub_io_state();
 
-            int get_frame(void);
+            int get_frame(unsigned char *data);
+            void update_rich_data(unsigned char *data, int size);
             int get_rich_data(ReportDataNorm &norm_data);
 
         private:

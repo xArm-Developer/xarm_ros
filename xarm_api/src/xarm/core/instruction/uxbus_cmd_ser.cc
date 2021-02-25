@@ -4,40 +4,12 @@
  *
  * Author: Jimy Zhang <jimy92@163.com>
  ============================================================================*/
- //#include <unistd.h>
-#include <sys/timeb.h>
-#ifdef _WIN32
-#include <windows.h>
-#include<io.h>
-#else
-#include <unistd.h>
-#include <time.h>
-#endif
+
 #include "xarm/core/instruction/uxbus_cmd_ser.h"
 #include "xarm/core/common/crc16.h"
 #include "xarm/core/debug/debug_print.h"
 #include "xarm/core/instruction/uxbus_cmd_config.h"
 
-inline void sleep_milliseconds(unsigned long milliseconds) {
-#ifdef _WIN32
-	Sleep(milliseconds); // 100 ms
-#else
-	usleep(milliseconds * 1000); // 100 ms
-#endif
-}
-
-inline long long get_system_time()
-{
-#ifdef _WIN32
-	struct timeb t;
-	ftime(&t);
-	return 1000 * t.time + t.millitm;
-#else
-	struct timespec t;
-	clock_gettime(CLOCK_REALTIME, &t);
-	return 1000 * t.tv_sec + t.tv_nsec / 1000000;
-#endif
-}
 
 UxbusCmdSer::UxbusCmdSer(SerialPort *arm_port) { arm_port_ = arm_port; }
 UxbusCmdSer::~UxbusCmdSer(void) {}

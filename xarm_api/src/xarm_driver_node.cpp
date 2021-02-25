@@ -41,11 +41,42 @@ class XarmRTConnection
 
             ros::Rate r(REPORT_RATE_HZ); // 10Hz
             
+            int size = 0;
+            int num = 0;
+            int offset = 0;
+            unsigned char rx_data[1024];
+            unsigned char ret_data[1024 * 2];
+
+
             while(xarm_driver.isConnectionOK())
             {
                 r.sleep();
-                ret = xarm_driver.get_frame();
+                ret = xarm_driver.get_frame(rx_data);
                 if (ret != 0) continue;
+
+                num = bin8_to_32(rx_data);
+                if (num < 4 && size <= 0) continue;
+                if (size <= 0) {
+                    size = bin8_to_32(rx_data + 4);
+                    bin32_to_8(size, &ret_data[0]);
+                }
+                if (num + offset < size) {
+                    memcpy(ret_data + offset + 4, rx_data + 4, num);
+                    offset += num;
+                    ROS_WARN("[DEBUG] real data package size=%d\n", num);
+                    continue;
+                }
+                else {
+                    memcpy(ret_data + offset + 4, rx_data + 4, size - offset);
+                    int offset2 = size - offset;
+                    while (num - offset2 >= size) {
+                        memcpy(ret_data + 4, rx_data + 4 + offset2, size);
+                        offset2 += size;
+                    }
+                    xarm_driver.update_rich_data(ret_data, size + 4);
+                    memcpy(ret_data + 4, rx_data + 4 + offset2, num - offset2);
+                    offset = num - offset2;
+                }
 
                 ret = xarm_driver.get_rich_data(norm_data);
                 if (ret == 0)
@@ -114,7 +145,8 @@ class XarmRTConnection
                 }
                 else 
                 {
-                    printf("Error: real_data.flush_data failed, ret = %d\n", ret);
+                    ROS_WARN("real_data.flush_data failed, ret = %d\n", ret);
+                    // printf("Error: real_data.flush_data failed, ret = %d\n", ret);
                     err_num++;
                 }
 

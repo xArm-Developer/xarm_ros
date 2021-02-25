@@ -814,11 +814,16 @@ namespace xarm_api
         end_input_state_.publish(io_msg);
     }
 
-    int XARMDriver::get_frame(void)
+    int XARMDriver::get_frame(unsigned char *data)
     {
         int ret;
-        ret = arm_report_->read_frame(rx_data_);
+        ret = arm_report_->read_frame(data);
         return ret;
+    }
+
+    void XARMDriver::update_rich_data(unsigned char *data, int size)
+    {
+        memcpy(rx_data_, data, size);
     }
 
     int XARMDriver::get_rich_data(ReportDataNorm &norm_data)
