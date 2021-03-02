@@ -12,7 +12,6 @@ QueueMemcpy::QueueMemcpy(long n, long n_size) {
   total_ = n;
   annode_size_ = n_size;
   buf_ = new char[total_ * annode_size_];
-  pthread_mutex_init(&mutex_, NULL);
   flush();
 }
 
@@ -39,9 +38,8 @@ int QueueMemcpy::is_full(void) {
 long QueueMemcpy::node_size(void) { return annode_size_; }
 
 char QueueMemcpy::pop(void *data) {
-  pthread_mutex_lock(&mutex_);
+  const std::lock_guard<std::mutex> lock(mutex_);
   if (0 >= cnt_) {
-    pthread_mutex_unlock(&mutex_);
     return -1;
   }
   if (total_ <= tail_) tail_ = 0;
@@ -49,28 +47,24 @@ char QueueMemcpy::pop(void *data) {
   memcpy(data, &buf_[tail_ * annode_size_], annode_size_);
   tail_++;
   cnt_--;
-  pthread_mutex_unlock(&mutex_);
   return 0;
 }
 
 char QueueMemcpy::get(void *data) {
-  pthread_mutex_lock(&mutex_);
+  const std::lock_guard<std::mutex> lock(mutex_);
   if (0 >= cnt_) {
-    pthread_mutex_unlock(&mutex_);
     return -1;
   }
   if (total_ <= tail_) tail_ = 0;
 
   memcpy(data, &buf_[tail_ * annode_size_], annode_size_);
-  pthread_mutex_unlock(&mutex_);
 
   return 0;
 }
 
 char QueueMemcpy::push(void *data) {
-  pthread_mutex_lock(&mutex_);
+  const std::lock_guard<std::mutex> lock(mutex_);
   if (total_ <= cnt_) {
-    pthread_mutex_unlock(&mutex_);
     return -1;
   }
   if (total_ <= head_) head_ = 0;
@@ -78,6 +72,5 @@ char QueueMemcpy::push(void *data) {
   memcpy(&buf_[head_ * annode_size_], data, annode_size_);
   head_++;
   cnt_++;
-  pthread_mutex_unlock(&mutex_);
   return 0;
 }

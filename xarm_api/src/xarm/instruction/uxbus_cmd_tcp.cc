@@ -6,8 +6,13 @@
  ============================================================================*/
 #include "xarm/instruction/uxbus_cmd_tcp.h"
 
+#ifndef WIN32
 #include <unistd.h>
+#else
+#include "windows.h"
+#endif
 
+#include "ros/ros.h"
 #include "xarm/debug/debug_print.h"
 #include "xarm/instruction/uxbus_cmd_config.h"
 
@@ -50,7 +55,7 @@ int UxbusCmdTcp::check_xbus_prot(unsigned char *datas, int funcode) {
 int UxbusCmdTcp::send_pend(int funcode, int num, int timeout, unsigned char *ret_data) {
   int i;
   int ret;
-  unsigned char rx_data[arm_port_->que_maxlen_] = {0};
+  unsigned char * rx_data = new unsigned char [arm_port_->que_maxlen_] {0};
   int times = timeout;
   while (times) {
     times -= 1;
@@ -64,16 +69,18 @@ int UxbusCmdTcp::send_pend(int funcode, int num, int timeout, unsigned char *ret
       }
       for (i = 0; i < n; i++) { ret_data[i] = rx_data[i + 8 + 4]; }
       // print_hex(" 3", rx_data, num + 8 + 4);
+      delete [] rx_data;
       return ret;
     }
-    usleep(1000);
+    ros::Duration(0.001).sleep(); //1ms
   }
+  delete [] rx_data;
   return UXBUS_STATE::ERR_TOUT;
 }
 
 int UxbusCmdTcp::send_xbus(int funcode, unsigned char *datas, int num) {
   int len = num + 7;
-  unsigned char send_data[len];
+  unsigned char * send_data = new unsigned char [len];
   bin16_to_8(bus_flag_, &send_data[0]);
   bin16_to_8(prot_flag_, &send_data[2]);
   bin16_to_8(num + 1, &send_data[4]);
@@ -83,11 +90,16 @@ int UxbusCmdTcp::send_xbus(int funcode, unsigned char *datas, int num) {
   arm_port_->flush();
   // print_hex("send:", send_data, num + 7);
   int ret = arm_port_->write_frame(send_data, len);
-  if (ret != len) { return -1; }
+  if (ret != len)
+  { 
+    delete [] send_data;
+    return -1;
+  }
 
   bus_flag_ += 1;
   if (bus_flag_ > TX2_BUS_FLAG_MAX_) { bus_flag_ = TX2_BUS_FLAG_MIN_; }
 
+  delete [] send_data;
   return 0;
 }
 

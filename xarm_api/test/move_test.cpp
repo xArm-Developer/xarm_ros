@@ -27,7 +27,7 @@ int go_home_test(xarm_msgs::Move srv, ros::ServiceClient client)
 
 int servoj_test(xarm_msgs::Move srv, ros::ServiceClient client)
 {
-    std::vector<float> joint[2] = {{0, 0, 0, 0, 0, 0, 0}, 
+        std::vector<float> joint[2] = {{0, 0, 0, 0, 0, 0, 0}, 
                                  {0, -0.3, 0, 0, 0, 0, 0}};
 
     srv.request.mvvelo = 0;
@@ -45,7 +45,7 @@ int servoj_test(xarm_msgs::Move srv, ros::ServiceClient client)
             ROS_ERROR("Failed to call service move_servoj");
             return 1;
         }
-        sleep(2);
+        ros::Duration(2).sleep(); //2s
     }
     return 0;
 }

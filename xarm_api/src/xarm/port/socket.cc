@@ -7,19 +7,27 @@
 #include "xarm/port/socket.h"
 
 #include <string.h>
+
+#ifndef WIN32
 #include <sys/socket.h>
 #include <unistd.h>
+#else
+#include <ws2tcpip.h>
+static int close(int fd)
+{
+  return closesocket(fd);
+}
+#endif
 #include <errno.h>
 
-#include "xarm/linux/network.h"
-#include "xarm/linux/thread.h"
+#include "xarm/os/network.h"
 
 void SocketPort::recv_proc(void) {
   int num;
-  unsigned char recv_data[que_maxlen_];
+  unsigned char * recv_data = new unsigned char [que_maxlen_];
   while (state_ == 0) {
-    bzero(recv_data, que_maxlen_);
-    num = recv(fp_, (void *)&recv_data[4], que_maxlen_ - 1, 0);
+    memset(recv_data, '\0', que_maxlen_);
+    num = recv(fp_, (char *)&recv_data[4], que_maxlen_ - 1, 0);
     if (num <= 0) {
       // in case recv() blocking call is interrupted by a system signal, this should not be considered as socket failure.
       if(errno == EINTR)
@@ -31,11 +39,11 @@ void SocketPort::recv_proc(void) {
 
       close_port();
       printf("SocketPort::recv_proc exit, %d\n", fp_);
-      pthread_exit(0);
     }
     bin32_to_8(num, &recv_data[0]);
     rx_que_->push(recv_data);
   }
+  delete [] recv_data;
 }
 
 static void *recv_proc_(void *arg) {
@@ -43,7 +51,8 @@ static void *recv_proc_(void *arg) {
 
   my_this->recv_proc();
 
-  pthread_exit(0);
+  //pthread_exit(0);
+  return (void *)0;
 }
 
 SocketPort::SocketPort(char *server_ip, int server_port, int que_num,
@@ -60,7 +69,8 @@ SocketPort::SocketPort(char *server_ip, int server_port, int que_num,
 
   state_ = 0;
   flush();
-  thread_id_ = thread_init(recv_proc_, this);
+  std::thread th(recv_proc_, this);
+  th.detach();
 }
 
 SocketPort::~SocketPort(void) {

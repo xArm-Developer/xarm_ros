@@ -20,7 +20,6 @@
 #include <pluginlib/class_list_macros.h>
 #include <sensor_msgs/JointState.h>
 // for mutex
-#include <pthread.h>
 #include <mutex>
 // xarm
 #include "xarm/instruction/uxbus_cmd_config.h"

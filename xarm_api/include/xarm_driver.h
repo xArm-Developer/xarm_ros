@@ -3,6 +3,7 @@
 
 #include "ros/ros.h"
 #include "std_msgs/Float32.h"
+#include <thread>
 #include <xarm_msgs/SetInt16.h>
 #include <xarm_msgs/TCPOffset.h>
 #include <xarm_msgs/SetLoad.h>
@@ -25,7 +26,6 @@
 #include <xarm_msgs/MoveAxisAngle.h>
 #include <sensor_msgs/JointState.h>
 #include <xarm/common/data_type.h>
-#include <xarm/linux/thread.h>
 #include "xarm/connect.h"
 #include "xarm/report_data.h"
 
@@ -87,7 +87,7 @@ namespace xarm_api
             UxbusCmd *arm_cmd_;
             unsigned char rx_data_[1280];
             std::string ip;
-            pthread_t thread_id_;
+            std::thread::id thread_id_;
             ros::AsyncSpinner spinner;
             int dof_;
             int curr_state_;

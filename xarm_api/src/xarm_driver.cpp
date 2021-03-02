@@ -6,19 +6,17 @@
  ============================================================================*/
 #include <xarm_driver.h>
 #include "xarm/instruction/uxbus_cmd_config.h"
-#include "xarm/linux/thread.h"
 
-#define CMD_HEARTBEAT_US 3e7 // 30s
+#define CMD_HEARTBEAT_US 30 // 30s
 
 void* cmd_heart_beat(void* args)
 {
     xarm_api::XARMDriver *my_driver = (xarm_api::XARMDriver *) args;
     while(true)
     {
-        usleep(CMD_HEARTBEAT_US); // non-realtime
+        ros::Duration(CMD_HEARTBEAT_US).sleep(); // non-realtime
         my_driver->Heartbeat();
     }
-    pthread_exit(0);
 }
 
 namespace xarm_api
@@ -43,7 +41,7 @@ namespace xarm_api
             ROS_ERROR("Xarm Connection Failed!");
         else // clear unimportant errors
         {
-            thread_id_ = thread_init(cmd_heart_beat, this); // heartbeat related
+            // thread_id_ = thread_init(cmd_heart_beat, this); // heartbeat related
             int dbg_msg[16] = {0};
             arm_cmd_->servo_get_dbmsg(dbg_msg);
 
@@ -371,7 +369,8 @@ namespace xarm_api
     {
         int send_len = req.send_data.size();
         int recv_len = req.respond_len;
-        unsigned char tx_data[send_len]={0}, rx_data[recv_len]={0};
+        unsigned char * tx_data = new unsigned char [send_len]{0};
+        unsigned char * rx_data = new unsigned char [recv_len]{0};
 
         for(int i=0; i<send_len; i++)
         {
@@ -383,6 +382,8 @@ namespace xarm_api
            res.respond_data.push_back(rx_data[i]);
         }
 
+        delete [] tx_data;
+        delete [] rx_data;
         return true;
     }
 

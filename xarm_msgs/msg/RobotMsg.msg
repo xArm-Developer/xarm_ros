@@ -1,11 +1,11 @@
 # feedback information of the controlled robot
 
-# state of robot: 
-#	1 – RUNNING, executing motion command.
-#	2 – SLEEPING, not in execution, but ready to move.
-#	3 – PAUSED, paused in the middle of unfinished motion.
-#	4 – STOPPED, not ready for any motion commands.
-#	5 – CONFIG_CHANGED, system configuration or mode changed, not ready for motion commands.
+# state of robot:
+#	1: RUNNING, executing motion command.
+#	2: SLEEPING, not in execution, but ready to move.
+#	3: PAUSED, paused in the middle of unfinished motion.
+#	4: STOPPED, not ready for any motion commands.
+#	5: CONFIG_CHANGED, system configuration or mode changed, not ready for motion commands.
 int16 state
 
 # mode of robot:
