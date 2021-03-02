@@ -35,6 +35,7 @@ void SocketPort::recv_proc(void) {
         printf("EINTR occured\n");
         continue;
       }
+      printf("\n*** SocketPort: ret = %d, ERROR NO: %d\n", num, errno);
 
       close_port();
       printf("SocketPort::recv_proc exit, %d\n", fp_);

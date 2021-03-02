@@ -193,6 +193,10 @@ namespace xarm_api
 
     bool XARMDriver::SetModeCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
     {
+        /* for successful none-zero mode switch, must happen at STOP state */
+        arm_cmd_->set_state(XARM_STATE::STOP);
+        ros::Duration(0.01).sleep();
+        
         res.ret = arm_cmd_->set_mode(req.data);
         switch(req.data)
         {
@@ -388,7 +392,7 @@ namespace xarm_api
         res.message = "";
         if(curr_err_)
         {
-            arm_cmd_->set_state(0);
+            arm_cmd_->set_state(XARM_STATE::START);
             ROS_WARN("Cleared Existing Error Code %d", curr_err_);
         }
 
