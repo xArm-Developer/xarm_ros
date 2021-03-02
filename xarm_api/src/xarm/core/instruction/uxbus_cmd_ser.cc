@@ -41,12 +41,12 @@ int UxbusCmdSer::send_pend(int funcode, int num, int timeout, unsigned char *ret
 		if (ret != -1) {
 			ret = check_xbus_prot(rx_data, funcode);
 			for (int i = 0; i < num; i++) { ret_data[i] = rx_data[i + 4]; }
-			delete rx_data;
+			delete[] rx_data;
 			return ret;
 		}
 		sleep_milliseconds(1);
 	}
-	delete rx_data;
+	delete[] rx_data;
 	return UXBUS_STATE::ERR_TOUT;
 }
 
@@ -67,7 +67,7 @@ int UxbusCmdSer::send_xbus(int funcode, unsigned char *datas, int num) {
 
 	arm_port_->flush();
 	int ret = arm_port_->write_frame(send_data, num + 6);
-	delete send_data;
+	delete[] send_data;
 	return ret;
 }
 

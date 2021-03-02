@@ -167,7 +167,7 @@ public:
 	int cgpio_set_analog2(float value);
 	int cgpio_set_infun(int ionum, int fun);
 	int cgpio_set_outfun(int ionum, int fun);
-	int cgpio_get_state(int *state, int *digit_io, float *analog, int *input_conf, int *output_conf);
+	int cgpio_get_state(int *state, int *digit_io, float *analog, int *input_conf, int *output_conf, int *input_conf2=NULL, int *output_conf2=NULL);
 
 	int get_pose_offset(float pose1[6], float pose2[6], float offset[6], int orient_type_in=0, int orient_type_out=0);
 	int get_position_aa(float pose[6]);

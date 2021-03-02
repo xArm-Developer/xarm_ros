@@ -9,16 +9,18 @@
 #include "xarm/core/linux/thread.h"
 
 #define CMD_HEARTBEAT_US 3e7 // 30s
+#define CMD_HEARTBEAT_SEC 30 // 30s
 
 void* cmd_heart_beat(void* args)
 {
     xarm_api::XARMDriver *my_driver = (xarm_api::XARMDriver *) args;
     while(true)
     {
-        usleep(CMD_HEARTBEAT_US); // non-realtime
+        // usleep(CMD_HEARTBEAT_US); // non-realtime
+        ros::Duration(CMD_HEARTBEAT_SEC).sleep(); // non-realtime
         my_driver->Heartbeat();
     }
-    pthread_exit(0);
+    // pthread_exit(0);
 }
 
 namespace xarm_api
@@ -31,11 +33,21 @@ namespace xarm_api
         spinner.stop();
     }
 
+    void XARMDriver::closeReportSocket(void)
+    {
+        arm_report_->close_port();
+    }
+
+    bool XARMDriver::reConnectReportSocket(char *server_ip)
+    {
+        arm_report_ = connext_tcp_report_norm(server_ip);
+        return arm_report_ != NULL;
+    }
+
     void XARMDriver::XARMDriverInit(ros::NodeHandle& root_nh, char *server_ip)
     {   
         nh_ = root_nh;
         nh_.getParam("DOF",dof_);
-
         arm_report_ = connext_tcp_report_norm(server_ip);
         // ReportDataNorm norm_data_;
         arm_cmd_ = connect_tcp_control(server_ip);  
@@ -43,7 +55,9 @@ namespace xarm_api
             ROS_ERROR("Xarm Connection Failed!");
         else // clear unimportant errors
         {
-            thread_id_ = thread_init(cmd_heart_beat, this); // heartbeat related
+            std::thread th(cmd_heart_beat, this);
+            th.detach();
+            // thread_id_ = thread_init(cmd_heart_beat, this); // heartbeat related
             int dbg_msg[16] = {0};
             arm_cmd_->servo_get_dbmsg(dbg_msg);
 

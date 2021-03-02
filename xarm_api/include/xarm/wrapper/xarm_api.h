@@ -666,10 +666,11 @@ public:
 
 	/*
 	* Get the digital value of the specified Controller GPIO
-	* @param digitals: the values of the controller GPIO
+	* @param digitals: the values of the controller GPIO(0-7)
+	* @param digitals2: the values of the controller GPIO(8-15)
 	* return: see the API code documentation for details.
 	*/
-	int get_cgpio_digital(int *digitals);
+	int get_cgpio_digital(int *digitals, int *digitals2 = NULL);
 
 	/*
 	* Get the analog value of the specified Controller GPIO
@@ -748,11 +749,13 @@ public:
 		analog[1]: analog-1 input value
 		analog[2]: analog-0 output value
 		analog[3]: analog-1 output value
-	* @param input_conf: digital input functional info
-	* @param output_conf: digital output functional info
+	* @param input_conf: digital(0-7) input functional info
+	* @param output_conf: digital(0-7) output functional info
+	* @param input_conf2: digital(8-15) input functional info
+	* @param output_conf2: digital(8-15) output functional info
 	* return: see the API code documentation for details.
 	*/
-	int get_cgpio_state(int *state, int *digit_io, fp32 *analog, int *input_conf, int *output_conf);
+	int get_cgpio_state(int *state, int *digit_io, fp32 *analog, int *input_conf, int *output_conf, int *input_conf2 = NULL, int *output_conf2 = NULL);
 
 	/*
 	* Register the report location callback
@@ -1513,6 +1516,8 @@ private:
 	bool is_sync_;
 	bool ignore_error_;
 	bool ignore_state_;
+	bool arm_type_is_1300_;
+	bool control_box_type_is_1300_;
 
 	int major_version_number_;
 	int minor_version_number_;

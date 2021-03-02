@@ -6,7 +6,6 @@
  ============================================================================*/
  // #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
-#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
@@ -17,7 +16,9 @@
 #include <cstring>
 #include<ws2tcpip.h>
 #include<MSTCPiP.h>
+#define errno WSAGetLastError()
 #else
+#include <errno.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <net/if.h>
@@ -50,6 +51,49 @@ extern "C" {
 #ifdef _WIN32
 
 int socket_init(char *local_ip, int port, int is_server) {
+	// int iResult;
+	// WSADATA wsaData;
+	// iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+	// if (iResult != 0) {
+	// 	printf("WSAStartup failed: %d\n", iResult);
+	// 	return -1;
+	// }
+	// struct addrinfo *result = NULL, *ptr = NULL, hints;
+	// ZeroMemory(&hints, sizeof(hints));
+	// hints.ai_family = AF_INET; // AF_UNSPEC;
+	// hints.ai_socktype = SOCK_STREAM;
+	// hints.ai_protocol = IPPROTO_TCP;
+	// if (is_server) hints.ai_flags = AI_PASSIVE;
+	// iResult = getaddrinfo(local_ip, port, &hints, &result);
+	// if (iResult != 0) {
+	// 	printf("getaddrinfo failed: %d\n", iResult);
+	// 	WSACleanup();
+	// 	return -1;
+	// }
+	// SOCKET sockfd = INVALID_SOCKET;
+	// // Attempt to connect to the first address returned by
+	// // the call to getaddrinfo
+	// ptr = result;
+
+	// // Create a SOCKET for connecting to server
+	// sockfd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+	// if (sockfd == INVALID_SOCKET) {
+	// 	printf("Error at socket(): %ld\n", WSAGetLastError());
+	// 	freeaddrinfo(result);
+	// 	WSACleanup();
+	// 	return -1;
+	// }
+	// if (is_server) {
+	// 	iResult = bind(sockfd, result->ai_addr, (int)result->ai_addrlen);
+	// 	if (iResult == SOCKET_ERROR) {
+	// 		printf("bind failed with error: %d\n", WSAGetLastError());
+	// 		freeaddrinfo(result);
+	// 		closesocket(sockfd);
+	// 		WSACleanup();
+	// 		return -1;
+	// 	}
+	// }
+
 	WORD sockVersion = MAKEWORD(2, 2);
 	WSADATA data;
 	PERRNO(WSAStartup(sockVersion, &data), DB_FLG, "ESAStartup");
@@ -72,9 +116,9 @@ int socket_init(char *local_ip, int port, int is_server) {
 
 	tcp_keepalive alive_in;
 	tcp_keepalive alive_out;
-	alive_in.keepalivetime = 1000;  // 1s
-	alive_in.keepaliveinterval = 1000; //1s
-	alive_in.onoff = TRUE;
+	alive_in.keepalivetime = 1000;  // 1s TCP_KEEPIDLE
+	alive_in.keepaliveinterval = 1000; //1s TCP_KEEPINTVL
+	alive_in.onoff = 1;
 	unsigned long ulBytesReturn = 0;
 	ret = WSAIoctl(sockfd, SIO_KEEPALIVE_VALS, &alive_in, sizeof(alive_in),
 		&alive_out, sizeof(alive_out), &ulBytesReturn, NULL, NULL);

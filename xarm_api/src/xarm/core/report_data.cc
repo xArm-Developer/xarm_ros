@@ -85,7 +85,10 @@ int ReportDataNorm::flush_data(unsigned char *rx_data) {
 
   total_num_ = bin8_to_32(data_fp);
   // 133: legacy bug, actuall total number (data part) is 145 bytes 
-  if (total_num_ != 133 && total_num_ != 145) { return -2; }
+  if (total_num_ != 133 && total_num_ != 145) { 
+    printf("total_num=%d, sizeof_data=%d\n", total_num_, sizeof_data);
+    return -2; 
+  }
 
   runing_ = data_fp[4] & 0x0F;
   mode_ = data_fp[4] >> 4;

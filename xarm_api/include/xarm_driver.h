@@ -3,6 +3,7 @@
 
 #include "ros/ros.h"
 #include "std_msgs/Float32.h"
+#include <thread>
 #include <xarm_msgs/SetInt16.h>
 #include <xarm_msgs/TCPOffset.h>
 #include <xarm_msgs/SetLoad.h>
@@ -26,7 +27,7 @@
 #include <xarm_msgs/MoveVelo.h>
 #include <sensor_msgs/JointState.h>
 #include <xarm/core/common/data_type.h>
-#include <xarm/core/linux/thread.h>
+// #include <xarm/core/linux/thread.h>
 #include "xarm/core/connect.h"
 #include "xarm/core/report_data.h"
 
@@ -40,6 +41,8 @@ namespace xarm_api
             void XARMDriverInit(ros::NodeHandle& root_nh, char *server_ip);
             void Heartbeat(void);
             bool isConnectionOK(void);
+            void closeReportSocket(void);
+            bool reConnectReportSocket(char *server_ip);
 
             // provide a list of services:
             bool MotionCtrlCB(xarm_msgs::SetAxis::Request &req, xarm_msgs::SetAxis::Response &res);
@@ -91,7 +94,7 @@ namespace xarm_api
             UxbusCmd *arm_cmd_;
             unsigned char rx_data_[1280];
             std::string ip;
-            pthread_t thread_id_;
+            // pthread_t thread_id_;
             ros::AsyncSpinner spinner;
             int dof_;
             int curr_state_;

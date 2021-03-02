@@ -11,7 +11,9 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <winsock.h>
+#define errno WSAGetLastError()
 #else
+#include <errno.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #endif
@@ -31,7 +33,7 @@ void SocketPort::recv_proc(void) {
 		memset(recv_data, 0, que_maxlen_);
 		// num = recv(fp_, (void *)&recv_data[4], que_maxlen_ - 1, 0);
 		num = recv(fp_, (char *)&recv_data[4], que_maxlen_ - 4, 0);
-		if (num <= 0 && errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK) {
+		if (num <= 0 && (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)) {
 			printf("EINTR occured, errno=%d\n", errno);
 			continue;
 		}
@@ -57,7 +59,7 @@ void SocketPort::recv_proc(void) {
 			break;
 		};
 	}
-	delete recv_data;
+	delete[] recv_data;
 	delete rx_que_;
 }
 

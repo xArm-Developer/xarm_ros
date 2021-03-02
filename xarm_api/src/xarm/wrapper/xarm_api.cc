@@ -80,6 +80,8 @@ void XArmAPI::_init(void) {
 	is_old_protocol_ = false;
 	is_first_report_ = true;
 	is_sync_ = false;
+	arm_type_is_1300_ = false;
+	control_box_type_is_1300_ = false;
 
 	major_version_number_ = 0;
 	minor_version_number_ = 0;
@@ -703,9 +705,27 @@ void XArmAPI::_check_version(void) {
 		cnt -= 1;
 	}
 	std::string v((const char *)version_);
-	std::regex pattern(".*[vV](\\d+)[.](\\d+)[.](\\d+).*");
+	std::regex pattern_new(".*(\\d+),(\\d+),(\\S+),(\\S+),.*[vV](\\d+)\\.(\\d+)\\.(\\d+)");
+	std::regex pattern(".*[vV](\\d+)\\.(\\d+)\\.(\\d+)");
+	// std::regex pattern(".*[vV](\\d+)[.](\\d+)[.](\\d+).*");
 	std::smatch result;
-	if (std::regex_match(v, result, pattern)) {
+	int arm_type = 0;
+	int control_type = 0;
+	if (std::regex_match(v, result, pattern_new)) {
+		auto it = result.begin();
+		sscanf(std::string(*++it).data(), "%d", &axis);
+		sscanf(std::string(*++it).data(), "%d", &device_type);
+		sscanf(std::string(*++it).substr(2).data(), "%d", &arm_type);
+		sscanf(std::string(*++it).substr(2).data(), "%d", &control_type);
+
+		arm_type_is_1300_ = arm_type >= 1300;
+		control_box_type_is_1300_ = control_type >= 1300;
+
+		sscanf(std::string(*++it).data(), "%d", &major_version_number_);
+		sscanf(std::string(*++it).data(), "%d", &minor_version_number_);
+		sscanf(std::string(*++it).data(), "%d", &revision_version_number_);
+	}
+	else if (std::regex_match(v, result, pattern)) {
 		auto it = result.begin();
 		sscanf(std::string(*++it).data(), "%d", &major_version_number_);
 		sscanf(std::string(*++it).data(), "%d", &minor_version_number_);
@@ -741,6 +761,7 @@ void XArmAPI::_check_version(void) {
 	version_number[2] = revision_version_number_;
 	printf("is_old_protocol: %d\n", is_old_protocol_);
 	printf("version_number: %d.%d.%d\n", major_version_number_, minor_version_number_, revision_version_number_);
+	printf("hardware_type: %d, control_box_type: %d\n", arm_type, control_type);
 	if (check_robot_sn_) {
 		cnt = 5;
 		int err_warn[2];
@@ -787,10 +808,28 @@ bool XArmAPI::_version_is_ge(int major, int minor, int revision) {
 	if (major_version_number_ == 0 && minor_version_number_ == 0 && revision_version_number_ == 0) {
 		unsigned char version_[40];
 		get_version(version_);
+
 		std::string v((const char *)version_);
-		std::regex pattern(".*[vV](\\d+)[.](\\d+)[.](\\d+)");
+		std::regex pattern_new(".*(\\d+),(\\d+),(\\S+),(\\S+),.*[vV](\\d+)\\.(\\d+)\\.(\\d+)");
+		std::regex pattern(".*[vV](\\d+)\\.(\\d+)\\.(\\d+)");
 		std::smatch result;
-		if (std::regex_match(v, result, pattern)) {
+		int arm_type = 0;
+		int control_type = 0;
+		if (std::regex_match(v, result, pattern_new)) {
+			auto it = result.begin();
+			sscanf(std::string(*++it).data(), "%d", &axis);
+			sscanf(std::string(*++it).data(), "%d", &device_type);
+			sscanf(std::string(*++it).substr(2).data(), "%d", &arm_type);
+			sscanf(std::string(*++it).substr(2).data(), "%d", &control_type);
+
+			arm_type_is_1300_ = arm_type >= 1300;
+			control_box_type_is_1300_ = control_type >= 1300;
+
+			sscanf(std::string(*++it).data(), "%d", &major_version_number_);
+			sscanf(std::string(*++it).data(), "%d", &minor_version_number_);
+			sscanf(std::string(*++it).data(), "%d", &revision_version_number_);
+		}
+		else if (std::regex_match(v, result, pattern)) {
 			auto it = result.begin();
 			sscanf(std::string(*++it).data(), "%d", &major_version_number_);
 			sscanf(std::string(*++it).data(), "%d", &minor_version_number_);
@@ -1710,12 +1749,17 @@ int XArmAPI::get_tgpio_analog(int ionum, float *value) {
 	}
 }
 
-int XArmAPI::get_cgpio_digital(int *digitals) {
+int XArmAPI::get_cgpio_digital(int *digitals, int *digitals2) {
 	if (!is_connected()) return API_CODE::NOT_CONNECTED;
 	int tmp;
 	int ret = core->cgpio_get_auxdigit(&tmp);
 	for (int i = 0; i < 8; i++) {
 		digitals[i] = tmp >> i & 0x0001;
+	}
+	if (digitals2 != NULL) {
+		for (int i = 8; i < 16; i++) {
+			digitals2[i-8] = tmp >> i & 0x0001;
+		}
 	}
 	return ret;
 }
@@ -1735,7 +1779,7 @@ int XArmAPI::set_cgpio_digital(int ionum, int value, float delay_sec) {
 	if (!is_connected()) return API_CODE::NOT_CONNECTED;
 	int wait_code = _wait_until_cmdnum_lt_max();
 	if (wait_code != 0) return wait_code;
-	assert(ionum >= 0 && ionum <= 7);
+	assert(ionum >= 0 && ionum <= 16);
 	if (delay_sec > 0) {
 		return core->cgpio_delay_set_digital(ionum, value, delay_sec);
 	}
@@ -1759,19 +1803,19 @@ int XArmAPI::set_cgpio_analog(int ionum, fp32 value) {
 
 int XArmAPI::set_cgpio_digital_input_function(int ionum, int fun) {
 	if (!is_connected()) return API_CODE::NOT_CONNECTED;
-	assert(ionum >= 0 && ionum <= 7);
+	assert(ionum >= 0 && ionum <= 16);
 	return core->cgpio_set_infun(ionum, fun);
 }
 
 int XArmAPI::set_cgpio_digital_output_function(int ionum, int fun) {
 	if (!is_connected()) return API_CODE::NOT_CONNECTED;
-	assert(ionum >= 0 && ionum <= 7);
+	assert(ionum >= 0 && ionum <= 16);
 	return core->cgpio_set_outfun(ionum, fun);
 }
 
-int XArmAPI::get_cgpio_state(int *state_, int *digit_io, fp32 *analog, int *input_conf, int *output_conf) {
+int XArmAPI::get_cgpio_state(int *state_, int *digit_io, fp32 *analog, int *input_conf, int *output_conf, int *input_conf2, int *output_conf2) {
 	if (!is_connected()) return API_CODE::NOT_CONNECTED;
-	return core->cgpio_get_state(state_, digit_io, analog, input_conf, output_conf);
+	return core->cgpio_get_state(state_, digit_io, analog, input_conf, output_conf, input_conf2, output_conf2);
 }
 
 int XArmAPI::set_reduced_mode(bool on) {
@@ -2326,7 +2370,7 @@ int XArmAPI::_get_modbus_baudrate(int *baud_inx) {
 		}
 		ret = (error_code != 19 && error_code != 28) ? 0 : ret;
 	}
-	if (ret == 0 && 0 <= *baud_inx < 13) modbus_baud_ = BAUDRATES[*baud_inx];
+	if (ret == 0 && *baud_inx >= 0 && *baud_inx < 13) modbus_baud_ = BAUDRATES[*baud_inx];
 	return ret;
 }
 
@@ -2383,7 +2427,7 @@ int XArmAPI::_robotiq_set(unsigned char *params, int length, unsigned char ret_d
 	send_data[6] = (unsigned char)length;
 	for (int i = 0; i < length; i++) { send_data[7+i] = params[i]; }
 	int ret = getset_tgpio_modbus_data(send_data, length + 7, ret_data, 6);
-	delete send_data;
+	delete[] send_data;
 	return ret;
 }
 int XArmAPI::_robotiq_get(unsigned char ret_data[9], unsigned char number_of_registers) {
@@ -2397,7 +2441,7 @@ int XArmAPI::_robotiq_get(unsigned char ret_data[9], unsigned char number_of_reg
 	send_data[4] = 0x00;
 	send_data[5] = number_of_registers;
 	int ret = getset_tgpio_modbus_data(send_data, 6, ret_data, 3 + 2 * number_of_registers);
-	delete send_data;
+	delete[] send_data;
 	if (ret == 0) {
 		if (number_of_registers >= 0x01) {
 			robotiq_status.gOBJ = (ret_data[3] & 0xC0) >> 6;
@@ -2735,7 +2779,7 @@ int XArmAPI::getset_tgpio_modbus_data(unsigned char *modbus_data, int modbus_len
 	int ret = core->tgpio_set_modbus(modbus_data, modbus_length, rx_data);
 	ret = _check_modbus_code(ret, rx_data);
 	memcpy(ret_data, rx_data + 1, ret_length);
-	delete rx_data;
+	delete[] rx_data;
 	return ret;
 }
 
@@ -2771,7 +2815,7 @@ int XArmAPI::set_collision_tool_model(int tool_type, int n, ...) {
 	}
 	va_end(args);
 	int ret = core->set_collision_tool_model(tool_type, n, params);
-	delete params;
+	delete[] params;
 	return ret;
 }
 
