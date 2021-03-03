@@ -42,6 +42,10 @@ void XArmROSClient::init(ros::NodeHandle& nh)
     //tool modbus:
     config_modbus_client_ = nh_.serviceClient<xarm_msgs::ConfigToolModbus>("config_tool_modbus");
     send_modbus_client_ = nh_.serviceClient<xarm_msgs::SetToolModbus>("set_tool_modbus");
+
+    // velocity control
+    velo_move_joint_client_ = nh_.serviceClient<xarm_msgs::MoveVelo>("vc_set_jointv");
+    velo_move_line_client_ = nh_.serviceClient<xarm_msgs::MoveVelo>("vc_set_linev");
 }
 
 int XArmROSClient::motionEnable(short en)
@@ -379,6 +383,38 @@ int XArmROSClient::getGripperState(float *curr_pulse, int *curr_err)
         return 1;
     }
 
+}
+
+int XArmROSClient::veloMoveJoint(const std::vector<float>& jnt_v, bool is_sync) 
+{
+    move_velo_srv_.request.velocities = jnt_v;
+    move_velo_srv_.request.jnt_sync = is_sync ? 1 : 0;
+
+    if(velo_move_joint_client_.call(move_velo_srv_))
+    {
+        return move_velo_srv_.response.ret;
+    }
+    else
+    {
+        ROS_ERROR("Failed to call service velo_move_joint");
+        return 1;
+    }
+}
+
+int XArmROSClient::veloMoveLine(const std::vector<float>& line_v, bool is_tool_coord)
+{
+    move_velo_srv_.request.velocities = line_v;
+    move_velo_srv_.request.coord = is_tool_coord ? 1 : 0;
+
+    if(velo_move_line_client_.call(move_velo_srv_))
+    {
+        return move_velo_srv_.response.ret;
+    }
+    else
+    {
+        ROS_ERROR("Failed to call service velo_move_line");
+        return 1;
+    }
 }
 
 }// namespace xarm_api

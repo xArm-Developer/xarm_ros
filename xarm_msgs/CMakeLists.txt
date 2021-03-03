@@ -74,6 +74,7 @@ find_package(catkin REQUIRED COMPONENTS
    GetControllerDigitalIO.srv
    SetControllerAnalogIO.srv
    MoveAxisAngle.srv
+   MoveVelo.srv
  )
 
 ## Generate actions in the 'action' folder

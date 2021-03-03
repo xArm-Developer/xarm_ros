@@ -1,9 +1,9 @@
 #ifndef __XARM_DRIVER_H
 #define __XARM_DRIVER_H
 
+#include <thread>
 #include "ros/ros.h"
 #include "std_msgs/Float32.h"
-#include <thread>
 #include <xarm_msgs/SetInt16.h>
 #include <xarm_msgs/TCPOffset.h>
 #include <xarm_msgs/SetLoad.h>
@@ -24,10 +24,11 @@
 #include <xarm_msgs/SetToolModbus.h>
 #include <xarm_msgs/ConfigToolModbus.h>
 #include <xarm_msgs/MoveAxisAngle.h>
+#include <xarm_msgs/MoveVelo.h>
 #include <sensor_msgs/JointState.h>
-#include <xarm/common/data_type.h>
-#include "xarm/connect.h"
-#include "xarm/report_data.h"
+#include "xarm/core/common/data_type.h"
+#include "xarm/core/connect.h"
+#include "xarm/core/report_data.h"
 
 namespace xarm_api
 {
@@ -39,6 +40,8 @@ namespace xarm_api
             void XARMDriverInit(ros::NodeHandle& root_nh, char *server_ip);
             void Heartbeat(void);
             bool isConnectionOK(void);
+            void closeReportSocket(void);
+            bool reConnectReportSocket(char *server_ip);
 
             // provide a list of services:
             bool MotionCtrlCB(xarm_msgs::SetAxis::Request &req, xarm_msgs::SetAxis::Response &res);
@@ -73,13 +76,17 @@ namespace xarm_api
             bool SetControllerAOutCB(xarm_msgs::SetControllerAnalogIO::Request &req, xarm_msgs::SetControllerAnalogIO::Response &res);
             bool GetControllerAInCB(xarm_msgs::GetAnalogIO::Request &req, xarm_msgs::GetAnalogIO::Response &res);
             void SleepTopicCB(const std_msgs::Float32ConstPtr& msg);
+            bool VeloMoveJointCB(xarm_msgs::MoveVelo::Request &req, xarm_msgs::MoveVelo::Response &res);
+            bool VeloMoveLineVCB(xarm_msgs::MoveVelo::Request &req, xarm_msgs::MoveVelo::Response &res);
 
             void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
             void pub_joint_state(sensor_msgs::JointState &js_msg);
             void pub_io_state();
 
-            int get_frame(void);
+            int get_frame(unsigned char *data);
+            void update_rich_data(unsigned char *data, int size);
             int get_rich_data(ReportDataNorm &norm_data);
+            UxbusCmd *get_uxbus_cmd(void) { return arm_cmd_; };
 
         private:
             SocketPort *arm_report_;
@@ -87,7 +94,6 @@ namespace xarm_api
             UxbusCmd *arm_cmd_;
             unsigned char rx_data_[1280];
             std::string ip;
-            std::thread::id thread_id_;
             ros::AsyncSpinner spinner;
             int dof_;
             int curr_state_;
@@ -126,6 +132,14 @@ namespace xarm_api
             ros::ServiceServer get_controller_din_server_;
             ros::ServiceServer set_controller_aout_server_;
             ros::ServiceServer get_controller_ain_server_;
+
+            // ros::ServiceServer tgpio_delay_set_digital_server_;
+            // ros::ServiceServer cgpio_delay_set_digital_server_;
+            // ros::ServiceServer tgpio_position_set_digital_server_;
+            // ros::ServiceServer cgpio_position_set_digital_server_;
+            // ros::ServiceServer cgpio_position_set_analog_server_;
+            ros::ServiceServer vc_set_jointv_server_;
+            ros::ServiceServer vc_set_linev_server_;
 
             ros::Publisher joint_state_;
             ros::Publisher robot_rt_state_; 

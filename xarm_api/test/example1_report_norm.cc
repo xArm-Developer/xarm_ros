@@ -9,8 +9,8 @@
 #endif
 
 #include "ros/ros.h"
-#include "xarm/connect.h"
-#include "xarm/report_data.h"
+#include "xarm/core/connect.h"
+#include "xarm/core/report_data.h"
 
 int main(int argc, char **argv) {
   if (argc < 2) {

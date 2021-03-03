@@ -3,7 +3,7 @@
 
 #include "ros/ros.h"
 #include <xarm_driver.h>
-#include "visibility_control.hpp"
+#include "visibility_control.h"
 
 namespace xarm_api{
 
@@ -34,6 +34,9 @@ public:
 	int config_tool_modbus(int baud_rate, int time_out_ms);
 	int send_tool_modbus(unsigned char* data, int send_len, unsigned char* recv_data=NULL, int recv_len=0);
 
+	int veloMoveJoint(const std::vector<float>& jnt_v, bool is_sync = true);
+	int veloMoveLine(const std::vector<float>& line_v, bool is_tool_coord = false);
+
 private:
 	ros::ServiceClient motion_ctrl_client_;
 	ros::ServiceClient set_mode_client_;
@@ -53,6 +56,8 @@ private:
 	ros::ServiceClient gripper_move_client_;
     ros::ServiceClient gripper_config_client_;
 	ros::ServiceClient gripper_state_client_;
+	ros::ServiceClient velo_move_joint_client_;
+	ros::ServiceClient velo_move_line_client_;
 
     xarm_msgs::SetAxis set_axis_srv_;
     xarm_msgs::SetInt16 set_int16_srv_;
@@ -68,6 +73,7 @@ private:
     xarm_msgs::GripperConfig gripper_config_msg_;
     xarm_msgs::GripperMove gripper_move_msg_;
     xarm_msgs::GripperState gripper_state_msg_;
+	xarm_msgs::MoveVelo move_velo_srv_;
 
     ros::NodeHandle nh_;
 };
