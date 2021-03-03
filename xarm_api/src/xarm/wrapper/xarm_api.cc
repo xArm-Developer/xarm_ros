@@ -715,8 +715,8 @@ void XArmAPI::_check_version(void) {
 		auto it = result.begin();
 		sscanf(std::string(*++it).data(), "%d", &axis);
 		sscanf(std::string(*++it).data(), "%d", &device_type);
-		sscanf(std::string(*++it).substr(2).data(), "%d", &arm_type);
-		sscanf(std::string(*++it).substr(2).data(), "%d", &control_type);
+		sscanf(std::string(*++it).substr(2, 4).data(), "%d", &arm_type);
+		sscanf(std::string(*++it).substr(2, 4).data(), "%d", &control_type);
 
 		arm_type_is_1300_ = arm_type >= 1300;
 		control_box_type_is_1300_ = control_type >= 1300;
@@ -2400,7 +2400,7 @@ int XArmAPI::_checkset_modbus_baud(int baudrate, bool check) {
 					sleep_milliseconds(1000);
 				}
 			}
-			catch (exception e) {
+			catch (...) {
 				ignore_error_ = false;
 				ignore_state_ = false;
 				return API_CODE::API_EXCEPTION;

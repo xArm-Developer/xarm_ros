@@ -8,6 +8,9 @@
 
 namespace xarm_api{
 
+XArmROSClient::XArmROSClient(){};
+XArmROSClient::~XArmROSClient(){};
+
 void XArmROSClient::init(ros::NodeHandle& nh)
 {   
     nh_ = nh;

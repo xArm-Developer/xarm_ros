@@ -35,6 +35,8 @@ int UxbusCmd::send_xbus(int funcode, unsigned char *txdata, int num) { return -1
 
 void UxbusCmd::close(void) {}
 
+int UxbusCmd::is_ok(void) {return -1;}
+
 int UxbusCmd::set_timeout(float timeout) {
 	GET_TIMEOUT_ = (int)(timeout * 1000);
 	SET_TIMEOUT_ = (int)(timeout * 1000);

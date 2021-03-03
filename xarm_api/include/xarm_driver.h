@@ -1,6 +1,7 @@
 #ifndef __XARM_DRIVER_H
 #define __XARM_DRIVER_H
 
+#include <thread>
 #include "ros/ros.h"
 #include "std_msgs/Float32.h"
 #include <thread>
@@ -26,8 +27,7 @@
 #include <xarm_msgs/MoveAxisAngle.h>
 #include <xarm_msgs/MoveVelo.h>
 #include <sensor_msgs/JointState.h>
-#include <xarm/core/common/data_type.h>
-// #include <xarm/core/linux/thread.h>
+#include "xarm/core/common/data_type.h"
 #include "xarm/core/connect.h"
 #include "xarm/core/report_data.h"
 
@@ -87,6 +87,7 @@ namespace xarm_api
             int get_frame(unsigned char *data);
             void update_rich_data(unsigned char *data, int size);
             int get_rich_data(ReportDataNorm &norm_data);
+            UxbusCmd *get_uxbus_cmd(void) { return arm_cmd_; };
 
         private:
             SocketPort *arm_report_;
@@ -94,7 +95,6 @@ namespace xarm_api
             UxbusCmd *arm_cmd_;
             unsigned char rx_data_[1280];
             std::string ip;
-            // pthread_t thread_id_;
             ros::AsyncSpinner spinner;
             int dof_;
             int curr_state_;

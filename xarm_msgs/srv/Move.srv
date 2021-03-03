@@ -4,7 +4,7 @@
 #	Cartesian space: mm, mm/s, and mm/s^2.
 #	time: sec
 
-# pose： target coordinate. 
+# pose: target coordinate. 
 #	For Joint Space target，pose dimention is the number of joints. element as each target joint position.
 #	For Cartesian target: pose dimention is 6 for (x, y, z, roll, pitch, yaw)
 

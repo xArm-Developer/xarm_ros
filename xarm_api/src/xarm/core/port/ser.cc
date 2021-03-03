@@ -22,7 +22,6 @@
 
 #include "xarm/core/port/ser.h"
 #include "xarm/core/common/crc16.h"
-#include "xarm/core/linux/thread.h"
 
 void SerialPort::recv_proc(void) {
 	unsigned char ch;

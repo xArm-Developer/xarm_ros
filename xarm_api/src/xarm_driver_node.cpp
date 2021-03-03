@@ -5,7 +5,6 @@
  * Author: Jason Peng <jason@ufactory.cc>
  ============================================================================*/
 #include <xarm_driver.h>
-// #include <xarm/core/linux/thread.h>
 #include <signal.h>
 #include <thread>
 #include "xarm/core/connect.h"
@@ -41,25 +40,25 @@ class XarmRTConnection
             xarm_driver = drv;
             xarm_driver.XARMDriverInit(root_nh, server_ip);
             ros::Duration(0.5).sleep();
-            std::thread th(thread_proc, this);
+            std::thread th(thread_proc, (void *)this);
             th.detach();
-            // thread_id = thread_init(thread_proc, (void *)this);
         }
 
         bool reConnect(void)
         {
             xarm_driver.closeReportSocket();
-            int retryCnt = 5;
-            ROS_INFO("try reconnect to report\n");
-            while (retryCnt--)
+            int retryCnt = 0;
+            ROS_INFO("try to reconnect to report socket");
+            while (retryCnt < 5)
             {
+                retryCnt++;
                 if (xarm_driver.reConnectReportSocket(ip)) {
-                    ROS_INFO("reconnect success\n");
+                    ROS_INFO("reconnect to report socket success");
                     return true;
                 }
                 ros::Duration(2).sleep();
             }
-            ROS_ERROR("reconnect failed\n");
+            ROS_ERROR("reconnect to report socket failed");
             return false;
         }
 
@@ -70,7 +69,8 @@ class XarmRTConnection
             int rxcnt;
             int i;
             int first_cycle = 1;
-            double d, prev_angle[joint_num_];
+            double d;
+            double * prev_angle = new double [joint_num_];
 
             ros::Rate r(REPORT_RATE_HZ); // 10Hz
 
@@ -244,18 +244,18 @@ class XarmRTConnection
                 }
 
             }
-            ROS_ERROR("xArm Connection Failed! Please Shut Down (Ctrl-C) and Retry ...");
+            delete [] prev_angle;
+            ROS_ERROR("xArm Report Connection Failed! Please Shut Down (Ctrl-C) and Retry ...");
         }
 
         static void* thread_proc(void *arg)
         {
-            XarmRTConnection* pThreadTest=(XarmRTConnection*)arg;
-            pThreadTest->thread_run();
-            pthread_exit(0);
+            XarmRTConnection* threadTest=(XarmRTConnection*)arg;
+            threadTest->thread_run();
+            return (void*)0;
         }
 
     public:
-        // pthread_t thread_id;
         char *ip;
         ros::Time now;
         SocketPort *arm_report;

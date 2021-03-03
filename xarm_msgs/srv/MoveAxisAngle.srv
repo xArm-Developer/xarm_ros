@@ -4,7 +4,7 @@
 #   Angular: radian, radian/s and radian/s^2.
 #	time: sec
 
-# pose： target coordinate. 
+# pose: target coordinate. 
 #	For Cartesian target: pose dimention is 6 for (x, y, z, rx, ry, rz)
 
 float32[] pose

@@ -110,3 +110,5 @@ int UxbusCmdTcp::send_xbus(int funcode, unsigned char *datas, int num) {
 }
 
 void UxbusCmdTcp::close(void) { arm_port_->close_port(); }
+
+int UxbusCmdTcp::is_ok(void) { return arm_port_->is_ok(); }

@@ -72,3 +72,5 @@ int UxbusCmdSer::send_xbus(int funcode, unsigned char *datas, int num) {
 }
 
 void UxbusCmdSer::close(void) { arm_port_->close_port(); }
+
+int UxbusCmdSer::is_ok(void) { return arm_port_->is_ok(); }

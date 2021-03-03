@@ -192,6 +192,7 @@ public:
 	int vc_set_linev(float line_v[6], int coord);
 
 	virtual void close(void);
+	virtual int is_ok(void);
 
 private:
 	virtual int check_xbus_prot(unsigned char *data, int funcode);

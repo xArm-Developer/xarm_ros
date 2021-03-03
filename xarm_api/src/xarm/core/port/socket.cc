@@ -7,31 +7,30 @@
 # Author: Vinman <vinman.wen@ufactory.cc> <vinman.cub@gmail.com>
 */
 #include <string.h>
-
-#ifdef _WIN32
-#include <windows.h>
-#include <winsock.h>
-#define errno WSAGetLastError()
-#else
 #include <errno.h>
+
+#ifndef WIN32
 #include <sys/socket.h>
 #include <unistd.h>
+#else
+#include <ws2tcpip.h>
+static int close(int fd)
+{
+  return closesocket(fd);
+}
+// #define errno WSAGetLastError()
 #endif
 
 #include "xarm/core/port/socket.h"
-#include "xarm/core/linux/network.h"
-#include "xarm/core/linux/thread.h"
+#include "xarm/core/os/network.h"
 
 void SocketPort::recv_proc(void) {
 	int ret;
 	int failed_cnt = 0;
 	int num;
-	// unsigned char recv_data[que_maxlen_];
 	unsigned char *recv_data = new unsigned char[que_maxlen_];
 	while (state_ == 0) {
-		//bzero(recv_data, que_maxlen_);
 		memset(recv_data, 0, que_maxlen_);
-		// num = recv(fp_, (void *)&recv_data[4], que_maxlen_ - 1, 0);
 		num = recv(fp_, (char *)&recv_data[4], que_maxlen_ - 4, 0);
 		if (num <= 0 && (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)) {
 			printf("EINTR occured, errno=%d\n", errno);
@@ -39,9 +38,7 @@ void SocketPort::recv_proc(void) {
 		}
 		if (num <= 0) {
 			printf("socket read failed, fp=%d, errno=%d, exit\n", fp_, errno);
-			// close(fp_);
 			close_port();
-			// pthread_exit(0);
 			break;
 		}
 		bin32_to_8(num, &recv_data[0]);
@@ -63,12 +60,11 @@ void SocketPort::recv_proc(void) {
 	delete rx_que_;
 }
 
-static void recv_proc_(void *arg) {
+static void *recv_proc_(void *arg) {
 	SocketPort *my_this = (SocketPort *)arg;
 
 	my_this->recv_proc();
-
-	// pthread_exit(0);
+	return (void *)0;
 }
 
 SocketPort::SocketPort(char *server_ip, int server_port, int que_num,
@@ -91,8 +87,8 @@ SocketPort::SocketPort(char *server_ip, int server_port, int que_num,
 
 	state_ = 0;
 	flush();
-	thread_id_ = std::thread(recv_proc_, this);
-	thread_id_.detach();
+	std::thread th(recv_proc_, this);
+	th.detach();
 }
 
 SocketPort::~SocketPort(void) {
@@ -119,10 +115,6 @@ int SocketPort::write_frame(unsigned char *data, int len) {
 }
 
 void SocketPort::close_port(void) {
-#ifdef _WIN32
-	closesocket(fp_);
-#else
 	close(fp_);
-#endif
 	state_ = -1;
 }

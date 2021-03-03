@@ -9,12 +9,6 @@
 
 #include <iostream>
 #include <thread>
-
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <pthread.h>
-#endif
 #include "xarm/core/common/data_type.h"
 #include "xarm/core/common/queue_memcpy.h"
 
@@ -35,8 +29,6 @@ private:
 	int state_;
 	int que_num_;
 	QueueMemcpy *rx_que_;
-	//pthread_t thread_id_;
-	std::thread thread_id_;
 };
 
 #endif

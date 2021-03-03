@@ -19,6 +19,7 @@ public:
 	int send_pend(int funcode, int num, int timeout, unsigned char *ret_data);
 	int send_xbus(int funcode, unsigned char *datas, int num);
 	void close(void);
+	int is_ok(void);
 
 private:
 	SerialPort *arm_port_;

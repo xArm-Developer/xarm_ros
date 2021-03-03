@@ -6,28 +6,25 @@
  ============================================================================*/
 #include <xarm_driver.h>
 #include "xarm/core/instruction/uxbus_cmd_config.h"
-#include "xarm/core/linux/thread.h"
-
-#define CMD_HEARTBEAT_US 3e7 // 30s
 #define CMD_HEARTBEAT_SEC 30 // 30s
 
 void* cmd_heart_beat(void* args)
 {
     xarm_api::XARMDriver *my_driver = (xarm_api::XARMDriver *) args;
-    while(true)
+    UxbusCmd *arm_cmd = my_driver->get_uxbus_cmd();
+    while(arm_cmd->is_ok() == 0)
     {
-        // usleep(CMD_HEARTBEAT_US); // non-realtime
         ros::Duration(CMD_HEARTBEAT_SEC).sleep(); // non-realtime
         my_driver->Heartbeat();
     }
-    // pthread_exit(0);
+    ROS_ERROR("xArm Control Connection Failed! Please Shut Down (Ctrl-C) and Retry ...");
+    return (void*)0;
 }
 
 namespace xarm_api
 {   
     XARMDriver::~XARMDriver()
     {   
-        // pthread_cancel(thread_id_);  // heartbeat related
         arm_cmd_->set_mode(XARM_MODE::POSE);
         arm_cmd_->close();
         spinner.stop();
@@ -57,7 +54,6 @@ namespace xarm_api
         {
             std::thread th(cmd_heart_beat, this);
             th.detach();
-            // thread_id_ = thread_init(cmd_heart_beat, this); // heartbeat related
             int dbg_msg[16] = {0};
             arm_cmd_->servo_get_dbmsg(dbg_msg);
 
@@ -145,7 +141,7 @@ namespace xarm_api
 
     bool XARMDriver::isConnectionOK(void)
     {
-        return !arm_report_->is_ok(); // is_ok will return 0 if connection is normal
+        return arm_report_->is_ok() == 0; // is_ok will return 0 if connection is normal
     }
 
     void XARMDriver::SleepTopicCB(const std_msgs::Float32ConstPtr& msg)
@@ -396,7 +392,8 @@ namespace xarm_api
     {
         int send_len = req.send_data.size();
         int recv_len = req.respond_len;
-        unsigned char tx_data[send_len]={0}, rx_data[recv_len]={0};
+        unsigned char * tx_data = new unsigned char [send_len]{0};
+        unsigned char * rx_data = new unsigned char [recv_len]{0};
 
         for(int i=0; i<send_len; i++)
         {
@@ -408,6 +405,8 @@ namespace xarm_api
            res.respond_data.push_back(rx_data[i]);
         }
 
+        delete [] tx_data;
+        delete [] rx_data;
         return true;
     }
 

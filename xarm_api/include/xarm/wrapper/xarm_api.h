@@ -17,7 +17,6 @@
 #include <cmath>
 #include "xarm/core/common/data_type.h"
 #include "xarm/core/xarm_config.h"
-#include "xarm/core/linux/thread.h"
 #include "xarm/core/instruction/uxbus_cmd.h"
 #include "xarm/core/instruction/uxbus_cmd_ser.h"
 #include "xarm/core/instruction/uxbus_cmd_tcp.h"
