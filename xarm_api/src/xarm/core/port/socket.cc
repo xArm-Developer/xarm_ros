@@ -8,21 +8,39 @@
 */
 #include <string.h>
 #include <errno.h>
+#include "xarm/core/port/socket.h"
+#include "xarm/core/os/network.h"
 
-#ifndef WIN32
-#include <sys/socket.h>
-#include <unistd.h>
-#else
+#ifdef _WIN32
 #include <ws2tcpip.h>
 static int close(int fd)
 {
-  return closesocket(fd);
+	return closesocket(fd);
 }
-// #define errno WSAGetLastError()
+
+static bool is_ignore_errno(int fp)
+{
+	if (WSAGetLastError() == WSAEINTR || WSAGetLastError() == WSAEWOULDBLOCK) {
+		printf("EINTR occured, fp=%d, errno=%d\n", fp, WSAGetLastError());
+		return true;
+	}
+	printf("socket read failed, fp=%d, errno=%d, exit\n", fp, WSAGetLastError());
+	return false;
+}
+#else
+#include <sys/socket.h>
+#include <unistd.h>
+static bool is_ignore_errno(int fp)
+{
+	if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK) {
+		printf("EINTR occured, fp=%d, errno=%d\n", fp, errno);
+		return true;
+	}
+	printf("socket read failed, fp=%d, errno=%d, exit\n", fp, errno);
+	return false;
+}
 #endif
 
-#include "xarm/core/port/socket.h"
-#include "xarm/core/os/network.h"
 
 void SocketPort::recv_proc(void) {
 	int ret;
@@ -32,14 +50,14 @@ void SocketPort::recv_proc(void) {
 	while (state_ == 0) {
 		memset(recv_data, 0, que_maxlen_);
 		num = recv(fp_, (char *)&recv_data[4], que_maxlen_ - 4, 0);
-		if (num <= 0 && (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)) {
-			printf("EINTR occured, errno=%d\n", errno);
-			continue;
-		}
 		if (num <= 0) {
-			printf("socket read failed, fp=%d, errno=%d, exit\n", fp_, errno);
-			close_port();
-			break;
+			if (is_ignore_errno(fp_)) {
+				continue;
+			}
+			else {
+				close_port();
+				break;
+			}
 		}
 		bin32_to_8(num, &recv_data[0]);
 		ret = rx_que_->push(recv_data);
