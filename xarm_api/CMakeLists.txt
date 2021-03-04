@@ -150,6 +150,7 @@ add_library(xarm_api
 
   ${SERIAL_API_DIR}/serial.cc
   ${SERIAL_API_DIR}/impl/unix.cc
+  ${SERIAL_API_DIR}/impl/win.cc
   ${SERIAL_API_DIR}/impl/list_ports/list_ports_linux.cc
  )
 

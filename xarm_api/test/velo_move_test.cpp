@@ -96,11 +96,11 @@ int main(int argc, char **argv)
         return 1;
     if(velo_move_test(move_joint_velo_srv_, velo_move_joint_client_) == 1)
         return 1;
-    usleep(3 * 1e6); // sleep 3s
+    sleep_milliseconds(3000); // sleep 3s
     move_joint_velo_srv_.request.velocities[0] = -1;
     if(velo_move_test(move_joint_velo_srv_, velo_move_joint_client_) == 1)
         return 1;
-    usleep(3.1 * 1e6); // sleep 3s
+    sleep_milliseconds(3100); // sleep 3s
     move_joint_velo_srv_.request.velocities[0] = 0;
     if(velo_move_test(move_joint_velo_srv_, velo_move_joint_client_) == 1)
         return 1;
@@ -110,11 +110,11 @@ int main(int argc, char **argv)
         return 1;
     if(velo_move_test(move_line_velo_srv_, velo_move_line_client_) == 1)
         return 1;
-    usleep(3 * 1e6); // sleep 3s
+    sleep_milliseconds(3000); // sleep 3s
     move_line_velo_srv_.request.velocities[0] = -100;
     if(velo_move_test(move_line_velo_srv_, velo_move_line_client_) == 1)
         return 1;
-    usleep(3 * 1e6); // sleep 3s
+    sleep_milliseconds(3000); // sleep 3s
     move_line_velo_srv_.request.velocities[0] = 0;
     if(velo_move_test(move_line_velo_srv_, velo_move_line_client_) == 1)
         return 1;
