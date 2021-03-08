@@ -12,8 +12,13 @@
 
 UxbusCmdSer *connect_rs485_control(const char *com);
 UxbusCmdTcp *connect_tcp_control(char *server_ip);
-SocketPort *connext_tcp_report_norm(char *server_ip);
-SocketPort *connext_tcp_report_rich(char *server_ip);
-SocketPort *connext_tcp_report_devl(char *server_ip);
+SocketPort *connect_tcp_report_norm(char *server_ip);
+SocketPort *connect_tcp_report_rich(char *server_ip);
+SocketPort *connect_tcp_report_devl(char *server_ip);
+SocketPort *connect_tcp_report(char *server_ip, std::string report_type="normal");
+
+#define connext_tcp_report_norm connect_tcp_report_norm
+#define connext_tcp_report_rich connect_tcp_report_rich
+#define connext_tcp_report_devl connect_tcp_report_devl
 
 #endif

@@ -1,5 +1,6 @@
 <launch>
   <arg name="robot_ip" />
+  <arg name="report_type" default="normal" />
   <arg name="dof" default="7"/>
   <arg name="use_moveit" default="false" />
   <arg name="namespace" default="xarm" />
@@ -7,6 +8,7 @@
   <!-- run xarm driver -->
   <include file="$(find xarm_bringup)/launch/xarm_robot.launch">
     <arg name="robot_ip" value="$(arg robot_ip)" />
+    <arg name="report_type" value="$(arg report_type)" />
     <arg name="hw_ns" value="$(arg namespace)" />
     <arg name="publish_tf" value="false"/>
   </include>

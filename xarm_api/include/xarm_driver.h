@@ -12,6 +12,7 @@
 #include <xarm_msgs/Move.h>
 #include <xarm_msgs/RobotMsg.h>
 #include <xarm_msgs/IOState.h>
+#include <xarm_msgs/CIOState.h>
 #include <xarm_msgs/SetDigitalIO.h>
 #include <xarm_msgs/GetDigitalIO.h>
 #include <xarm_msgs/GetControllerDigitalIO.h>
@@ -83,18 +84,22 @@ namespace xarm_api
             void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
             void pub_joint_state(sensor_msgs::JointState &js_msg);
             void pub_io_state();
+            void pub_cgpio_state(xarm_msgs::CIOState &cio_msg);
 
             int get_frame(unsigned char *data);
             void update_rich_data(unsigned char *data, int size);
-            int get_rich_data(ReportDataNorm &norm_data);
+            int flush_report_data(XArmReportData &report_data);
+            // int get_rich_data(ReportDataNorm &norm_data);
             UxbusCmd *get_uxbus_cmd(void) { return arm_cmd_; };
 
         private:
             SocketPort *arm_report_;
-            ReportDataNorm norm_data_;
+            XArmReportData report_data_;
+            // ReportDataNorm norm_data_;
             UxbusCmd *arm_cmd_;
             unsigned char rx_data_[1280];
             std::string ip;
+            std::string report_type_;
             ros::AsyncSpinner spinner;
             int dof_;
             int curr_state_;
@@ -145,6 +150,7 @@ namespace xarm_api
             ros::Publisher joint_state_;
             ros::Publisher robot_rt_state_; 
             ros::Publisher end_input_state_;
+            ros::Publisher cgpio_state_;
 
             ros::Subscriber sleep_sub_;
 

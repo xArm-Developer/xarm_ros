@@ -12,9 +12,10 @@
 #include "xarm/core/debug/debug_print.h"
 
 #define DEBUG_MODE 0
+#define DEBUG_DETAIL 0
 #define PRINT_HEX_DATA(hex, len, ...)     \
 {                                         \
-    if (DEBUG_MODE) {                     \
+    if (DEBUG_MODE && DEBUG_DETAIL) {                     \
         printf(__VA_ARGS__);              \
         for (int i = 0; i < len; ++i) {   \
             printf("%02x ", hex[i]);      \
@@ -88,9 +89,6 @@ class XarmRTConnection
             int db_faied_pkt_cnt = 0;
             bool prev_pkt_is_not_empty = false;
 
-            // setlocale(LC_CTYPE, "zh_CN.utf8");
-            // setlocale(LC_ALL, "");
-
             while(xarm_driver.isConnectionOK())
             {
                 r.sleep();
@@ -105,8 +103,9 @@ class XarmRTConnection
                     bin32_to_8(size, &ret_data[0]);
                 }
                 if (num + offset < size) {
-                    ROS_INFO("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d] The data packet length is insufficient, waiting for the next packet splicing. num=%d, offset=%d, length=%d\n", 
-                        db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_faied_pkt_cnt, num, offset, num + offset);
+                    if (DEBUG_MODE)
+                        ROS_INFO("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d] The data packet length is insufficient, waiting for the next packet splicing. num=%d, offset=%d, length=%d\n", 
+                            db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_faied_pkt_cnt, num, offset, num + offset);
                     memcpy(ret_data + offset + 4, rx_data + 4, num);
                     offset += num;
                     continue;
@@ -118,8 +117,9 @@ class XarmRTConnection
                     while (num - offset2 >= size) {
                         db_discard_pkt_cnt += 1;
                         db_packet_cnt += 1;
-                        ROS_INFO("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d] Data packet stick to packets, the previous data packet will be discarded. num=%d, offset=%d\n", 
-                            db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_faied_pkt_cnt, num, offset);
+                        if (DEBUG_MODE)
+                            ROS_INFO("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d] Data packet stick to packets, the previous data packet will be discarded. num=%d, offset=%d\n", 
+                                db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_faied_pkt_cnt, num, offset);
                         PRINT_HEX_DATA(ret_data, size + 4, "[%d] Discard Packet: ", db_packet_cnt);
                         memcpy(ret_data + 4, rx_data + 4 + offset2, size);
                         offset2 += size;
@@ -150,8 +150,9 @@ class XarmRTConnection
                     // xarm_driver.update_rich_data(ret_data, size + 4);
                     offset = num - offset2;
                     if (offset > 0) {
-                        ROS_INFO("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d] Data packets are redundant and will be left for the next packet splicing process. num=%d, offset=%d\n", 
-                            db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_faied_pkt_cnt, num, offset);
+                        if (DEBUG_MODE)
+                            ROS_INFO("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d] Data packets are redundant and will be left for the next packet splicing process. num=%d, offset=%d\n", 
+                                db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_faied_pkt_cnt, num, offset);
                         memcpy(ret_data + 4, rx_data + 4 + offset2, offset);
                     }
                     if (!prev_pkt_is_not_empty) {
@@ -160,14 +161,15 @@ class XarmRTConnection
                     }
                 }
 
-                ret = xarm_driver.get_rich_data(norm_data);
+                ret = xarm_driver.flush_report_data(report_data);
                 if (ret == 0) {
                     db_success_pkt_cnt++;
                 }
                 else {
                     db_faied_pkt_cnt++;
                 }
-                if (db_packet_cnt % 900 == 2) {
+                if (DEBUG_MODE && db_packet_cnt % 900 == 2) {
+                    // report_data.print_data();
                     ROS_INFO("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d]", db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_faied_pkt_cnt);
                 }
 
@@ -184,7 +186,7 @@ class XarmRTConnection
                     js_msg.effort.resize(joint_num_);
                     for(i = 0; i < joint_num_; i++)
                     {
-                        d = (double)norm_data.angle_[i];
+                        d = (double)report_data.angle[i];
                         js_msg.name[i] = joint_name_[i];
                         js_msg.position[i] = d;
 
@@ -198,26 +200,26 @@ class XarmRTConnection
                             js_msg.velocity[i] = (js_msg.position[i] - prev_angle[i])*REPORT_RATE_HZ;
                         }
 
-                        js_msg.effort[i] = (double)norm_data.tau_[i];
+                        js_msg.effort[i] = (double)report_data.tau[i];
 
                         prev_angle[i] = d;
                     }
 
                     xarm_driver.pub_joint_state(js_msg);
 
-                    rm_msg.state = norm_data.runing_;
-                    rm_msg.mode = norm_data.mode_;
-                    rm_msg.cmdnum = norm_data.cmdnum_;
-                    rm_msg.err = norm_data.err_;
-                    rm_msg.warn = norm_data.war_;
-                    rm_msg.mt_brake = norm_data.mt_brake_;
-                    rm_msg.mt_able = norm_data.mt_able_;
+                    rm_msg.state = report_data.state;
+                    rm_msg.mode = report_data.mode;
+                    rm_msg.cmdnum = report_data.cmdnum;
+                    rm_msg.err = report_data.err;
+                    rm_msg.warn = report_data.war;
+                    rm_msg.mt_brake = report_data.mt_brake;
+                    rm_msg.mt_able = report_data.mt_able;
                     rm_msg.angle.resize(joint_num_);
 
                     for(i = 0; i < joint_num_; i++)
                     {
                         /* set the float precision*/
-                        double d = norm_data.angle_[i];
+                        double d = report_data.angle[i];
                         double r;
                         char str[8];
                         sprintf(str, "%0.3f", d);
@@ -226,14 +228,33 @@ class XarmRTConnection
                     }
                     for(i = 0; i < 6; i++)
                     {
-                        rm_msg.pose[i] = norm_data.pose_[i];
-                        rm_msg.offset[i] = norm_data.tcp_offset_[i];
+                        rm_msg.pose[i] = report_data.pose[i];
+                        rm_msg.offset[i] = report_data.tcp_offset[i];
                     }
                     xarm_driver.pub_robot_msg(rm_msg);
 
                     // publish io state: This line may interfere with servoj execution
                     // xarm_driver.pub_io_state();
 
+                    if (report_data.total_num >= 417) {
+                        cio_msg.state = report_data.cgpio_state;
+                        cio_msg.code = report_data.cgpio_code;
+                        cio_msg.input_digitals[0] = report_data.cgpio_input_digitals[0];
+                        cio_msg.input_digitals[1] = report_data.cgpio_input_digitals[1];
+                        cio_msg.output_digitals[0] = report_data.cgpio_output_digitals[0];
+                        cio_msg.output_digitals[1] = report_data.cgpio_output_digitals[1];
+
+                        cio_msg.input_analogs[0] = report_data.cgpio_input_analogs[0];
+                        cio_msg.input_analogs[1] = report_data.cgpio_input_analogs[1];
+                        cio_msg.output_analogs[0] = report_data.cgpio_output_analogs[0];
+                        cio_msg.output_analogs[1] = report_data.cgpio_output_analogs[1];
+
+                        for (int i = 0; i < 16; ++i) {
+                            cio_msg.input_conf[i] = report_data.cgpio_input_conf[i];
+                            cio_msg.output_conf[i] = report_data.cgpio_output_conf[i];
+                        }
+                        xarm_driver.pub_cgpio_state(cio_msg);
+                    }
                 }
                 else
                 {
@@ -259,10 +280,12 @@ class XarmRTConnection
         char *ip;
         ros::Time now;
         SocketPort *arm_report;
-        ReportDataNorm norm_data;
+        // ReportDataNorm norm_data;
+        XArmReportData report_data;
         sensor_msgs::JointState js_msg;
         xarm_api::XARMDriver xarm_driver;
         xarm_msgs::RobotMsg rm_msg;
+        xarm_msgs::CIOState cio_msg;
 
         int joint_num_;
         std::vector<std::string> joint_name_;

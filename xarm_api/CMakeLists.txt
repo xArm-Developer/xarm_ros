@@ -193,6 +193,10 @@ add_executable(velo_move_test
    test/velo_move_test.cpp
 )
 
+add_executable(test_xarm_cgpio_states
+   test/test_xarm_cgpio_states.cpp
+)
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -244,6 +248,11 @@ target_link_libraries(servo_cart_test
 )
 
 target_link_libraries(velo_move_test 
+  xarm_api
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(test_xarm_cgpio_states 
   xarm_api
   ${catkin_LIBRARIES}
 )

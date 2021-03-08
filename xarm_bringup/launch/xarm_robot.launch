@@ -1,9 +1,11 @@
 <launch>
 	<arg name="robot_ip" doc="User must properly specify robot ip address"/>
+	<arg name="report_type" default="normal" />
 	<arg name="publish_tf" default="true" />
 	<arg name="hw_ns" default="xarm" />
     
 	<param name = "$(arg hw_ns)/xarm_robot_ip" type="str" value = "$(arg robot_ip)"/>
+	<param name = "$(arg hw_ns)/xarm_report_type" type="str" value = "$(arg report_type)"/>
 
     <node name="robot_state_publisher" if="$(arg publish_tf)" pkg="robot_state_publisher" type="state_publisher" />
 

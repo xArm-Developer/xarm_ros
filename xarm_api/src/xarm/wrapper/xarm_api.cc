@@ -174,8 +174,8 @@ void XArmAPI::_init(void) {
 	cgpio_output_digitals = new int[2]{ 0, 0 };
 	cgpio_intput_anglogs = new fp32[2]{ 0, 0 };
 	cgpio_output_anglogs = new fp32[2]{ 0, 0 };
-	cgpio_input_conf = new int[8]{ 0, 0, 0, 0, 0, 0, 0, 0 };
-	cgpio_output_conf = new int[8]{ 0, 0, 0, 0, 0, 0, 0, 0 };
+	cgpio_input_conf = new int[16]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	cgpio_output_conf = new int[16]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	cmd_timeout_ = -1;
 
 	xarm_gripper_error_code_ = 0;
@@ -619,13 +619,19 @@ void XArmAPI::_update(unsigned char *rx_data) {
 			cgpio_input_digitals[1] = bin8_to_16(&data_fp[387]);
 			cgpio_output_digitals[0] = bin8_to_16(&data_fp[389]);
 			cgpio_output_digitals[1] = bin8_to_16(&data_fp[391]);
-			cgpio_intput_anglogs[0] = (fp32)(bin8_to_16(&data_fp[393]) / 4095 * 10);
-			cgpio_intput_anglogs[1] = (fp32)(bin8_to_16(&data_fp[395]) / 4095 * 10);
-			cgpio_output_anglogs[0] = (fp32)(bin8_to_16(&data_fp[397]) / 4095 * 10);
-			cgpio_output_anglogs[1] = (fp32)(bin8_to_16(&data_fp[399]) / 4095 * 10);
+			cgpio_intput_anglogs[0] = (fp32)(bin8_to_16(&data_fp[393])) / 4095 * 10;
+			cgpio_intput_anglogs[1] = (fp32)(bin8_to_16(&data_fp[395])) / 4095 * 10;
+			cgpio_output_anglogs[0] = (fp32)(bin8_to_16(&data_fp[397])) / 4095 * 10;
+			cgpio_output_anglogs[1] = (fp32)(bin8_to_16(&data_fp[399])) / 4095 * 10;
 			for (int i = 0; i < 8; i++) {
 				cgpio_input_conf[i] = data_fp[401 + i];
 				cgpio_output_conf[i] = data_fp[409 + i];
+			}
+			if (sizeof_data >= 433) {
+				for (int i = 0; i < 8; i++) {
+					cgpio_input_conf[i+8] = data_fp[417 + i];
+					cgpio_output_conf[i+8] = data_fp[425 + i];
+				}
 			}
 		}
 	}

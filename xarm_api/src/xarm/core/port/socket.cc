@@ -18,25 +18,25 @@ static int close(int fd)
 	return closesocket(fd);
 }
 
-static bool is_ignore_errno(int fp)
+static bool is_ignore_errno(int fp, int port)
 {
 	if (WSAGetLastError() == WSAEINTR || WSAGetLastError() == WSAEWOULDBLOCK) {
-		printf("EINTR occured, fp=%d, errno=%d\n", fp, WSAGetLastError());
+		printf("EINTR occured, port=%d, fp=%d, errno=%d\n", port, fp, WSAGetLastError());
 		return true;
 	}
-	printf("socket read failed, fp=%d, errno=%d, exit\n", fp, WSAGetLastError());
+	printf("socket read failed, port=%d, fp=%d, errno=%d, exit\n", port, fp, WSAGetLastError());
 	return false;
 }
 #else
 #include <sys/socket.h>
 #include <unistd.h>
-static bool is_ignore_errno(int fp)
+static bool is_ignore_errno(int fp, int port)
 {
 	if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK) {
-		printf("EINTR occured, fp=%d, errno=%d\n", fp, errno);
+		printf("EINTR occured, port=%d, fp=%d, errno=%d\n", port, fp, errno);
 		return true;
 	}
-	printf("socket read failed, fp=%d, errno=%d, exit\n", fp, errno);
+	printf("socket read failed, port=%d, fp=%d, errno=%d, exit\n", port, fp, errno);
 	return false;
 }
 #endif
@@ -51,7 +51,7 @@ void SocketPort::recv_proc(void) {
 		memset(recv_data, 0, que_maxlen_);
 		num = recv(fp_, (char *)&recv_data[4], que_maxlen_ - 4, 0);
 		if (num <= 0) {
-			if (is_ignore_errno(fp_)) {
+			if (is_ignore_errno(fp_, port_)) {
 				continue;
 			}
 			else {
@@ -69,8 +69,9 @@ void SocketPort::recv_proc(void) {
 			failed_cnt += 1;
 		}
 		if (ret != 0) {
+			if (state_ == 0)
+				printf("socket push data failed, exit, port=%d, fp=%d\n", port_, fp_);
 			close_port();
-			printf("socket push data failed, exit, %d\n", fp_);
 			break;
 		};
 	}
@@ -102,7 +103,7 @@ SocketPort::SocketPort(char *server_ip, int server_port, int que_num,
 		delete rx_que_;
 		return;
 	}
-
+	port_ = server_port;
 	state_ = 0;
 	flush();
 	std::thread th(recv_proc_, this);
@@ -133,6 +134,7 @@ int SocketPort::write_frame(unsigned char *data, int len) {
 }
 
 void SocketPort::close_port(void) {
-	close(fp_);
 	state_ = -1;
+	flush();
+	close(fp_);
 }

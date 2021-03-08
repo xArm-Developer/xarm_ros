@@ -112,4 +112,81 @@ class ReportDataRich {
   float rot_msg_[2];
 };
 
-#endif
+class XArmReportData {
+public:
+  XArmReportData(void);
+  ~XArmReportData(void);
+
+  int flush_data(unsigned char *rx_data);
+  void print_data(void);
+
+public:
+  int total_num;
+  // normal report data
+  int state;
+  int mode;
+  int cmdnum;
+  float angle[7];
+  float pose[6];
+  float tau[7];
+  int mt_brake;
+  int mt_able;
+  int err;
+  int war;
+  float tcp_offset[6];
+  float tcp_load[4];
+  int collis_sens;
+  int teach_sens;
+  float gravity_dir[3];
+
+  // rich report data
+  int arm_type;
+  int axis_num;
+  int master_id;
+  int slave_id;
+  int motor_tid;
+  int motor_fid;
+  unsigned char versions[30];
+  float trs_jerk;
+  float trs_accmin;
+  float trs_accmax;
+  float trs_velomin;
+  float trs_velomax;
+  float p2p_jerk;
+  float p2p_accmin;
+  float p2p_accmax;
+  float p2p_velomin;
+  float p2p_velomax;
+  float rot_jerk;
+  float rot_accmax;
+
+  int temperatures[7];
+  float rt_tcp_spd;
+  float rt_joint_spds[7];
+  int count;
+  float world_offset[6];
+  int gpio_reset_conf[2];
+  int simulation_mode;
+  int collision_detection;
+  int collision_tool_type;
+  float collision_model_params[6];
+  float voltages[7];
+  float currents[7];
+  
+  int cgpio_state;
+  int cgpio_code;
+  int cgpio_input_digitals[2];
+  int cgpio_output_digitals[2];
+  float cgpio_input_analogs[2];
+  float cgpio_output_analogs[2];
+  unsigned char cgpio_input_conf[16];
+  unsigned char cgpio_output_conf[16];
+
+private:
+  int sv3msg_[16];
+  float trs_msg_[5];
+  float p2p_msg_[5];
+  float rot_msg_[2];
+};
+
+#endif // XARM_REPORT_DATA_H_
