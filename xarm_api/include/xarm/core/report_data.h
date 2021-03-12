@@ -122,13 +122,15 @@ public:
 
 public:
   int total_num;
-  // normal report data
+  // dev/normal/rich report data
   int state;
   int mode;
   int cmdnum;
   float angle[7];
   float pose[6];
   float tau[7];
+
+  // normal/rich report data
   int mt_brake;
   int mt_able;
   int err;

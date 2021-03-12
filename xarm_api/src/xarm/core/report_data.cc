@@ -399,7 +399,7 @@ int XArmReportData::flush_data(unsigned char *rx_data)
       collision_detection = data_fp[315];
       collision_tool_type = data_fp[316];
       hex_to_nfp32(&data_fp[317], collision_model_params, 6);
-      for (int i = 0; i < 17; i++) { voltages[i] = (float)bin8_to_16(&data_fp[341 + 2 * i]) / 100; }
+      for (int i = 0; i < 7; i++) { voltages[i] = (float)bin8_to_16(&data_fp[341 + 2 * i]) / 100; }
       hex_to_nfp32(&data_fp[355], currents, 7);
       
       cgpio_state = data_fp[383];
@@ -430,39 +430,101 @@ int XArmReportData::flush_data(unsigned char *rx_data)
 
 void XArmReportData::print_data(void)
 {
-  printf("total   = %d\n", total_num);
-  printf("state  = %d\n", state);
-  printf("mode    = %d\n", mode);
-  printf("cmdnum  = %d\n", cmdnum);
-  print_nvect("angle   = ", angle, 7);
+  // dev/normal/rich report data
+  printf("total = %d\n", total_num);
+  printf("state = %d, mode = %d, cmdnum = %d\n", state, mode, cmdnum);
   print_nvect("pose    = ", pose, 6);
+  print_nvect("angle   = ", angle, 7);
   print_nvect("tau     = ", tau, 7);
 
+  // normal/rich report data
   if (total_num >= 133) {
-    printf("mt_brake= %x\n", mt_brake);
-    printf("mt_able = %x\n", mt_able);
-    printf("err&war = %d %d\n", err, war);
-    print_nvect("tcp_off = ", tcp_offset, 6);
-    print_nvect("tcp_load= ", tcp_load, 4);
-    printf("coll_sen= %d\n", collis_sens);
-    printf("teac_sen= %d\n", teach_sens);
+    printf("mt_brake = 0x%X, mt_able = 0x%X\n", mt_brake, mt_able);
+    printf("error = %d, warn = %d\n", err, war);
+    printf("coll_sen = %d, teach_sen = %d\n", collis_sens, teach_sens);
+    print_nvect("tcp_load = ", tcp_load, 4);
+    print_nvect("tcp_offset = ", tcp_offset, 6);
     print_nvect("gravity_dir= ", gravity_dir, 3);
   }
 
+  // rich report data
   if (total_num >= 245) {
-    printf("xarm_type = %d(axis%d)\n", arm_type, axis_num);
-    printf("xarm_msid = 0x%X 0x%X\n", master_id, slave_id);
-    printf("motor_tfid = 0x%X 0x%X\n", motor_tid, motor_fid);
+    printf("xarm_axis = %d, xarm_type = %d\n", axis_num, arm_type);
+    printf("master_id = 0x%X, slave_id = 0x%X\n", master_id, slave_id);
+    printf("motor_tid = 0x%X, motor_fid = 0x%X\n", motor_tid, motor_fid);
 
-    printf("versions= %s\n", versions);
+    printf("versions = %s\n", versions);
     
-    print_nvect("trs_msg = ", rot_msg_, 5);
-    print_nvect("p2p_msg = ", rot_msg_, 5);
+    print_nvect("trs_msg = ", trs_msg_, 5);
+    print_nvect("p2p_msg = ", p2p_msg_, 5);
     print_nvect("ros_msg = ", rot_msg_, 2);
 
-    printf("ID   执行状态  错误代码\n");
+    printf("ID   State  ErrorCode\n");
     for (int i = 0; i < 8; i++) {
-        printf("%d      %d        0x%X\n", i + 1, sv3msg_[i * 2], sv3msg_[i * 2 + 1]);
+      printf("%d      %d        0x%X\n", i + 1, sv3msg_[i * 2], sv3msg_[i * 2 + 1]);
+    }
+
+    if (total_num >= 252) {
+      print_nvect("temperatures: ", temperatures, 7);
+    }
+    if (total_num >= 284) {
+      printf("realtime_tcp_speed: %f\n", rt_tcp_spd);
+      print_nvect("realtime_joint_speed: ", rt_joint_spds, 7);
+    }
+    if (total_num >= 288) {
+      printf("counter_val: %d\n", count);
+    }
+    if (total_num >= 312) {
+      print_nvect("world_offset: ", world_offset, 6);
+    }
+    if (total_num >= 314) {
+      printf("gpio_reset_conf: [ %d, %d ]\n", gpio_reset_conf[0], gpio_reset_conf[1]);
+    }
+    if (total_num >= 417) {
+      printf("simulation_mode: %d\n", simulation_mode);
+      printf("collision_detection: %d\n", collision_detection);
+      printf("collision_tool_type: %d\n", collision_tool_type);
+      print_nvect("collision_model_params: ", collision_model_params, 6);
+      print_nvect("voltages: ", voltages, 7);
+      print_nvect("currents: ", currents, 7);
+
+      printf("cgpio_state: %d, cgpio_code = %d\n", cgpio_state, cgpio_code);
+      // printf("cgpio_input_digitals: [ %d, %d ]\n", cgpio_input_digitals[0], cgpio_input_digitals[1]);
+      // printf("cgpio_output_digitals: [ %d, %d ]\n", cgpio_output_digitals[0], cgpio_output_digitals[1]);
+      // printf("cgpio_input_analogs: [ %f, %f ]\n", cgpio_input_analogs[0], cgpio_input_analogs[1]);
+      // printf("cgpio_output_analogs: [ %f, %f ]\n", cgpio_output_analogs[0], cgpio_output_analogs[1]);
+      // print_nvect("cgpio_input_conf: ", cgpio_input_conf, total_num >= 433 ? 16 : 8);
+      // print_nvect("cgpio_output_conf: ", cgpio_output_conf, total_num >= 433 ? 16 : 8);
+      printf("CGPIO_INPUT: \n");
+        printf("    [CI] ");
+        for (int i = 0; i < 8; ++i) { printf("CI%d=%d, ", i, (cgpio_input_digitals[1] >> i) & 0x0001); }
+        printf("\n");
+        printf("    [DI] ");
+        for (int i = 8; i < 16; ++i) { printf("DI%d=%d, ", i-8, (cgpio_input_digitals[1] >> i) & 0x0001); }
+        printf("\n");
+        printf("    [AI] AI0=%f, AI1=%f\n", cgpio_input_analogs[0], cgpio_input_analogs[1]);
+      printf("CGPIO_OUTPUT: \n");
+        printf("    [CO] ");
+        for (int i = 0; i < 8; ++i) { printf("CO%d=%d, ", i, (cgpio_output_digitals[1] >> i) & 0x0001); }
+        printf("\n");
+        printf("    [DO] ");
+        for (int i = 8; i < 16; ++i) { printf("DO%d=%d, ", i-8, (cgpio_output_digitals[1] >> i) & 0x0001); }
+        printf("\n");
+      
+        printf("    [AO] AO0=%f, AO1=%f\n", cgpio_output_analogs[0], cgpio_output_analogs[1]);
+      printf("CGPIO_CONF: \n");
+        printf("    [CI] ");
+        for (int i = 0; i < 8; ++i) { printf("CI%d=%d, ", i, cgpio_input_conf[i]); }
+        printf("\n");
+        printf("    [DI] ");
+          for (int i = 8; i < 16; ++i) { printf("DI%d=%d, ", i-8, cgpio_input_conf[i]); }
+        printf("\n");
+        printf("    [CO] ");
+          for (int i = 0; i < 8; ++i) { printf("CO%d=%d, ", i, cgpio_output_conf[i]); }
+        printf("\n");
+        printf("    [DO] ");
+          for (int i = 8; i < 16; ++i) { printf("DO%d=%d, ", i-8, cgpio_output_conf[i]); }
+        printf("\n");
     }
   }
 }

@@ -189,8 +189,8 @@ add_executable(servo_cart_test
    test/servo_cartesian_test.cpp
 )
 
-add_executable(velo_move_test
-   test/velo_move_test.cpp
+add_executable(test_velo_move
+   test/test_velo_move.cpp
 )
 
 add_executable(test_xarm_cgpio_states
@@ -247,7 +247,7 @@ target_link_libraries(servo_cart_test
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(velo_move_test 
+target_link_libraries(test_velo_move 
   xarm_api
   ${catkin_LIBRARIES}
 )
