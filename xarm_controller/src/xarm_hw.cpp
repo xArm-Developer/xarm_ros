@@ -81,6 +81,12 @@ namespace xarm_control
 			ROS_ERROR("ROS Parameter control_rate not specified!");
 			return false;
 		}
+		// If there is no /robot_description parameter, moveit controller may send zero command even controller fails to initialize
+		if(!robot_hw_nh.hasParam("/robot_description"))
+		{
+			ROS_ERROR("ROS Parameter /robot_description not specified!");
+			return false;
+		}
 
 		/* getParam forbids to change member */
 		robot_hw_nh.getParam("DOF", xarm_dof);
@@ -150,7 +156,7 @@ namespace xarm_control
 		}
 
 		xarm.setServoJ(position_cmd_float_);
-
+		
 		initial_write_ = false;
 	}
 
