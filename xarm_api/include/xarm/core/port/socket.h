@@ -25,6 +25,7 @@ public:
 	int que_maxlen_;
 
 private:
+	int port_;
 	int fp_;
 	int state_;
 	int que_num_;

@@ -37,7 +37,7 @@ namespace xarm_api
 
     bool XARMDriver::reConnectReportSocket(char *server_ip)
     {
-        arm_report_ = connext_tcp_report_norm(server_ip);
+        arm_report_ = connect_tcp_report(server_ip, report_type_);
         return arm_report_ != NULL;
     }
 
@@ -45,7 +45,9 @@ namespace xarm_api
     {   
         nh_ = root_nh;
         nh_.getParam("DOF",dof_);
-        arm_report_ = connext_tcp_report_norm(server_ip);
+        root_nh.getParam("xarm_report_type", report_type_);
+        arm_report_ = connect_tcp_report(server_ip, report_type_);
+        // arm_report_ = connext_tcp_report_norm(server_ip);
         // ReportDataNorm norm_data_;
         arm_cmd_ = connect_tcp_control(server_ip);  
         if (arm_cmd_ == NULL)
@@ -122,6 +124,7 @@ namespace xarm_api
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
         robot_rt_state_ = nh_.advertise<xarm_msgs::RobotMsg>("xarm_states", 10, true);
         // end_input_state_ = nh_.advertise<xarm_msgs::IOState>("xarm_input_states", 10, true);
+        cgpio_state_ = nh_.advertise<xarm_msgs::CIOState>("xarm_cgpio_states", 10, true);
 
         // subscribed topics
         sleep_sub_ = nh_.subscribe("sleep_sec", 1, &XARMDriver::SleepTopicCB, this);
@@ -827,6 +830,11 @@ namespace xarm_api
         end_input_state_.publish(io_msg);
     }
 
+    void XARMDriver::pub_cgpio_state(xarm_msgs::CIOState &cio_msg)
+    {
+        cgpio_state_.publish(cio_msg);
+    }
+
     int XARMDriver::get_frame(unsigned char *data)
     {
         int ret;
@@ -839,13 +847,21 @@ namespace xarm_api
         memcpy(rx_data_, data, size);
     }
 
-    int XARMDriver::get_rich_data(ReportDataNorm &norm_data)
+    int XARMDriver::flush_report_data(XArmReportData &report_data)
     {
         int ret;
-        ret = norm_data_.flush_data(rx_data_);
-        norm_data = norm_data_;
+        ret = report_data_.flush_data(rx_data_);
+        report_data = report_data_;
         return ret;
     }
+
+    // int XARMDriver::get_rich_data(ReportDataNorm &norm_data)
+    // {
+    //     int ret;
+    //     ret = norm_data_.flush_data(rx_data_);
+    //     norm_data = norm_data_;
+    //     return ret;
+    // }
 
     int XARMDriver::wait_for_finish()
     {
