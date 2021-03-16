@@ -67,7 +67,6 @@ namespace xarm_control
 		std::vector<double> velocity_fdb_;
 		std::vector<double> effort_fdb_;
 
-		double control_rate_;
 		bool initial_write_;
 		std::mutex mutex_;
 		
