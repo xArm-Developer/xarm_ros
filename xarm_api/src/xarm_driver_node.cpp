@@ -15,7 +15,7 @@
 #define DEBUG_DETAIL 0
 #define PRINT_HEX_DATA(hex, len, ...)     \
 {                                         \
-    if (DEBUG_MODE && DEBUG_DETAIL) {                     \
+    if (DEBUG_MODE && DEBUG_DETAIL) {     \
         printf(__VA_ARGS__);              \
         for (int i = 0; i < len; ++i) {   \
             printf("%02x ", hex[i]);      \
@@ -73,7 +73,7 @@ class XarmRTConnection
             double d;
             double * prev_angle = new double [joint_num_];
 
-            ros::Rate r(REPORT_RATE_HZ); // 10Hz
+            ros::Rate r(GET_FRAME_RATE_HZ);
 
             int size = 0;
             int num = 0;
@@ -86,8 +86,10 @@ class XarmRTConnection
             int db_packet_cnt = 0;
             int db_success_pkt_cnt = 0;
             int db_discard_pkt_cnt = 0;
-            int db_faied_pkt_cnt = 0;
+            int db_failed_pkt_cnt = 0;
             bool prev_pkt_is_not_empty = false;
+
+            ROS_INFO("start to handle the tcp report");
 
             while(xarm_driver.isConnectionOK())
             {
@@ -105,7 +107,7 @@ class XarmRTConnection
                 if (num + offset < size) {
                     if (DEBUG_MODE)
                         ROS_INFO("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d] The data packet length is insufficient, waiting for the next packet splicing. num=%d, offset=%d, length=%d\n", 
-                            db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_faied_pkt_cnt, num, offset, num + offset);
+                            db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_failed_pkt_cnt, num, offset, num + offset);
                     memcpy(ret_data + offset + 4, rx_data + 4, num);
                     offset += num;
                     continue;
@@ -119,7 +121,7 @@ class XarmRTConnection
                         db_packet_cnt += 1;
                         if (DEBUG_MODE)
                             ROS_INFO("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d] Data packet stick to packets, the previous data packet will be discarded. num=%d, offset=%d\n", 
-                                db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_faied_pkt_cnt, num, offset);
+                                db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_failed_pkt_cnt, num, offset);
                         PRINT_HEX_DATA(ret_data, size + 4, "[%d] Discard Packet: ", db_packet_cnt);
                         memcpy(ret_data + 4, rx_data + 4 + offset2, size);
                         offset2 += size;
@@ -127,14 +129,15 @@ class XarmRTConnection
                     
                     int size_of_data = bin8_to_32(ret_data + 4);
                     if (size_of_data != size) {
-                        db_faied_pkt_cnt += 2;
+                        db_failed_pkt_cnt += 2;
                         ROS_WARN("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d] Packet abnormal. num=%d, offset=%d, size=%d, length=%d\n", 
-                            db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_faied_pkt_cnt, num, offset, size, size_of_data);
+                            db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_failed_pkt_cnt, num, offset, size, size_of_data);
                         PRINT_HEX_DATA(ret_data, size + 4, "[%d] Abnormal Packet: ", db_packet_cnt);
                         if (reConnect()) {
                             size = 0;
                             offset = 0;
                             prev_pkt_is_not_empty = false;
+                            first_cycle = 1;
                             continue;
                         };
                         ROS_ERROR("packet abnormal, reconnect failed\n");
@@ -152,7 +155,7 @@ class XarmRTConnection
                     if (offset > 0) {
                         if (DEBUG_MODE)
                             ROS_INFO("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d] Data packets are redundant and will be left for the next packet splicing process. num=%d, offset=%d\n", 
-                                db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_faied_pkt_cnt, num, offset);
+                                db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_failed_pkt_cnt, num, offset);
                         memcpy(ret_data + 4, rx_data + 4 + offset2, offset);
                     }
                     if (!prev_pkt_is_not_empty) {
@@ -166,18 +169,19 @@ class XarmRTConnection
                     db_success_pkt_cnt++;
                 }
                 else {
-                    db_faied_pkt_cnt++;
+                    db_failed_pkt_cnt++;
                 }
                 if (DEBUG_MODE && db_packet_cnt % 900 == 2) {
                     // report_data.print_data();
-                    ROS_INFO("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d]", db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_faied_pkt_cnt);
+                    ROS_INFO("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d]", db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_failed_pkt_cnt);
                 }
 
                 if (ret == 0)
                 {
                     rxcnt++;
-
+                    last_now = now;
                     now = ros::Time::now();
+                    elapsed = now - last_now;
                     js_msg.header.stamp = now;
                     js_msg.header.frame_id = "real-time data";
                     js_msg.name.resize(joint_num_);
@@ -197,7 +201,7 @@ class XarmRTConnection
                         }
                         else
                         {
-                            js_msg.velocity[i] = (js_msg.position[i] - prev_angle[i])*REPORT_RATE_HZ;
+                            js_msg.velocity[i] = (js_msg.position[i] - prev_angle[i]) / elapsed.toSec();
                         }
 
                         js_msg.effort[i] = (double)report_data.tau[i];
@@ -278,7 +282,8 @@ class XarmRTConnection
 
     public:
         char *ip;
-        ros::Time now;
+        ros::Time now, last_now;
+        ros::Duration elapsed;
         SocketPort *arm_report;
         // ReportDataNorm norm_data;
         XArmReportData report_data;
@@ -289,7 +294,7 @@ class XarmRTConnection
 
         int joint_num_;
         std::vector<std::string> joint_name_;
-        constexpr static const double REPORT_RATE_HZ = 1000; /* 10Hz, same with norm_report frequency */
+        constexpr static const double GET_FRAME_RATE_HZ = 1000;
 };
 
 int main(int argc, char **argv)
