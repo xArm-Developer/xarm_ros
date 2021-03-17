@@ -1,6 +1,8 @@
 <launch>
   <arg name="robot_ip_1" /> 
   <arg name="robot_ip_2" />
+  <arg name="report_type_1" default="normal" />	
+  <arg name="report_type_2" default="normal" />	
   <arg name="hw_ns_1" default="L_xarm6" />
   <arg name="hw_ns_2" default="R_xarm6" />
   <!-- load the default move_group planner (not xarm_simple_planner) -->
@@ -13,6 +15,8 @@
   <include file="$(find xarm_bringup)/launch/dual_xarm6_server.launch">
     <arg name="robot_ip_1" value="$(arg robot_ip_1)" />
     <arg name="robot_ip_2" value="$(arg robot_ip_2)" />
+    <arg name="report_type_1" value="$(arg report_type_1)" />
+    <arg name="report_type_2" value="$(arg report_type_2)" />
     <arg name="hw_ns_1" value="$(arg hw_ns_1)" />
     <arg name="hw_ns_2" value="$(arg hw_ns_2)" />
     <arg name="use_moveit" value="false" />

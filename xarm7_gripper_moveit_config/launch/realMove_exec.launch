@@ -1,6 +1,7 @@
 <launch>
 
   <arg name="robot_ip" />
+  <arg name="report_type" default="normal" />	
   <!-- load the default move_group planner (not xarm_simple_planner) -->
   <arg name="show_rviz" default="true" />
   <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
@@ -11,6 +12,7 @@
   <!-- common: bring up node to enable real xArm control -->
   <include file="$(find xarm_bringup)/launch/xarm7_server.launch">
     <arg name="robot_ip" value="$(arg robot_ip)" />
+    <arg name="report_type" value="$(arg report_type)" />
     <arg name="use_moveit" value="true" />
     <arg name="ns" value="$(arg xarm_hw_ns)" />
     <arg name="use_gripper_action" value="true" />
