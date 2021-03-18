@@ -64,7 +64,6 @@ namespace xarm_control
 		std::string robot_ip;
 		std::vector<std::string> jnt_names;
 		int xarm_dof = 0;
-		double ctrl_rate = 100;
 
 		if(!robot_hw_nh.hasParam("DOF"))
 		{
@@ -76,9 +75,10 @@ namespace xarm_control
 			ROS_ERROR("ROS Parameter xarm_robot_ip not specified!");
 			return false;
 		}
-		if(!robot_hw_nh.hasParam("control_rate"))
+		// If there is no /robot_description parameter, moveit controller may send zero command even controller fails to initialize
+		if(!robot_hw_nh.hasParam("/robot_description"))
 		{
-			ROS_ERROR("ROS Parameter control_rate not specified!");
+			ROS_ERROR("ROS Parameter /robot_description not specified!");
 			return false;
 		}
 
@@ -86,11 +86,9 @@ namespace xarm_control
 		robot_hw_nh.getParam("DOF", xarm_dof);
 		robot_hw_nh.getParam("xarm_robot_ip", robot_ip);
 		robot_hw_nh.getParam("joint_names", jnt_names);
-		robot_hw_nh.getParam("control_rate", ctrl_rate);
 
 		dof_ = xarm_dof;
 		jnt_names_ = jnt_names;
-		control_rate_ = ctrl_rate;
 		initial_write_ = true;
 
 		clientInit(robot_ip, robot_hw_nh);
@@ -140,7 +138,7 @@ namespace xarm_control
 		for(int k=0; k<dof_; k++)
 		{
 			// make sure no abnormal command will be written into joints, check if cmd velocity > [180 deg/sec * (1+10%)]
-			if(fabs(position_cmd_float_[k]-(float)position_cmd_[k])*control_rate_ > 3.14*1.25  && !initial_write_)
+			if(fabs(position_cmd_float_[k]-(float)position_cmd_[k])/(period.toSec()) > 3.14*1.25  && !initial_write_)
 			{
 				ROS_WARN("joint %d abnormal command! previous: %f, this: %f\n", k+1, position_cmd_float_[k], (float)position_cmd_[k]);
 				// return;
@@ -150,7 +148,7 @@ namespace xarm_control
 		}
 
 		xarm.setServoJ(position_cmd_float_);
-
+		
 		initial_write_ = false;
 	}
 

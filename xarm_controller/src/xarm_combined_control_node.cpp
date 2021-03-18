@@ -12,7 +12,6 @@ int main(int argc, char**argv)
 	ros::init(argc, argv, "xarm_controller");
 	ros::NodeHandle nh;
 	double ctrl_rate = 100;
-	nh.setParam("control_rate", ctrl_rate);
 	ros::Rate r(ctrl_rate);
 	
 	ros::Duration(1.0).sleep();
