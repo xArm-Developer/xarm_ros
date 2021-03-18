@@ -37,6 +37,7 @@ class XarmRTConnection
         {
             root_nh.getParam("DOF", joint_num_);
             root_nh.getParam("joint_names", joint_name_);
+            root_nh.getParam("xarm_report_type", report_type);
             ip = server_ip;
             xarm_driver = drv;
             xarm_driver.XARMDriverInit(root_nh, server_ip);
@@ -79,7 +80,7 @@ class XarmRTConnection
             int num = 0;
             int offset = 0;
             unsigned char rx_data[1024];
-            unsigned char prev_data[512];
+            unsigned char prev_data[1280];
             unsigned char ret_data[1024 * 2];
 
             int db_read_cnt = 0;
@@ -90,6 +91,8 @@ class XarmRTConnection
             bool prev_pkt_is_not_empty = false;
 
             ROS_INFO("start to handle the tcp report");
+
+            report_data_ptr = new XArmReportData(report_type);
 
             while(xarm_driver.isConnectionOK())
             {
@@ -146,7 +149,7 @@ class XarmRTConnection
                     else {
                         if (prev_pkt_is_not_empty) {
                             PRINT_HEX_DATA(prev_data, size + 4, "[%d] Normal Packet: ", db_packet_cnt);
-                            xarm_driver.update_rich_data(prev_data, size + 4);
+                            // xarm_driver.update_rich_data(prev_data, size + 4);
                         }
                         memcpy(prev_data, ret_data, size + 4);
                     }
@@ -164,7 +167,9 @@ class XarmRTConnection
                     }
                 }
 
-                ret = xarm_driver.flush_report_data(report_data);
+                ret = report_data_ptr->flush_data(prev_data);
+
+                // ret = xarm_driver.flush_report_data(report_data);
                 if (ret == 0) {
                     db_success_pkt_cnt++;
                 }
@@ -172,7 +177,7 @@ class XarmRTConnection
                     db_failed_pkt_cnt++;
                 }
                 if (DEBUG_MODE && db_packet_cnt % 900 == 2) {
-                    // report_data.print_data();
+                    report_data_ptr->print_data();
                     ROS_INFO("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d]", db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_failed_pkt_cnt);
                 }
 
@@ -190,7 +195,7 @@ class XarmRTConnection
                     js_msg.effort.resize(joint_num_);
                     for(i = 0; i < joint_num_; i++)
                     {
-                        d = (double)report_data.angle[i];
+                        d = (double)report_data_ptr->angle[i];
                         js_msg.name[i] = joint_name_[i];
                         js_msg.position[i] = d;
 
@@ -204,26 +209,26 @@ class XarmRTConnection
                             js_msg.velocity[i] = (js_msg.position[i] - prev_angle[i]) / elapsed.toSec();
                         }
 
-                        js_msg.effort[i] = (double)report_data.tau[i];
+                        js_msg.effort[i] = (double)report_data_ptr->tau[i];
 
                         prev_angle[i] = d;
                     }
 
                     xarm_driver.pub_joint_state(js_msg);
 
-                    rm_msg.state = report_data.state;
-                    rm_msg.mode = report_data.mode;
-                    rm_msg.cmdnum = report_data.cmdnum;
-                    rm_msg.err = report_data.err;
-                    rm_msg.warn = report_data.war;
-                    rm_msg.mt_brake = report_data.mt_brake;
-                    rm_msg.mt_able = report_data.mt_able;
+                    rm_msg.state = report_data_ptr->state;
+                    rm_msg.mode = report_data_ptr->mode;
+                    rm_msg.cmdnum = report_data_ptr->cmdnum;
+                    rm_msg.err = report_data_ptr->err;
+                    rm_msg.warn = report_data_ptr->war;
+                    rm_msg.mt_brake = report_data_ptr->mt_brake;
+                    rm_msg.mt_able = report_data_ptr->mt_able;
                     rm_msg.angle.resize(joint_num_);
 
                     for(i = 0; i < joint_num_; i++)
                     {
                         /* set the float precision*/
-                        double d = report_data.angle[i];
+                        double d = report_data_ptr->angle[i];
                         double r;
                         char str[8];
                         sprintf(str, "%0.3f", d);
@@ -232,30 +237,30 @@ class XarmRTConnection
                     }
                     for(i = 0; i < 6; i++)
                     {
-                        rm_msg.pose[i] = report_data.pose[i];
-                        rm_msg.offset[i] = report_data.tcp_offset[i];
+                        rm_msg.pose[i] = report_data_ptr->pose[i];
+                        rm_msg.offset[i] = report_data_ptr->tcp_offset[i];
                     }
                     xarm_driver.pub_robot_msg(rm_msg);
 
                     // publish io state: This line may interfere with servoj execution
                     // xarm_driver.pub_io_state();
 
-                    if (report_data.total_num >= 417) {
-                        cio_msg.state = report_data.cgpio_state;
-                        cio_msg.code = report_data.cgpio_code;
-                        cio_msg.input_digitals[0] = report_data.cgpio_input_digitals[0];
-                        cio_msg.input_digitals[1] = report_data.cgpio_input_digitals[1];
-                        cio_msg.output_digitals[0] = report_data.cgpio_output_digitals[0];
-                        cio_msg.output_digitals[1] = report_data.cgpio_output_digitals[1];
+                    if (report_type == "rich" && report_data_ptr->total_num >= 417) {
+                        cio_msg.state = report_data_ptr->cgpio_state;
+                        cio_msg.code = report_data_ptr->cgpio_code;
+                        cio_msg.input_digitals[0] = report_data_ptr->cgpio_input_digitals[0];
+                        cio_msg.input_digitals[1] = report_data_ptr->cgpio_input_digitals[1];
+                        cio_msg.output_digitals[0] = report_data_ptr->cgpio_output_digitals[0];
+                        cio_msg.output_digitals[1] = report_data_ptr->cgpio_output_digitals[1];
 
-                        cio_msg.input_analogs[0] = report_data.cgpio_input_analogs[0];
-                        cio_msg.input_analogs[1] = report_data.cgpio_input_analogs[1];
-                        cio_msg.output_analogs[0] = report_data.cgpio_output_analogs[0];
-                        cio_msg.output_analogs[1] = report_data.cgpio_output_analogs[1];
+                        cio_msg.input_analogs[0] = report_data_ptr->cgpio_input_analogs[0];
+                        cio_msg.input_analogs[1] = report_data_ptr->cgpio_input_analogs[1];
+                        cio_msg.output_analogs[0] = report_data_ptr->cgpio_output_analogs[0];
+                        cio_msg.output_analogs[1] = report_data_ptr->cgpio_output_analogs[1];
 
                         for (int i = 0; i < 16; ++i) {
-                            cio_msg.input_conf[i] = report_data.cgpio_input_conf[i];
-                            cio_msg.output_conf[i] = report_data.cgpio_output_conf[i];
+                            cio_msg.input_conf[i] = report_data_ptr->cgpio_input_conf[i];
+                            cio_msg.output_conf[i] = report_data_ptr->cgpio_output_conf[i];
                         }
                         xarm_driver.pub_cgpio_state(cio_msg);
                     }
@@ -269,6 +274,7 @@ class XarmRTConnection
                 }
 
             }
+            delete report_data_ptr;
             delete [] prev_angle;
             ROS_ERROR("xArm Report Connection Failed! Please Shut Down (Ctrl-C) and Retry ...");
         }
@@ -282,11 +288,12 @@ class XarmRTConnection
 
     public:
         char *ip;
+        std::string report_type;
         ros::Time now, last_now;
         ros::Duration elapsed;
         SocketPort *arm_report;
         // ReportDataNorm norm_data;
-        XArmReportData report_data;
+        XArmReportData *report_data_ptr;
         sensor_msgs::JointState js_msg;
         xarm_api::XARMDriver xarm_driver;
         xarm_msgs::RobotMsg rm_msg;

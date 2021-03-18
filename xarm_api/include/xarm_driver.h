@@ -87,17 +87,17 @@ namespace xarm_api
             void pub_cgpio_state(xarm_msgs::CIOState &cio_msg);
 
             int get_frame(unsigned char *data);
-            void update_rich_data(unsigned char *data, int size);
-            int flush_report_data(XArmReportData &report_data);
+            // void update_rich_data(unsigned char *data, int size);
+            // int flush_report_data(XArmReportData &report_data);
             // int get_rich_data(ReportDataNorm &norm_data);
             UxbusCmd *get_uxbus_cmd(void) { return arm_cmd_; };
 
         private:
             SocketPort *arm_report_;
-            XArmReportData report_data_;
+            // XArmReportData report_data_;
             // ReportDataNorm norm_data_;
             UxbusCmd *arm_cmd_;
-            unsigned char rx_data_[1280];
+            // unsigned char rx_data_[1280];
             std::string ip;
             std::string report_type_;
             ros::AsyncSpinner spinner;

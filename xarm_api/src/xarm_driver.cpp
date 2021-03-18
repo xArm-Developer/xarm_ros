@@ -842,18 +842,18 @@ namespace xarm_api
         return ret;
     }
 
-    void XARMDriver::update_rich_data(unsigned char *data, int size)
-    {
-        memcpy(rx_data_, data, size);
-    }
+    // void XARMDriver::update_rich_data(unsigned char *data, int size)
+    // {
+    //     memcpy(rx_data_, data, size);
+    // }
 
-    int XARMDriver::flush_report_data(XArmReportData &report_data)
-    {
-        int ret;
-        ret = report_data_.flush_data(rx_data_);
-        report_data = report_data_;
-        return ret;
-    }
+    // int XARMDriver::flush_report_data(XArmReportData &report_data)
+    // {
+    //     int ret;
+    //     ret = report_data_.flush_data(rx_data_);
+    //     report_data = report_data_;
+    //     return ret;
+    // }
 
     // int XARMDriver::get_rich_data(ReportDataNorm &norm_data)
     // {

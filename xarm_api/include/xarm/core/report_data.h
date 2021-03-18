@@ -7,6 +7,7 @@
 #ifndef XARM_REPORT_DATA_H_
 #define XARM_REPORT_DATA_H_
 
+#include <string>
 #include "xarm/core/common/data_type.h"
 
 
@@ -114,11 +115,21 @@ class ReportDataRich {
 
 class XArmReportData {
 public:
-  XArmReportData(void);
+  XArmReportData(std::string report_type = "normal");
   ~XArmReportData(void);
 
   int flush_data(unsigned char *rx_data);
   void print_data(void);
+
+private:
+  int __flush_common_data(unsigned char *rx_data);
+  void __print_common_data(void);
+  int _flush_dev_data(unsigned char *rx_data);
+  void _print_dev_data(void);
+  int _flush_normal_data(unsigned char *rx_data);
+  void _print_normal_data(void);
+  int _flush_rich_data(unsigned char *rx_data);
+  void _print_rich_data(void);
 
 public:
   int total_num;
@@ -185,6 +196,8 @@ public:
   unsigned char cgpio_output_conf[16];
 
 private:
+  std::string report_type;
+  unsigned char *data_fp;
   int sv3msg_[16];
   float trs_msg_[5];
   float p2p_msg_[5];
