@@ -15,10 +15,10 @@
     * [5.3 xarm_controller](#53-xarm_controller)  
     * [5.4 xarm_bringup](#54-xarm_bringup)  
     * [5.5 ***xarm7_moveit_config***](#55-xarm7_moveit_config)  
-    * [5.6 ***xarm_planner(有更新)***](#56-xarm_planner)  
+    * [5.6 ***xarm_planner***](#56-xarm_planner)  
     * [5.7 ***xarm_api/xarm_msgs***](#57-xarm_apixarm_msgs)  
         * [5.7.1 使用ROS Service启动 xArm (***后续指令执行的前提***)](#使用ros-service启动-xarm)  
-        * [5.7.2 关节空间和笛卡尔空间运动指令的示例(**有更新**)](#关节空间和笛卡尔空间运动指令的示例)
+        * [5.7.2 关节空间和笛卡尔空间运动指令的示例(新增**速度模式**)](#关节空间和笛卡尔空间运动指令的示例)
         * [5.7.3 I/O 操作](#工具-io-操作)  
         * [5.7.4 获得反馈状态信息](#获得反馈状态信息)  
         * [5.7.5 关于设定末端工具偏移量](#关于设定末端工具偏移量)  
@@ -29,7 +29,7 @@
 * [6. 模式切换](#6-模式切换)
     * [6.1 模式介绍](#61-模式介绍)
     * [6.2 切换模式的正确方法](#62-切换模式的正确方法)
-* [7. 其他示例(***new***)](#7-其他示例)
+* [7. 其他示例](#7-其他示例)
   * [7.1 两台xArm5 (两进程独立控制)](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#1-multi_xarm5-controlled-separately)
     * [7.2 Servo_Cartesian 笛卡尔位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
     * [7.3 Servo_Joint 关节位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#3-servo_joint-streamed-joint-space-trajectory)
@@ -52,6 +52,7 @@
    * 添加 xArm Gripper action 控制。
    * 添加 xArm-with-gripper Moveit 开发包。
    * 添加 vacuum gripper（真空吸头）3D模型以及 xArm-with-vacuum-gripper Moveit开发包 (位于 /examples 路径下)。
+   * 添加关节空间和笛卡尔空间的速度控制模式。(需要**控制器固件版本 >= 1.6.8**)
 
 # 3. 准备工作
 
@@ -138,6 +139,8 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 &ensp;&ensp;内含加载xarm driver的启动文件，用来控制真实机械臂。  
 
 ## 5.5 xarm7_moveit_config
+请注意: xarm_moveit_config相关package会将所有关节限制在`[-pi, pi]`范围内, 因为如果不加限制，moveit可能会解出关节运动范围很大的轨迹。这个关节范围限制可以通过设置`...moveit_config/launch/planning_context.launch`文件中的"limited:=false"来取消。  
+
 &ensp;&ensp;
    部分文档由moveit_setup_assistant自动生成, 用于Moveit Planner和Rviz可视化仿真。如果已安装MoveIt!,可以尝试跑demo： 
    ```bash
@@ -196,14 +199,24 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 'robot_dof'参数指的是xArm的关节数目 (默认值为7)。xarm_planner已经可以支持装载UF机械爪或真空吸头的xArm模型，请根据需要指定"**add_gripper**"或"**add_vacuum_gripper**"为true。   
 
 ## 5.7 xarm_api/xarm_msgs:
-&ensp;&ensp;这两个package提供给用户封装了xArm SDK功能的ros服务, xarm自带的控制盒会进行轨迹规划。当前支持六种运动命令（ros service同名）:  
-* move_joint: 关节空间的点到点运动, 用户仅需要给定目标关节位置，运动过程最大关节速度/加速度即可， 对应SDK里的set_servo_angle()函数。 
-* move_line: 笛卡尔空间的直线轨迹运动，用户需要给定工具中心点（TCP）目标位置以及笛卡尔速度、加速度，对应SDK里的set_position()函数【不指定交融半径】。  
-* move_lineb: 圆弧交融的直线运动，给定一系列中间点以及目标位置。 每两个中间点间为直线轨迹，但在中间点处做一个圆弧过渡（需给定半径）来保证速度连续，对应SDK里的set_position()函数【指定了交融半径】。代码示例请参考[move_test.cpp](./xarm_api/test/move_test.cpp)  
-* move_line_tool: 基于工具坐标系（而不是基坐标系）的直线运动。对应SDK里的set_tool_position()函数。  
+&ensp;&ensp;这两个package提供给用户封装了xArm SDK功能的ros服务, xarm自带的控制盒会进行轨迹规划。当前支持八种运动命令（ros service同名）, 请首先务必确保手臂工作在正确的模式下, 参考[模式切换](#6-模式切换):  
+#### 手臂模式0:
+* `move_joint`: 关节空间的点到点运动, 用户仅需要给定目标关节位置，运动过程最大关节速度/加速度即可， 对应SDK里的set_servo_angle()函数。 
+* `move_line`: 笛卡尔空间的直线轨迹运动，用户需要给定工具中心点（TCP）目标位置以及笛卡尔速度、加速度，对应SDK里的set_position()函数【不指定交融半径】。  
+* `move_lineb`: 圆弧交融的直线运动，给定一系列中间点以及目标位置。 每两个中间点间为直线轨迹，但在中间点处做一个圆弧过渡（需给定半径）来保证速度连续，对应SDK里的set_position()函数【指定了交融半径】。代码示例请参考[move_test.cpp](./xarm_api/test/move_test.cpp)  
+* `move_line_tool`: 基于工具坐标系（而不是基坐标系）的直线运动。对应SDK里的set_tool_position()函数。  
 另外需要 ***注意*** 的是，使用以上4种service之前，需要通过service依次将机械臂模式(mode)设置为0，然后状态(state)设置为0。这些运动指令的意义和详情可以参考产品使用指南。除此之外还提供了其他xarm编程API支持的service调用, 对于相关ros service的定义在 [xarm_msgs目录](./xarm_msgs/)中。  
-* move_line_aa: 笛卡尔空间的直线轨迹运动，姿态使用**轴-角** 而不是roll-pitch-yaw欧拉角，在使用此命令之前请仔细查阅xArm用户手册关于轴-角的解释。  
-* move_servo_cart/move_servoj: （固定）高频率的笛卡尔或关节轨迹指令，分别对应SDK里的set_servo_cartesian()和set_servo_angle_j()，需要机械臂工作在**模式1**，可以间接实现速度控制。在使用这两个服务功能之前，务必做好**风险评估**并且仔细阅读第[7.2-7.3节](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)的使用方法。  
+* `move_line_aa`: 笛卡尔空间的直线轨迹运动，姿态使用**轴-角** 而不是roll-pitch-yaw欧拉角，在使用此命令之前请仔细查阅xArm用户手册关于轴-角的解释。  
+
+#### 手臂模式1:
+* `move_servo_cart/move_servoj`: （固定）高频率的笛卡尔或关节轨迹指令，分别对应SDK里的set_servo_cartesian()和set_servo_angle_j()，需要机械臂工作在**模式1**，可以间接实现速度控制。在使用这两个服务功能之前，务必做好**风险评估**并且仔细阅读第[7.2-7.3节](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)的使用方法。  
+
+#### 手臂模式4:
+* `velo_move_joint`: 指定所有关节目标转速(单位: rad/s)的运动, 最大关节加速度可以通过 `set_max_acc_joint` 服务设定。（[例子](#5-关节旋转速度控制)）  
+
+#### 手臂模式5:
+* `velo_move_line:` 指定TCP笛卡尔线速度（mm/s）和姿态角速度（rad/s，**轴-角速度**表示）的运动, 最大关节加速度可以通过`set_max_acc_line` 服务设定。（[例子](#6-笛卡尔线速度控制)）  
+
 
 #### 使用ROS Service启动 xArm:
 
@@ -264,6 +277,34 @@ $ rosservice call /xarm/move_line_aa [0,0,0,0,0,1.0] 30.0 100.0 0.0 1 1
 ```bash
 $ rosservice call /xarm/move_line_aa [0,122,0,-0.5,0,0] 30.0 100.0 0.0 0 1  
 ```
+
+##### 5. 关节旋转速度控制:
+&ensp;&ensp;（需要**控制器固件版本 >= 1.6.8**）如果需要对关节速度进行控制, 请先根据[模式切换](#6-模式切换)设置为**Mode 4**, 使用前请阅读[MoveVelo.srv](./xarm_msgs/srv/MoveVelo.srv)并理解速度控制服务输入参数的含义。对于关节速度控制, 如果多于一个关节参与运动，可以设置**jnt_sync** 参数为 1 来确保每个运动关节同步进行加、减速，否则每个关节会以自己最快的方式达到指定速度。***coord*** 参数在这里没有意义，设为0即可。例如: 
+```bash
+$ rosservice call /xarm/velo_move_joint [0.1,-0.1,0,0,0,-0.3] 1 0
+``` 
+会命令对应的关节(for xArm6)以对应的速度(in rad/s)运动，并且所有关节会同步达到指定速度。最大关节加速度可以用以下方法设置，单位rad/s^2:  
+```bash
+$ rosservice call /xarm/set_max_acc_joint 10.0  (maximum: 20.0 rad/s^2)
+``` 
+
+##### 6. 笛卡尔线速度控制:
+&ensp;&ensp;（需要**控制器固件版本 >= 1.6.8**）如果期望控制TCP朝着某一方向的线速度, 请先根据[模式切换](#6-模式切换)设置为**Mode 5**, 使用前请阅读[MoveVelo.srv](./xarm_msgs/srv/MoveVelo.srv)并理解速度控制服务输入参数的含义。如果指定的线速度是对应用户/基坐标系，设置 **coord** 参数为 0，如果是对应工具坐标系则设置为 1。***jnt_sync*** 参数在这里无意义，设置为0即可。例如: 
+```bash
+$ rosservice call /xarm/velo_move_line [30,0,0,0,0,0] 1 0
+``` 
+会指定xArm的末端TCP沿着工具坐标系X轴以30 mm/s的速度移动，最大线性加速度可以用以下方法设置，单位mm/s^2:  
+```bash
+$ rosservice call /xarm/set_max_acc_line 5000.0  (maximum: 50000 mm/s^2)
+``` 
+对于姿态旋转速度控制, 请留意姿态速度是以**轴-角速度**方式指定，即：[(指定坐标系下)单位旋转矢量] 乘以 [旋转角速度标量]。例如, 
+```bash
+$ rosservice call /xarm/velo_move_line [0,0,0,0.707,0,0] 0 0
+``` 
+会命令末端TCP绕着用户/基坐标系的X轴以45度/秒速度旋转，姿态变化的最大加速度目前是一个固定值。  
+
+请注意: 速度模式下，手臂可以通过两种方式停止： 发送**全零速度**指令, 或者设置**state为4(STOP)** 然后下一次运动前再设置回0(READY)。  
+
 
 ##### 运动服务返回值:
 &ensp;&ensp;请注意以上的运动服务调用在默认情况下会**立刻返回**，如果希望等待运动结束之后再返回, 需要提前设置 ros parameter **"/xarm/wait_for_finish"** 为 **true**. 即:  
@@ -428,9 +469,12 @@ respond_data: [9, 1, 6, 0, 10, 0, 3]
 
 &ensp;&ensp; ***Mode 0*** : 基于xArm controller规划的位置模式；   
 &ensp;&ensp; ***Mode 1*** : 基于外部轨迹规划器的位置模式；  
-&ensp;&ensp; ***Mode 2*** : 自由拖动(零重力)模式。  
+&ensp;&ensp; ***Mode 2*** : 自由拖动(零重力)模式；  
+&ensp;&ensp; ***Mode 3*** : 保留；  
+&ensp;&ensp; ***Mode 4*** : 关节速度控制模式；  
+&ensp;&ensp; ***Mode 5*** : 笛卡尔速度控制模式。  
 
-&ensp;&ensp;***Mode 0*** 是系统初始化的默认模式，当机械臂发生错误(碰撞、过载、超速等等),系统也会自动切换到模式0。并且对于[xarm_api](./xarm_api/)包和[SDK](https://github.com/xArm-Developer/xArm-Python-SDK)中提供的运动指令都要求xArm工作在模式0来执行。***Mode 1*** 是为了方便像 Moveit! 一样的第三方规划器绕过xArm控制器的规划去执行轨迹。 ***Mode 2*** 可以打开自由拖动模式, 机械臂会进入零重力状态方便拖动示教, 但需注意在进入模式2之前确保机械臂安装方式和负载均已正确设置。
+&ensp;&ensp;***Mode 0*** 是系统初始化的默认模式，当机械臂发生错误(碰撞、过载、超速等等),系统也会自动切换到模式0。并且对于[xarm_api](./xarm_api/)包和[SDK](https://github.com/xArm-Developer/xArm-Python-SDK)中提供的运动指令都要求xArm工作在模式0来执行。***Mode 1*** 是为了方便像 Moveit! 一样的第三方规划器绕过xArm控制器的规划去执行轨迹。 ***Mode 2*** 可以打开自由拖动模式, 机械臂会进入零重力状态方便拖动示教, 但需注意在进入模式2之前确保机械臂安装方式和负载均已正确设置。 ***Mode 4*** 可以直接给定关节期望速度来控制手臂。***Mode 5*** 可以给定末端笛卡尔线速度来控制手臂运动。
 
 ### 6.2 切换模式的正确方法:  
 &ensp;&ensp;如果在执行Moveit!规划的轨迹期间发生碰撞等错误, 为了安全考虑，当前模式将被自动从1切换到0, 同时robot state将变为 4 (错误状态)。这时即使碰撞已经解除，机械臂在重新回到模式1之前也无法执行任何Moveit!或者servoj指令。请依次按照下列指示切换模式:  

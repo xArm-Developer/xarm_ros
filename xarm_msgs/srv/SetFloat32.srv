@@ -1,0 +1,14 @@
+# request: set single floating point parameters.
+# data: floating point (32-bit) parameter value.
+
+float32 data
+
+-----
+
+# response: 
+#	ret is 0 for successful execution and others for errors or warnings occured
+#	message is a string returned by function, indicating execution status.
+
+int16 ret
+
+string message

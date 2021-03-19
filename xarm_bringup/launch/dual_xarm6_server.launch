@@ -7,7 +7,8 @@
   <!-- Important: currently real xArm can be either controlled by API service or Moveit planner, but not at the same time! -->
   <!-- If you use moveit, use the launch file in xarm*_moveit_config package for startup! -->
   <arg name="use_moveit" default="false" />
-
+  
+  <!-- important parameters for combined hardware interface initialization -->
   <rosparam file="$(find dual_xarm6_moveit_config)/config/xarm6_combined_control_config.yaml" command="load"/>
 
   <!-- common: bring up node to collect robot feedback -->

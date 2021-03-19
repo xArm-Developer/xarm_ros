@@ -4,14 +4,14 @@
 #	Cartesian space: mm/s, radian/s.
 
 # velocities: the velocity list of the joints/tcp
-#   For vc_set_jointv service: [joint1_velocity, ..., joint7_velocity]
-#   For vc_set_linev service: [x_velocity, y_svelocity, z_velocity, roll_velocity, pitch_velocity, yaw_velocity]
+#   For velo_move_joint service: [joint1_velocity, ..., joint7_velocity]
+#   For velo_move_line service: [x_velocity, y_svelocity, z_velocity, rx_velocity, ry_velocity, rz_velocity (axis-angle)]
 float32[] velocities
 
-# jnt_sync: this is special for vc_set_jointv service, meaning whether all joints accelerate and decelerate synchronously
+# jnt_sync: this is special for velo_move_joint service, meaning whether all joints accelerate and decelerate synchronously, 1 for yes, 0 for no.
 int16 jnt_sync
 
-# coord: this is special for vc_set_linev service, meaning whether is tool coordinate or not
+# coord: this is special for velo_move_line service, meaning whether motion is in tool coordinate(1) or not(0)
 int16 coord
 
 ---

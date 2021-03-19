@@ -117,8 +117,11 @@ namespace xarm_api
         set_controller_aout_server_ = nh_.advertiseService("set_controller_aout", &XARMDriver::SetControllerAOutCB, this);
         get_controller_ain_server_ = nh_.advertiseService("get_controller_ain", &XARMDriver::GetControllerAInCB, this);
 
-        vc_set_jointv_server_ = nh_.advertiseService("vc_set_jointv", &XARMDriver::VeloMoveJointCB, this);
-        vc_set_linev_server_ = nh_.advertiseService("vc_set_linev", &XARMDriver::VeloMoveLineVCB, this);
+        // velocity control:
+        vc_set_jointv_server_ = nh_.advertiseService("velo_move_joint", &XARMDriver::VeloMoveJointCB, this);
+        vc_set_linev_server_ = nh_.advertiseService("velo_move_line", &XARMDriver::VeloMoveLineVCB, this);
+        set_max_jacc_server_ = nh_.advertiseService("set_max_acc_joint", &XARMDriver::SetMaxJAccCB, this);
+        set_max_lacc_server_ = nh_.advertiseService("set_max_acc_line", &XARMDriver::SetMaxLAccCB, this);
 
         // state feedback topics:
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
@@ -738,6 +741,32 @@ namespace xarm_api
 
         res.ret = arm_cmd_->vc_set_linev(line_v, req.coord);
         res.message = "velocity move line, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XARMDriver::SetMaxJAccCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res)
+    {
+        if(req.data<0 || req.data>20.0)
+        {
+            res.ret = -1;
+            res.message = "set max joint acc: " + std::to_string(req.data) + "error! Proper range is: 0-20.0 rad/s^2";
+            return true;
+        }
+        res.ret = arm_cmd_->set_joint_maxacc(req.data);
+        res.message = "set max joint acc: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XARMDriver::SetMaxLAccCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res)
+    {
+        if(req.data<0 || req.data>50000.0)
+        {
+            res.ret = -1;
+            res.message = "set max linear acc: " + std::to_string(req.data) + "error! Proper range is: 0-50000.0 mm/s^2";
+            return true;
+        }
+        res.ret = arm_cmd_->set_tcp_maxacc(req.data);
+        res.message = "set max linear acc: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
         return true;
     }
 

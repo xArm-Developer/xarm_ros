@@ -22,7 +22,7 @@
       </joint>
       <actuator name="${prefix}motor2">
         <hardwareInterface>hardware_interface/${hard_interface}</hardwareInterface>
-        <mechanicalReduction>reduction</mechanicalReduction>
+        <mechanicalReduction>${reduction}</mechanicalReduction>
       </actuator>
     </transmission>
 
@@ -33,7 +33,7 @@
       </joint>
       <actuator name="${prefix}motor3">
         <hardwareInterface>hardware_interface/${hard_interface}</hardwareInterface>
-        <mechanicalReduction>reduction</mechanicalReduction>
+        <mechanicalReduction>${reduction}</mechanicalReduction>
       </actuator>
     </transmission>
 
@@ -44,7 +44,7 @@
       </joint>
       <actuator name="${prefix}motor3">
         <hardwareInterface>hardware_interface/${hard_interface}</hardwareInterface>
-        <mechanicalReduction>reduction</mechanicalReduction>
+        <mechanicalReduction>${reduction}</mechanicalReduction>
       </actuator>
     </transmission>
 
@@ -55,7 +55,7 @@
       </joint>
       <actuator name="${prefix}motor5">
         <hardwareInterface>hardware_interface/${hard_interface}</hardwareInterface>
-        <mechanicalReduction>reduction</mechanicalReduction>
+        <mechanicalReduction>${reduction}</mechanicalReduction>
       </actuator>
     </transmission>
 

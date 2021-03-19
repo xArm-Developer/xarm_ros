@@ -6,6 +6,7 @@
 #include "std_msgs/Float32.h"
 #include <thread>
 #include <xarm_msgs/SetInt16.h>
+#include <xarm_msgs/SetFloat32.h>
 #include <xarm_msgs/TCPOffset.h>
 #include <xarm_msgs/SetLoad.h>
 #include <xarm_msgs/SetAxis.h>
@@ -80,6 +81,8 @@ namespace xarm_api
             void SleepTopicCB(const std_msgs::Float32ConstPtr& msg);
             bool VeloMoveJointCB(xarm_msgs::MoveVelo::Request &req, xarm_msgs::MoveVelo::Response &res);
             bool VeloMoveLineVCB(xarm_msgs::MoveVelo::Request &req, xarm_msgs::MoveVelo::Response &res);
+            bool SetMaxJAccCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res);
+            bool SetMaxLAccCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res);
 
             void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
             void pub_joint_state(sensor_msgs::JointState &js_msg);
@@ -146,6 +149,8 @@ namespace xarm_api
             // ros::ServiceServer cgpio_position_set_analog_server_;
             ros::ServiceServer vc_set_jointv_server_;
             ros::ServiceServer vc_set_linev_server_;
+            ros::ServiceServer set_max_jacc_server_;
+            ros::ServiceServer set_max_lacc_server_;
 
             ros::Publisher joint_state_;
             ros::Publisher robot_rt_state_; 
