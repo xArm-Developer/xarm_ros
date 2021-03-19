@@ -292,7 +292,7 @@ $ rosservice call /xarm/set_max_acc_joint 10.0  (maximum: 20.0 rad/s^2)
 ##### 6. Cartesian velocity control:
 &ensp;&ensp;(**xArm controller firmware version >= 1.6.8** required) If controlling linar velocity of TCP towards certain direction is desired, first switch to **Mode 5** as descriped in [mode change section](#6-mode-change). Please check the [MoveVelo.srv](./xarm_msgs/srv/MoveVelo.srv) first to understand the meanings of parameters reqired. Set **coord** to 0 for motion in world/base coordinate system and 1 for tool coordinate system. ***jnt_sync*** parameter is not used here, just set it to 0. For example: 
 ```bash
-$ rosservice call /xarm/velo_move_line [30,0,0,0,0,0] 1 0
+$ rosservice call /xarm/velo_move_line [30,0,0,0,0,0] 0 1
 ``` 
 will command xArm TCP move along X-axis of TOOL coordinate system with speed of 30 mm/s. The maximum linear acceleration can also be configured by (unit: mm/s^2):  
 ```bash

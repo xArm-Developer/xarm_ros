@@ -291,7 +291,7 @@ $ rosservice call /xarm/set_max_acc_joint 10.0  (maximum: 20.0 rad/s^2)
 ##### 6. 笛卡尔线速度控制:
 &ensp;&ensp;（需要**控制器固件版本 >= 1.6.8**）如果期望控制TCP朝着某一方向的线速度, 请先根据[模式切换](#6-模式切换)设置为**Mode 5**, 使用前请阅读[MoveVelo.srv](./xarm_msgs/srv/MoveVelo.srv)并理解速度控制服务输入参数的含义。如果指定的线速度是对应用户/基坐标系，设置 **coord** 参数为 0，如果是对应工具坐标系则设置为 1。***jnt_sync*** 参数在这里无意义，设置为0即可。例如: 
 ```bash
-$ rosservice call /xarm/velo_move_line [30,0,0,0,0,0] 1 0
+$ rosservice call /xarm/velo_move_line [30,0,0,0,0,0] 0 1
 ``` 
 会指定xArm的末端TCP沿着工具坐标系X轴以30 mm/s的速度移动，最大线性加速度可以用以下方法设置，单位mm/s^2:  
 ```bash
