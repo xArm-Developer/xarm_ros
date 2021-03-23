@@ -12,6 +12,12 @@
 #include <control_toolbox/pid.h>
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/joint_command_interface.h>
+#include <joint_limits_interface/joint_limits.h>
+#include <joint_limits_interface/joint_limits_rosparam.h>
+#include <joint_limits_interface/joint_limits_urdf.h>
+#include <urdf_parser/urdf_parser.h>
+#include <urdf/model.h>
+#include <joint_limits_interface/joint_limits_interface.h>
 #include <hardware_interface/robot_hw.h>
 #include <controller_manager/controller_manager.h>
 // ROS
@@ -50,6 +56,9 @@ namespace xarm_control
 		void get_status(int state_mode_err[3]);
 		/* check whether the controller needs to be reset due to error or mode change */
 		bool need_reset();
+	
+	protected:
+		enum ControlMethod {EFFORT, POSITION, VELOCITY};
 
 	private:
 		int curr_state;
@@ -61,19 +70,32 @@ namespace xarm_control
 		std::vector<double> position_cmd_;
 		std::vector<float> position_cmd_float_;
 		std::vector<double> velocity_cmd_;
+		std::vector<float> velocity_cmd_float_;
 		std::vector<double> effort_cmd_;
 
 		std::vector<double> position_fdb_;
 		std::vector<double> velocity_fdb_;
 		std::vector<double> effort_fdb_;
 
-		bool initial_write_;
+		bool initial_write_;		
 		std::mutex mutex_;
 		
 		xarm_api::XArmROSClient xarm;
 
+		urdf::ModelInterfaceSharedPtr model_ptr_;
+		ControlMethod ctrl_method_;
+
 		hardware_interface::JointStateInterface    js_interface_;
-	  	hardware_interface::PositionJointInterface pj_interface_;
+		hardware_interface::EffortJointInterface   ej_interface_;
+		hardware_interface::PositionJointInterface pj_interface_;
+		hardware_interface::VelocityJointInterface vj_interface_;
+
+		joint_limits_interface::EffortJointSaturationInterface   ej_sat_interface_;
+		joint_limits_interface::EffortJointSoftLimitsInterface   ej_limits_interface_;
+		joint_limits_interface::PositionJointSaturationInterface pj_sat_interface_;
+		joint_limits_interface::PositionJointSoftLimitsInterface pj_limits_interface_;
+		joint_limits_interface::VelocityJointSaturationInterface vj_sat_interface_;
+		joint_limits_interface::VelocityJointSoftLimitsInterface vj_limits_interface_;
 
 		ros::Subscriber pos_sub_, vel_sub_, effort_sub_, state_sub_;
 
@@ -81,6 +103,9 @@ namespace xarm_control
 		void pos_fb_cb(const sensor_msgs::JointState::ConstPtr& data);
 		void state_fb_cb(const xarm_msgs::RobotMsg::ConstPtr& data);
 
+		void _register_joint_limits(ros::NodeHandle &root_nh, std::string joint_name, const ControlMethod ctrl_method);
+		void _reset_limits(void);
+		void _enforce_limits(const ros::Duration& period);
 	};
 
 }

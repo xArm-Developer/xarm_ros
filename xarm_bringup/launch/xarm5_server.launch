@@ -9,6 +9,7 @@
   <arg name="use_gripper_action" default="false" />
   
   <rosparam file="$(find xarm5_moveit_config)/config/xarm5_params.yaml" command="load"/>
+  <rosparam if="$(arg use_moveit)" file="$(find xarm5_moveit_config)/config/joint_limits.yaml" command="load" ns="$(arg ns)"/>
 
   <!-- common: bring up node to collect robot feedback -->
   <include file="$(find xarm_bringup)/launch/xarm_driver_common.launch">

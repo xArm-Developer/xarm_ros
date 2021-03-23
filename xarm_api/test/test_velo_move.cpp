@@ -73,8 +73,8 @@ int main(int argc, char **argv)
     ros::ServiceClient motion_ctrl_client_ = nh.serviceClient<xarm_msgs::SetAxis>("/xarm/motion_ctrl");
 	ros::ServiceClient set_mode_client_ = nh.serviceClient<xarm_msgs::SetInt16>("/xarm/set_mode");
 	ros::ServiceClient set_state_client_ = nh.serviceClient<xarm_msgs::SetInt16>("/xarm/set_state");
-	ros::ServiceClient velo_move_joint_client_ = nh.serviceClient<xarm_msgs::MoveVelo>("/xarm/vc_set_jointv");
-	ros::ServiceClient velo_move_line_client_ = nh.serviceClient<xarm_msgs::MoveVelo>("/xarm/vc_set_linev");
+	ros::ServiceClient velo_move_joint_client_ = nh.serviceClient<xarm_msgs::MoveVelo>("/xarm/velo_move_joint");
+	ros::ServiceClient velo_move_line_client_ = nh.serviceClient<xarm_msgs::MoveVelo>("/xarm/velo_move_line");
 
     xarm_msgs::SetAxis set_axis_srv_;
     xarm_msgs::SetInt16 set_int16_srv_;

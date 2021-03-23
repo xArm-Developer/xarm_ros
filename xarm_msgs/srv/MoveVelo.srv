@@ -5,7 +5,7 @@
 
 # velocities: the velocity list of the joints/tcp
 #   For velo_move_joint service: [joint1_velocity, ..., joint7_velocity]
-#   For velo_move_line service: [x_velocity, y_svelocity, z_velocity, rx_velocity, ry_velocity, rz_velocity (axis-angle)]
+#   For velo_move_line service: [x_velocity, y_velocity, z_velocity, rx_velocity, ry_velocity, rz_velocity (axis-angle)]
 float32[] velocities
 
 # jnt_sync: this is special for velo_move_joint service, meaning whether all joints accelerate and decelerate synchronously, 1 for yes, 0 for no.

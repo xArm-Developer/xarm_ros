@@ -177,7 +177,7 @@ class XarmRTConnection
                     db_failed_pkt_cnt++;
                 }
                 if (DEBUG_MODE && db_packet_cnt % 900 == 2) {
-                    report_data_ptr->print_data();
+                    // report_data_ptr->print_data();
                     ROS_INFO("[READ:%d][PACKET:%d][SUCCESS:%d][DISCARD:%d][FAILED:%d]", db_read_cnt, db_packet_cnt, db_success_pkt_cnt, db_discard_pkt_cnt, db_failed_pkt_cnt);
                 }
 

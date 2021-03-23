@@ -26,7 +26,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   # trajectory_msgs
   # transmission_interface
-  # urdf
+  urdf
 )
 
 ## System dependencies are found with CMake's conventions
