@@ -13,11 +13,11 @@
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <joint_limits_interface/joint_limits.h>
+#include <joint_limits_interface/joint_limits_interface.h>
 #include <joint_limits_interface/joint_limits_rosparam.h>
 #include <joint_limits_interface/joint_limits_urdf.h>
 #include <urdf_parser/urdf_parser.h>
 #include <urdf/model.h>
-#include <joint_limits_interface/joint_limits_interface.h>
 #include <hardware_interface/robot_hw.h>
 #include <controller_manager/controller_manager.h>
 // ROS
@@ -58,7 +58,7 @@ namespace xarm_control
 		bool need_reset();
 	
 	protected:
-		enum ControlMethod {EFFORT, POSITION, VELOCITY};
+		enum ControlMethod {POSITION, VELOCITY, EFFORT};
 
 	private:
 		int curr_state;

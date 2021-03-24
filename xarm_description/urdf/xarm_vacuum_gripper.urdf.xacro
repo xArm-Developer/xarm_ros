@@ -3,7 +3,7 @@
 <!--
   Author: Jason Peng <jason@ufactory.cc>
 -->
-  <xacro:macro name="xarm_vacuum_gripper_urdf" params="prefix:='' attach_to:='' rpy:='0 0 0' xyz:='0 0 0' ">
+  <xacro:macro name="xarm_vacuum_gripper_urdf" params="prefix:='' attach_to:='' rpy:='0 0 0' xyz:='0 0 0' effort_control:='false' velocity_control:='false' ">
   <xacro:unless value="${attach_to == ''}">
     <joint name="${prefix}vacuum_gripper_fix" type="fixed">
       <parent link="${attach_to}"/>

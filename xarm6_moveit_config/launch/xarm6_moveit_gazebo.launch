@@ -1,8 +1,9 @@
 <launch>
-
+  <arg name="velocity_control" default="false"/>
   <!-- Remap the name space so it can send command to gazebo loaded controller -->
   <!-- this remap must appear BEFORE move_group launch -->
-  <remap from="/follow_joint_trajectory" to="/xarm/xarm6_traj_controller/follow_joint_trajectory"/>
+  <arg name="xarm_traj_controller" value="$(eval 'xarm6_traj_controller_velocity' if arg('velocity_control') else 'xarm6_traj_controller')" />
+  <remap from="/follow_joint_trajectory" to="/xarm/$(arg xarm_traj_controller)/follow_joint_trajectory"/>
 
   <include file="$(find xarm6_moveit_config)/launch/moveit_rviz_common.launch">
     <arg name="jnt_stat_source" value="[/xarm/joint_states]" />

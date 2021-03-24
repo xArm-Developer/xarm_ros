@@ -37,25 +37,26 @@ namespace xarm_control
 		case EFFORT:
 			{
 				if (has_soft_limits)
-					ej_limits_interface_.registerHandle(joint_limits_interface::EffortJointSoftLimitsHandle(pj_interface_.getHandle(joint_name), joint_limits, soft_joint_limits));
+					ej_limits_interface_.registerHandle(joint_limits_interface::EffortJointSoftLimitsHandle(ej_interface_.getHandle(joint_name), joint_limits, soft_joint_limits));
 				else
-					ej_sat_interface_.registerHandle(joint_limits_interface::EffortJointSaturationHandle(pj_interface_.getHandle(joint_name), joint_limits));
-			}
-			break;
-		case POSITION:
-			{
-				if (has_soft_limits)
-					pj_limits_interface_.registerHandle(joint_limits_interface::PositionJointSoftLimitsHandle(pj_interface_.getHandle(joint_name), joint_limits, soft_joint_limits));
-				else
-					pj_sat_interface_.registerHandle(joint_limits_interface::PositionJointSaturationHandle(pj_interface_.getHandle(joint_name), joint_limits));
+					ej_sat_interface_.registerHandle(joint_limits_interface::EffortJointSaturationHandle(ej_interface_.getHandle(joint_name), joint_limits));
 			}
 			break;
 		case VELOCITY:
 			{
 				if (has_soft_limits)
-					vj_limits_interface_.registerHandle(joint_limits_interface::VelocityJointSoftLimitsHandle(pj_interface_.getHandle(joint_name), joint_limits, soft_joint_limits));
+					vj_limits_interface_.registerHandle(joint_limits_interface::VelocityJointSoftLimitsHandle(vj_interface_.getHandle(joint_name), joint_limits, soft_joint_limits));
 				else
-					vj_sat_interface_.registerHandle(joint_limits_interface::VelocityJointSaturationHandle(pj_interface_.getHandle(joint_name), joint_limits));
+					vj_sat_interface_.registerHandle(joint_limits_interface::VelocityJointSaturationHandle(vj_interface_.getHandle(joint_name), joint_limits));
+			}
+			break;
+		case POSITION:
+		default:
+			{
+				if (has_soft_limits)
+					pj_limits_interface_.registerHandle(joint_limits_interface::PositionJointSoftLimitsHandle(pj_interface_.getHandle(joint_name), joint_limits, soft_joint_limits));
+				else
+					pj_sat_interface_.registerHandle(joint_limits_interface::PositionJointSaturationHandle(pj_interface_.getHandle(joint_name), joint_limits));
 			}
 			break;
 		}
@@ -118,6 +119,7 @@ namespace xarm_control
 			registerInterface(&vj_interface_);
 			break;
 		case POSITION:
+		default:
 			registerInterface(&pj_interface_);
 			break;
 		}
@@ -252,7 +254,7 @@ namespace xarm_control
 
 	void XArmHW::write(const ros::Time& time, const ros::Duration& period)
 	{
-		if(need_reset())
+		if(initial_write_ || need_reset())
 		{
 			std::lock_guard<std::mutex> locker(mutex_);
 			for(int k=0; k<dof_; k++)
@@ -261,6 +263,7 @@ namespace xarm_control
 				velocity_cmd_float_[k] = 0;
 			}
 			_reset_limits();
+			initial_write_ = false;
 			return;
 		}
 
@@ -268,12 +271,13 @@ namespace xarm_control
 
 		switch (ctrl_method_)
 		{
-		// case VELOCITY:
-		// 	{
-		// 		for (int k = 0; k < dof_; k++) { velocity_cmd_float_[k] = (float)velocity_cmd_[k]; }
-		// 		xarm.veloMoveJoint(velocity_cmd_float_, true);
-		// 	}
-		// 	break;		
+		case VELOCITY:
+			{
+				for (int k = 0; k < dof_; k++) { velocity_cmd_float_[k] = (float)velocity_cmd_[k]; }
+				xarm.veloMoveJoint(velocity_cmd_float_, true);
+			}
+			break;
+		case POSITION:		
 		default:
 			{
 				for (int k = 0; k < dof_; k++) { position_cmd_float_[k] = (float)position_cmd_[k]; }

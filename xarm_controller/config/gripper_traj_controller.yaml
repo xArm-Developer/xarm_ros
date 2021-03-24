@@ -7,7 +7,17 @@ xarm:
       goal_time: 0.5
       stopped_velocity_tolerance: 0.05
       drive_joint: {trajectory: 1, goal: 0.01}
-
+  
+  gripper_trajectory_controller_velocity:
+    type: velocity_controllers/JointTrajectoryController
+    joints: 
+      - drive_joint
+    gains:
+      drive_joint: {p: 10, i: 0.1, d: 0.1, i_clamp: 0}
+    constraints:
+      goal_time: 0.5
+      stopped_velocity_tolerance: 0.05
+      drive_joint: {trajectory: 1, goal: 0.01}
 
 # No Pid gains specified error fix
 gazebo_ros_control:

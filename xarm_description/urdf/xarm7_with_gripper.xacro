@@ -4,6 +4,7 @@
   <xacro:arg name="ros_namespace" default="xarm"/>
   <xacro:arg name="limited" default="false"/>
   <xacro:arg name="effort_control" default="false"/>
+  <xacro:arg name="velocity_control" default="false"/>
 
   <!-- load xarm7 robot -->
   <xacro:include filename="$(find xarm_description)/urdf/xarm7_robot_macro.xacro" />
@@ -11,6 +12,6 @@
   <!-- Attach gripper --> 
   <xacro:include filename="$(find xarm_gripper)/urdf/xarm_gripper_model.xacro" />
 
-  <xacro:xarm7_robot prefix="$(arg prefix)" namespace="$(arg ros_namespace)" limited="$(arg limited)" effort_control="$(arg effort_control)"/>
-  <xacro:load_gripper attach_to="$(arg prefix)link_eef" />
+  <xacro:xarm7_robot prefix="$(arg prefix)" namespace="$(arg ros_namespace)" limited="$(arg limited)" effort_control="$(arg effort_control)" velocity_control="$(arg velocity_control)" />
+  <xacro:load_gripper attach_to="$(arg prefix)link_eef" effort_control="$(arg effort_control)" velocity_control="$(arg velocity_control)" />
 </robot>

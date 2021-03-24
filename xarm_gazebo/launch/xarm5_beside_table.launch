@@ -4,8 +4,11 @@
   <arg name="paused" default="false" doc="Starts gazebo in paused mode" />
   <arg name="gui" default="true" doc="Starts gazebo gui" />
   <arg name="effort_control" default="false"/>
+  <arg name="velocity_control" default="false"/>
   <arg name="add_gripper" default="false" />
   <arg name="add_vacuum_gripper" default="false" />
+
+  <arg name="xarm_velocity_control" value="$(eval arg('velocity_control') and not arg('run_demo'))" />
 
   <rosparam file="$(find xarm5_moveit_config)/config/xarm5_params.yaml" command="load"/>
   <!-- startup simulated world -->
@@ -19,17 +22,17 @@
   <param unless="$(eval arg('add_gripper') or arg('add_vacuum_gripper'))" name="robot_description"
     command="$(find xacro)/xacro
     --inorder '$(find xarm_description)/urdf/xarm5_robot.urdf.xacro'
-    effort_control:=$(arg effort_control)" />
+    effort_control:=$(arg effort_control) velocity_control:=$(arg xarm_velocity_control)" />
 
   <param if="$(arg add_gripper)" name="robot_description"
     command="$(find xacro)/xacro
     --inorder '$(find xarm_description)/urdf/xarm5_with_gripper.xacro'
-    effort_control:=$(arg effort_control)" />
+    effort_control:=$(arg effort_control) velocity_control:=$(arg xarm_velocity_control)" />
 
   <param if="$(arg add_vacuum_gripper)" name="robot_description"
     command="$(find xacro)/xacro
     --inorder '$(find xarm_description)/urdf/xarm5_with_vacuum_gripper.xacro'
-    effort_control:=$(arg effort_control)" />
+    effort_control:=$(arg effort_control) velocity_control:=$(arg xarm_velocity_control)" />
 
   <!-- spawn robot model in gazebo, located on the table -->
   <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model"
@@ -40,6 +43,7 @@
   <include file="$(find xarm_controller)/launch/xarm5_control.launch">
     <arg name="run_demo_traj" value="$(arg run_demo)"/>
     <arg name="effort_control" value="$(arg effort_control)"/>
+    <arg name="velocity_control" value="$(arg xarm_velocity_control)"/>
     <arg name="add_gripper" value="$(arg add_gripper)" />
   </include>
 

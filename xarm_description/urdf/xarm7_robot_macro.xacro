@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="xarm7" >
   <xacro:macro name="xarm7_robot" params="prefix:='' namespace:='xarm' limited:='false' effort_control:='false' 
-    attach_to:='world' xyz:='0 0 0' rpy:='0 0 0' load_gazebo_plugin:='true' ">  
+    velocity_control:='false' attach_to:='world' xyz:='0 0 0' rpy:='0 0 0' load_gazebo_plugin:='true' ">  
 
     <!-- xarm7 -->
     <xacro:include filename="$(find xarm_description)/urdf/xarm7.urdf.xacro" />
@@ -39,12 +39,7 @@
       <xacro:xarm7_urdf prefix="${prefix}"/>
     </xacro:unless>
 
-    <xacro:if value="${effort_control}">
-      <xacro:xarm7_transmission prefix="${prefix}" hard_interface="EffortJointInterface" />
-    </xacro:if>
-    <xacro:unless value="${effort_control}">
-      <xacro:xarm7_transmission prefix="${prefix}" hard_interface="PositionJointInterface" />
-    </xacro:unless>
+    <xacro:xarm7_transmission prefix="${prefix}" hard_interface="${'EffortJointInterface' if effort_control else 'VelocityJointInterface' if velocity_control else 'PositionJointInterface'}" />
 
     <xacro:xarm7_gazebo prefix="${prefix}" />
 
