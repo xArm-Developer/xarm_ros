@@ -2,7 +2,8 @@
 #define __XARM_ROS_CLIENT_H__
 
 #include "ros/ros.h"
-#include <xarm_driver.h>
+// #include <xarm_driver.h>
+#include "xarm_msgs.h"
 #include "visibility_control.h"
 
 namespace xarm_api{

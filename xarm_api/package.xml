@@ -11,6 +11,7 @@
 
   <depend>std_srvs</depend>
   <depend>genmsg</depend>
+  <depend>xarm_sdk</depend>
 
   <build_depend>roscpp</build_depend>
   <build_depend>std_msgs</build_depend>
