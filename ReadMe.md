@@ -55,6 +55,7 @@
    * Add xArm Gripper action control.
    * Add xArm-with-gripper Moveit development packages.
    * Add vacuum gripper model and xArm-with-vacuum-gripper Moveit development packages (under /examples dir).
+   * Thanks to [Microsoft IoT](https://github.com/ms-iot), xarm_ros can now be compiled and run on Windows platform.
    * Add velocity control mode for joint and Cartesian space. (**xArm controller firmware version >= 1.6.8** required)  
 
 # 3. Preparations before using this package
