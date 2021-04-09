@@ -15,6 +15,7 @@
   <group ns="$(arg ns_1)">
     <remap from="/tf" to="$(arg ns_1)/tf" />
     <remap from="/tf_static" to="$(arg ns_1)/tf_static" />
+    <remap from="/robot_description" to="$(arg ns_1)/robot_description" />
     <include file="$(find xarm5_moveit_config)/launch/realMove_exec.launch">
       <arg name="robot_ip" value="$(arg robot_ip_1)"/>
       <arg name="report_type" value="$(arg report_type_1)" />
@@ -27,6 +28,7 @@
   <group ns="$(arg ns_2)">
     <remap from="/tf" to="$(arg ns_2)/tf" />
     <remap from="/tf_static" to="$(arg ns_2)/tf_static" />
+    <remap from="/robot_description" to="$(arg ns_2)/robot_description" />
     <include file="$(find xarm5_moveit_config)/launch/realMove_exec.launch">
       <arg name="robot_ip" value="$(arg robot_ip_2)"/>
       <arg name="report_type" value="$(arg report_type_2)" />

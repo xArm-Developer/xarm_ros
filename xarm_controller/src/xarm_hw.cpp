@@ -145,14 +145,14 @@ namespace xarm_control
 		// ctrl_method_ = VELOCITY; // INVALID
 		ctrl_method_ = POSITION; // RELEASE
 
-		std::string hw_ns = robot_hw_nh.getNamespace() + "/";
-		ros::service::waitForService(hw_ns+"motion_ctrl");
-	  	ros::service::waitForService(hw_ns+"set_state");
-	  	ros::service::waitForService(hw_ns+"set_mode");
+		hw_ns_ = robot_hw_nh.getNamespace() + "/";
+		ros::service::waitForService(hw_ns_+"motion_ctrl");
+	  	ros::service::waitForService(hw_ns_+"set_state");
+	  	ros::service::waitForService(hw_ns_+"set_mode");
 		if (ctrl_method_ == VELOCITY)
-			ros::service::waitForService(hw_ns+"velo_move_joint");
+			ros::service::waitForService(hw_ns_+"velo_move_joint");
 		else
-	  		ros::service::waitForService(hw_ns+"move_servoj");
+	  		ros::service::waitForService(hw_ns_+"move_servoj");
 		xarm.init(robot_hw_nh);
 		std::string robot_ip;
 		std::vector<std::string> jnt_names;
@@ -311,11 +311,22 @@ namespace xarm_control
 	}
 
 	bool XArmHW::need_reset()
-	{
+	{	
+		static int last_err = 0;
 		if((ctrl_method_ == VELOCITY ? curr_mode != XARM_MODE::VELO_JOINT : curr_mode != XARM_MODE::SERVO) || curr_state==4 || curr_state==5 || curr_err)
+		{
+			if(last_err != curr_err && curr_err)
+			{
+				ROS_ERROR("[ns: %s] xArm Error detected! Code: %d", hw_ns_.c_str(), curr_err);
+				last_err = curr_err;
+			}
 			return true;
+		}
 		else
+		{
+			last_err = 0;
 			return false;
+		}
 	}
 }
 

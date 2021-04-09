@@ -79,6 +79,7 @@ namespace xarm_control
 
 		bool initial_write_;		
 		std::mutex mutex_;
+		std::string hw_ns_;
 		
 		xarm_api::XArmROSClient xarm;
 
