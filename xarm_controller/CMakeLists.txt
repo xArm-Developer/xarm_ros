@@ -20,8 +20,8 @@ find_package(catkin REQUIRED COMPONENTS
   xarm_api
   xarm_msgs
   hardware_interface
-  # joint_limits_interface
-  # roscpp
+  joint_limits_interface
+  roscpp
   sensor_msgs
   std_msgs
   # trajectory_msgs
