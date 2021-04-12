@@ -89,9 +89,7 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
 ## 4.2 Obtain the package
    ```bash
    $ cd ~/catkin_ws/src
-   $ git clone https://github.com/xArm-Developer/xarm_ros.git
-   $ cd xarm_ros
-   $ git submodule update --init --recursive
+   $ git clone https://github.com/xArm-Developer/xarm_ros.git --recursive
    ```
 
 ## 4.2.1 update the package
