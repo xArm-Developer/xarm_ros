@@ -6,7 +6,8 @@
 #include "xarm_msgs.h"
 #include "visibility_control.h"
 
-namespace xarm_api{
+namespace xarm_api
+{
 
 class XARM_API_PUBLIC XArmROSClient
 {

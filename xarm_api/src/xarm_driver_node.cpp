@@ -21,27 +21,27 @@ class XArmDriverRunner
         {
             root_nh.getParam("DOF", joint_num_);
             root_nh.getParam("joint_names", joint_name_);
-            root_nh.getParam("xarm_report_type", report_type);
-            is_first_cycle = true;
-            prev_angle = new double [joint_num_];
+            root_nh.getParam("xarm_report_type", report_type_);
+            is_first_cycle_ = true;
+            prev_angle_ = new double [joint_num_];
 
-            xarm_driver.init(root_nh, server_ip);
-            xarm_driver.arm->register_connect_changed_callback(std::bind(&XArmDriverRunner::_report_connect_changed_callback, this, std::placeholders::_1, std::placeholders::_2));
-            xarm_driver.arm->register_report_data_callback(std::bind(&XArmDriverRunner::_report_data_callback, this, std::placeholders::_1));
+            xarm_driver_.init(root_nh, server_ip);
+            xarm_driver_.arm->register_connect_changed_callback(std::bind(&XArmDriverRunner::_report_connect_changed_callback, this, std::placeholders::_1, std::placeholders::_2));
+            xarm_driver_.arm->register_report_data_callback(std::bind(&XArmDriverRunner::_report_data_callback, this, std::placeholders::_1));
         }
         void _report_connect_changed_callback(bool connected, bool reported)
         {
             ROS_INFO("[TCP STATUS] CONTROL: %d, REPORT: %d", connected, reported);
-            if (!reported) is_first_cycle = true;
+            if (!reported) is_first_cycle_ = true;
         }
 
         void _report_data_callback(XArmReportData *report_data_ptr)
         {
             // ROS_INFO("[2] state: %d, error_code: %d", report_data_ptr->state, report_data_ptr->err);
-            last_now = now;
-            now = ros::Time::now();
-            elapsed = now - last_now;
-            joint_state_msg_.header.stamp = now;
+            last_now_ = now_;
+            now_ = ros::Time::now();
+            elapsed_ = now_ - last_now_;
+            joint_state_msg_.header.stamp = now_;
             joint_state_msg_.header.frame_id = "joint-state data";
             joint_state_msg_.name.resize(joint_num_);
             joint_state_msg_.position.resize(joint_num_);
@@ -53,22 +53,22 @@ class XArmDriverRunner
                 joint_state_msg_.name[i] = joint_name_[i];
                 joint_state_msg_.position[i] = d;
 
-                if (is_first_cycle)
+                if (is_first_cycle_)
                 {
                     joint_state_msg_.velocity[i] = 0;
-                    is_first_cycle = false;
+                    is_first_cycle_ = false;
                 }
                 else
                 {
-                    joint_state_msg_.velocity[i] = (joint_state_msg_.position[i] - prev_angle[i]) / elapsed.toSec();
+                    joint_state_msg_.velocity[i] = (joint_state_msg_.position[i] - prev_angle_[i]) / elapsed_.toSec();
                 }
 
                 joint_state_msg_.effort[i] = (double)report_data_ptr->tau[i];
 
-                prev_angle[i] = d;
+                prev_angle_[i] = d;
             }
 
-            xarm_driver.pub_joint_state(joint_state_msg_);
+            xarm_driver_.pub_joint_state(joint_state_msg_);
 
             xarm_state_msg_.state = report_data_ptr->state;
             xarm_state_msg_.mode = report_data_ptr->mode;
@@ -94,7 +94,7 @@ class XArmDriverRunner
                 xarm_state_msg_.pose[i] = report_data_ptr->pose[i];
                 xarm_state_msg_.offset[i] = report_data_ptr->tcp_offset[i];
             }
-            xarm_driver.pub_robot_msg(xarm_state_msg_);
+            xarm_driver_.pub_robot_msg(xarm_state_msg_);
 
             if (report_data_ptr->total_num >= 417) {
                 cgpio_state_msg_.state = report_data_ptr->cgpio_state;
@@ -113,23 +113,23 @@ class XArmDriverRunner
                     cgpio_state_msg_.input_conf[i] = report_data_ptr->cgpio_input_conf[i];
                     cgpio_state_msg_.output_conf[i] = report_data_ptr->cgpio_output_conf[i];
                 }
-                xarm_driver.pub_cgpio_state(cgpio_state_msg_);
+                xarm_driver_.pub_cgpio_state(cgpio_state_msg_);
             }
         }
 
-    public:
-        std::string report_type;
-        ros::Time now, last_now;
-        ros::Duration elapsed;
+    private:
+        std::string report_type_;
+        ros::Time now_, last_now_;
+        ros::Duration elapsed_;
         sensor_msgs::JointState joint_state_msg_;
-        xarm_api::XArmDriver xarm_driver;
+        xarm_api::XArmDriver xarm_driver_;
         xarm_msgs::RobotMsg xarm_state_msg_;
         xarm_msgs::CIOState cgpio_state_msg_;
 
         int joint_num_;
         std::vector<std::string> joint_name_;
-        bool is_first_cycle;
-        double *prev_angle;
+        bool is_first_cycle_;
+        double *prev_angle_;
 };
 
 int main(int argc, char **argv)
@@ -138,6 +138,7 @@ int main(int argc, char **argv)
 
     // with namespace (ns) specified in the calling launch file (xarm by default)
     ros::NodeHandle n;
+    ROS_INFO("namespace: %s", n.getNamespace().c_str());
 
     std::string robot_ip = "192.168.1.121";
     if (!n.hasParam("xarm_robot_ip"))
@@ -150,13 +151,13 @@ int main(int argc, char **argv)
         n.getParam("xarm_robot_ip", robot_ip);
     }
 
-    ROS_INFO("start xarm driver");
+    ROS_INFO("xarm_driver_node start");
     XArmDriverRunner xarm_driver_runner(n, robot_ip);
 
     signal(SIGINT, exit_sig_handler);
     ros::waitForShutdown();
 
-    printf("end");
+    ROS_INFO("xarm_driver_node over");
 
     return 0;
 }

@@ -92,6 +92,7 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
 ## 4.2.1 更新代码包
    ```bash
    $ cd ~/catkin_ws/src/xarm_ros
+   $ git pull
    $ git submodule sync
    $ git submodule update --remote
    ```

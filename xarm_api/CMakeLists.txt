@@ -72,8 +72,8 @@ add_executable(test_velo_move
   test/test_velo_move.cpp
 )
 
-add_executable(test_xarm_cgpio_states
-  test/test_xarm_cgpio_states.cpp
+add_executable(test_xarm_states
+  test/test_xarm_states.cpp
 )
 
 ## Rename C++ executable without prefix
@@ -124,7 +124,7 @@ target_link_libraries(test_velo_move
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(test_xarm_cgpio_states 
+target_link_libraries(test_xarm_states 
   xarm_cxx_sdk
   ${catkin_LIBRARIES}
 )
