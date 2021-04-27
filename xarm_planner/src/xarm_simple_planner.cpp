@@ -70,7 +70,7 @@ void XArmSimplePlanner::init()
 {
   joint_names = group.getJointNames();
 
-  display_path = node_handle.advertise<moveit_msgs::DisplayTrajectory>("/move_group/display_planned_path", 1, true); /*necessary?*/
+  display_path = node_handle.advertise<moveit_msgs::DisplayTrajectory>("move_group/display_planned_path", 1, true); /*necessary?*/
 
   ROS_INFO_NAMED("move_group_planner", "Reference frame: %s", group.getPlanningFrame().c_str());
 

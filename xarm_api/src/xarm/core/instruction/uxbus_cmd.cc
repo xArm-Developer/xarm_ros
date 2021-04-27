@@ -47,6 +47,19 @@ int UxbusCmd::set_timeout(float timeout) {
 /*******************************************************
  * Uxbus generic protocol function
  *******************************************************/
+// new: input argument as char array instead of int array
+int UxbusCmd::set_nu8_char(int funcode, char *datas, int num) {
+	unsigned char *send_data = new unsigned char[num];
+	for (int i = 0; i < num; i++) { send_data[i] = (unsigned char)datas[i];}
+
+	std::lock_guard<std::mutex> locker(mutex_);
+	int ret = send_xbus(funcode, send_data, num);
+	delete[] send_data;
+	if (ret != 0) { return UXBUS_STATE::ERR_NOTTCP; }
+	int timeout = (funcode != UXBUS_RG::MOTION_EN || (funcode == UXBUS_RG::MOTION_EN && SET_TIMEOUT_ >= 2)) ? SET_TIMEOUT_ : 2000;
+	ret = send_pend(funcode, 0, timeout, NULL);
+	return ret;
+}
 
 int UxbusCmd::set_nu8(int funcode, int *datas, int num) {
 	unsigned char *send_data = new unsigned char[num];
@@ -210,11 +223,11 @@ int UxbusCmd::playback_traj_old(int times) {
 }
 
 int UxbusCmd::save_traj(char filename[81]) {
-	return set_nu8(UXBUS_RG::SAVE_TRAJ, (int *)filename, 81);
+	return set_nu8_char(UXBUS_RG::SAVE_TRAJ, filename, 81);
 }
 
 int UxbusCmd::load_traj(char filename[81]) {
-	return set_nu8(UXBUS_RG::LOAD_TRAJ, (int *)filename, 81);
+	return set_nu8_char(UXBUS_RG::LOAD_TRAJ, filename, 81);
 }
 
 int UxbusCmd::get_traj_rw_status(int *rx_data) {

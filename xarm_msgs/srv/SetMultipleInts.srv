@@ -1,0 +1,13 @@
+# request: set multiple integer parameters.
+# data_int: int values to be set.
+
+int16[] data_int
+
+-----
+
+# response: 
+#	ret is 0 for successful execution and others for errors or warnings occured
+#	message is a string returned by function, indicating execution status.
+
+int16 ret
+string message

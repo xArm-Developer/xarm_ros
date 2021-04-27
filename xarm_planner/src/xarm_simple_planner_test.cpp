@@ -9,6 +9,7 @@
 #include <xarm_planner/pose_plan.h>
 #include <xarm_planner/joint_plan.h>
 #include <xarm_planner/exec_plan.h>
+#include <xarm_msgs/SetInt16.h>
 #include <stdlib.h>
 #include <vector>
 
@@ -41,71 +42,91 @@ bool request_exec(ros::ServiceClient& client, xarm_planner::exec_plan& srv)
 
 int main(int argc, char** argv)
 {	
-	std::vector<double> tar_joint1 = {-1.0, -0.75, 0.0, -0.5, 0.0, 0.3, 0.0};
+	std::vector<double> tar_joint1 = {-1.0, -0.75, 0.0, 0.2, 0.0, 0.3, 0.0};
 	std::vector<double> tar_joint2 = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-	std::vector<double> tar_joint3 = {1.0, -0.75, 0.0, -0.5, 0.0, -0.3, 0.0};
+	std::vector<double> tar_joint3 = {1.0, -0.75, 0.0, 0.2, 0.0, -0.3, 0.0};
 
 	ros::init(argc, argv, "xarm_simple_planner_client");
 	ros::NodeHandle nh;
 	ros::ServiceClient client = nh.serviceClient<xarm_planner::joint_plan>("xarm_joint_plan");
 	ros::ServiceClient client_exec = nh.serviceClient<xarm_planner::exec_plan>("xarm_exec_plan");
+	ros::ServiceClient client_stop = nh.serviceClient<xarm_msgs::SetInt16>("xarm/set_state");
 
 	ros::Publisher exec_pub = nh.advertise<std_msgs::Bool>("xarm_planner_exec", 10);
 	std_msgs::Bool msg;
 	xarm_planner::joint_plan srv;
 	xarm_planner::exec_plan srv_exec;
+	xarm_msgs::SetInt16 srv_stop;
+	
+	ros::service::waitForService("xarm_exec_plan");
+	ros::service::waitForService("xarm/set_state");
 
-
-	srv.request.target = tar_joint1;
-	if(request_plan(client, srv))
+	while(ros::ok())
 	{
-		ROS_INFO("Plan SUCCESS! Executing... ");
-		// msg.data = true;
-		// ros::Duration(1.0).sleep();
-		// exec_pub.publish(msg);
-		srv_exec.request.exec = true;
-		request_exec(client_exec, srv_exec);
+		srv.request.target = tar_joint1;
+		if(request_plan(client, srv))
+		{
+			ROS_INFO("Plan SUCCESS! Executing... ");
+			srv_exec.request.exec = true;
+			if(request_exec(client_exec, srv_exec)==false)
+			{	
+				srv_stop.request.data = 4;
+				client_stop.call(srv_stop);
+				ROS_WARN("OOPS! SETTING STOP... ");
+				break;
+			}
+		}
+
+		// ros::Duration(4.0).sleep(); // Wait for last execution to finish
+
+		srv.request.target = tar_joint2;
+		if(request_plan(client, srv))
+		{
+			ROS_INFO("Plan SUCCESS! Executing... ");
+			srv_exec.request.exec = true;
+			if(request_exec(client_exec, srv_exec)==false)
+			{	
+				srv_stop.request.data = 4;
+				client_stop.call(srv_stop);
+				ROS_WARN("OOPS! SETTING STOP... ");
+				break;
+			}
+		}
+
+		// ros::Duration(4.0).sleep(); // Wait for last execution to finish
+
+		srv.request.target = tar_joint3;
+		if(request_plan(client, srv))
+		{
+			ROS_INFO("Plan SUCCESS! Executing... ");
+			srv_exec.request.exec = true;
+			if(request_exec(client_exec, srv_exec)==false)
+			{	
+				srv_stop.request.data = 4;
+				client_stop.call(srv_stop);
+				ROS_WARN("OOPS! SETTING STOP... ");
+				break;
+			}
+		}
+
+		// ros::Duration(4.0).sleep(); // Wait for last execution to finish
+
+		srv.request.target = tar_joint2;
+		if(request_plan(client, srv))
+		{
+			ROS_INFO("Plan SUCCESS! Executing... ");
+			srv_exec.request.exec = true;
+			if(request_exec(client_exec, srv_exec)==false)
+			{	
+				srv_stop.request.data = 4;
+				client_stop.call(srv_stop);
+				ROS_WARN("OOPS! SETTING STOP... ");
+				break;
+			}
+		}
 	}
 
-	// ros::Duration(4.0).sleep(); // Wait for last execution to finish
-
-	srv.request.target = tar_joint2;
-	if(request_plan(client, srv))
-	{
-		ROS_INFO("Plan SUCCESS! Executing... ");
-		// msg.data = true;
-		// ros::Duration(1.0).sleep();
-		// exec_pub.publish(msg);
-		srv_exec.request.exec = true;
-		request_exec(client_exec, srv_exec);
-	}
-
-	// ros::Duration(4.0).sleep(); // Wait for last execution to finish
-
-	srv.request.target = tar_joint3;
-	if(request_plan(client, srv))
-	{
-		ROS_INFO("Plan SUCCESS! Executing... ");
-		// msg.data = true;
-		// ros::Duration(1.0).sleep();
-		// exec_pub.publish(msg);
-		srv_exec.request.exec = true;
-		request_exec(client_exec, srv_exec);
-	}
-
-	// ros::Duration(4.0).sleep(); // Wait for last execution to finish
-
-	srv.request.target = tar_joint2;
-	if(request_plan(client, srv))
-	{
-		ROS_INFO("Plan SUCCESS! Executing... ");
-		// msg.data = true;
-		// ros::Duration(1.0).sleep();
-		// exec_pub.publish(msg);
-		srv_exec.request.exec = true;
-		request_exec(client_exec, srv_exec);
-	}
-
+	ros::shutdown();
 	return 0;
 
 }

@@ -198,6 +198,7 @@ private:
 	virtual int check_xbus_prot(unsigned char *data, int funcode);
 	virtual int send_pend(int funcode, int num, int timeout, unsigned char *rx_data);
 	virtual int send_xbus(int funcode, unsigned char *txdata, int num);
+	int set_nu8_char(int funcode, char *datas, int num);
 	int set_nu8(int funcode, int *datas, int num);
 	int get_nu8(int funcode, int *rx_data, int num);
 	int get_nu8(int funcode, unsigned char *rx_data, int num);

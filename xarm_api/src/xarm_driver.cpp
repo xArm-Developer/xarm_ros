@@ -123,6 +123,11 @@ namespace xarm_api
         set_max_jacc_server_ = nh_.advertiseService("set_max_acc_joint", &XARMDriver::SetMaxJAccCB, this);
         set_max_lacc_server_ = nh_.advertiseService("set_max_acc_line", &XARMDriver::SetMaxLAccCB, this);
 
+        // trajectory recording and playback (beta):
+        traj_record_server_ = nh_.advertiseService("set_recording", &XARMDriver::SetRecordingCB, this); // start(1)/stop(0) recording
+        traj_save_server_ = nh_.advertiseService("save_traj", &XARMDriver::SaveTrajCB, this);
+        traj_play_server_ = nh_.advertiseService("play_traj", &XARMDriver::LoadNPlayTrajCB, this); // load and playback recorded trajectory
+
         // state feedback topics:
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
         robot_rt_state_ = nh_.advertise<xarm_msgs::RobotMsg>("xarm_states", 10, true);
@@ -419,7 +424,7 @@ namespace xarm_api
     bool XARMDriver::ConfigModbusCB(xarm_msgs::ConfigToolModbus::Request &req, xarm_msgs::ConfigToolModbus::Response &res)
     {
         res.message = "";
-        if(curr_err_)
+        if(get_error())
         {
             arm_cmd_->set_state(XARM_STATE::START);
             ROS_WARN("Cleared Existing Error Code %d", curr_err_);
@@ -838,10 +843,183 @@ namespace xarm_api
         return true;
     }
 
-    void XARMDriver::pub_robot_msg(xarm_msgs::RobotMsg &rm_msg)
+
+    bool XARMDriver::SetRecordingCB(xarm_msgs::SetInt16::Request &req, xarm_msgs::SetInt16::Response &res)
+    {  
+        if(req.data)
+            res.ret = arm_cmd_->set_record_traj(1); // start recording
+        else
+            res.ret = arm_cmd_->set_record_traj(0); // stop recording
+        res.message = "set trajectory recording: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    static enum rw_status
     {
+        IDLE = 0, 
+        LOADING, 
+        LOAD_SUCCESS, 
+        LOAD_FAIL, 
+        SAVING, 
+        SAVE_SUCCESS, 
+        SAVE_FAIL 
+
+    }rw_status_now;
+
+    bool XARMDriver::SaveTrajCB(xarm_msgs::SetString::Request &req, xarm_msgs::SetString::Response &res)
+    {
+        if(req.str_data.size()>80)
+        {
+            res.ret = -1;
+            res.message = "Save Trajectory ERROR: name length should be within 80 characrters!";
+            return false;
+        }
+        char file_name[81]={0};
+        req.str_data.copy(file_name, req.str_data.size(), 0);
+        res.ret = arm_cmd_->save_traj(file_name);
+
+        int rw_status_int = IDLE;
+
+        int wait_cnt = 0;
+        ros::Duration slp_t(0.1);
+        while(rw_status_int!=SAVE_SUCCESS && rw_status_int!=SAVE_FAIL)
+        {
+            slp_t.sleep();
+            arm_cmd_->get_traj_rw_status(&rw_status_int);
+
+            if(wait_cnt++ >50 || get_state()==XARM_STATE::STOP)
+            {
+                res.ret = -1;
+                res.message = "Save trajectory file: Time out!";
+                return false;
+            }
+            if(rw_status_int == SAVE_FAIL)
+            {
+                res.ret = -1;
+                res.message = "SAVE trajectory file Failed!, please make sure Recording is not in progress!";
+                ROS_ERROR("%s", res.message.c_str());
+                return false;
+            }
+        }
+        res.message = "save trajectory file: " + req.str_data + " ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XARMDriver::LoadNPlayTrajCB(xarm_msgs::PlayTraj::Request &req, xarm_msgs::PlayTraj::Response &res)
+    {
+        /* LOAD: */
+        if(req.traj_file.size()>80)
+        {
+            res.ret = -1;
+            res.message = "Load Trajectory ERROR: name length should be within 80 characrters!";
+            ROS_ERROR("%s", res.message.c_str());
+            return false;
+        }
+
+        if(req.speed_factor != 1 && req.speed_factor != 2 && req.speed_factor != 4)
+        {
+            res.ret = -1;
+            res.message = "PlayBack Trajectory ERROR: please check given speed_factor (int: 1, 2 or 4)";
+            ROS_ERROR("%s", res.message.c_str());
+            return false;
+        }
+
+        if(get_mode()==11 || get_state()==XARM_STATE::STOP || get_state()==XARM_STATE::MODE_CHANGE)
+        {
+            res.ret = -1;
+            res.message = "Please set the Robot to be in proper Mode and state(0) before loading trajectory!";
+            ROS_ERROR("%s", res.message.c_str());
+            return false;
+        }
+
+        char file_name[81]={0};
+        req.traj_file.copy(file_name, req.traj_file.size(), 0);
+        res.ret = arm_cmd_->load_traj(file_name);
+        int rw_status_int = IDLE;
+
+        int wait_cnts = 0;
+        ros::Duration wait_slp(0.1);
+
+        while(rw_status_int!=LOAD_SUCCESS && rw_status_int!=LOAD_FAIL)
+        {
+            wait_slp.sleep();
+            arm_cmd_->get_traj_rw_status(&rw_status_int);
+
+            if(wait_cnts++ >50 || get_state()==XARM_STATE::STOP)
+            {
+                res.ret = -1;
+                res.message = "Load trajectory file: Time out!";
+                ROS_ERROR("%s", res.message.c_str());
+                return false;
+            }
+            if(rw_status_int == LOAD_FAIL)
+            {
+                res.ret = -1;
+                res.message = "Load trajectory file Failed!, please check the correction and existence of file_name !";
+                ROS_ERROR("%s", res.message.c_str());
+                return false;
+            }
+        }
+        
+        ROS_INFO("Load trajectory file success!");
+
+        /* PLAY: */
+        wait_cnts = 0;
+        while(get_cmdnum())
+        {
+            wait_slp.sleep();
+            if(wait_cnts++>=100)
+            {
+                res.ret=-1;
+                res.message = "PlayBack Trajectory ERROR: TIME OUT waiting for previous tasks";
+                ROS_ERROR("%s", res.message.c_str());
+                return false;
+            }
+        }
+
+        res.ret = arm_cmd_->playback_traj(req.repeat_times,req.speed_factor);
+
+        wait_cnts = 0;
+        while(get_mode()!=11 && get_state()!=XARM_STATE::STOP) // 11 is internal mode for playback trajectory
+        {
+            wait_slp.sleep();
+            if(wait_cnts++ >=100)
+            {
+                res.ret=-1;
+                res.message = "PlayBack Trajectory ERROR: TIME OUT waiting for starting position";
+                ROS_ERROR("%s", res.message.c_str());
+                return false;
+            }
+        }
+        
+        ros::Duration(0.5).sleep(); // DO not remove!
+
+        wait_cnts = 0;
+        while(get_state()==XARM_STATE::MOVING)
+        {
+            wait_slp.sleep();
+            if(wait_cnts++ >=3000)
+            {
+                res.ret=-1;
+                arm_cmd_->set_mode(XARM_MODE::POSE);
+                res.message = "PlayBack Trajectory ERROR: TIME OUT waiting for trajectory completion";
+                ROS_ERROR("%s", res.message.c_str());
+                return false;
+            }
+        }
+        arm_cmd_->set_mode(XARM_MODE::POSE);
+        res.message = "PlayBack Trajectory, ret = " + std::to_string(res.ret);
+        return true;
+
+    }
+
+    void XARMDriver::pub_robot_msg(xarm_msgs::RobotMsg &rm_msg)
+    {   
+        std::lock_guard<std::mutex> locker(*mutex_);
         curr_err_ = rm_msg.err;
         curr_state_ = rm_msg.state;
+        curr_cmd_num_ = rm_msg.cmdnum;
+        curr_mode_ = rm_msg.mode;
         robot_rt_state_.publish(rm_msg);
     }
     
@@ -871,6 +1049,29 @@ namespace xarm_api
         return ret;
     }
 
+    int XARMDriver::get_state()
+    {
+        std::lock_guard<std::mutex> locker(*mutex_);
+        return curr_state_;
+    }
+
+    int XARMDriver::get_error()
+    {
+        std::lock_guard<std::mutex> locker(*mutex_);
+        return curr_err_;
+    }
+
+    int XARMDriver::get_cmdnum()
+    {
+        std::lock_guard<std::mutex> locker(*mutex_);
+        return curr_cmd_num_;
+    }
+
+    int XARMDriver::get_mode()
+    {
+        std::lock_guard<std::mutex> locker(*mutex_);
+        return curr_mode_;
+    }
     // void XARMDriver::update_rich_data(unsigned char *data, int size)
     // {
     //     memcpy(rx_data_, data, size);
@@ -905,9 +1106,9 @@ namespace xarm_api
         ros::Duration(0.2).sleep(); // delay 0.2s, for 5Hz state update
         ros::Rate sleep_rate(10); // 10Hz
 
-        while(curr_state_== 1) // in MOVE state
+        while(get_state()== 1) // in MOVE state
         {
-            if(curr_err_)
+            if(get_error())
             {
                 ret = UXBUS_STATE::ERR_CODE;
                 break;

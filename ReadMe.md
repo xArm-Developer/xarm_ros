@@ -6,6 +6,9 @@
 
 &ensp;&ensp;You MUST follow **chapter 3** to install additional packages needed before any usage of xarm_ros packages. Otherwise, unexpected errors may occur.
 
+&ensp;&ensp;If developing with **Moveit**, it is highly recommended to use **DIRECT network connection** between controller box and your PC, and no intermediate switches or routers, or the communication latency may have a bad impact on trajectory execution.  
+
+
 # Contents:  
 * [1. Introduction](#1-introduction)
 * [2. Update History](#2-update-summary)

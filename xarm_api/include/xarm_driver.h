@@ -28,6 +28,9 @@
 #include <xarm_msgs/ConfigToolModbus.h>
 #include <xarm_msgs/MoveAxisAngle.h>
 #include <xarm_msgs/MoveVelo.h>
+#include <xarm_msgs/SetMultipleInts.h>
+#include <xarm_msgs/PlayTraj.h>
+#include <xarm_msgs/SetString.h>
 #include <sensor_msgs/JointState.h>
 #include "xarm/core/common/data_type.h"
 #include "xarm/core/connect.h"
@@ -38,7 +41,11 @@ namespace xarm_api
     class XARMDriver
     {
         public:
-            XARMDriver():spinner(4){spinner.start();};
+            XARMDriver():spinner(4)
+            { 
+                  mutex_ = std::make_shared<std::mutex>(); 
+                  spinner.start();
+            };
             ~XARMDriver();
             void XARMDriverInit(ros::NodeHandle& root_nh, char *server_ip);
             void Heartbeat(void);
@@ -84,12 +91,20 @@ namespace xarm_api
             bool SetMaxJAccCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res);
             bool SetMaxLAccCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res);
 
+            bool SetRecordingCB(xarm_msgs::SetInt16::Request &req, xarm_msgs::SetInt16::Response &res);
+            bool SaveTrajCB(xarm_msgs::SetString::Request &req, xarm_msgs::SetString::Response &res);
+            bool LoadNPlayTrajCB(xarm_msgs::PlayTraj::Request &req, xarm_msgs::PlayTraj::Response &res);
+
             void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
             void pub_joint_state(sensor_msgs::JointState &js_msg);
             void pub_io_state();
             void pub_cgpio_state(xarm_msgs::CIOState &cio_msg);
 
             int get_frame(unsigned char *data);
+            int get_error();
+            int get_state();
+            int get_cmdnum();
+            int get_mode();
             // void update_rich_data(unsigned char *data, int size);
             // int flush_report_data(XArmReportData &report_data);
             // int get_rich_data(ReportDataNorm &norm_data);
@@ -107,6 +122,9 @@ namespace xarm_api
             int dof_;
             int curr_state_;
             int curr_err_;
+            int curr_cmd_num_;
+            int curr_mode_;
+            std::shared_ptr<std::mutex> mutex_;
             xarm_msgs::IOState io_msg;
 
             ros::NodeHandle nh_;
@@ -151,6 +169,10 @@ namespace xarm_api
             ros::ServiceServer vc_set_linev_server_;
             ros::ServiceServer set_max_jacc_server_;
             ros::ServiceServer set_max_lacc_server_;
+
+            ros::ServiceServer traj_record_server_;
+            ros::ServiceServer traj_save_server_;
+            ros::ServiceServer traj_play_server_;
 
             ros::Publisher joint_state_;
             ros::Publisher robot_rt_state_; 

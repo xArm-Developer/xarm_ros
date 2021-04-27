@@ -1,0 +1,8 @@
+<launch>
+<arg name="ns_1" default="" doc="namespace as a group"/>
+<arg name="ns_2" default="" doc="namespace as a group"/>
+
+<node name="xarm_traj_test" pkg="run_recorded_traj" type="xarm_traj_test" ns="$(arg ns_1)"/>
+<node name="xarm_traj_test" pkg="run_recorded_traj" type="xarm_traj_test" ns="$(arg ns_2)"/>
+
+</launch>

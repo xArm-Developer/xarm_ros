@@ -103,3 +103,21 @@ $ roslaunch dual_xarm6_moveit_config demo.launch
 ```bash
 $ roslaunch dual_xarm6_moveit_config realMove_exec.launch robot_ip_1:=192.168.1.xxx robot_ip_2:=192.168.1.xxx
 ```  
+
+# 5. Run Recorded Trajectory (Beta):
+To record a new trajectory (no longer than 5 min):
+```bash
+$ rosservice call /xarm/set_state 0 (DO NOT set STOP state(4) during recording or saving process)
+
+$ rosservice call /xarm/set_recording  1 (to start recording trajectory)
+...
+$ rosservice call /xarm/set_recording  0 (to finish recording trajectory)
+
+$ rosservice call /xarm/save_traj 'my_recording.traj' (give your desired name with the suffix '.traj')
+```   
+To run a saved trajectory:
+```bash
+$ rosservice call /xarm/set_mode 0
+$ rosservice call /xarm/set_state 0
+$ rosservice call /xarm/play_traj 'my_recording.traj' 1 (repeat times)  1 (speed-up factor: 1x,2x or 4x speed)
+``` 

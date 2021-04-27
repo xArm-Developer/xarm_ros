@@ -20,6 +20,7 @@ COMPONENTS
     message_generation
     geometry_msgs
     std_msgs
+    xarm_msgs
 )
 
 ## System dependencies are found with CMake's conventions

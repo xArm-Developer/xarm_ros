@@ -4,6 +4,8 @@
   <arg name="end_effector" default="" />
   <arg name="show_rviz" default="true" />
   <arg name="no_gui_plan" default="true" />
+  <arg name="report_type" default="normal" />
+  <arg name="ext_ns" default="" />
 
   <include file="$(eval find('xarm' + str(arg('arm_dof')) + arg('end_effector') + '_moveit_config') + '/launch/realMove_exec.launch')">
     <arg name="robot_ip" value="$(arg robot_ip)" />
@@ -11,6 +13,8 @@
     <arg name="show_rviz" value="$(arg show_rviz)" />
     <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
     <arg name="no_gui_plan" value="$(arg no_gui_plan)" />
+    <arg name="report_type" value="$(arg report_type)" />
+    <arg name="ext_ns" value="$(arg ext_ns)" />
   </include>
 
 </launch>

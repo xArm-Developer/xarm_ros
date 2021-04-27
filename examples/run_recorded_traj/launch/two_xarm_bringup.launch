@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="ns_1" default="" doc="namespace as a group"/>
+  <arg name="ns_2" default="" doc="namespace as a group"/>
+  <arg name="robot_ip_1" />
+  <arg name="robot_ip_2" />
+  <arg name="dof" />
+
+  <!-- startup 2 xarms in moveit -->
+  <group ns="$(arg ns_1)">
+    <include file="$(find xarm_bringup)/launch/xarm$(arg dof)_server.launch">
+      <arg name="robot_ip" value="$(arg robot_ip_1)"/>
+    </include>
+  </group>
+
+  <group ns="$(arg ns_2)">
+    <include file="$(find xarm_bringup)/launch/xarm$(arg dof)_server.launch">
+      <arg name="robot_ip" value="$(arg robot_ip_2)"/>
+    </include>
+  </group>
+
+
+</launch>

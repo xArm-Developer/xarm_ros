@@ -1,0 +1,17 @@
+# request: set multiple integer parameters.
+# traj_file: file name of trajectory record, do not forget ".traj" suffix
+# repeat_times: how many times will be played
+# speed_factor: supported values are 1 (original speed), 2 (2x speed), 4 (4x speed, not recommended). 
+
+string traj_file
+int16 repeat_times
+int16 speed_factor
+
+-----
+
+# response: 
+#	ret is 0 for successful execution and others for errors or warnings occured
+#	message is a string returned by function, indicating execution status.
+
+int16 ret
+string message

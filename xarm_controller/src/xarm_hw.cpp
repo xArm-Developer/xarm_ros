@@ -254,6 +254,7 @@ namespace xarm_control
 
 	void XArmHW::write(const ros::Time& time, const ros::Duration& period)
 	{
+		
 		if(initial_write_ || need_reset())
 		{
 			std::lock_guard<std::mutex> locker(mutex_);
@@ -320,6 +321,8 @@ namespace xarm_control
 				ROS_ERROR("[ns: %s] xArm Error detected! Code: %d", hw_ns_.c_str(), curr_err);
 				last_err = curr_err;
 			}
+			// test:
+			ROS_ERROR("Need Reset returns true! ctrl_method_: %d, curr_mode: %d, curr_state: %d, curr_err: %d", ctrl_method_, curr_mode, curr_state, curr_err);
 			return true;
 		}
 		else

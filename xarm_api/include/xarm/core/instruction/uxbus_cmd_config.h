@@ -212,8 +212,11 @@ public:
 	~XARM_STATE(void) {}
 
 	static const int START = 0;
+	static const int MOVING = 1;
+	static const int READY = 2;
 	static const int PAUSE = 3;
 	static const int STOP = 4;
+	static const int MODE_CHANGE = 5;
 };
 
 class API_CODE {
