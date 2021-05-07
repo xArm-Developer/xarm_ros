@@ -270,21 +270,28 @@ namespace xarm_control
 
 		_enforce_limits(period);
 
+		int cmd_ret = 0;
 		switch (ctrl_method_)
 		{
 		case VELOCITY:
 			{
 				for (int k = 0; k < dof_; k++) { velocity_cmd_float_[k] = (float)velocity_cmd_[k]; }
-				xarm.veloMoveJoint(velocity_cmd_float_, true);
+				cmd_ret = xarm.veloMoveJoint(velocity_cmd_float_, true);
 			}
 			break;
 		case POSITION:		
 		default:
 			{
 				for (int k = 0; k < dof_; k++) { position_cmd_float_[k] = (float)position_cmd_[k]; }
-				xarm.setServoJ(position_cmd_float_);
+				cmd_ret = xarm.setServoJ(position_cmd_float_);
 			}
 			break;
+		}
+
+		if(cmd_ret)
+		{
+			xarm.setState(XARM_STATE::STOP);
+			ROS_ERROR("XArmHW::Write() Error! Code: %d, Setting Robot State to STOP...", cmd_ret);
 		}
 
 		// for(int k=0; k<dof_; k++)

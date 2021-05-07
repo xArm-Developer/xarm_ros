@@ -6,42 +6,12 @@
  ============================================================================*/
 #include "ros/ros.h"
 #include <std_msgs/Bool.h>
-#include <xarm_planner/pose_plan.h>
-#include <xarm_planner/joint_plan.h>
-#include <xarm_planner/exec_plan.h>
 #include <xarm_msgs/SetInt16.h>
 #include <xarm_msgs/SetAxis.h>
 #include <xarm_msgs/SetString.h>
 #include <xarm_msgs/PlayTraj.h>
 #include <stdlib.h>
 #include <vector>
-
-bool request_plan(ros::ServiceClient& client, xarm_planner::joint_plan& srv)
-{
-	if(client.call(srv))
-	{
-		return srv.response.success;
-	}
-	else
-	{
-		ROS_ERROR("Failed to call service joint_plan");
-		return false;
-	}
-}
-
-bool request_exec(ros::ServiceClient& client, xarm_planner::exec_plan& srv)
-{
-	if(client.call(srv))
-	{
-		return srv.response.success;
-	}
-	else
-	{
-		ROS_ERROR("Failed to call service exec_plan");
-		return false;
-	}
-}
-
 
 int main(int argc, char** argv)
 {	
