@@ -64,6 +64,7 @@ namespace xarm_control
 		int curr_state;
 		int curr_mode;
 		int curr_err;
+		bool communication_timed_out;
 
 		unsigned int dof_;
 		std::vector<std::string> jnt_names_;

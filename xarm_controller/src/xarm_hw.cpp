@@ -78,6 +78,7 @@ namespace xarm_control
 
 		curr_err = 0;
 		curr_state = 0;
+		communication_timed_out = false;
 
 		pos_sub_ = root_nh.subscribe(jnt_state_topic, 100, &XArmHW::pos_fb_cb, this);
 		state_sub_ = root_nh.subscribe(xarm_state_topic, 100, &XArmHW::state_fb_cb, this);
@@ -288,12 +289,10 @@ namespace xarm_control
 			break;
 		}
 
-		if(cmd_ret)
+		if(cmd_ret==3) // to reset controller, preempt current goal
 		{
-			xarm.setState(XARM_STATE::STOP);
-			ROS_ERROR("XArmHW::Write() Error! Code: %d, Setting Robot State to STOP...", cmd_ret);
+			communication_timed_out = true;
 		}
-
 		// for(int k=0; k<dof_; k++)
 		// {
 		// 	// make sure no abnormal command will be written into joints, check if cmd velocity > [180 deg/sec * (1+10%)]
@@ -321,15 +320,21 @@ namespace xarm_control
 	bool XArmHW::need_reset()
 	{	
 		static int last_err = 0;
-		if((ctrl_method_ == VELOCITY ? curr_mode != XARM_MODE::VELO_JOINT : curr_mode != XARM_MODE::SERVO) || curr_state==4 || curr_state==5 || curr_err)
+		if((ctrl_method_ == VELOCITY ? curr_mode != XARM_MODE::VELO_JOINT : curr_mode != XARM_MODE::SERVO) || curr_state==4 || curr_state==5 || curr_err || communication_timed_out)
 		{
 			if(last_err != curr_err && curr_err)
 			{
 				ROS_ERROR("[ns: %s] xArm Error detected! Code: %d", hw_ns_.c_str(), curr_err);
 				last_err = curr_err;
 			}
-			// test:
-			ROS_ERROR("Need Reset returns true! ctrl_method_: %d, curr_mode: %d, curr_state: %d, curr_err: %d", ctrl_method_, curr_mode, curr_state, curr_err);
+
+			if(communication_timed_out) // set robot state to stop once write time-out happens, for safety consideration
+			{
+				int ret = xarm.setState(XARM_STATE::STOP);
+				ROS_ERROR("XArmHW::Write() Timed-out!, Setting Robot State to STOP... (ret: %d)", ret);
+				communication_timed_out = false;
+			}
+			// ROS_ERROR("Need Reset returns true! ctrl_method_: %d, curr_mode: %d, curr_state: %d, curr_err: %d", ctrl_method_, curr_mode, curr_state, curr_err);
 			return true;
 		}
 		else
