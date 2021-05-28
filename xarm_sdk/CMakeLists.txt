@@ -17,6 +17,19 @@ set(CXX_SDK_SRC_XARM_WRAPPER ${CXX_SDK_SRC_XARM}/wrapper)
 set(CXX_SDK_SRC_XARM_CORE ${CXX_SDK_SRC_XARM}/core)
 set(CXX_SDK_SRC_SERIAL ${CXX_SDK_SRC}/serial)
 
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/${CXX_SDK_INC}
+  OR NOT EXISTS ${PROJECT_SOURCE_DIR}/${CXX_SDK_INC}/xarm/wrapper/xarm_api.h
+  OR NOT EXISTS ${PROJECT_SOURCE_DIR}/${CXX_SDK_SRC_XARM_WRAPPER}
+  OR NOT EXISTS ${PROJECT_SOURCE_DIR}/${CXX_SDK_SRC_XARM_CORE}
+  OR NOT EXISTS ${PROJECT_SOURCE_DIR}/${CXX_SDK_SRC_SERIAL}
+  OR NOT EXISTS ${PROJECT_SOURCE_DIR}/${CXX_SDK_SRC_XARM_WRAPPER}/xarm_api.cc
+)
+  message(FATAL_ERROR "xarm_sdk contains sub-modules, Please use the following command to get or update the sub-module code first
+  $ git pull
+  $ git submodule sync
+  $ git submodule update --remote")
+endif()
+
 catkin_package(
   INCLUDE_DIRS ${CXX_SDK_INC}
   LIBRARIES xarm_cxx_sdk
