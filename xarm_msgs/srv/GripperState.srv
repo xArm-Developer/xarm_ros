@@ -1,4 +1,5 @@
 ---
-
+int16 ret
+string message
 float32 curr_pos
 int16 err_code

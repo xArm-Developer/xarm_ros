@@ -2,5 +2,5 @@
 ---
 
 int16 err
-
+int16 ret
 string message

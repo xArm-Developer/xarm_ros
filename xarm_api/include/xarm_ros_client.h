@@ -2,10 +2,12 @@
 #define __XARM_ROS_CLIENT_H__
 
 #include "ros/ros.h"
-#include <xarm_driver.h>
+// #include <xarm_driver.h>
+#include "xarm_msgs.h"
 #include "visibility_control.h"
 
-namespace xarm_api{
+namespace xarm_api
+{
 
 class XARM_API_PUBLIC XArmROSClient
 {
@@ -37,6 +39,14 @@ public:
 	int veloMoveJoint(const std::vector<float>& jnt_v, bool is_sync = true);
 	int veloMoveLine(const std::vector<float>& line_v, bool is_tool_coord = false);
 
+	int trajRecord(short on);
+	int trajSave(std::string filename, float timeout = 10);
+	int trajPlay(std::string filename, int times = 1, int double_speed = 1, bool wait = false);
+
+private:
+	template<typename ServiceSrv>
+	int _call_service(ros::ServiceClient client, ServiceSrv srv);
+
 private:
 	ros::ServiceClient motion_ctrl_client_;
 	ros::ServiceClient set_mode_client_;
@@ -58,6 +68,9 @@ private:
 	ros::ServiceClient gripper_state_client_;
 	ros::ServiceClient velo_move_joint_client_;
 	ros::ServiceClient velo_move_line_client_;
+	ros::ServiceClient traj_record_client_;
+	ros::ServiceClient traj_save_client_;
+	ros::ServiceClient traj_play_client_;
 
     xarm_msgs::SetAxis set_axis_srv_;
     xarm_msgs::SetInt16 set_int16_srv_;
@@ -74,6 +87,8 @@ private:
     xarm_msgs::GripperMove gripper_move_msg_;
     xarm_msgs::GripperState gripper_state_msg_;
 	xarm_msgs::MoveVelo move_velo_srv_;
+	xarm_msgs::SetString set_string_srv_;
+	xarm_msgs::PlayTraj play_traj_srv_;
 
     ros::NodeHandle nh_;
 };

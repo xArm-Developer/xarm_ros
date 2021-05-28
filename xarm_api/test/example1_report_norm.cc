@@ -7,10 +7,16 @@
 #ifndef WIN32
 #include <unistd.h>
 #endif
-
+#include <signal.h>
 #include "ros/ros.h"
 #include "xarm/core/connect.h"
 #include "xarm/core/report_data.h"
+
+void exit_sig_handler(int signum)
+{
+    fprintf(stderr, "Ctrl-C caught, exit process...\n");
+    exit(-1);
+}
 
 int main(int argc, char **argv) {
   if (argc < 2) {
@@ -18,8 +24,13 @@ int main(int argc, char **argv) {
     return 0;
   }
   char *server_ip = argv[1];
-  SocketPort *arm_report = connext_tcp_report_norm(server_ip);
+  SocketPort *arm_report = connect_tcp_report_norm(server_ip);
   if (arm_report == NULL) return 0;
+
+  ros::init(argc, argv, "example_report_norm");
+  ros::NodeHandle nh;
+
+  signal(SIGINT, exit_sig_handler);
 
   int rxcnt = 0;
   ReportDataNorm *norm_data = new ReportDataNorm();

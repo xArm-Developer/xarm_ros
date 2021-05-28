@@ -7,4 +7,5 @@ int16 respond_len
 ---
 
 int16 ret
+string message
 uint8[] respond_data

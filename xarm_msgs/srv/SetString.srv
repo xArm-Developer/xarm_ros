@@ -2,6 +2,8 @@
 # str_data: string parameter to be set.
 
 string str_data
+float32 timeout
+
 -----
 
 # response: 

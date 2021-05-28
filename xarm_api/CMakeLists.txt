@@ -16,185 +16,68 @@ find_package(catkin REQUIRED COMPONENTS
   genmsg
   xarm_msgs
   sensor_msgs
+  xarm_sdk
 )
 
-set(XARM_API_DIR src/xarm)
-set(XARM_CORE_API_DIR src/xarm/core)
-set(SERIAL_API_DIR src/serial)
-
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
-
-
-## Uncomment this if the package has a setup.py. This macro ensures
-## modules and global scripts declared therein get installed
-## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
-
-################################################
-## Declare ROS messages, services and actions ##
-################################################
-
-## To declare and build messages, services or actions from within this
-## package, follow these steps:
-## * Let MSG_DEP_SET be the set of packages whose message types you use in
-##   your messages/services/actions (e.g. std_msgs, actionlib_msgs, ...).
-## * In the file package.xml:
-##   * add a build_depend tag for "message_generation"
-##   * add a build_depend and a exec_depend tag for each package in MSG_DEP_SET
-##   * If MSG_DEP_SET isn't empty the following dependency has been pulled in
-##     but can be declared for certainty nonetheless:
-##     * add a exec_depend tag for "message_runtime"
-## * In this file (CMakeLists.txt):
-##   * add "message_generation" and every package in MSG_DEP_SET to
-##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * add "message_runtime" and every package in MSG_DEP_SET to
-##     catkin_package(CATKIN_DEPENDS ...)
-##   * uncomment the add_*_files sections below as needed
-##     and list every .msg/.srv/.action file to be processed
-##   * uncomment the generate_messages entry below
-##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
-
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
-
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
-
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
-
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
-
-################################################
-## Declare ROS dynamic reconfigure parameters ##
-################################################
-
-## To declare and build dynamic reconfigure parameters within this
-## package, follow these steps:
-## * In the file package.xml:
-##   * add a build_depend and a exec_depend tag for "dynamic_reconfigure"
-## * In this file (CMakeLists.txt):
-##   * add "dynamic_reconfigure" to
-##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * uncomment the "generate_dynamic_reconfigure_options" section below
-##     and list every .cfg file to be processed
-
-## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
-
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if your package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES xarm_api xarm_ros_client
-  CATKIN_DEPENDS roscpp std_msgs
+  LIBRARIES xarm_ros_client
+  CATKIN_DEPENDS roscpp std_msgs xarm_sdk
 #  DEPENDS system_lib
 )
 
 ###########
 ## Build ##
 ###########
-
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
 include_directories(
- include
+  include
+  ${xarm_cxx_sdk_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
-
-## Declare a C++ library
-add_library(xarm_api
-  ${XARM_CORE_API_DIR}/connect.cc
-  ${XARM_CORE_API_DIR}/report_data.cc
-
-  ${XARM_CORE_API_DIR}/common/crc16.cc
-  ${XARM_CORE_API_DIR}/common/queue_memcpy.cc
-
-  ${XARM_CORE_API_DIR}/debug/debug_print.cc
-
-  ${XARM_CORE_API_DIR}/instruction/uxbus_cmd.cc
-  ${XARM_CORE_API_DIR}/instruction/uxbus_cmd_ser.cc
-  ${XARM_CORE_API_DIR}/instruction/uxbus_cmd_tcp.cc
-
-   ${XARM_CORE_API_DIR}/os/network.cc
-
-  ${XARM_CORE_API_DIR}/port/ser.cc
-  ${XARM_CORE_API_DIR}/port/socket.cc
-
-  ${SERIAL_API_DIR}/serial.cc
-  ${SERIAL_API_DIR}/impl/unix.cc
-  ${SERIAL_API_DIR}/impl/win.cc
-  ${SERIAL_API_DIR}/impl/list_ports/list_ports_linux.cc
- )
 
 add_library(xarm_ros_client
   src/xarm_ros_client.cpp
 )
-# Make sure xarm_msgs header files are generated before building xarm_ros_client
-add_dependencies(xarm_ros_client xarm_msgs_generate_messages_cpp)
 
-## Add cmake target dependencies of the library
-## as an example, code may need to be generated before libraries
-## either from message generation or dynamic reconfigure
-add_dependencies(xarm_api ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# Make sure xarm_msgs header files are generated before building xarm_ros_client
+add_dependencies(xarm_ros_client xarm_msgs_generate_messages_cpp xarm_cxx_sdk)
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(example1_report_norm_node 
-   test/example1_report_norm.cc 
-)
-
 add_executable(xarm_driver_node
-   src/xarm_driver_node.cpp
-   src/xarm_driver.cpp
+  src/xarm_driver_node.cpp
+  src/xarm_driver.cpp
+  # src/xarm_driver_callback.cpp
+)
+add_dependencies(xarm_driver_node xarm_msgs_generate_messages_cpp xarm_cxx_sdk)
+
+add_executable(example1_report_norm_node 
+  test/example1_report_norm.cc 
 )
 
 add_executable(move_test
-   test/move_test.cpp
+  test/move_test.cpp
 )
 
 add_executable(test_tool_modbus
-   test/test_tool_modbus.cpp
+  test/test_tool_modbus.cpp
 )
 
 add_executable(servo_cart_test
-   test/servo_cartesian_test.cpp
+  test/servo_cartesian_test.cpp
 )
 
-add_executable(test_velo_move
-   test/test_velo_move.cpp
+add_executable(test_xarm_ros_client
+  test/test_xarm_ros_client.cpp
 )
 
-add_executable(test_xarm_cgpio_states
-   test/test_xarm_cgpio_states.cpp
+add_executable(test_xarm_velo_move
+  test/test_xarm_velo_move.cpp
+)
+
+add_executable(test_xarm_states
+  test/test_xarm_states.cpp
 )
 
 ## Rename C++ executable without prefix
@@ -209,108 +92,70 @@ add_executable(test_xarm_cgpio_states
 
 
 ## Specify libraries to link a library or executable target against
-if(MSVC)
-  target_link_libraries(xarm_api 
-    Ws2_32.lib
-    ${catkin_LIBRARIES}
-  )
 
-  target_link_libraries(xarm_ros_client 
-    Ws2_32.lib
-    ${catkin_LIBRARIES}
-  )
-endif()
+target_link_libraries(xarm_ros_client 
+  xarm_cxx_sdk
+  ${catkin_LIBRARIES}
+)
 
 target_link_libraries(example1_report_norm_node 
-  xarm_api
+  xarm_cxx_sdk
   ${catkin_LIBRARIES}
 )
 
 target_link_libraries(xarm_driver_node 
-  xarm_api
+  xarm_cxx_sdk
   ${catkin_LIBRARIES}
 )
 
 target_link_libraries(move_test 
-  xarm_api
+  xarm_cxx_sdk
   ${catkin_LIBRARIES}
 )
 
 target_link_libraries(test_tool_modbus 
-  xarm_api
-  ${catkin_LIBRARIES}
   xarm_ros_client
+  ${catkin_LIBRARIES}
 )
 
 target_link_libraries(servo_cart_test 
-  xarm_api
+  xarm_cxx_sdk
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(test_velo_move 
-  xarm_api
+target_link_libraries(test_xarm_ros_client 
+  xarm_ros_client
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(test_xarm_cgpio_states 
-  xarm_api
+target_link_libraries(test_xarm_velo_move 
+  xarm_ros_client
   ${catkin_LIBRARIES}
 )
 
-# Causes the visibility macros to use dllexport rather than dllimport,
-# which is appropriate when building the dll but not consuming it.
-target_compile_definitions(xarm_api
-  PRIVATE "XARM_API_BUILDING_LIBRARY")
+target_link_libraries(test_xarm_states 
+  xarm_cxx_sdk
+  ${catkin_LIBRARIES}
+)
 
-
-#############
-## Install ##
-#############
-
-# all install targets should use catkin DESTINATION variables
-# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
-
-## Mark executable scripts (Python etc.) for installation
-## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
-#   scripts/my_python_script
+# #############
+# ## Install ##
+# #############
+# catkin_install_python(PROGRAMS scripts/servo_cartesian_test.py
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
-catkin_install_python(PROGRAMS scripts/servo_cartesian_test.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+# ## Mark executables and/or libraries for installation
+# install(TARGETS xarm_api
+#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+#  )
 
-## Mark executables and/or libraries for installation
-install(TARGETS xarm_api xarm_ros_client
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
- )
-
-## Mark cpp header files for installation
-install(DIRECTORY include/
-  DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
-  FILES_MATCHING PATTERN "*.h"
-  PATTERN ".svn" EXCLUDE
- )
-
-## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+# ## Mark cpp header files for installation
+# install(DIRECTORY include/
+#   DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
+#   FILES_MATCHING PATTERN "*.h"
+#   PATTERN ".svn" EXCLUDE
 # )
 
-#############
-## Testing ##
-#############
-
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_xarm_api.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
