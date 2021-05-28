@@ -174,6 +174,114 @@ namespace xarm_api
         // subscribed topics
         sleep_sub_ = nh_.subscribe("sleep_sec", 1, &XArmDriver::SleepTopicCB, this);
 
+        gripper_joint_state_msg_.header.stamp = ros::Time::now();
+        gripper_joint_state_msg_.header.frame_id = "gripper-joint-state data";
+        gripper_joint_state_msg_.name.resize(6);
+        gripper_joint_state_msg_.position.resize(6, std::numeric_limits<double>::quiet_NaN());
+        gripper_joint_state_msg_.velocity.resize(6, std::numeric_limits<double>::quiet_NaN());
+        gripper_joint_state_msg_.effort.resize(6, std::numeric_limits<double>::quiet_NaN());
+        gripper_joint_state_msg_.name[0] = "drive_joint";
+        gripper_joint_state_msg_.name[1] = "left_finger_joint";
+        gripper_joint_state_msg_.name[2] = "left_inner_knuckle_joint";
+        gripper_joint_state_msg_.name[3] = "right_outer_knuckle_joint";
+        gripper_joint_state_msg_.name[4] = "right_finger_joint";
+        gripper_joint_state_msg_.name[5] = "right_inner_knuckle_joint";
+        gripper_action_server_.reset(new actionlib::ActionServer<control_msgs::GripperCommandAction>(nh_, "gripper_action",
+          std::bind(&XArmDriver::_handle_gripper_action_goal, this, std::placeholders::_1),
+          std::bind(&XArmDriver::_handle_gripper_action_cancel, this, std::placeholders::_1),
+          false));
+        gripper_action_server_->start(); 
+    }
+
+    void XArmDriver::_pub_gripper_joint_states(float pos)
+    {
+        gripper_joint_state_msg_.header.stamp = ros::Time::now();
+        float p = pos / 1000;
+        for (int i = 0; i < 6; i++) {
+            gripper_joint_state_msg_.position[i] = p;
+        }
+        pub_joint_state(gripper_joint_state_msg_);
+    }
+
+    void XArmDriver::_handle_gripper_action_goal(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh)
+    {
+        ros::Rate loop_rate(10);
+        const auto goal = gh.getGoal();
+        ROS_INFO("gripper_action_goal handle, position: %f", goal->command.position);
+        gh.setAccepted();
+        control_msgs::GripperCommandResult result;
+        control_msgs::GripperCommandFeedback feedback;
+
+        const int max_pos = 850;
+        int ret;
+        float cur_pos = 0;
+        int err = 0;
+        ret = arm->get_gripper_err_code(&err);
+        if (err != 0) {
+            gh.setCanceled(result);
+            ROS_ERROR("get_gripper_err_code, ret=%d, err=%d", ret, err);
+            return;
+        }
+        ret = arm->get_gripper_position(&cur_pos);
+        _pub_gripper_joint_states(fabs(max_pos - cur_pos));
+
+        ret = arm->set_gripper_mode(0);
+        if (ret != 0) {
+            result.position = fabs(max_pos - cur_pos) / 1000;
+            gh.setCanceled(result);
+            ret = arm->get_gripper_err_code(&err);
+            ROS_WARN("set_gripper_mode, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
+            return;
+        }
+        ret = arm->set_gripper_enable(true);
+        if (ret != 0) {
+            result.position = fabs(max_pos - cur_pos) / 1000;
+            gh.setCanceled(result);
+            ret = arm->get_gripper_err_code(&err);
+            ROS_WARN("set_gripper_enable, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
+            return;
+        }
+        ret = arm->set_gripper_speed(3000);
+        if (ret != 0) {
+            result.position = fabs(max_pos - cur_pos) / 1000;
+            gh.setCanceled(result);
+            ret = arm->get_gripper_err_code(&err);
+            ROS_WARN("set_gripper_speed, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
+            return;
+        }
+
+        float target_pos = fabs(max_pos - goal->command.position * 1000);
+        bool is_move = true;
+        std::thread([this, &target_pos, &is_move, &cur_pos]() {
+            is_move = true;
+            int ret2 = arm->set_gripper_position(target_pos, true);
+            int err;
+            arm->get_gripper_err_code(&err);
+            ROS_INFO("set_gripper_position, ret=%d, err=%d, cur_pos=%f", ret2, err, cur_pos);
+            is_move = false;
+        }).detach();
+        while (is_move && ros::ok())
+        {
+            loop_rate.sleep();
+            ret = arm->get_gripper_position(&cur_pos);
+            if (ret == 0) {
+                feedback.position = fabs(max_pos - cur_pos) / 1000;
+                gh.publishFeedback(feedback);
+                _pub_gripper_joint_states(fabs(max_pos - cur_pos));
+            }
+        }
+        arm->get_gripper_position(&cur_pos);
+        ROS_INFO("move finish, cur_pos=%f", cur_pos);
+        if (ros::ok()) {
+            result.position = fabs(max_pos - cur_pos) / 1000;
+            gh.setSucceeded(result);
+            ROS_INFO("Goal succeeded");
+        }
+    }
+
+    void XArmDriver::_handle_gripper_action_cancel(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh)
+    {
+        ROS_INFO("gripper cancel, not support");
     }
 
     void XArmDriver::SleepTopicCB(const std_msgs::Float32ConstPtr& msg)

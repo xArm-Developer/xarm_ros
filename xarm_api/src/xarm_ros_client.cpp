@@ -59,8 +59,8 @@ int XArmROSClient::_call_service(ros::ServiceClient client, ServiceSrv srv)
 {
     if(client.call(srv))
     {
-        ROS_INFO("call service %s, ret=%d, message=%s", 
-            client.getService().c_str(), srv.response.ret, srv.response.message.c_str());
+        // ROS_INFO("call service %s, ret=%d, message=%s", 
+        //     client.getService().c_str(), srv.response.ret, srv.response.message.c_str());
         return srv.response.ret;
     }
     else

@@ -3,6 +3,8 @@
 
 #include <thread>
 #include <ros/ros.h>
+#include <control_msgs/GripperCommandAction.h>
+#include <actionlib/server/action_server.h>
 #include <std_msgs/Float32.h>
 #include <sensor_msgs/JointState.h>
 #include "xarm_msgs.h"
@@ -67,6 +69,10 @@ namespace xarm_api
         void _report_connect_changed_callback(bool connected, bool reported);
         void _report_data_callback(XArmReportData *report_data_ptr);
         bool _get_wait_param(void);
+
+        void _handle_gripper_action_goal(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh);
+        void _handle_gripper_action_cancel(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh);
+        void _pub_gripper_joint_states(float pos);
     
     public:
         XArmAPI *arm;
@@ -133,6 +139,9 @@ namespace xarm_api
         ros::Publisher cgpio_state_;
 
         ros::Subscriber sleep_sub_;
+
+        std::shared_ptr<actionlib::ActionServer<control_msgs::GripperCommandAction>> gripper_action_server_;
+        sensor_msgs::JointState gripper_joint_state_msg_;
 
     // private:
     //     void _init_xarm_api_server(void);
