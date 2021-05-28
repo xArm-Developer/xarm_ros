@@ -146,7 +146,7 @@ xarm6:
     - LazyPRMstar
     - SPARS
     - SPARStwo
-xarm:
+xarm/xarm_gripper:
   default_planner_config: RRTConnect
   planner_configs:
     - SBL

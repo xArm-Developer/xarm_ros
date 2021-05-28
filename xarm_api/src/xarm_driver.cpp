@@ -174,6 +174,8 @@ namespace xarm_api
         // subscribed topics
         sleep_sub_ = nh_.subscribe("sleep_sec", 1, &XArmDriver::SleepTopicCB, this);
 
+        ros::NodeHandle gripper_node("xarm_gripper");
+
         gripper_joint_state_msg_.header.stamp = ros::Time::now();
         gripper_joint_state_msg_.header.frame_id = "gripper-joint-state data";
         gripper_joint_state_msg_.name.resize(6);
@@ -186,7 +188,7 @@ namespace xarm_api
         gripper_joint_state_msg_.name[3] = "right_outer_knuckle_joint";
         gripper_joint_state_msg_.name[4] = "right_finger_joint";
         gripper_joint_state_msg_.name[5] = "right_inner_knuckle_joint";
-        gripper_action_server_.reset(new actionlib::ActionServer<control_msgs::GripperCommandAction>(nh_, "gripper_action",
+        gripper_action_server_.reset(new actionlib::ActionServer<control_msgs::GripperCommandAction>(gripper_node, "gripper_action",
           std::bind(&XArmDriver::_handle_gripper_action_goal, this, std::placeholders::_1),
           std::bind(&XArmDriver::_handle_gripper_action_cancel, this, std::placeholders::_1),
           false));

@@ -8,3 +8,9 @@ controller_list:
       - joint3
       - joint4
       - joint5
+
+  - name: xarm/xarm_gripper
+    action_ns: gripper_action
+    type: GripperCommand
+    joints:
+     - drive_joint
