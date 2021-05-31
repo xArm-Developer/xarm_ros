@@ -27,7 +27,7 @@ if(NOT EXISTS ${PROJECT_SOURCE_DIR}/${CXX_SDK_INC}
   message(FATAL_ERROR "xarm_sdk contains sub-modules, Please use the following command to get or update the sub-module code first
   $ git pull
   $ git submodule sync
-  $ git submodule update --remote")
+  $ git submodule update --init --remote")
 endif()
 
 catkin_package(

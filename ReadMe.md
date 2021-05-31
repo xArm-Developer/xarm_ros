@@ -100,7 +100,7 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
    $ cd ~/catkin_ws/src/xarm_ros
    $ git pull
    $ git submodule sync
-   $ git submodule update --remote
+   $ git submodule update --init --remote
    ```
 
 ## 4.3 Install other dependent packages:
