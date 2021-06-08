@@ -165,6 +165,8 @@ namespace xarm_api
         traj_record_server_ = nh_.advertiseService("set_recording", &XArmDriver::SetRecordingCB, this); // start(1)/stop(0) recording
         traj_save_server_ = nh_.advertiseService("save_traj", &XArmDriver::SaveTrajCB, this);
         traj_play_server_ = nh_.advertiseService("play_traj", &XArmDriver::LoadNPlayTrajCB, this); // load and playback recorded trajectory
+        
+        set_rebound_server_ = nh_.advertiseService("set_collision_rebound", &XArmDriver::SetReboundCB, this); // set collision rebound
 
         // state feedback topics:
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
@@ -970,6 +972,12 @@ namespace xarm_api
         res.message = "PlayBack Trajectory, ret = " + std::to_string(res.ret);
         return res.ret >= 0;
 
+    }
+
+    bool XArmDriver::SetReboundCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
+    {
+        res.ret = arm->set_collision_rebound((bool)req.data); 
+        return res.ret >= 0;
     }
 
     void XArmDriver::pub_robot_msg(xarm_msgs::RobotMsg &rm_msg)

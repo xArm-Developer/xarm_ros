@@ -43,6 +43,8 @@ public:
 	int trajSave(std::string filename, float timeout = 10);
 	int trajPlay(std::string filename, int times = 1, int double_speed = 1, bool wait = false);
 
+	int setCollisionRebound(bool on);
+
 private:
 	template<typename ServiceSrv>
 	int _call_service(ros::ServiceClient client, ServiceSrv srv);
@@ -71,6 +73,7 @@ private:
 	ros::ServiceClient traj_record_client_;
 	ros::ServiceClient traj_save_client_;
 	ros::ServiceClient traj_play_client_;
+	ros::ServiceClient set_rebound_client_;
 
     xarm_msgs::SetAxis set_axis_srv_;
     xarm_msgs::SetInt16 set_int16_srv_;
