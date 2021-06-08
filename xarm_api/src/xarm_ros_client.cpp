@@ -53,7 +53,9 @@ void XArmROSClient::init(ros::NodeHandle& nh)
     traj_save_client_ = nh_.serviceClient<xarm_msgs::SetString>("save_traj");
     traj_play_client_ = nh_.serviceClient<xarm_msgs::PlayTraj>("play_traj");
 
-    set_rebound_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_collision_rebound");
+    set_coll_rebound_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_collision_rebound");
+    set_coll_sens_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_collision_sensitivity");
+    set_teach_sens_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_teach_sensitivity");
 }
 
 template<typename ServiceSrv>
@@ -281,7 +283,19 @@ int XArmROSClient::trajPlay(std::string filename, int times, int double_speed, b
 int XArmROSClient::setCollisionRebound(bool on)
 {
 	set_int16_srv_.request.data = (int)on;
-    return _call_service(set_rebound_client_, set_int16_srv_);
+    return _call_service(set_coll_rebound_client_, set_int16_srv_);
+}
+
+int XArmROSClient::setCollSens(int sens)
+{
+    set_int16_srv_.request.data = sens;
+    return _call_service(set_coll_sens_client_, set_int16_srv_);
+}
+
+int XArmROSClient::setTeachSens(int sens)
+{
+    set_int16_srv_.request.data = sens;
+    return _call_service(set_teach_sens_client_, set_int16_srv_);
 }
 
 }// namespace xarm_api

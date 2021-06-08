@@ -62,6 +62,8 @@ namespace xarm_api
         bool LoadNPlayTrajCB(xarm_msgs::PlayTraj::Request &req, xarm_msgs::PlayTraj::Response &res);
 
         bool SetReboundCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
+        bool SetCollSensCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
+        bool SetTeachSensCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
 
         void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
         void pub_joint_state(sensor_msgs::JointState &js_msg);
@@ -136,6 +138,8 @@ namespace xarm_api
         ros::ServiceServer traj_play_server_;
 
         ros::ServiceServer set_rebound_server_;
+        ros::ServiceServer set_coll_sens_server_;
+        ros::ServiceServer set_teach_sens_server_;
 
         ros::Publisher joint_state_;
         ros::Publisher robot_rt_state_; 

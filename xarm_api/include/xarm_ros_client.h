@@ -44,6 +44,8 @@ public:
 	int trajPlay(std::string filename, int times = 1, int double_speed = 1, bool wait = false);
 
 	int setCollisionRebound(bool on);
+	int setCollSens(int sens);
+	int setTeachSens(int sens);
 
 private:
 	template<typename ServiceSrv>
@@ -73,7 +75,9 @@ private:
 	ros::ServiceClient traj_record_client_;
 	ros::ServiceClient traj_save_client_;
 	ros::ServiceClient traj_play_client_;
-	ros::ServiceClient set_rebound_client_;
+	ros::ServiceClient set_coll_rebound_client_;
+	ros::ServiceClient set_coll_sens_client_;
+	ros::ServiceClient set_teach_sens_client_;
 
     xarm_msgs::SetAxis set_axis_srv_;
     xarm_msgs::SetInt16 set_int16_srv_;

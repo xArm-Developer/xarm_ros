@@ -167,6 +167,8 @@ namespace xarm_api
         traj_play_server_ = nh_.advertiseService("play_traj", &XArmDriver::LoadNPlayTrajCB, this); // load and playback recorded trajectory
         
         set_rebound_server_ = nh_.advertiseService("set_collision_rebound", &XArmDriver::SetReboundCB, this); // set collision rebound
+        set_coll_sens_server_ = nh_.advertiseService("set_collision_sensitivity", &XArmDriver::SetCollSensCB, this); // set collision sensitivity
+        set_teach_sens_server_ = nh_.advertiseService("set_teach_sensitivity", &XArmDriver::SetTeachSensCB, this); // set teach sensitivity
 
         // state feedback topics:
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
@@ -977,6 +979,18 @@ namespace xarm_api
     bool XArmDriver::SetReboundCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
     {
         res.ret = arm->set_collision_rebound((bool)req.data); 
+        return res.ret >= 0;
+    }
+
+    bool XArmDriver::SetCollSensCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
+    {
+        res.ret = arm->set_collision_sensitivity(req.data); 
+        return res.ret >= 0;
+    }
+
+    bool XArmDriver::SetTeachSensCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
+    {
+        res.ret = arm->set_teach_sensitivity(req.data); 
         return res.ret >= 0;
     }
 
