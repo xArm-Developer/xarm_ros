@@ -195,7 +195,7 @@ install(TARGETS xarm_hw xarm_combined_hw
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
- )
+)
 
 ## Mark cpp header files for installation
 install(DIRECTORY include/
@@ -203,6 +203,8 @@ install(DIRECTORY include/
   FILES_MATCHING PATTERN "*.h"
   PATTERN ".svn" EXCLUDE
  )
+
+install(DIRECTORY launch config DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 install(FILES xarm_hw_plugin.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
@@ -236,3 +238,9 @@ target_link_libraries(xarm_traj_controller xarm_hw ${catkin_LIBRARIES})
 
 add_executable(xarm_combined_traj_controller src/xarm_combined_control_node.cpp)
 target_link_libraries(xarm_combined_traj_controller xarm_combined_hw ${catkin_LIBRARIES})
+
+install(TARGETS sample_motion xarm_traj_controller xarm_combined_traj_controller
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
