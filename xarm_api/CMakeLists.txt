@@ -34,7 +34,6 @@ catkin_package(
 ###########
 include_directories(
   include
-  ${xarm_cxx_sdk_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -43,7 +42,7 @@ add_library(xarm_ros_client
 )
 
 # Make sure xarm_msgs header files are generated before building xarm_ros_client
-add_dependencies(xarm_ros_client xarm_msgs_generate_messages_cpp xarm_cxx_sdk)
+# add_dependencies(xarm_ros_client xarm_msgs_generate_messages_cpp xarm_cxx_sdk)
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
@@ -53,7 +52,7 @@ add_executable(xarm_driver_node
   src/xarm_driver.cpp
   # src/xarm_driver_callback.cpp
 )
-add_dependencies(xarm_driver_node xarm_msgs_generate_messages_cpp xarm_cxx_sdk)
+# add_dependencies(xarm_driver_node xarm_msgs_generate_messages_cpp xarm_cxx_sdk)
 
 add_executable(example1_report_norm_node 
   test/example1_report_norm.cc 
@@ -97,22 +96,18 @@ add_executable(test_xarm_states
 ## Specify libraries to link a library or executable target against
 
 target_link_libraries(xarm_ros_client 
-  xarm_cxx_sdk
   ${catkin_LIBRARIES}
 )
 
 target_link_libraries(example1_report_norm_node 
-  xarm_cxx_sdk
   ${catkin_LIBRARIES}
 )
 
 target_link_libraries(xarm_driver_node 
-  xarm_cxx_sdk
   ${catkin_LIBRARIES}
 )
 
 target_link_libraries(move_test 
-  xarm_cxx_sdk
   ${catkin_LIBRARIES}
 )
 
@@ -122,7 +117,6 @@ target_link_libraries(test_tool_modbus
 )
 
 target_link_libraries(servo_cart_test 
-  xarm_cxx_sdk
   ${catkin_LIBRARIES}
 )
 
@@ -137,7 +131,6 @@ target_link_libraries(test_xarm_velo_move
 )
 
 target_link_libraries(test_xarm_states 
-  xarm_cxx_sdk
   ${catkin_LIBRARIES}
 )
 
@@ -149,16 +142,16 @@ target_link_libraries(test_xarm_states
 # )
 
 # ## Mark executables and/or libraries for installation
-# install(TARGETS xarm_api
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-#  )
+install(TARGETS xarm_ros_client xarm_driver_node example1_report_norm_node move_test test_tool_modbus servo_cart_test test_xarm_ros_client test_xarm_velo_move test_xarm_states
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 # ## Mark cpp header files for installation
-# install(DIRECTORY include/
-#   DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(DIRECTORY include/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+  PATTERN ".svn" EXCLUDE
+)
 

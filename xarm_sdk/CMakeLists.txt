@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(xarm_sdk)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
@@ -78,7 +78,7 @@ add_library(xarm_cxx_sdk
   ${CXX_SDK_SRC_SERIAL}/impl/list_ports/list_ports_win.cc
 )
 
-add_dependencies(xarm_cxx_sdk ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#dd_dependencies(xarm_cxx_sdk ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 if(MSVC)
   target_link_libraries(xarm_cxx_sdk 
@@ -86,3 +86,17 @@ if(MSVC)
     ${catkin_LIBRARIES}
   )
 endif()
+
+install(TARGETS xarm_cxx_sdk
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+# this is a bit non-standard, but doing otherwise would require changes to the external cxx sdk - TODO: later
+install(DIRECTORY ${CXX_SDK_INC}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/..
+  FILES_MATCHING PATTERN "*.h"
+  PATTERN ".svn" EXCLUDE
+)
+
