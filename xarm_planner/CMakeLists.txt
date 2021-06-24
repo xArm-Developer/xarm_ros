@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(xarm_planner)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
@@ -223,3 +223,11 @@ target_link_libraries(xarm_simple_planner_test ${catkin_LIBRARIES})
 add_executable(xarm_gripper_planner src/xarm_gripper_planner.cpp)
 add_dependencies(xarm_gripper_planner ${${PROJECT_NAME}_EXPORTED_TARGETS})
 target_link_libraries(xarm_gripper_planner ${catkin_LIBRARIES})
+
+install(TARGETS xarm_simple_planner xarm_gripper_planner xarm_simple_planner_test
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
