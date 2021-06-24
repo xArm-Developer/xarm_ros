@@ -150,7 +150,7 @@ install(TARGETS xarm_ros_client xarm_driver_node example1_report_norm_node move_
 
 # ## Mark cpp header files for installation
 install(DIRECTORY include/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/..
   FILES_MATCHING PATTERN "*.h"
   PATTERN ".svn" EXCLUDE
 )
