@@ -17,6 +17,7 @@ set(CXX_SDK_SRC_XARM_WRAPPER ${CXX_SDK_SRC_XARM}/wrapper)
 set(CXX_SDK_SRC_XARM_CORE ${CXX_SDK_SRC_XARM}/core)
 set(CXX_SDK_SRC_SERIAL ${CXX_SDK_SRC}/serial)
 
+# check
 if(NOT EXISTS ${PROJECT_SOURCE_DIR}/${CXX_SDK_INC}
   OR NOT EXISTS ${PROJECT_SOURCE_DIR}/${CXX_SDK_INC}/xarm/wrapper/xarm_api.h
   OR NOT EXISTS ${PROJECT_SOURCE_DIR}/${CXX_SDK_SRC_XARM_WRAPPER}
@@ -40,6 +41,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+# add the library xarm_cxx_sdk
 add_library(xarm_cxx_sdk
   ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_api.cc
   ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_bio.cc
@@ -86,3 +88,16 @@ if(MSVC)
     ${catkin_LIBRARIES}
   )
 endif()
+
+# install the xarm_cxx_sdk headers path
+
+install(
+  DIRECTORY ${CXX_SDK_INC}
+  DESTINATION .)
+
+# install the xarm_cxx_sdk library 
+install(
+  TARGETS xarm_cxx_sdk
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

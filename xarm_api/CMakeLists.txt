@@ -29,136 +29,79 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
-###########
-## Build ##
-###########
+# set the include directories
 include_directories(
   include
-  ${xarm_cxx_sdk_INCLUDE_DIRS}
+  ${xarm_sdk_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
 
+# xarm_ros_client: add library and add dependencies and set link libraries
 add_library(xarm_ros_client
   src/xarm_ros_client.cpp
 )
+add_dependencies(xarm_ros_client xarm_msgs_generate_messages_cpp)
+target_link_libraries(xarm_ros_client 
+  ${xarm_sdk_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
 
-# Make sure xarm_msgs header files are generated before building xarm_ros_client
-add_dependencies(xarm_ros_client xarm_msgs_generate_messages_cpp xarm_cxx_sdk)
-
-## Declare a C++ executable
-## With catkin_make all packages are built within a single CMake context
-## The recommended prefix ensures that target names across packages don't collide
+# xarm_driver_node: add executable and add dependencies and set link libraries
 add_executable(xarm_driver_node
   src/xarm_driver_node.cpp
   src/xarm_driver.cpp
-  # src/xarm_driver_callback.cpp
 )
-add_dependencies(xarm_driver_node xarm_msgs_generate_messages_cpp xarm_cxx_sdk)
-
-add_executable(example1_report_norm_node 
-  test/example1_report_norm.cc 
-)
-
-add_executable(move_test
-  test/move_test.cpp
-)
-
-add_executable(test_tool_modbus
-  test/test_tool_modbus.cpp
-)
-
-add_executable(servo_cart_test
-  test/servo_cartesian_test.cpp
-)
-
-add_executable(test_xarm_ros_client
-  test/test_xarm_ros_client.cpp
-)
-
-add_executable(test_xarm_velo_move
-  test/test_xarm_velo_move.cpp
-)
-
-add_executable(test_xarm_states
-  test/test_xarm_states.cpp
-)
-
-## Rename C++ executable without prefix
-## The above recommended prefix causes long target names, the following renames the
-## target back to the shorter version for ease of user use
-## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
-
-## Add cmake target dependencies of the executable
-## same as for the library above
-#add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-
-## Specify libraries to link a library or executable target against
-
-target_link_libraries(xarm_ros_client 
-  xarm_cxx_sdk
-  ${catkin_LIBRARIES}
-)
-
-target_link_libraries(example1_report_norm_node 
-  xarm_cxx_sdk
-  ${catkin_LIBRARIES}
-)
-
+add_dependencies(xarm_driver_node xarm_msgs_generate_messages_cpp)
 target_link_libraries(xarm_driver_node 
-  xarm_cxx_sdk
+  ${xarm_sdk_LIBRARIES}
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(move_test 
-  xarm_cxx_sdk
-  ${catkin_LIBRARIES}
+# set the exec list who link the xarm_sdk library
+set(link_xarm_sdk_exec_list 
+  example1_report_norm
+  move_test
+  servo_cartesian_test
 )
+FOREACH(exec ${link_xarm_sdk_exec_list})
+  add_executable(${exec} 
+    test/${exec}.cpp
+  )
+  target_link_libraries(${exec} 
+    ${xarm_sdk_LIBRARIES}
+    ${catkin_LIBRARIES}
+  )
+ENDFOREACH(exec)
 
-target_link_libraries(test_tool_modbus 
+# set the exec list who link the xarm_ros_client library
+set(link_xarm_ros_client_exec_list 
+  test_tool_modbus
+  test_xarm_ros_client
+  test_xarm_velo_move
+  test_xarm_states
+)
+FOREACH(exec ${link_xarm_ros_client_exec_list})
+  add_executable(${exec} 
+    test/${exec}.cpp
+  )
+  target_link_libraries(${exec} 
+    xarm_ros_client
+    ${catkin_LIBRARIES}
+  )
+ENDFOREACH(exec)
+
+# install the library and executable
+install(TARGETS
+  xarm_driver_node
   xarm_ros_client
-  ${catkin_LIBRARIES}
+  ${link_xarm_sdk_exec_list}
+  ${link_xarm_ros_client_exec_list}
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-target_link_libraries(servo_cart_test 
-  xarm_cxx_sdk
-  ${catkin_LIBRARIES}
+# install the include path
+install(DIRECTORY include
+  DESTINATION .
 )
-
-target_link_libraries(test_xarm_ros_client 
-  xarm_ros_client
-  ${catkin_LIBRARIES}
-)
-
-target_link_libraries(test_xarm_velo_move 
-  xarm_ros_client
-  ${catkin_LIBRARIES}
-)
-
-target_link_libraries(test_xarm_states 
-  xarm_cxx_sdk
-  ${catkin_LIBRARIES}
-)
-
-# #############
-# ## Install ##
-# #############
-# catkin_install_python(PROGRAMS scripts/servo_cartesian_test.py
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
-# ## Mark executables and/or libraries for installation
-# install(TARGETS xarm_api
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-#  )
-
-# ## Mark cpp header files for installation
-# install(DIRECTORY include/
-#   DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
-

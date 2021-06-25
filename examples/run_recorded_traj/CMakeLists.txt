@@ -201,3 +201,11 @@ include_directories(
 
 add_executable(xarm_traj_test src/xarm_traj_test.cpp)
 target_link_libraries(xarm_traj_test ${catkin_LIBRARIES})
+
+install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(TARGETS
+  xarm_traj_test
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
