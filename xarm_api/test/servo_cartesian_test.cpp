@@ -5,7 +5,7 @@
  * Author: jason <jason@ufactory.cc>
  ============================================================================*/
 #include "ros/ros.h"
-#include <xarm_driver.h>
+#include <xarm_api/xarm_driver.h>
 
 int go_home_test(xarm_msgs::Move &srv, ros::ServiceClient &client)
 {

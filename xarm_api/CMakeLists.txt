@@ -32,7 +32,12 @@ catkin_package(
 # set the include directories
 include_directories(
   include
+  
   ${xarm_sdk_INCLUDE_DIRS}
+
+  # catkin_make_isolated --install
+  ${xarm_sdk_INCLUDE_DIRS}/xarm_sdk
+
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -90,6 +95,11 @@ FOREACH(exec ${link_xarm_ros_client_exec_list})
   )
 ENDFOREACH(exec)
 
+# install the include path
+install(DIRECTORY include/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
 # install the library and executable
 install(TARGETS
   xarm_driver_node
@@ -99,9 +109,4 @@ install(TARGETS
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
-# install the include path
-install(DIRECTORY include
-  DESTINATION .
 )

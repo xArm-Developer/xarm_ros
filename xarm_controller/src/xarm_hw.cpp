@@ -5,7 +5,7 @@
  * Author: Jason Peng <jason@ufactory.cc>
  ============================================================================*/
 
-#include "xarm_hw.h"
+#include "xarm_controller/xarm_hw.h"
 
 namespace xarm_control
 {

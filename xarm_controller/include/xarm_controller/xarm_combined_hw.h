@@ -6,7 +6,7 @@
  ============================================================================*/
 #include <ros/ros.h>
 #include <combined_robot_hw/combined_robot_hw.h>
-#include "xarm_hw.h"
+#include "xarm_controller/xarm_hw.h"
 
 namespace xarm_control
 {

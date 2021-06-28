@@ -1,7 +1,7 @@
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
 #include <xarm_gripper/MoveAction.h>
-#include <xarm_ros_client.h>
+#include <xarm_api/xarm_ros_client.h>
 
 // Please run "export ROS_NAMESPACE=/xarm" first
 

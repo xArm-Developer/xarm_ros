@@ -7,7 +7,7 @@
  ============================================================================*/
 #include "ros/ros.h"
 #include <sensor_msgs/JointState.h>
-#include "xarm_msgs.h"
+#include "xarm_api/xarm_msgs.h"
 
 
 void joint_states_callback(const sensor_msgs::JointState::ConstPtr& states)

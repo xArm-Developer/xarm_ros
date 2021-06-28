@@ -92,8 +92,8 @@ endif()
 # install the xarm_cxx_sdk headers path
 
 install(
-  DIRECTORY ${CXX_SDK_INC}
-  DESTINATION .)
+  DIRECTORY ${CXX_SDK_INC}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 
 # install the xarm_cxx_sdk library 
 install(

@@ -4,7 +4,7 @@
  *
  * Author: Jason Peng <jason@ufactory.cc>
  ============================================================================*/
-#include <xarm_ros_client.h>
+#include <xarm_api/xarm_ros_client.h>
 
 #define SERVICE_CALL_FAILED 999
 

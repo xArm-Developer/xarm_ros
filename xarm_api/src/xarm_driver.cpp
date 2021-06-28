@@ -4,7 +4,7 @@
  *
  * Author: Jason Peng <jason@ufactory.cc>
  ============================================================================*/
-#include "xarm_driver.h"
+#include "xarm_api/xarm_driver.h"
 #define CMD_HEARTBEAT_SEC 30 // 30s
 
 #define DEBUG_MODE 1

@@ -6,7 +6,7 @@
            Vinman <vinman@ufactory.cc> 
  ============================================================================*/
 #include "ros/ros.h"
-#include "xarm_ros_client.h"
+#include "xarm_api/xarm_ros_client.h"
 
 
 int main(int argc, char **argv)

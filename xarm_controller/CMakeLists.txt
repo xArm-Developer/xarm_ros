@@ -133,6 +133,17 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include
+  
+  ${xarm_sdk_INCLUDE_DIRS}
+  ${xarm_api_INCLUDE_DIRS}
+  
+  # catkin_make_isolated --install
+  ${xarm_sdk_INCLUDE_DIRS}/xarm_sdk
+  ${xarm_sdk_INCLUDE_DIRS}/xarm_api
+
+  # colcon build
+  ${xarm_sdk_INCLUDE_DIRS}/../../xarm_api/include/xarm_api
+
   ${catkin_INCLUDE_DIRS}
 )
 

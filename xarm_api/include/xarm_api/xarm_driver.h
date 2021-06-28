@@ -7,7 +7,7 @@
 #include <actionlib/server/action_server.h>
 #include <std_msgs/Float32.h>
 #include <sensor_msgs/JointState.h>
-#include "xarm_msgs.h"
+#include "xarm_api/xarm_msgs.h"
 #include "xarm/wrapper/xarm_api.h"
 
 namespace xarm_api

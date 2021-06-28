@@ -1,6 +1,6 @@
 #include "ros/ros.h"
-#include "xarm_ros_client.h"
-#include <xarm_driver.h>
+#include "xarm_api/xarm_ros_client.h"
+#include <xarm_api/xarm_driver.h>
 
 // Please run "export ROS_NAMESPACE=/xarm" first
 
