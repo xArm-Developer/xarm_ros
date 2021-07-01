@@ -1,4 +1,4 @@
-# Getting the controller DIGITAL input port status, io_num: from 1 to 8
+# Getting the controller DIGITAL input port status, io_num: from 1 to 16
 
 int16 io_num
 

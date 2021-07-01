@@ -1,4 +1,4 @@
-# Setting the 2 digital Output port at robot end connector
+# Setting the digital Output port at control box or robot end connector
 
 int16 io_num
 

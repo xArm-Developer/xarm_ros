@@ -347,19 +347,19 @@ $ rosservice call /xarm/set_digital_out 2 1  (Setting output 2 to be 1)
 
 #### Controller I/O Operations:
 
-&ensp;&ensp;We provide 8 digital input and 8 digital output ports at controller box for general usage.  
+&ensp;&ensp;We provide 8/16 digital input and 8/16 digital output ports at controller box for general usage.  
 
 ##### 1. To get one of the controller DIGITAL input state:  
 ```bash
-$ rosservice call /xarm/get_controller_din io_num (Notice: from 1 to 8, for CI0~CI7)  
+$ rosservice call /xarm/get_controller_din io_num (Notice: from 1 to 8, for CI0~CI7; from 9 to 16, for DI0~DI7[if any])  
 ```
 ##### 2. To set one of the controller DIGITAL output:
 ```bash
-$ rosservice call /xarm/set_controller_dout io_num (Notice: from 1 to 8, for CO0~CO7) logic (0 or 1) 
+$ rosservice call /xarm/set_controller_dout io_num (Notice: from 1 to 8, for CO0~CO7; from 9 to 16, for DI0~DI7[if any]) logic (0 or 1) 
 ```
 &ensp;&ensp;For example:  
 ```bash
-$ rosservice call /xarm/set_controller_dout 5 1  (Setting output 5 to be 1)
+$ rosservice call /xarm/set_controller_dout 5 1  (Setting output 5 [lable C04] to be 1)
 ```
 ##### 3. To get one of the controller ANALOG input:
 ```bash

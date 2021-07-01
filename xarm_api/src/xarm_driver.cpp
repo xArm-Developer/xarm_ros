@@ -469,7 +469,7 @@ namespace xarm_api
             res.message = "get Controller digital Input ret = " + std::to_string(res.ret);
             return res.ret >= 0;
         }
-        ROS_WARN("Controller Digital IO io_num: from 1 to 8");
+        ROS_WARN("Controller Digital IO io_num: from 1 to 16");
         return false;
     }
 

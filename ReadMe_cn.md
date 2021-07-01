@@ -341,19 +341,19 @@ $ rosservice call /xarm/set_digital_out 2 1  (设定输出端口2的逻辑为1)
 &ensp;&ensp;注意检查这些service返回的"ret"值为0，来确保操作成功。
 
 #### 控制器 I/O 操作:
-&ensp;&ensp;我们在控制盒外侧提供了八路数字输入和八路数字输出信号接口。
+&ensp;&ensp;我们在控制盒外侧提供了8/16路数字输入和8/16路数字输出信号接口。  
 
 ##### 1. 获得某一数字输入信号状态的方法: 
 ```bash
-$ $ rosservice call /xarm/get_controller_din io_num (注意：从1到8, 对应CI0到CI7)  
+$ $ rosservice call /xarm/get_controller_din io_num (注意：从1到8, 对应CI0到CI7，9-16对应DI0到DI7[如有])  
 ```
 ##### 2. 设定某一个输出端口电平的方法:
 ```bash
-$ rosservice /xarm/set_controller_dout io_num (注意：从1到8, 对应CO0到CO7) logic (0或1) 
+$ rosservice /xarm/set_controller_dout io_num (注意：从1到8, 对应CO0到CO7，9-16对应DI0到DI7[如有]) logic (0或1) 
 ```
 &ensp;&ensp;例如:  
 ```bash
-$ rosservice call /xarm/set_controller_dout 5 1  (设定输出端口5的逻辑为1)
+$ rosservice call /xarm/set_controller_dout 5 1  (设定输出端口5[标签CO4]的逻辑为1)
 ```
 ##### 3. 读取某一端口模拟输入量的方法:
 ```bash
