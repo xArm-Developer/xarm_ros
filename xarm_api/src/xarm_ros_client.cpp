@@ -7,6 +7,7 @@
 #include <xarm_api/xarm_ros_client.h>
 
 #define SERVICE_CALL_FAILED 999
+#define SERVICE_IS_PERSISTENT_BUT_INVALID 998
 
 namespace xarm_api{
 
@@ -61,6 +62,7 @@ void XArmROSClient::init(ros::NodeHandle& nh)
 template<typename ServiceSrv>
 int XArmROSClient::_call_service(ros::ServiceClient client, ServiceSrv srv)
 {
+    if (client.isPersistent() && !client.isValid()) return SERVICE_IS_PERSISTENT_BUT_INVALID;
     if(client.call(srv))
     {
         // ROS_INFO("call service %s, ret=%d, message=%s", 

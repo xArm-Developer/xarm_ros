@@ -64,7 +64,7 @@ namespace xarm_control
 		int curr_state;
 		int curr_mode;
 		int curr_err;
-		bool communication_timed_out;
+		int service_fail_ret;
 
 		unsigned int dof_;
 		std::vector<std::string> jnt_names_;
@@ -74,6 +74,8 @@ namespace xarm_control
 		std::vector<float> velocity_cmd_float_;
 		std::vector<double> effort_cmd_;
 
+		std::vector<float> prev_cmds_float_;
+
 		std::vector<double> position_fdb_;
 		std::vector<double> velocity_fdb_;
 		std::vector<double> effort_fdb_;
@@ -81,6 +83,10 @@ namespace xarm_control
 		bool initial_write_;		
 		std::mutex mutex_;
 		std::string hw_ns_;
+
+		ros::Time cur_time_;
+		ros::Time prev_time_;
+		ros::Duration elapsed_;
 		
 		xarm_api::XArmROSClient xarm;
 
@@ -108,6 +114,7 @@ namespace xarm_control
 		void _register_joint_limits(ros::NodeHandle &root_nh, std::string joint_name, const ControlMethod ctrl_method);
 		void _reset_limits(void);
 		void _enforce_limits(const ros::Duration& period);
+		bool _check_cmds_is_change(std::vector<float> prev, std::vector<float> cur, double threshold = 0.0001);
 	};
 
 }
