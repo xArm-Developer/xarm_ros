@@ -8,7 +8,7 @@
 #define CMD_HEARTBEAT_SEC 30 // 30s
 
 #define DEBUG_MODE 1
-#define PARAM_ERROR 998
+#define PARAM_ERROR 997
 
 
 void* cmd_heart_beat(void* args)
@@ -1012,7 +1012,7 @@ namespace xarm_api
 
     bool XArmDriver::SetFenceModeCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
     {
-        res.ret = arm->set_fence_mode((bool)req.data); 
+        res.ret = arm->set_fence_mode((bool)req.data);
         return res.ret >= 0;
     }
 
