@@ -170,6 +170,12 @@ namespace xarm_api
         set_coll_sens_server_ = nh_.advertiseService("set_collision_sensitivity", &XArmDriver::SetCollSensCB, this); // set collision sensitivity
         set_teach_sens_server_ = nh_.advertiseService("set_teach_sensitivity", &XArmDriver::SetTeachSensCB, this); // set teach sensitivity
 
+        set_world_offset_server_ = nh_.advertiseService("set_world_offset", &XArmDriver::SetWorldOffsetCB, this);;
+        set_fence_mode_server_ = nh_.advertiseService("set_fence_mode", &XArmDriver::SetFenceModeCB, this);
+        set_reduced_mode_server_ = nh_.advertiseService("set_reduced_mode", &XArmDriver::SetReducedModeCB, this);
+        set_tcp_jerk_server_ = nh_.advertiseService("set_tcp_jerk", &XArmDriver::SetTcpJerkCB, this);
+        set_joint_jerk_server_ = nh_.advertiseService("set_joint_jerk", &XArmDriver::SetJointJerkCB, this);
+
         // state feedback topics:
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
         robot_rt_state_ = nh_.advertise<xarm_msgs::RobotMsg>("xarm_states", 10, true);
@@ -991,6 +997,42 @@ namespace xarm_api
     bool XArmDriver::SetTeachSensCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
     {
         res.ret = arm->set_teach_sensitivity(req.data); 
+        return res.ret >= 0;
+    }
+
+    bool XArmDriver::SetWorldOffsetCB(xarm_msgs::TCPOffset::Request &req, xarm_msgs::TCPOffset::Response &res)
+    {
+        float offsets[6] = {req.x, req.y, req.z, req.roll, req.pitch, req.yaw};
+        res.ret = arm->set_world_offset(offsets);
+        if (res.ret >= 0)
+            arm->save_conf();
+        res.message = "set world offset: ret = " + std::to_string(res.ret); 
+        return res.ret >= 0;
+    }
+
+    bool XArmDriver::SetFenceModeCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
+    {
+        res.ret = arm->set_fence_mode((bool)req.data); 
+        return res.ret >= 0;
+    }
+
+    bool XArmDriver::SetReducedModeCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
+    {
+        res.ret = arm->set_reduced_mode((bool)req.data); 
+        return res.ret >= 0;
+    }
+
+    bool XArmDriver::SetTcpJerkCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res)
+    {
+        res.ret = arm->set_tcp_jerk(req.data);
+        res.message = "set tcp jerk: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
+        return res.ret >= 0;
+    }
+
+    bool XArmDriver::SetJointJerkCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res)
+    {
+        res.ret = arm->set_joint_jerk(req.data);
+        res.message = "set joint jerk: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
         return res.ret >= 0;
     }
 

@@ -46,6 +46,14 @@ public:
 	int setCollSens(int sens);
 	int setTeachSens(int sens);
 
+	int setWorldOffset(const std::vector<float>& world_offset);
+	int setFenceMode(bool on);
+	int setReducedMode(bool on);
+	int setTcpJerk(float jerk);
+	int setJointJerk(float jerk);
+	int setTcpMaxAcc(float maxacc);
+	int setJointMaxAcc(float maxacc);
+
 private:
 	template<typename ServiceSrv>
 	int _call_service(ros::ServiceClient client, ServiceSrv srv);
@@ -78,6 +86,14 @@ private:
 	ros::ServiceClient set_coll_sens_client_;
 	ros::ServiceClient set_teach_sens_client_;
 
+	ros::ServiceClient set_world_offset_client_;
+	ros::ServiceClient set_fence_mode_client_;
+	ros::ServiceClient set_reduced_mode_client_;
+	ros::ServiceClient set_tcp_jerk_client_;
+	ros::ServiceClient set_joint_jerk_client_;
+	ros::ServiceClient set_tcp_maxacc_client_;
+	ros::ServiceClient set_joint_maxacc_client_;
+
     xarm_msgs::SetAxis set_axis_srv_;
     xarm_msgs::SetInt16 set_int16_srv_;
     xarm_msgs::TCPOffset offset_srv_;
@@ -95,6 +111,7 @@ private:
 	xarm_msgs::MoveVelo move_velo_srv_;
 	xarm_msgs::SetString set_string_srv_;
 	xarm_msgs::PlayTraj play_traj_srv_;
+	xarm_msgs::SetFloat32 set_float32_srv_;
 
     ros::NodeHandle nh_;
 };

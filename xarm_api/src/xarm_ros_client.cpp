@@ -8,6 +8,7 @@
 
 #define SERVICE_CALL_FAILED 999
 #define SERVICE_IS_PERSISTENT_BUT_INVALID 998
+#define PARAMS_ERROR 997
 
 namespace xarm_api{
 
@@ -57,6 +58,14 @@ void XArmROSClient::init(ros::NodeHandle& nh)
     set_coll_rebound_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_collision_rebound");
     set_coll_sens_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_collision_sensitivity");
     set_teach_sens_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_teach_sensitivity");
+
+    set_world_offset_client_ = nh_.serviceClient<xarm_msgs::TCPOffset>("set_world_offset");
+    set_fence_mode_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_fence_mode");
+    set_reduced_mode_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_reduced_mode");
+    set_tcp_jerk_client_ = nh_.serviceClient<xarm_msgs::SetFloat32>("set_tcp_jerk");
+    set_joint_jerk_client_ = nh_.serviceClient<xarm_msgs::SetFloat32>("set_joint_jerk");
+    set_tcp_maxacc_client_ = nh_.serviceClient<xarm_msgs::SetFloat32>("set_tcp_maxacc");
+    set_joint_maxacc_client_ = nh_.serviceClient<xarm_msgs::SetFloat32>("set_joint_maxacc");
 }
 
 template<typename ServiceSrv>
@@ -131,7 +140,7 @@ int XArmROSClient::setTCPOffset(const std::vector<float>& tcp_offset)
     if(tcp_offset.size() != 6)
     {
         ROS_ERROR("Set tcp offset service parameter should be 6-element Cartesian offset!");
-        return 1;
+        return PARAMS_ERROR;
     }
     
     offset_srv_.request.x = tcp_offset[0];
@@ -298,6 +307,59 @@ int XArmROSClient::setTeachSens(int sens)
 {
     set_int16_srv_.request.data = sens;
     return _call_service(set_teach_sens_client_, set_int16_srv_);
+}
+
+int XArmROSClient::setWorldOffset(const std::vector<float>& world_offset)
+{
+    if(world_offset.size() != 6)
+    {
+        ROS_ERROR("Set world offset service parameter should be 6-element Cartesian offset!");
+        return PARAMS_ERROR;
+    }
+    
+    offset_srv_.request.x = world_offset[0];
+    offset_srv_.request.y = world_offset[1];
+    offset_srv_.request.z = world_offset[2];
+    offset_srv_.request.roll = world_offset[3];
+    offset_srv_.request.pitch = world_offset[4];
+    offset_srv_.request.yaw = world_offset[5];
+    return _call_service(set_world_offset_client_, offset_srv_);
+}
+
+int XArmROSClient::setFenceMode(bool on)
+{
+    set_int16_srv_.request.data = (int)on;
+    return _call_service(set_fence_mode_client_, set_int16_srv_);
+}
+
+int XArmROSClient::setReducedMode(bool on)
+{
+    set_int16_srv_.request.data = (int)on;
+    return _call_service(set_reduced_mode_client_, set_int16_srv_);
+}
+
+int XArmROSClient::setTcpJerk(float jerk)
+{
+    set_float32_srv_.request.data = jerk;
+    return _call_service(set_tcp_jerk_client_, set_float32_srv_);
+}
+
+int XArmROSClient::setJointJerk(float jerk)
+{
+    set_float32_srv_.request.data = jerk;
+    return _call_service(set_joint_jerk_client_, set_float32_srv_);
+}
+
+int XArmROSClient::setTcpMaxAcc(float maxacc)
+{
+    set_float32_srv_.request.data = maxacc;
+    return _call_service(set_tcp_maxacc_client_, set_float32_srv_);
+}
+
+int XArmROSClient::setJointMaxAcc(float maxacc)
+{
+    set_float32_srv_.request.data = maxacc;
+    return _call_service(set_joint_maxacc_client_, set_float32_srv_);
 }
 
 }// namespace xarm_api

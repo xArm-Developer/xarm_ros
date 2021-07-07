@@ -65,6 +65,12 @@ namespace xarm_api
         bool SetCollSensCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
         bool SetTeachSensCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
 
+        bool SetWorldOffsetCB(xarm_msgs::TCPOffset::Request &req, xarm_msgs::TCPOffset::Response &res);
+        bool SetFenceModeCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
+        bool SetReducedModeCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
+        bool SetTcpJerkCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res);
+        bool SetJointJerkCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res);
+
         void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
         void pub_joint_state(sensor_msgs::JointState &js_msg);
         void pub_cgpio_state(xarm_msgs::CIOState &cio_msg);
@@ -140,6 +146,12 @@ namespace xarm_api
         ros::ServiceServer set_rebound_server_;
         ros::ServiceServer set_coll_sens_server_;
         ros::ServiceServer set_teach_sens_server_;
+
+        ros::ServiceServer set_world_offset_server_;
+        ros::ServiceServer set_fence_mode_server_;
+        ros::ServiceServer set_reduced_mode_server_;
+        ros::ServiceServer set_tcp_jerk_server_;
+        ros::ServiceServer set_joint_jerk_server_;
 
         ros::Publisher joint_state_;
         ros::Publisher robot_rt_state_; 
