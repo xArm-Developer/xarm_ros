@@ -9,6 +9,19 @@
   <arg name="xarm_hw_ns" default="xarm" />
   <arg name="ext_ns" default="" />
 
+  <arg name="add_other_geometry" default="false"/>
+  <arg name="geometry_type" default="box"/>
+  <arg name="geometry_mass" default="0.1"/>
+  <arg name="geometry_height" default="0.1"/>
+  <arg name="geometry_radius" default="0.1"/>
+  <arg name="geometry_length" default="0.1"/>
+  <arg name="geometry_width" default="0.1"/>
+  <arg name="geometry_mesh_filename" default=""/>
+  <arg name="geometry_mesh_origin_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_origin_rpy" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
+
   <!-- common: bring up node to enable real xArm control -->
   <include file="$(find xarm_bringup)/launch/xarm7_server.launch">
     <arg name="robot_ip" value="$(arg robot_ip)" />
@@ -39,6 +52,19 @@
     <arg name="jnt_stat_source" value="[$(arg xarm_hw_ns)/joint_states]" />
     <arg name="show_rviz" value="$(arg show_rviz)" />
     <arg name="NO_GUI_CTRL" value="$(arg no_gui_plan)"/>
+
+    <arg name="add_other_geometry" default="$(arg add_other_geometry)"/>
+    <arg name="geometry_type" default="$(arg geometry_type)"/>
+    <arg name="geometry_mass" default="$(arg geometry_mass)"/>
+    <arg name="geometry_height" default="$(arg geometry_height)"/>
+    <arg name="geometry_radius" default="$(arg geometry_radius)"/>
+    <arg name="geometry_length" default="$(arg geometry_length)"/>
+    <arg name="geometry_width" default="$(arg geometry_width)"/>
+    <arg name="geometry_mesh_filename" default="$(arg geometry_mesh_filename)"/>
+    <arg name="geometry_mesh_origin_xyz" default="$(arg geometry_mesh_origin_xyz)"/>
+    <arg name="geometry_mesh_origin_rpy" default="$(arg geometry_mesh_origin_rpy)"/>
+    <arg name="geometry_mesh_tcp_xyz" default="$(arg geometry_mesh_tcp_xyz)"/>
+    <arg name="geometry_mesh_tcp_rpy" default="$(arg geometry_mesh_tcp_rpy)"/>
   </include>
 
 </launch>

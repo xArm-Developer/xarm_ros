@@ -56,6 +56,7 @@
    * 添加 vacuum gripper（真空吸头）3D模型以及 xArm-with-vacuum-gripper Moveit开发包 (位于 /examples 路径下)。
    * 在[Microsoft IoT](https://github.com/ms-iot)的帮助下, xarm_ros 现已能够在 Windows平台编译和运行。
    * 添加关节空间和笛卡尔空间的速度控制模式。(需要**控制器固件版本 >= 1.6.8**)
+   * 支持添加其它模型到末端
 
 # 3. 准备工作
 

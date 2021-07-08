@@ -1,5 +1,19 @@
 <launch>
   <arg name="velocity_control" default="false"/>
+
+  <arg name="add_other_geometry" default="false"/>
+  <arg name="geometry_type" default="box"/>
+  <arg name="geometry_mass" default="0.1"/>
+  <arg name="geometry_height" default="0.1"/>
+  <arg name="geometry_radius" default="0.1"/>
+  <arg name="geometry_length" default="0.1"/>
+  <arg name="geometry_width" default="0.1"/>
+  <arg name="geometry_mesh_filename" default=""/>
+  <arg name="geometry_mesh_origin_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_origin_rpy" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
+
   <!-- Remap the name space so it can send command to gazebo loaded controller -->
   <!-- this remap must appear BEFORE move_group launch -->
   <arg name="xarm_traj_controller" value="$(eval 'xarm5_traj_controller_velocity' if arg('velocity_control') else 'xarm5_traj_controller')" />
@@ -9,6 +23,19 @@
     <arg name="jnt_stat_source" value="[/xarm/joint_states]" />
     <arg name="load_move_group" value="true" />
     <arg name="pub_tf" value="false" />
+
+    <arg name="add_other_geometry" default="$(arg add_other_geometry)"/>
+    <arg name="geometry_type" default="$(arg geometry_type)"/>
+    <arg name="geometry_mass" default="$(arg geometry_mass)"/>
+    <arg name="geometry_height" default="$(arg geometry_height)"/>
+    <arg name="geometry_radius" default="$(arg geometry_radius)"/>
+    <arg name="geometry_length" default="$(arg geometry_length)"/>
+    <arg name="geometry_width" default="$(arg geometry_width)"/>
+    <arg name="geometry_mesh_filename" default="$(arg geometry_mesh_filename)"/>
+    <arg name="geometry_mesh_origin_xyz" default="$(arg geometry_mesh_origin_xyz)"/>
+    <arg name="geometry_mesh_origin_rpy" default="$(arg geometry_mesh_origin_rpy)"/>
+    <arg name="geometry_mesh_tcp_xyz" default="$(arg geometry_mesh_tcp_xyz)"/>
+    <arg name="geometry_mesh_tcp_rpy" default="$(arg geometry_mesh_tcp_rpy)"/>
   </include>
 
   
