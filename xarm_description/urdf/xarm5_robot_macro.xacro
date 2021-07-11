@@ -27,7 +27,7 @@
 
     <xacro:if value="${limited}">
       <xacro:xarm5_urdf prefix="${prefix}"
-        joint1_lower_limit="${-pi*0.99}" joint1_upper_limit="${pi*0.99}"
+        joint1_lower_limit="${-pi*1.25*0.99}" joint1_upper_limit="${pi*0.75*0.99}"
         joint2_lower_limit="${-2.059}" joint2_upper_limit="${2.0944}"
         joint3_lower_limit="${-pi*0.99}" joint3_upper_limit="${0.19198}"
         joint4_lower_limit="${-1.69297}" joint4_upper_limit="${pi*0.99}"
