@@ -14,6 +14,6 @@
   </include>
 
   <!-- run xarm_traj_controller from HW interface, enable direct command to real robot arm -->  
-  <node if="$(arg use_moveit)" name="xarm_traj_controller" pkg="xarm_controller" type="xarm_traj_controller" args="ip=$(arg robot_ip)" ns="$(arg namespace)" respawn="false" output="screen" />
+  <node if="$(arg use_moveit)" name="xarm_traj_controller" pkg="xarm_controller" type="xarm_traj_controller" args="ip=$(arg robot_ip)" ns="$(arg namespace)" respawn="false" output="screen" required="true"/>
 
 </launch>

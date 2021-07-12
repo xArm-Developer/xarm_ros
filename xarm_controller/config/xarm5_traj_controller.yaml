@@ -14,11 +14,11 @@ xarm:
     constraints:
         goal_time: 0.5
         stopped_velocity_tolerance: 0.05
-        joint1: {trajectory: 1, goal: 0.01}
-        joint2: {trajectory: 1, goal: 0.01}
-        joint3: {trajectory: 1, goal: 0.01}
-        joint4: {trajectory: 1, goal: 0.01}
-        joint5: {trajectory: 1, goal: 0.01}
+        joint1: {trajectory: 0.1, goal: 0.01}
+        joint2: {trajectory: 0.1, goal: 0.01}
+        joint3: {trajectory: 0.1, goal: 0.01}
+        joint4: {trajectory: 0.1, goal: 0.01}
+        joint5: {trajectory: 0.1, goal: 0.01}
     stop_trajectory_duration: 0.2
     state_publish_rate:  25
     action_monitor_rate: 10
