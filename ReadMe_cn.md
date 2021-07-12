@@ -37,6 +37,7 @@
     * [7.3 Servo_Joint 关节位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#3-servo_joint-streamed-joint-space-trajectory)
     * [7.4 使用同一个moveGroup节点控制xArm6双臂](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#4-dual-xarm6-controlled-with-one-movegroup-node)
     * [7.5 用Moveit展示xarm7冗余解的示例](https://github.com/xArm-Developer/xarm_ros/tree/master/examples/xarm7_redundancy_res)
+* [8. 加载其它模型到机械臂末端](#8-加载其它模型到机械臂末端)
 
 # 1. 简介：
    &ensp;&ensp;此代码库包含xArm模型文件以及相关的控制、规划等示例开发包。开发及测试使用的环境为 Ubuntu 16.04 + ROS Kinetic Kame。
@@ -56,7 +57,7 @@
    * 添加 vacuum gripper（真空吸头）3D模型以及 xArm-with-vacuum-gripper Moveit开发包 (位于 /examples 路径下)。
    * 在[Microsoft IoT](https://github.com/ms-iot)的帮助下, xarm_ros 现已能够在 Windows平台编译和运行。
    * 添加关节空间和笛卡尔空间的速度控制模式。(需要**控制器固件版本 >= 1.6.8**)
-   * 支持添加其它模型到末端
+   * 支持[添加其它模型到末端](#8-加载其它模型到机械臂末端)
 
 # 3. 准备工作
 
@@ -505,3 +506,33 @@ $ rosservice call /xarm/set_state 0
 
 # 7. 其他示例
 &ensp;&ensp;[在examples路径下](./examples)会陆续更新一些其他应用的demo例程，欢迎前去探索研究。
+
+# 8. 加载其它模型到机械臂末端
+&ensp;&ensp;在 __xarm5_moveit_config__/__xarm6_moveit_config__/__xarm7_moveit_config__ 这三个包里，可以通过以下参数可以加载其它模型到机械臂末端
+- ### 使用示例
+   ```bash
+   # 加载box模型
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=box
+
+   # 加载cylinder模型
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=cylinder
+
+   # 加载sphere模型
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=sphere
+
+   # 加载其它mesh模型（这里加载vacuum_gripper为例，如果加载的模型是放在xarm_description/meshes/other里面，geometry_mesh_filename参数只需要传文件名）
+   $ roslaunch xarm6_moveit_config demo.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/visual/vacuum_gripper.STL geometry_mesh_tcp_xyz:='"0 0 0.126"'
+   ```
+
+- ### 参数说明
+   - __add_other_geometry__: 默认为false，表示是否加载其它几何模型到末端
+   - __geometry_type__: 要加载的几何模型的类型，支持box/cylinder/sphere/mesh这几种，不同种类支持的参数不一样
+   - __geometry_height__: 几何模型高度，单位(米)，默认0.1，仅在geometry_type为box/cylinder/sphere时有效
+   - __geometry_radius__: 几何模型半径，单位(米)，默认0.1，仅在geometry_type为cylinder/sphere时有效
+   - __geometry_length__: 几何模型长度，单位(米)，默认0.1，仅在geometry_type为box时有效
+   - __geometry_width__: 几何模型宽度，单位(米)，默认0.1，仅在geometry_type为box时有效
+   - __geometry_mesh_filename__: 几何模型的文件名，仅在geometry_type为mesh时有效
+   - __geometry_mesh_origin_xyz__: 几何模型的参考系相对于末端的参考系, 默认"0 0 0"，仅在geometry_type为mesh时有效
+   - __geometry_mesh_origin_rpy__: 几何模型的参考系相对于末端的参考系, 默认"0 0 0"，仅在geometry_type为mesh时有效
+   - __geometry_mesh_tcp_xyz__: 几何模型相对于末端的偏移, 默认"0 0 0"，仅在geometry_type为mesh时有效
+   - __geometry_mesh_tcp_rpy__: 几何模型相对于末端的偏移, 默认"0 0 0"，仅在geometry_type为mesh时有效
