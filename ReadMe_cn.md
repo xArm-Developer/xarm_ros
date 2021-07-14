@@ -17,6 +17,7 @@
     * [5.3 xarm_controller](#53-xarm_controller)  
     * [5.4 xarm_bringup](#54-xarm_bringup)  
     * [5.5 ***xarm7_moveit_config***](#55-xarm7_moveit_config)  
+        * [5.5.1 Moveit加载其它自定义模型到机械臂末端](#551-moveit加载其它自定义模型到机械臂末端)
     * [5.6 ***xarm_planner***](#56-xarm_planner)  
     * [5.7 ***xarm_api/xarm_msgs***](#57-xarm_apixarm_msgs)  
         * [5.7.1 使用ROS Service启动 xArm (***后续指令执行的前提***)](#使用ros-service启动-xarm)  
@@ -37,10 +38,9 @@
     * [7.3 Servo_Joint 关节位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#3-servo_joint-streamed-joint-space-trajectory)
     * [7.4 使用同一个moveGroup节点控制xArm6双臂](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#4-dual-xarm6-controlled-with-one-movegroup-node)
     * [7.5 用Moveit展示xarm7冗余解的示例](https://github.com/xArm-Developer/xarm_ros/tree/master/examples/xarm7_redundancy_res)
-* [8. 加载其它模型到机械臂末端](#8-加载其它模型到机械臂末端)
 
 # 1. 简介：
-   &ensp;&ensp;此代码库包含xArm模型文件以及相关的控制、规划等示例开发包。开发及测试使用的环境为 Ubuntu 16.04 + ROS Kinetic Kame。
+   &ensp;&ensp;此代码库包含xArm模型文件以及相关的控制、规划等示例开发包。开发及测试使用的环境为 Ubuntu 16.04 + ROS Kinetic/Melodic。
    ***以下的指令说明是基于xArm7, 其他型号用户可以在对应位置将'xarm7'替换成'xarm6'或'xarm5'***
 
 # 2. 更新记录：
@@ -57,7 +57,7 @@
    * 添加 vacuum gripper（真空吸头）3D模型以及 xArm-with-vacuum-gripper Moveit开发包 (位于 /examples 路径下)。
    * 在[Microsoft IoT](https://github.com/ms-iot)的帮助下, xarm_ros 现已能够在 Windows平台编译和运行。
    * 添加关节空间和笛卡尔空间的速度控制模式。(需要**控制器固件版本 >= 1.6.8**)
-   * 支持[添加其它模型到末端](#8-加载其它模型到机械臂末端)
+   * 支持[Moveit添加其它模型到末端](#551-moveit加载其它自定义模型到机械臂末端)
 
 # 3. 准备工作
 
@@ -201,7 +201,38 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
    $ roslaunch xarm7_vacuum_gripper_moveit_config realMove_exec.launch robot_ip:=<your controller box LAN IP address>
    ```
    如果使用了我们配套的真空吸头(xArm vacuum gripper), 最好可以使用这个package，因为其中的配置会让Moveit在规划无碰撞轨迹时将真空吸头考虑在内。 
-  
+
+## 5.5.1 Moveit加载其它自定义模型到机械臂末端
+&ensp;&ensp;***此部分功能需要使用ROS Melodic或之后的版本***  
+&ensp;&ensp;在 __xarm5_moveit_config__/__xarm6_moveit_config__/__xarm7_moveit_config__ 这三个包里，可通过以下参数加载其它工具模型到机械臂末端，以实现在moveit规划中加入自定义末端工具的偏移量和碰撞检测。(注意：使用/xarm/set_tcp_offset服务的设置对moveit规划不生效！) 
+
+### 使用示例
+   ```bash
+   # 加载box模型
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=box
+
+   # 加载cylinder模型
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=cylinder
+
+   # 加载sphere模型
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=sphere
+
+   # 加载其它mesh模型（这里加载vacuum_gripper为例，如果加载的模型是放在xarm_description/meshes/other里面，geometry_mesh_filename参数只需要传文件名）
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/visual/vacuum_gripper.STL geometry_mesh_tcp_xyz:='"0 0 0.126"'
+   ```
+
+### 参数说明
+- __add_other_geometry__: 默认为false，表示是否加载其它几何模型到末端
+- __geometry_type__: 要加载的几何模型的类型，支持box/cylinder/sphere/mesh这几种，不同种类支持的参数不一样
+- __geometry_height__: 几何模型高度，单位(米)，默认0.1，仅在geometry_type为box/cylinder/sphere时有效
+- __geometry_radius__: 几何模型半径，单位(米)，默认0.1，仅在geometry_type为cylinder/sphere时有效
+- __geometry_length__: 几何模型长度，单位(米)，默认0.1，仅在geometry_type为box时有效
+- __geometry_width__: 几何模型宽度，单位(米)，默认0.1，仅在geometry_type为box时有效
+- __geometry_mesh_filename__: 几何模型的文件名，仅在geometry_type为mesh时有效
+- __geometry_mesh_origin_xyz__: 几何模型的参考系相对于末端的参考系, 默认"0 0 0"，仅在geometry_type为mesh时有效
+- __geometry_mesh_origin_rpy__: 几何模型的参考系相对于末端的参考系, 默认"0 0 0"，仅在geometry_type为mesh时有效
+- __geometry_mesh_tcp_xyz__: 几何模型相对于末端的偏移, 默认"0 0 0"，仅在geometry_type为mesh时有效
+- __geometry_mesh_tcp_rpy__: 几何模型相对于末端的偏移, 默认"0 0 0"，仅在geometry_type为mesh时有效  
 
 ## 5.6 xarm_planner:
 这个简单包装实现的规划器接口是基于 Moveit!中的 move_group interface, 可以使用户通过service指定目标位置进行规划和执行。 这部分的详细使用方法请阅读[xarm_planner包](./xarm_planner)的文档。  
@@ -377,7 +408,7 @@ $ rosservice call /xarm/set_controller_aout 2 3.3  (设定输出端口 AO1 为 3
 &ensp;&ensp;另一种选择是订阅 ***"/joint_states"*** topic, 它是以[JointState.msg](http://docs.ros.org/jade/api/sensor_msgs/html/msg/JointState.html)格式发布数据的, 但是当前 ***只有 "position" 是有效数据***; "velocity" 是没有经过任何滤波的基于相邻两组位置数据进行的数值微分, "effort" 的反馈数据是基于电流的估计值，而不是直接从力矩传感器获得，因而它们只能作为参考。
 &ensp;&ensp;基于运行时性能考虑，目前以上两个topic的数据更新率固定为 ***5Hz***.  
 
-#### 关于设定末端工具偏移量:  
+#### 关于设定末端工具偏移量(适用于xarm_api service控制):  
 &ensp;&ensp;末端工具的偏移量可以也通过'/xarm/set_tcp_offset'服务来设定,参考下图，请注意这一坐标偏移量是基于 ***默认工具坐标系*** (坐标系B)描述的，它位于末端法兰中心，并且相对基坐标系(坐标系A)有（PI, 0, 0)的RPY旋转偏移。
 ![xArmFrames](./doc/xArmFrames.png)  
 &ensp;&ensp;例如：
@@ -507,32 +538,3 @@ $ rosservice call /xarm/set_state 0
 # 7. 其他示例
 &ensp;&ensp;[在examples路径下](./examples)会陆续更新一些其他应用的demo例程，欢迎前去探索研究。
 
-# 8. 加载其它模型到机械臂末端
-&ensp;&ensp;在 __xarm5_moveit_config__/__xarm6_moveit_config__/__xarm7_moveit_config__ 这三个包里，可以通过以下参数可以加载其它模型到机械臂末端
-- ### 使用示例
-   ```bash
-   # 加载box模型
-   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=box
-
-   # 加载cylinder模型
-   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=cylinder
-
-   # 加载sphere模型
-   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=sphere
-
-   # 加载其它mesh模型（这里加载vacuum_gripper为例，如果加载的模型是放在xarm_description/meshes/other里面，geometry_mesh_filename参数只需要传文件名）
-   $ roslaunch xarm6_moveit_config demo.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/visual/vacuum_gripper.STL geometry_mesh_tcp_xyz:='"0 0 0.126"'
-   ```
-
-- ### 参数说明
-   - __add_other_geometry__: 默认为false，表示是否加载其它几何模型到末端
-   - __geometry_type__: 要加载的几何模型的类型，支持box/cylinder/sphere/mesh这几种，不同种类支持的参数不一样
-   - __geometry_height__: 几何模型高度，单位(米)，默认0.1，仅在geometry_type为box/cylinder/sphere时有效
-   - __geometry_radius__: 几何模型半径，单位(米)，默认0.1，仅在geometry_type为cylinder/sphere时有效
-   - __geometry_length__: 几何模型长度，单位(米)，默认0.1，仅在geometry_type为box时有效
-   - __geometry_width__: 几何模型宽度，单位(米)，默认0.1，仅在geometry_type为box时有效
-   - __geometry_mesh_filename__: 几何模型的文件名，仅在geometry_type为mesh时有效
-   - __geometry_mesh_origin_xyz__: 几何模型的参考系相对于末端的参考系, 默认"0 0 0"，仅在geometry_type为mesh时有效
-   - __geometry_mesh_origin_rpy__: 几何模型的参考系相对于末端的参考系, 默认"0 0 0"，仅在geometry_type为mesh时有效
-   - __geometry_mesh_tcp_xyz__: 几何模型相对于末端的偏移, 默认"0 0 0"，仅在geometry_type为mesh时有效
-   - __geometry_mesh_tcp_rpy__: 几何模型相对于末端的偏移, 默认"0 0 0"，仅在geometry_type为mesh时有效

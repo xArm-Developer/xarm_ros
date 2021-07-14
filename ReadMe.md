@@ -20,6 +20,7 @@
     * [5.3 xarm_controller](#53-xarm_controller)  
     * [5.4 xarm_bringup](#54-xarm_bringup)  
     * [5.5 ***xarm7_moveit_config***](#55-xarm7_moveit_config)  
+        * [5.5.1 Add Custom Tool Model For Moveit](#551-add-custom-tool-model-for-moveit)  
     * [5.6 ***xarm_planner***](#56-xarm_planner)  
     * [5.7 ***xarm_api/xarm_msgs***](#57-xarm_apixarm_msgs)  
         * [5.7.1 Starting xArm by ROS service (***priority for the following operations***)](#starting-xarm-by-ros-service)  
@@ -42,7 +43,7 @@
     * [7.5 An example of demonstrating redundancy resolution using MoveIt](https://github.com/xArm-Developer/xarm_ros/tree/master/examples/xarm7_redundancy_res)
 
 # 1. Introduction
-   &ensp;&ensp;This repository contains the 3D models of xArm series and demo packages for ROS development and simulations.Developing and testing environment: Ubuntu 16.04 + ROS Kinetic Kame + Gazebo 9.  
+   &ensp;&ensp;This repository contains the 3D models of xArm series and demo packages for ROS development and simulations.Developing and testing environment: Ubuntu 16.04 + ROS Kinetic/Melodic.  
    ***Instructions below is based on xArm7, other model user can replace 'xarm7' with 'xarm6' or 'xarm5' where applicable.***
    For simplified Chinese instructions: [简体中文版](./ReadMe_cn.md)    
 
@@ -60,6 +61,7 @@
    * Add vacuum gripper model and xArm-with-vacuum-gripper Moveit development packages (under /examples dir).
    * Thanks to [Microsoft IoT](https://github.com/ms-iot), xarm_ros can now be compiled and run on Windows platform.
    * Add velocity control mode for joint and Cartesian space. (**xArm controller firmware version >= 1.6.8** required)  
+   * Add support for [custom tool model for Moveit](#551-add-custom-tool-model-for-moveit)  
 
 # 3. Preparations before using this package
 
@@ -202,6 +204,39 @@ Please note: xarm_moveit_config related packages will limit all joints within `[
    $ roslaunch xarm7_vacuum_gripper_moveit_config realMove_exec.launch robot_ip:=<your controller box LAN IP address>
    ```
    It is better to use this package with real xArm vacuum gripper, since Moveit planner will take the vacuum gripper into account for collision detection.  
+
+## 5.5.1 Add custom tool model for Moveit
+&ensp;&ensp;***This part may require ROS Melodic or later versions to function well***  
+&ensp;&ensp;For __xarm5_moveit_config__/__xarm6_moveit_config__/__xarm7_moveit_config__, customized tool models maybe added to the tool flange through quick-configuration parameters listed below，thus to enable Tool offset and 3D collision checking during Moveit motion planning. (Notice：configuration through '/xarm/set_tcp_offset' service will not be effective in Moveit planning!) 
+
+### Examples:
+   ```bash
+   # attaching box model:
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=box
+
+   # attaching cylinder model:
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=cylinder
+
+   # attaching sphere model:
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=sphere
+
+   # attaching customized mesh model:（Here take xarm vacuum_gripper as an example，if the mesh model could be placed in: 'xarm_description/meshes/other'directory，'geometry_mesh_filename' argument can be simplified to be just the filename）
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/visual/vacuum_gripper.STL geometry_mesh_tcp_xyz:='"0 0 0.126"'
+   ```
+
+### Argument explanations:
+- __add_other_geometry__: default to be false，indicating whether to add other geometry model to the tool.
+- __geometry_type__: geometry shapes to be added，as one of 'box/cylinder/sphere/mesh', there are different parameters required for different types.  
+- __geometry_height__: height of geometry shape，unit: meter，default value: 0.1，effective for geometry_type: box/cylinder/sphere.
+- __geometry_radius__: radius of geometry shape，unit: meter，default value: 0.1，effective for geometry_type: cylinder/sphere.
+- __geometry_length__: length of geometry shape，unit: meter，default value: 0.1，effective for geometry_type: box.
+- __geometry_width__: width of geometry shape，unit: meter，default value: 0.1，effective for geometry_type: box.
+- __geometry_mesh_filename__: geometry shape，effective for geometry_type: mesh.
+- __geometry_mesh_origin_xyz__: position offset from mesh base coordinate to xarm tool-flange coordinate, default: "0 0 0"，effective for geometry_type: mesh.
+- __geometry_mesh_origin_rpy__: orientation offset from mesh base coordinate to xarm tool-flange coordinate, default: "0 0 0"，effective for geometry_type: mesh.
+- __geometry_mesh_tcp_xyz__: the positional TCP offset with respect to xarm tool-flange coordinate, default: "0 0 0"，effective for geometry_type: mesh.
+- __geometry_mesh_tcp_rpy__: the orientational TCP offset with respect to xarm tool-flange coordinate, default: "0 0 0"，effective for geometry_type: mesh.  
+
 
 ## 5.6 xarm_planner:
 &ensp;&ensp;This implemented simple planner interface is based on move_group from Moveit! and provide ros service for users to do planning & execution based on the requested target, user can find detailed instructions on how to use it inside [***xarm_planner package***](./xarm_planner/).  
@@ -380,7 +415,7 @@ $ rosservice call /xarm/set_controller_aout 2 3.3  (Setting port AO1 to be 3.3)
 &ensp;&ensp;Another option is subscribing to ***"/joint_states"*** topic, which is reporting in [JointState.msg](http://docs.ros.org/jade/api/sensor_msgs/html/msg/JointState.html), however, currently ***only "position" field is valid***; "velocity" is non-filtered numerical differentiation based on 2 adjacent position data, and "effort" feedback are current-based estimated values, not from direct torque sensor, so they are just for reference.
 &ensp;&ensp;In consideration of performance, current update rate of above two topics are set at ***5Hz***.  
 
-#### Setting Tool Center Point Offset:
+#### Setting Tool Center Point Offset(only effective for xarm_api ROS service control):
 &ensp;&ensp;The tool tip point offset values can be set by calling service "/xarm/set_tcp_offset". Refer to the figure below, please note this offset coordinate is expressed with respect to ***default tool frame*** (Frame B), which is located at flange center, with roll, pitch, yaw rotations of (PI, 0, 0) from base frame (Frame A).   
 ![xArmFrames](./doc/xArmFrames.png)  
 &ensp;&ensp;For example:  
