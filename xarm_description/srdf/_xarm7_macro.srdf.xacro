@@ -16,23 +16,27 @@
       <xacro:property name="_use_gripper" value="true"/>
       <xacro:property name="_use_vacuum_gripper" value="false"/>
       <xacro:property name="_use_other_geometry" value="false"/>
+      <xacro:property name="_use_no_end_effector" value="false"/>
     </xacro:if>
     <xacro:unless value="${add_gripper}">
       <xacro:if value="${add_vacuum_gripper}">
         <xacro:property name="_use_gripper" value="false"/>
         <xacro:property name="_use_vacuum_gripper" value="true"/>
         <xacro:property name="_use_other_geometry" value="false"/>
+        <xacro:property name="_use_no_end_effector" value="false"/>
       </xacro:if>
       <xacro:unless value="${add_vacuum_gripper}">
         <xacro:if value="${add_other_geometry}">
           <xacro:property name="_use_gripper" value="false"/>
           <xacro:property name="_use_vacuum_gripper" value="false"/>
           <xacro:property name="_use_other_geometry" value="true"/>
+          <xacro:property name="_use_no_end_effector" value="false"/>
         </xacro:if>
         <xacro:unless value="${add_other_geometry}">
           <xacro:property name="_use_gripper" value="false"/>
           <xacro:property name="_use_vacuum_gripper" value="false"/>
           <xacro:property name="_use_other_geometry" value="false"/>
+          <xacro:property name="_use_no_end_effector" value="true"/>
         </xacro:unless>
       </xacro:unless>
     </xacro:unless>
@@ -63,12 +67,12 @@
     </group>
 
     <!-- end_effector must be defined to display planned path in xarm_planner -->
-    <xacro:unless value="${_use_gripper or _use_vacuum_gripper or _use_other_geometry}">
+    <xacro:if value="${_use_no_end_effector}">
       <group name="tool_end">
         <joint name="${prefix}joint_eef" />
       </group>
       <end_effector name="end_effector" parent_link="link7" group="tool_end" />
-    </xacro:unless>
+    </xacro:if>
 
       <!-- GROUP STATES, Purpose, Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms' -->
     <group_state name="home" group="${prefix}xarm7">
