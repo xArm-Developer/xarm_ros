@@ -35,7 +35,7 @@
       geometry_mesh_tcp_rpy:=$(arg geometry_mesh_tcp_rpy)
     "/>
 
-  <param name="$(arg robot_description)_semantic" 
+  <param if="$(arg load_robot_description)" name="$(arg robot_description)_semantic" 
     command="xacro --inorder  '$(find xarm_description)/srdf/xarm.srdf.xacro' dof:=5
       add_other_geometry:=$(arg add_other_geometry)
   "/>
