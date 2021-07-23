@@ -8,6 +8,7 @@
   <arg name="no_gui_plan" default="false" />
   <arg name="xarm_hw_ns" default="xarm" />
   <arg name="ext_ns" default="" />
+  <arg name="velocity_control" default="false"/>
 
   <!-- common: bring up node to enable real xArm control -->
   <include file="$(find xarm_bringup)/launch/xarm6_server.launch">
@@ -15,10 +16,12 @@
     <arg name="report_type" value="$(arg report_type)" />
     <arg name="use_moveit" value="true" />
     <arg name="ns" value="$(arg xarm_hw_ns)" />
+    <arg name="velocity_control" value="$(arg velocity_control)" />
   </include>
 
   <!-- load the joint trajectory controller specified in yaml -->
   <rosparam file="$(find xarm_controller)/config/xarm6_traj_controller.yaml" command="load"/>
+  <arg name="xarm_traj_controller" value="$(eval 'xarm6_traj_controller_velocity' if arg('velocity_control') else 'xarm6_traj_controller')" />
   <node
     name="traj_controller_spawner"
     pkg="controller_manager"
@@ -26,9 +29,10 @@
     respawn="false"
     output="screen"
     ns="xarm"
-    args="xarm6_traj_controller"/>
+    args="$(arg xarm_traj_controller)"/>
 
-  <remap from="/follow_joint_trajectory" to="xarm/xarm6_traj_controller/follow_joint_trajectory"/>
+  <!-- <remap from="/follow_joint_trajectory" to="xarm/xarm6_traj_controller/follow_joint_trajectory"/> -->
+  <remap from="/follow_joint_trajectory" to="xarm/$(arg xarm_traj_controller)/follow_joint_trajectory"/>
 
   <!-- common part -->
   <remap from="/tf" to="$(arg ext_ns)/tf" />

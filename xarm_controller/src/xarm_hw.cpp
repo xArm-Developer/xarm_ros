@@ -146,9 +146,16 @@ namespace xarm_control
 
 	bool XArmHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
 	{
+		bool velocity_control = false;
+		robot_hw_nh.getParam("velocity_control", velocity_control);
 		// ctrl_method_ = EFFORT; // INVALID
 		// ctrl_method_ = VELOCITY; // INVALID
-		ctrl_method_ = POSITION; // RELEASE
+		if (velocity_control) {
+			ctrl_method_ = VELOCITY;
+		}
+		else {
+			ctrl_method_ = POSITION; // default
+		}
 
 		hw_ns_ = robot_hw_nh.getNamespace() + "/";
 		ros::service::waitForService(hw_ns_+"motion_ctrl");

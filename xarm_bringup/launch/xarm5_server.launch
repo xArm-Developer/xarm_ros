@@ -7,6 +7,7 @@
   <!-- If you use moveit, use the launch file in xarm*_moveit_config package for startup! -->
   <arg name="use_moveit" default="false" />
   <arg name="use_gripper_action" default="false" />
+  <arg name="velocity_control" default="false"/>
   
   <rosparam file="$(find xarm5_moveit_config)/config/xarm5_params.yaml" command="load"/>
   <rosparam if="$(arg use_moveit)" file="$(find xarm5_moveit_config)/config/joint_limits.yaml" command="load" ns="$(arg ns)"/>
@@ -18,6 +19,7 @@
     <arg name="dof" value="5" />
     <arg name="use_moveit" value="$(arg use_moveit)" />
     <arg name="namespace" value="$(arg ns)" />
+    <arg name="velocity_control" value="$(arg velocity_control)" />
   </include>
 
   <!-- the node for xarm gripper action server -->
