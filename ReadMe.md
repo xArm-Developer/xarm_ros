@@ -66,9 +66,11 @@
 # 3. Preparations before using this package
 
 ## 3.1 Install dependent package module
-   gazebo_ros_pkgs: <http://gazebosim.org/tutorials?tut=ros_installing> (if use Gazebo)   
-   ros_control: <http://wiki.ros.org/ros_control> (remember to select your correct ROS distribution)  
-   moveit_core: <https://moveit.ros.org/install/>  
+   * gazebo_ros_pkgs: <http://gazebosim.org/tutorials?tut=ros_installing> (if use Gazebo)   
+   * ros_control: <http://wiki.ros.org/ros_control> (remember to select your correct ROS distribution)  
+   * moveit_core: <https://moveit.ros.org/install/>  
+   * mimic_joint_gazebo package: <https://github.com/roboticsgroup/roboticsgroup_upatras_gazebo_plugins>
+      * refer section 3.4
    
 ## 3.2 Go through the official tutorial documents
 ROS Wiki: <http://wiki.ros.org/>  
