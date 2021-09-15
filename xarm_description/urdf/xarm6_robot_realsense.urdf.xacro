@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="xarm6">
+  <xacro:arg name="prefix" default=""/>
+  <xacro:arg name="ros_namespace" default="xarm"/>
+  <xacro:arg name="limited" default="false"/>
+  <xacro:arg name="effort_control" default="false"/>
+
+  <!-- load xarm6 robot -->
+  <xacro:include filename="$(find xarm_description)/urdf/xarm6_robot_macro.xacro" />
+  <xacro:include filename="$(find xarm_description)/sensors/Realsense_D435.xacro" />
+
+  <xacro:property name="camera_offset_x" value="0.07" />
+  <xacro:property name="camera_offset_y" value="0.01" />
+  <xacro:property name="camera_offset_z" value="0" />
+
+  <!-- realsense camera -->
+  <joint name="camera_joint" type="fixed">
+      <origin xyz="${camera_offset_x} ${camera_offset_y} ${camera_offset_z}" rpy="0 -1.57 0" />
+      <parent link="$(arg prefix)xarm_gripper_base_link"/>
+      <child link="camera_base_link"/>
+  </joint>
+
+  <xacro:xarm6_robot prefix="$(arg prefix)" namespace="$(arg ros_namespace)" limited="$(arg limited)" effort_control="$(arg effort_control)"/>
+
+  <xacro:sensor_d435 name = "camera"/>
+
+</robot>

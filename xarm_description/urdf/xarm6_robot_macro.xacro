@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="xarm6" >
   <xacro:macro name="xarm6_robot" params="prefix:='' namespace:='xarm' limited:='false' effort_control:='false' 
-    velocity_control:='false' attach_to:='world' xyz:='0 0 0' rpy:='0 0 0' load_gazebo_plugin:='true'
+    velocity_control:='false' attach_to:='world' xyz:='0 0 1.021' rpy:='0 0 0' load_gazebo_plugin:='true'
     add_other_geometry:='false' 
     geometry_type:='box' geometry_mass:='0.1' 
     geometry_radius:='0.1' geometry_height:='0.1' 
