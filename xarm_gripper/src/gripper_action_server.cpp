@@ -1,3 +1,9 @@
+/**
+ * Action server for real gripper
+ * MiveIt control for real gripper isn't supported
+ * Uses xarm api to control gripper
+ */
+
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
 #include <xarm_gripper/MoveAction.h>
@@ -44,6 +50,11 @@ namespace xarm_control
 	    int ret = 0;
 	    feedback_.current_pulse = 0;
 
+		// to get initial gripper state
+		int initial_gripper_state = 0;
+		float init_pulse = 0; int init_err = 0;
+		initial_gripper_state = xarm.getGripperState(&init_pulse, &init_err);
+
 	    // publish info to the console for the user
 	    ROS_INFO("Executing, creating MoveAction ");
 
@@ -65,26 +76,42 @@ namespace xarm_control
 	   	float fdb_pulse = 0; int fdb_err = 0;
 	   	ret = xarm.getGripperState(&fdb_pulse, &fdb_err);
 
-	   	while(!ret && fabs(fdb_pulse-goal->target_pulse)>10)
-	   	{
-	   		
-	   		feedback_.current_pulse = fdb_pulse;
-		    as_.publishFeedback(feedback_);
+		// if target pulse = 0 (fully close)
+		// consider success as long as gripper closed to pulse < initial_pulse-100
+		if(goal->target_pulse == 0)
+		{
+			while(!ret && fabs(init_pulse - fdb_pulse) < 50)
+			{
+				feedback_.current_pulse = fdb_pulse;
+				as_.publishFeedback(feedback_);
+				r.sleep();
+				ret = xarm.getGripperState(&fdb_pulse, &fdb_err);
+			}
+		}
+		else
+		{
+		   	while(!ret && fabs(fdb_pulse - goal->target_pulse)>15)
+		   	{
 
-	   	    if (as_.isPreemptRequested() || !ros::ok())
-		    {
-		        ROS_INFO("%s: Preempted", action_name_.c_str());
-		        // set the action state to preempted
-		        xarm.gripperMove(fdb_pulse);
-		        as_.setPreempted();
-		        return;
-		    }
+		   		feedback_.current_pulse = fdb_pulse;
+				// ROS_INFO("%f", fdb_pulse);
+			    as_.publishFeedback(feedback_);
 
-		    r.sleep();
+		   	    if (as_.isPreemptRequested() || !ros::ok())
+			    {
+			        ROS_INFO("%s: Preempted", action_name_.c_str());
+			        // set the action state to preempted
+			        xarm.gripperMove(fdb_pulse);
+			        as_.setPreempted();
+			        return;
+			    }
 
-		    ret = xarm.getGripperState(&fdb_pulse, &fdb_err);
-		    
-	   	}
+			    r.sleep();
+
+			    ret = xarm.getGripperState(&fdb_pulse, &fdb_err);
+
+		   	}
+		}
 
 	    if(!ret)
 	    {
