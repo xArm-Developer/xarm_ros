@@ -42,7 +42,7 @@ namespace xarm_control
 		gripper("xarm_gripper")
 	{
 		as_.start();
-		std::cout << "Gripper server for gazebo started " << std::endl;
+		std::cout << ">> Gripper server for gazebo started " << std::endl;
 
 	}
 
@@ -129,7 +129,8 @@ namespace xarm_control
 int main(int argc, char** argv)
 {
 	ros::init(argc, argv, "xarm_gripper_node");
-	
+	// std::cout << "here" << std::endl;
+
 	xarm_control::GripperGazeboAction gripper_gazebo_action("gripper_move");
 
 	ros::spin();
