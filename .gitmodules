@@ -1,3 +1,6 @@
 [submodule "xarm_sdk/cxx"]
 	path = xarm_sdk/cxx
 	url = https://github.com/xArm-Developer/xArm-CPLUS-SDK.git
+[submodule "realsense_gazebo_plugin"]
+	path = realsense_gazebo_plugin
+	url = https://github.com/pal-robotics/realsense_gazebo_plugin.git
