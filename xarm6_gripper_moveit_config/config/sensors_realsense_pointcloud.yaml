@@ -3,7 +3,7 @@ sensors:
   - filtered_cloud_topic: filtered_cloud
     max_range: 5.0
     max_update_rate: 1.0
-    padding_offset: 0.05
+    padding_offset: 0.1
     padding_scale: 1.0
     point_cloud_topic: /camera/depth/color/points
     point_subsample: 1
