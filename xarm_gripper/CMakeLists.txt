@@ -37,7 +37,6 @@ add_action_files(
   DIRECTORY action
   FILES 
   Move.action
-  GripperGazebo.action
 )
 
 generate_messages(
