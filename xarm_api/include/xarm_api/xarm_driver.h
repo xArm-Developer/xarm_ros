@@ -7,6 +7,7 @@
 #include <actionlib/server/action_server.h>
 #include <std_msgs/Float32.h>
 #include <sensor_msgs/JointState.h>
+// #include <geometry_msgs/WrenchStamped.h>
 #include "xarm_api/xarm_msgs.h"
 #include "xarm/wrapper/xarm_api.h"
 
@@ -54,6 +55,8 @@ namespace xarm_api
         void SleepTopicCB(const std_msgs::Float32ConstPtr& msg);
         bool VeloMoveJointCB(xarm_msgs::MoveVelo::Request &req, xarm_msgs::MoveVelo::Response &res);
         bool VeloMoveLineVCB(xarm_msgs::MoveVelo::Request &req, xarm_msgs::MoveVelo::Response &res);
+        bool VCSetJointVelocityCB(xarm_msgs::MoveVelocity::Request &req, xarm_msgs::MoveVelocity::Response &res);
+        bool VCSetCartesianVelocityCB(xarm_msgs::MoveVelocity::Request &req, xarm_msgs::MoveVelocity::Response &res);
         bool SetMaxJAccCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res);
         bool SetMaxLAccCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res);
 
@@ -74,6 +77,7 @@ namespace xarm_api
         void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
         void pub_joint_state(sensor_msgs::JointState &js_msg);
         void pub_cgpio_state(xarm_msgs::CIOState &cio_msg);
+        // void pub_ftsensor_state(geometry_msgs::WrenchStamped &wrench_msg);
 
     private:
         void _report_connect_changed_callback(bool connected, bool reported);
@@ -136,6 +140,8 @@ namespace xarm_api
         // ros::ServiceServer cgpio_position_set_analog_server_;
         ros::ServiceServer vc_set_jointv_server_;
         ros::ServiceServer vc_set_linev_server_;
+        ros::ServiceServer vdc_set_jointv_server_;
+        ros::ServiceServer vdc_set_linev_server_;
         ros::ServiceServer set_max_jacc_server_;
         ros::ServiceServer set_max_lacc_server_;
 
@@ -157,6 +163,7 @@ namespace xarm_api
         ros::Publisher robot_rt_state_; 
         ros::Publisher end_input_state_;
         ros::Publisher cgpio_state_;
+        // ros::Publisher ftsensor_state_;
 
         ros::Subscriber sleep_sub_;
 

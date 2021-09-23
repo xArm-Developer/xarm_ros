@@ -158,6 +158,10 @@ namespace xarm_api
         // velocity control:
         vc_set_jointv_server_ = nh_.advertiseService("velo_move_joint", &XArmDriver::VeloMoveJointCB, this);
         vc_set_linev_server_ = nh_.advertiseService("velo_move_line", &XArmDriver::VeloMoveLineVCB, this);
+        // velocity control (with duration parameter)
+        vdc_set_jointv_server_ = nh_.advertiseService("vc_set_joint_velocity", &XArmDriver::VCSetJointVelocityCB, this);
+        vdc_set_linev_server_ = nh_.advertiseService("vc_set_cartesian_velocity", &XArmDriver::VCSetCartesianVelocityCB, this);
+        
         set_max_jacc_server_ = nh_.advertiseService("set_max_acc_joint", &XArmDriver::SetMaxJAccCB, this);
         set_max_lacc_server_ = nh_.advertiseService("set_max_acc_line", &XArmDriver::SetMaxLAccCB, this);
 
@@ -180,6 +184,7 @@ namespace xarm_api
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
         robot_rt_state_ = nh_.advertise<xarm_msgs::RobotMsg>("xarm_states", 10, true);
         cgpio_state_ = nh_.advertise<xarm_msgs::CIOState>("xarm_cgpio_states", 10, true);
+        // ftsensor_state_ = nh_.advertise<geometry_msgs::WrenchStamped>("xarm_ftsensor_states", 10, true);
 
         // subscribed topics
         sleep_sub_ = nh_.subscribe("sleep_sec", 1, &XArmDriver::SleepTopicCB, this);
@@ -850,6 +855,56 @@ namespace xarm_api
         return res.ret >= 0;
     }
 
+    bool XArmDriver::VCSetJointVelocityCB(xarm_msgs::MoveVelocity::Request &req, xarm_msgs::MoveVelocity::Response &res)
+    {
+        float jnt_v[7]={0};
+        int index = 0;
+        if(req.speeds.size() < dof_)
+        {
+            res.ret = req.speeds.size();
+            res.message = "pose parameters incorrect! Expected: "+std::to_string(dof_);
+            return false;
+        }
+        else
+        {
+            for(index = 0; index < 7; index++) // should always send 7 joint commands, whatever current DOF is.
+            {
+                // jnt_v[0][index] = req.velocities[index];
+                if(index < req.speeds.size())
+                    jnt_v[index] = req.speeds[index];
+                else
+                    jnt_v[index] = 0;
+            }
+        }
+
+        res.ret = arm->vc_set_joint_velocity(jnt_v, req.is_sync, req.duration);
+        res.message = "velocity move joint, ret = " + std::to_string(res.ret);
+        return res.ret >= 0;
+    }
+    
+    bool XArmDriver::VCSetCartesianVelocityCB(xarm_msgs::MoveVelocity::Request &req, xarm_msgs::MoveVelocity::Response &res)
+    {
+        float line_v[6];
+        int index = 0;
+        if(req.speeds.size() < 6)
+        {
+            res.ret = PARAM_ERROR;
+            res.message = "number of parameters incorrect!";
+            return false;
+        }
+        else
+        {
+            for(index = 0; index < 6; index++)
+            {
+                line_v[index] = req.speeds[index];
+            }
+        }
+
+        res.ret = arm->vc_set_cartesian_velocity(line_v, req.is_tool_coord, req.duration);
+        res.message = "velocity move line, ret = " + std::to_string(res.ret);
+        return res.ret >= 0;
+    }
+
     bool XArmDriver::SetMaxJAccCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res)
     {
         if(req.data<0 || req.data>20.0)
@@ -1050,4 +1105,9 @@ namespace xarm_api
     {
         cgpio_state_.publish(cio_msg);
     }
+
+    // void XArmDriver::pub_ftsensor_state(geometry_msgs::WrenchStamped &wrench_msg)
+    // {
+    //     ftsensor_state_.publish(wrench_msg);
+    // }
 }

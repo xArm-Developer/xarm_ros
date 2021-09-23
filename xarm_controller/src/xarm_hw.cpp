@@ -8,6 +8,7 @@
 #include "xarm_controller/xarm_hw.h"
 
 #define SERVICE_IS_PERSISTENT_BUT_INVALID 998
+#define VELO_DURATION 1
 
 namespace xarm_control
 {
@@ -86,6 +87,7 @@ namespace xarm_control
 
 		pos_sub_ = root_nh.subscribe(jnt_state_topic, 100, &XArmHW::pos_fb_cb, this);
 		state_sub_ = root_nh.subscribe(xarm_state_topic, 100, &XArmHW::state_fb_cb, this);
+		// wrench_sub_ = root_nh.subscribe(xarm_ftsensor_states_topic, 100, &XArmHW::ftsensor_fb_cb, this);
 
 		for(unsigned int j=0; j < dof_; j++)
 	  	{
@@ -114,6 +116,9 @@ namespace xarm_control
 			_register_joint_limits(root_nh, jnt_names_[j], ctrl_method_);
 	  	}
 
+		// fts_interface_.registerHandle(hardware_interface::ForceTorqueSensorHandle(
+		// 	force_torque_sensor_name_, force_torque_sensor_frame_id_, force_, torque_));
+
 		registerInterface(&js_interface_);
 		switch (ctrl_method_)
 		{
@@ -128,6 +133,7 @@ namespace xarm_control
 			registerInterface(&pj_interface_);
 			break;
 		}
+		// registerInterface(&fts_interface_);
 	  	
 	  	int ret1 = xarm.motionEnable(1);
 	  	int ret2 = xarm.setMode(ctrl_method_ == VELOCITY ? XARM_MODE::VELO_JOINT : XARM_MODE::SERVO);
@@ -191,6 +197,8 @@ namespace xarm_control
 		robot_hw_nh.getParam("DOF", xarm_dof);
 		robot_hw_nh.getParam("xarm_robot_ip", robot_ip);
 		robot_hw_nh.getParam("joint_names", jnt_names);
+		// robot_hw_nh.param<std::string>("force_torque_sensor_name", force_torque_sensor_name_, "ft_sensor");
+		// force_torque_sensor_frame_id_ = "ft_sensor_data";
 
 		dof_ = xarm_dof;
 		jnt_names_ = jnt_names;
@@ -211,6 +219,8 @@ namespace xarm_control
 
 	void XArmHW::pos_fb_cb(const sensor_msgs::JointState::ConstPtr& data)
 	{
+		if (data->header.stamp <= last_joint_state_stamp_) return;
+
 		std::lock_guard<std::mutex> locker(mutex_);
 		for(int j=0; j<dof_; j++)
 		{
@@ -218,6 +228,7 @@ namespace xarm_control
 			velocity_fdb_[j] = data->velocity[j];
 			effort_fdb_[j] = data->effort[j];
 		}
+		last_joint_state_stamp_ = data->header.stamp;
 	}
 
 	void XArmHW::state_fb_cb(const xarm_msgs::RobotMsg::ConstPtr& data)
@@ -226,6 +237,20 @@ namespace xarm_control
 		curr_state = data->state;
 		curr_err = data->err;
 	}
+
+	// void XArmHW::ftsensor_fb_cb(const geometry_msgs::WrenchStamped::ConstPtr& data)
+	// {
+	// 	if (data->header.stamp <= last_ftsensor_stamp_) return;
+	// 	if (data->header.frame_id != force_torque_sensor_frame_id_) return;
+		
+	// 	force_[0] = data->wrench.force.x;
+	// 	force_[1] = data->wrench.force.y;
+	// 	force_[2] = data->wrench.force.z;
+	// 	torque_[0] = data->wrench.torque.x;
+	// 	torque_[1] = data->wrench.torque.y;
+	// 	torque_[2] = data->wrench.torque.z;
+	// 	last_ftsensor_stamp_ = data->header.stamp;
+	// }
 
 	void XArmHW::_reset_limits(void)
 	{
@@ -287,10 +312,10 @@ namespace xarm_control
 		case VELOCITY:
 			{
 				for (int k = 0; k < dof_; k++) { velocity_cmd_float_[k] = (float)velocity_cmd_[k]; }
-				cmd_ret = xarm.veloMoveJoint(velocity_cmd_float_, true);
+				cmd_ret = xarm.veloMoveJoint(velocity_cmd_float_, true, VELO_DURATION);
 			}
 			break;
-		case POSITION:		
+		case POSITION:
 		default:
 			{
 				for (int k = 0; k < dof_; k++) { position_cmd_float_[k] = (float)position_cmd_[k]; }

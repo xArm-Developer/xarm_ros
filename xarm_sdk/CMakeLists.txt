@@ -41,43 +41,53 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+file(GLOB_RECURSE CXX_SDK_SRC_FILES ${CXX_SDK_SRC}/*.cc)
+# list(APPEND CXX_SDK_SRC_FILE_LIST ${CXX_SDK_SRC_FILES})
+set(CXX_SDK_SRC_FILE_LIST "")
+foreach(f ${CXX_SDK_SRC_FILES})
+  if (NOT f MATCHES "bak")
+    list(APPEND CXX_SDK_SRC_FILE_LIST ${f}) 
+  endif()
+endforeach()
+
 # add the library xarm_cxx_sdk
 add_library(xarm_cxx_sdk
-  ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_api.cc
-  ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_bio.cc
-  ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_events.cc
-  ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_gpio.cc
-  ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_gripper.cc
-  ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_motion.cc
-  ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_params.cc
-  ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_record.cc
-  ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_report.cc
-  ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_robotiq.cc
-  ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_servo.cc
+  ${CXX_SDK_SRC_FILE_LIST}
+  # ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_api.cc
+  # ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_bio.cc
+  # ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_events.cc
+  # ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_gpio.cc
+  # ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_gripper.cc
+  # ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_motion.cc
+  # ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_params.cc
+  # ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_record.cc
+  # ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_report.cc
+  # ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_robotiq.cc
+  # ${CXX_SDK_SRC_XARM_WRAPPER}/xarm_servo.cc
 
-  ${CXX_SDK_SRC_XARM_CORE}/connect.cc
-  ${CXX_SDK_SRC_XARM_CORE}/report_data.cc
+  # ${CXX_SDK_SRC_XARM_CORE}/connect.cc
+  # ${CXX_SDK_SRC_XARM_CORE}/report_data.cc
 
-  ${CXX_SDK_SRC_XARM_CORE}/common/crc16.cc
-  ${CXX_SDK_SRC_XARM_CORE}/common/queue_memcpy.cc
+  # ${CXX_SDK_SRC_XARM_CORE}/common/crc16.cc
+  # ${CXX_SDK_SRC_XARM_CORE}/common/queue_memcpy.cc
 
-  ${CXX_SDK_SRC_XARM_CORE}/debug/debug_print.cc
+  # ${CXX_SDK_SRC_XARM_CORE}/debug/debug_print.cc
 
-  ${CXX_SDK_SRC_XARM_CORE}/instruction/uxbus_cmd.cc
-  ${CXX_SDK_SRC_XARM_CORE}/instruction/uxbus_cmd_ser.cc
-  ${CXX_SDK_SRC_XARM_CORE}/instruction/uxbus_cmd_tcp.cc
+  # ${CXX_SDK_SRC_XARM_CORE}/instruction/uxbus_cmd.cc
+  # ${CXX_SDK_SRC_XARM_CORE}/instruction/uxbus_cmd_ser.cc
+  # ${CXX_SDK_SRC_XARM_CORE}/instruction/uxbus_cmd_tcp.cc
 
-   ${CXX_SDK_SRC_XARM_CORE}/os/network.cc
+  #  ${CXX_SDK_SRC_XARM_CORE}/os/network.cc
 
-  ${CXX_SDK_SRC_XARM_CORE}/port/ser.cc
-  ${CXX_SDK_SRC_XARM_CORE}/port/socket.cc
+  # ${CXX_SDK_SRC_XARM_CORE}/port/ser.cc
+  # ${CXX_SDK_SRC_XARM_CORE}/port/socket.cc
 
-  ${CXX_SDK_SRC_SERIAL}/serial.cc
-  ${CXX_SDK_SRC_SERIAL}/impl/unix.cc
-  ${CXX_SDK_SRC_SERIAL}/impl/win.cc
-  ${CXX_SDK_SRC_SERIAL}/impl/list_ports/list_ports_linux.cc
-  ${CXX_SDK_SRC_SERIAL}/impl/list_ports/list_ports_osx.cc
-  ${CXX_SDK_SRC_SERIAL}/impl/list_ports/list_ports_win.cc
+  # ${CXX_SDK_SRC_SERIAL}/serial.cc
+  # ${CXX_SDK_SRC_SERIAL}/impl/unix.cc
+  # ${CXX_SDK_SRC_SERIAL}/impl/win.cc
+  # ${CXX_SDK_SRC_SERIAL}/impl/list_ports/list_ports_linux.cc
+  # ${CXX_SDK_SRC_SERIAL}/impl/list_ports/list_ports_osx.cc
+  # ${CXX_SDK_SRC_SERIAL}/impl/list_ports/list_ports_win.cc
 )
 
 add_dependencies(xarm_cxx_sdk ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

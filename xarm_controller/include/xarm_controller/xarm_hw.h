@@ -11,6 +11,7 @@
 // ros_control
 #include <control_toolbox/pid.h>
 #include <hardware_interface/joint_state_interface.h>
+// #include <hardware_interface/force_torque_sensor_interface.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <joint_limits_interface/joint_limits.h>
 #include <joint_limits_interface/joint_limits_interface.h>
@@ -25,6 +26,7 @@
 #include <angles/angles.h>
 #include <pluginlib/class_list_macros.h>
 #include <sensor_msgs/JointState.h>
+// #include <geometry_msgs/WrenchStamped.h>
 // for mutex
 #include <mutex>
 // xarm
@@ -36,6 +38,7 @@ namespace xarm_control
 {
 	const std::string jnt_state_topic = "joint_states";
 	const std::string xarm_state_topic = "xarm_states";
+	// const std::string xarm_ftsensor_states_topic = "xarm_ftsensor_states";
 
 	class XArmHW : public hardware_interface::RobotHW
 	{
@@ -80,9 +83,17 @@ namespace xarm_control
 		std::vector<double> velocity_fdb_;
 		std::vector<double> effort_fdb_;
 
+		// double force_[3];
+		// double torque_[3];
+
 		bool initial_write_;		
 		std::mutex mutex_;
 		std::string hw_ns_;
+		// std::string force_torque_sensor_name_;
+		// std::string force_torque_sensor_frame_id_;
+		
+		ros::Time last_joint_state_stamp_;
+		// ros::Time last_ftsensor_stamp_;
 
 		ros::Time cur_time_;
 		ros::Time prev_time_;
@@ -97,6 +108,7 @@ namespace xarm_control
 		hardware_interface::EffortJointInterface   ej_interface_;
 		hardware_interface::PositionJointInterface pj_interface_;
 		hardware_interface::VelocityJointInterface vj_interface_;
+		// hardware_interface::ForceTorqueSensorInterface fts_interface_;
 
 		joint_limits_interface::EffortJointSaturationInterface   ej_sat_interface_;
 		joint_limits_interface::EffortJointSoftLimitsInterface   ej_limits_interface_;
@@ -106,10 +118,12 @@ namespace xarm_control
 		joint_limits_interface::VelocityJointSoftLimitsInterface vj_limits_interface_;
 
 		ros::Subscriber pos_sub_, vel_sub_, effort_sub_, state_sub_;
+		// ros::Subscriber wrench_sub_;
 
 		void clientInit(const std::string& robot_ip, ros::NodeHandle &root_nh);
 		void pos_fb_cb(const sensor_msgs::JointState::ConstPtr& data);
 		void state_fb_cb(const xarm_msgs::RobotMsg::ConstPtr& data);
+		// void ftsensor_fb_cb(const geometry_msgs::WrenchStamped::ConstPtr& data);
 
 		void _register_joint_limits(ros::NodeHandle &root_nh, std::string joint_name, const ControlMethod ctrl_method);
 		void _reset_limits(void);
