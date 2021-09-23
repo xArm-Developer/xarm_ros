@@ -11,7 +11,7 @@ controller_list:
       - joint6
       - joint7
 
-  - name: xarm/xarm_gripper
+  - name: xarm_gripper
     action_ns: gripper_action
     type: GripperCommand
     joints:

@@ -9,7 +9,7 @@
   <arg name="use_gripper_action" default="false" />
   <arg name="velocity_control" default="false"/>
   
-  <rosparam file="$(find xarm7_moveit_config)/config/xarm7_params.yaml" command="load"/>
+  <rosparam file="$(find xarm7_moveit_config)/config/xarm7_params.yaml" command="load" ns="$(arg ns)"/>
   <rosparam if="$(arg use_moveit)" file="$(find xarm7_moveit_config)/config/joint_limits.yaml" command="load" ns="$(arg ns)"/>
 
   <!-- common: bring up node to collect robot feedback -->
