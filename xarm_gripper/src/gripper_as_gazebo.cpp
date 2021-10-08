@@ -110,7 +110,7 @@ namespace xarm_control
 			result_.success = false;
 	        ROS_INFO("%s: Preempted", action_name_.c_str());
 	        // set the action state to preempted
-	        as_.setPreempted();
+	        as_.setPreempted(result_);
 	        return;
 	    }
 		r.sleep();
@@ -121,6 +121,12 @@ namespace xarm_control
 			result_.success = true;
 			ROS_INFO("%s: Succeeded", action_name_.c_str());
 			as_.setSucceeded(result_);
+		}
+		else
+		{	
+			result_.success = false;
+			as_.setAborted(result_);
+			return;
 		}
 		
 	}
