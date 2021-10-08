@@ -1,6 +1,3 @@
-## Updates on Moveit with Gripper/Vacuum Gripper:
-&ensp;&ensp;Please pay attention if you are using Moveit motion planning for xArm models with Gripper/Vacuum Gripper attached, in updates since **Jan 6, 2021**, pose command/feedback will count in the **TCP offset** of the tool, as a result in moveit configuration change. 
-
 ## Important Notice:
 &ensp;&ensp;Due to robot communication data format change, ***early users*** (xArm shipped ***before June 2019***) are encouraged to ***upgrade*** their controller firmware immediately to drive the robot normally in future updates as well as to use newly developed functions. Please contact our staff to get instructions of the upgrade process. The old version robot driver can still be available in ***'legacy'*** branch, however, it will not be updated any more.   
 
@@ -8,6 +5,7 @@
 
 &ensp;&ensp;If developing with **Moveit**, it is highly recommended to use **DIRECT network cable connection** between controller box and your PC, and no intermediate switches or routers, or the communication latency may have a bad impact on trajectory execution.  
 
+&ensp;&ensp; When updating this package, please remember to [check the submodule update](#421-update-the-package) as well!  
 
 # Contents:  
 * [1. Introduction](#1-introduction)
@@ -62,6 +60,8 @@
    * Thanks to [Microsoft IoT](https://github.com/ms-iot), xarm_ros can now be compiled and run on Windows platform.
    * Add velocity control mode for joint and Cartesian space. (**xArm controller firmware version >= 1.6.8** required)  
    * Add support for [custom tool model for Moveit](#551-add-custom-tool-model-for-moveit)  
+   * Add timed-out version of velocity control mode, for better safety consideration. (**xArm controller firmware version >= 1.8.0** required)  
+
 
 # 3. Preparations before using this package
 
@@ -263,10 +263,10 @@ Please ***keep in mind that*** before calling the 4 motion services above, first
 * <font color=blue>[move_servo_cart](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)/[move_servoj](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#3-servo_joint-streamed-joint-space-trajectory):</font> streamed high-frequency trajectory command execution in Cartesian space or joint space. Corresponding functions in SDK are set_servo_cartesian() and set_servo_angle_j(). An alternative way to implement <font color=red>velocity control</font>. Special **RISK ASSESMENT** is required before using them. Please read the guidance carefully at [chapter 7.2-7.3](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory).  
 
 #### Robot Mode 4:
-* <font color=blue>[velo_move_joint](#5-joint-velocity-control):</font> Joint motion with specified velocity for each joint (unit: rad/s), with maximum joint acceleration configurable by `set_max_acc_joint` service.  
+* <font color=blue>[velo_move_joint/velo_move_joint_timed](#5-joint-velocity-control):</font> Joint motion with specified velocity for each joint (unit: rad/s), with maximum joint acceleration configurable by `set_max_acc_joint` service.  
 
 #### Robot Mode 5:
-* <font color=blue>[velo_move_line](#6-cartesian-velocity-control):</font> Linear motion of TCP with specified velocity in mm/s (position) and rad/s (orientation in **axis-angular_velocity**), with maximum linear acceleration configurable by `set_max_acc_line` service. 
+* <font color=blue>[velo_move_line/velo_move_line_timed](#6-cartesian-velocity-control):</font> Linear motion of TCP with specified velocity in mm/s (position) and rad/s (orientation in **axis-angular_velocity**), with maximum linear acceleration configurable by `set_max_acc_line` service. 
 
 #### Starting xArm by ROS service:
 
@@ -332,7 +332,10 @@ $ rosservice call /xarm/move_line_aa [0,122,0,-0.5,0,0] 30.0 100.0 0.0 0 1
 ##### 5. Joint velocity control:
 &ensp;&ensp;(**xArm controller firmware version >= 1.6.8** required) If controlling joint velocity is desired, first switch to **Mode 4** as descriped in [mode change section](#6-mode-change). Please check the [MoveVelo.srv](./xarm_msgs/srv/MoveVelo.srv) first to understand the meanings of parameters reqired. If more than one joint are to move, set **jnt_sync** to 1 for synchronized acceleration/deceleration for all joints in motion, and if jnt_sync is 0, each joint will reach to its target velocity as fast as possible. ***coord*** parameter is not used here, just set it to 0. For example: 
 ```bash
+# NO Timed-out version (will not stop until all-zero velocity command received!):
 $ rosservice call /xarm/velo_move_joint [0.1,-0.1,0,0,0,-0.3] 1 0
+# With Timed-out version(controller firmware version >= 1.8.0): (if next velocity command not received within 0.2 seconds, xArm will stop)  
+$ rosservice call /xarm/velo_move_joint_timed [0.1,-0.1,0,0,0,-0.3] 1 0 0.2
 ``` 
 will command the joints (for xArm6) to move in specified angular velocities (in rad/s) and they will reach to target velocities synchronously. The maximum joint acceleration can also be configured by (unit: rad/s^2):  
 ```bash
@@ -342,7 +345,10 @@ $ rosservice call /xarm/set_max_acc_joint 10.0  (maximum: 20.0 rad/s^2)
 ##### 6. Cartesian velocity control:
 &ensp;&ensp;(**xArm controller firmware version >= 1.6.8** required) If controlling linar velocity of TCP towards certain direction is desired, first switch to **Mode 5** as descriped in [mode change section](#6-mode-change). Please check the [MoveVelo.srv](./xarm_msgs/srv/MoveVelo.srv) first to understand the meanings of parameters reqired. Set **coord** to 0 for motion in world/base coordinate system and 1 for tool coordinate system. ***jnt_sync*** parameter is not used here, just set it to 0. For example: 
 ```bash
-$ rosservice call /xarm/velo_move_line [30,0,0,0,0,0] 0 1
+# NO Timed-out version (will not stop until all-zero velocity command received!):  
+$ rosservice call /xarm/velo_move_line [30,0,0,0,0,0] 0 1  
+# With Timed-out version(controller firmware version >= 1.8.0): (if next velocity command not received within 0.2 seconds, xArm will stop)  
+$ rosservice call /xarm/velo_move_line_timed [30,0,0,0,0,0] 0 1 0.2
 ``` 
 will command xArm TCP move along X-axis of TOOL coordinate system with speed of 30 mm/s. The maximum linear acceleration can also be configured by (unit: mm/s^2):  
 ```bash
@@ -351,12 +357,14 @@ $ rosservice call /xarm/set_max_acc_line 5000.0  (maximum: 50000 mm/s^2)
 
 For angular motion in orientation, please note the velocity is specified as **axis-angular_velocity** elements. That is, [the unit rotation axis vector] multiplied by [rotation velocity value(scalar)]. For example, 
 ```bash
+# NO Timed-out version (will not stop until all-zero velocity command received!):
 $ rosservice call /xarm/velo_move_line [0,0,0,0.707,0,0] 0 0
+# With Timed-out version(controller firmware version >= 1.8.0): (if next velocity command not received within 0.2 seconds, xArm will stop)  
+$ rosservice call /xarm/velo_move_line_timed [0,0,0,0.707,0,0] 0 0 0.2
 ``` 
 This will command TCP to rotate along X-axis in BASE coordinates at about 45 degrees/sec. The maximum acceleration for orientation change is fixed.  
 
-Please Note: velocity motion can be stopped by either giving **all 0 velocity** command, or setting **state to 4(STOP)** and 0(READY) later for next motion.  
-
+Please Note: For no Timed-out version services: velocity motion can be stopped by either giving **all 0 velocity** command, or setting **state to 4(STOP)** and 0(READY) later for next motion. However, **timed-out versions are more recommended for use**, since it can be safe if network comminication or user program fails, controller firmware needs to be updated to v1.8.0 or later.  
 
 #### Motion service Return:
 &ensp;&ensp;Please Note the above motion services will **return immediately** by default. If you wish to return until actual motion is finished, set the ros parameter **"/xarm/wait_for_finish"** to be **true** in advance. That is:  

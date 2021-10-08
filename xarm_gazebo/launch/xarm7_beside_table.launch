@@ -7,10 +7,11 @@
   <arg name="velocity_control" default="false"/>
   <arg name="add_gripper" default="false" />
   <arg name="add_vacuum_gripper" default="false" />
+  <arg name="namespace" default="xarm"/>
 
   <arg name="xarm_velocity_control" value="$(eval arg('velocity_control') and not arg('run_demo'))" />
   
-  <rosparam file="$(find xarm7_moveit_config)/config/xarm7_params.yaml" command="load"/>
+  <rosparam file="$(find xarm7_moveit_config)/config/xarm7_params.yaml" command="load" ns="$(arg namespace)"/>
   <!-- startup simulated world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find xarm_gazebo)/worlds/xarm_example1_table.world"/>

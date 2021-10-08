@@ -48,8 +48,8 @@ void XArmROSClient::init(ros::NodeHandle& nh)
     send_modbus_client_ = nh_.serviceClient<xarm_msgs::SetToolModbus>("set_tool_modbus");
 
     // velocity control
-    velo_move_joint_client_ = nh_.serviceClient<xarm_msgs::MoveVelo>("velo_move_joint");
-    velo_move_line_client_ = nh_.serviceClient<xarm_msgs::MoveVelo>("velo_move_line");
+    velo_move_joint_client_ = nh_.serviceClient<xarm_msgs::MoveVelocity>("velo_move_joint_timed");
+    velo_move_line_client_ = nh_.serviceClient<xarm_msgs::MoveVelocity>("velo_move_line_timed");
 
     traj_record_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_recording");
     traj_save_client_ = nh_.serviceClient<xarm_msgs::SetString>("save_traj");
@@ -256,17 +256,23 @@ int XArmROSClient::getGripperState(float *curr_pulse, int *curr_err)
     return ret;
 }
 
-int XArmROSClient::veloMoveJoint(const std::vector<float>& jnt_v, bool is_sync) 
+int XArmROSClient::veloMoveJoint(const std::vector<float>& jnt_v, bool is_sync, float duration) 
 {
-    move_velo_srv_.request.velocities = jnt_v;
-    move_velo_srv_.request.jnt_sync = is_sync ? 1 : 0;
+    // move_velo_srv_.request.velocities = jnt_v;
+    // move_velo_srv_.request.jnt_sync = is_sync ? 1 : 0;
+    move_velo_srv_.request.speeds = jnt_v;
+    move_velo_srv_.request.is_sync = is_sync;
+    move_velo_srv_.request.duration = duration;
     return _call_service(velo_move_joint_client_, move_velo_srv_);
 }
 
-int XArmROSClient::veloMoveLine(const std::vector<float>& line_v, bool is_tool_coord)
+int XArmROSClient::veloMoveLine(const std::vector<float>& line_v, bool is_tool_coord, float duration)
 {
-    move_velo_srv_.request.velocities = line_v;
-    move_velo_srv_.request.coord = is_tool_coord ? 1 : 0;
+    // move_velo_srv_.request.velocities = line_v;
+    // move_velo_srv_.request.coord = is_tool_coord ? 1 : 0;
+    move_velo_srv_.request.speeds = line_v;
+    move_velo_srv_.request.is_tool_coord = is_tool_coord;
+    move_velo_srv_.request.duration = duration;
     return _call_service(velo_move_line_client_, move_velo_srv_);
 }
 

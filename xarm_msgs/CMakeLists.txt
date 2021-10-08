@@ -76,6 +76,7 @@ find_package(catkin REQUIRED COMPONENTS
    SetControllerAnalogIO.srv
    MoveAxisAngle.srv
    MoveVelo.srv
+   MoveVelocity.srv
    SetFloat32.srv
    SetMultipleInts.srv
    SetString.srv

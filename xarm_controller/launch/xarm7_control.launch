@@ -7,7 +7,7 @@
   <arg name="add_gripper" default="false" />
 
   <!-- if don't run the demo, load the joint trajectory controller instead -->
-  <rosparam unless="$(arg run_demo_traj)" file="$(find xarm_controller)/config/xarm7_traj_controller.yaml" command="load"/>
+  <rosparam unless="$(arg run_demo_traj)" file="$(find xarm_controller)/config/xarm7_traj_controller.yaml" command="load" ns="$(arg namespace)"/>
   <arg name="xarm_traj_controller" value="$(eval 'xarm7_traj_controller_velocity' if arg('velocity_control') else 'xarm7_traj_controller')" />
   <node unless="$(arg run_demo_traj)"
     name="traj_controller_spawner"
@@ -19,7 +19,7 @@
     args="spawn $(arg xarm_traj_controller) joint_state_controller"/>
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
-  <rosparam if="$(arg run_demo_traj)" file="$(find xarm_controller)/config/xarm7_position_controllers.yaml" command="load"/>
+  <rosparam if="$(arg run_demo_traj)" file="$(find xarm_controller)/config/xarm7_position_controllers.yaml" command="load" ns="$(arg namespace)"/>
   <!-- run_demo: load the position controllers -->
   <node if="$(arg run_demo_traj)" name="position_controller_spawner"
     pkg="controller_manager"
@@ -33,7 +33,7 @@
           joint7_position_controller joint_state_controller"/>
 
   <rosparam if="$(arg add_gripper)"
-    file="$(find xarm_controller)/config/gripper_traj_controller.yaml" command="load"/>
+    file="$(find xarm_controller)/config/gripper_traj_controller.yaml" command="load" ns="$(arg namespace)"/>
   <arg name="gripper_trajectory_controller" value="$(eval 'gripper_trajectory_controller_velocity' if arg('velocity_control') else 'gripper_trajectory_controller')" />
   <node if="$(arg add_gripper)" name="gripper_controller_spawner"
     pkg="controller_manager"

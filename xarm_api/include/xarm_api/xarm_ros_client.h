@@ -35,8 +35,8 @@ public:
 	int config_tool_modbus(int baud_rate, int time_out_ms);
 	int send_tool_modbus(unsigned char* data, int send_len, unsigned char* recv_data=NULL, int recv_len=0);
 
-	int veloMoveJoint(const std::vector<float>& jnt_v, bool is_sync = true);
-	int veloMoveLine(const std::vector<float>& line_v, bool is_tool_coord = false);
+	int veloMoveJoint(const std::vector<float>& jnt_v, bool is_sync = true, float duration = -1.0);
+	int veloMoveLine(const std::vector<float>& line_v, bool is_tool_coord = false, float duration = -1.0);
 
 	int trajRecord(short on);
 	int trajSave(std::string filename, float timeout = 10);
@@ -108,7 +108,7 @@ private:
     xarm_msgs::GripperConfig gripper_config_msg_;
     xarm_msgs::GripperMove gripper_move_msg_;
     xarm_msgs::GripperState gripper_state_msg_;
-	xarm_msgs::MoveVelo move_velo_srv_;
+	xarm_msgs::MoveVelocity move_velo_srv_;
 	xarm_msgs::SetString set_string_srv_;
 	xarm_msgs::PlayTraj play_traj_srv_;
 	xarm_msgs::SetFloat32 set_float32_srv_;

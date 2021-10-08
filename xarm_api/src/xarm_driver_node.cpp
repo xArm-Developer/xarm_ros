@@ -115,6 +115,19 @@ class XArmDriverRunner
                 }
                 xarm_driver_.pub_cgpio_state(cgpio_state_msg_);
             }
+            
+            // if ((report_type_ == "dev" && report_data_ptr->total_num >= 135) 
+            //     || (report_type_ == "rich" && report_data_ptr->total_num >= 481)) {
+            //     ftsensor_msg_.header.stamp = now_;
+            //     ftsensor_msg_.header.frame_id = "ft_sensor_data";
+            //     ftsensor_msg_.wrench.force.x = report_data_ptr->ft_ext_force[0];
+		    //     ftsensor_msg_.wrench.force.y = report_data_ptr->ft_ext_force[1];
+		    //     ftsensor_msg_.wrench.force.z = report_data_ptr->ft_ext_force[2];
+		    //     ftsensor_msg_.wrench.torque.x = report_data_ptr->ft_ext_force[3];
+		    //     ftsensor_msg_.wrench.torque.y = report_data_ptr->ft_ext_force[4];
+		    //     ftsensor_msg_.wrench.torque.z = report_data_ptr->ft_ext_force[5];
+            //     xarm_driver_.pub_ftsensor_state(ftsensor_msg_);
+            // }
         }
 
     private:
@@ -122,6 +135,7 @@ class XArmDriverRunner
         ros::Time now_, last_now_;
         ros::Duration elapsed_;
         sensor_msgs::JointState joint_state_msg_;
+        // geometry_msgs::WrenchStamped ftsensor_msg_;
         xarm_api::XArmDriver xarm_driver_;
         xarm_msgs::RobotMsg xarm_state_msg_;
         xarm_msgs::CIOState cgpio_state_msg_;

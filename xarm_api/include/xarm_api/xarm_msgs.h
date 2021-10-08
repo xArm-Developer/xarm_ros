@@ -24,6 +24,7 @@
 #include <xarm_msgs/ConfigToolModbus.h>
 #include <xarm_msgs/MoveAxisAngle.h>
 #include <xarm_msgs/MoveVelo.h>
+#include <xarm_msgs/MoveVelocity.h>
 #include <xarm_msgs/SetMultipleInts.h>
 #include <xarm_msgs/PlayTraj.h>
 #include <xarm_msgs/SetString.h>
