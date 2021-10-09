@@ -9,8 +9,8 @@
     <arg name="end_effector" value="_vacuum_gripper" if="$(arg add_vacuum_gripper)" />
   </include>
   
-  <!-- <remap from="/DOF" to="/xarm/DOF" /> -->
   <param name="DOF" value="$(arg robot_dof)" />
+  <remap from="DOF" to="/xarm/DOF" />
 
   <!-- bring up the simple planner (based on move_group) that provide plan service and execution server -->
   <node name="xarm_move_group_planner" pkg="xarm_planner" type="xarm_simple_planner" />
