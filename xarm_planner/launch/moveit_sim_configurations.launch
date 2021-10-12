@@ -1,8 +1,9 @@
 <launch>
   <arg name="arm_dof" />
   <arg name="end_effector" default="" />
+  <arg name="namespace" default="xarm"/>
 
-  <rosparam file="$(eval find('xarm' + str(arg('arm_dof')) + arg('end_effector') + '_moveit_config') + '/config/xarm' + str(arg('arm_dof')) + '_params.yaml')" command="load"/>
+  <rosparam file="$(eval find('xarm' + str(arg('arm_dof')) + arg('end_effector') + '_moveit_config') + '/config/xarm' + str(arg('arm_dof')) + '_params.yaml')" command="load" ns="$(arg namespace)"/>
   <include file="$(eval find('xarm' + str(arg('arm_dof')) + arg('end_effector') + '_moveit_config') + '/launch/moveit_rviz_common.launch')">
     <arg name="jnt_stat_source" value="[/move_group/fake_controller_joint_states]" />
     <!-- whether to use fake_execution controller to drive the motion -->

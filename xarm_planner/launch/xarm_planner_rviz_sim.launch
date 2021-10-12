@@ -2,11 +2,13 @@
   <arg name="robot_dof" />
   <arg name="add_gripper" default="false" />
   <arg name="add_vacuum_gripper" default="false" />
+  <arg name="namespace" default="xarm"/>
 
   <include file="$(find xarm_planner)/launch/moveit_sim_configurations.launch">
     <arg name="arm_dof" value="$(arg robot_dof)" />
     <arg name="end_effector" value="_gripper" if="$(arg add_gripper)" />
     <arg name="end_effector" value="_vacuum_gripper" if="$(arg add_vacuum_gripper)" />
+    <arg name="namespace" value="$(arg namespace)" />
   </include>
   
   <remap from="/DOF" to="/xarm/DOF" />
