@@ -159,8 +159,8 @@ namespace xarm_api
         vc_set_jointv_server_ = nh_.advertiseService("velo_move_joint", &XArmDriver::VeloMoveJointCB, this);
         vc_set_linev_server_ = nh_.advertiseService("velo_move_line", &XArmDriver::VeloMoveLineVCB, this);
         // velocity control (with duration parameter)
-        vdc_set_jointv_server_ = nh_.advertiseService("vc_set_joint_velocity", &XArmDriver::VCSetJointVelocityCB, this);
-        vdc_set_linev_server_ = nh_.advertiseService("vc_set_cartesian_velocity", &XArmDriver::VCSetCartesianVelocityCB, this);
+        vdc_set_jointv_server_ = nh_.advertiseService("velo_move_joint_timed", &XArmDriver::VCSetJointVelocityCB, this);
+        vdc_set_linev_server_ = nh_.advertiseService("velo_move_line_timed", &XArmDriver::VCSetCartesianVelocityCB, this);
         
         set_max_jacc_server_ = nh_.advertiseService("set_max_acc_joint", &XArmDriver::SetMaxJAccCB, this);
         set_max_lacc_server_ = nh_.advertiseService("set_max_acc_line", &XArmDriver::SetMaxLAccCB, this);

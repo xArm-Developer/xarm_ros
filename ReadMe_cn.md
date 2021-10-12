@@ -1,10 +1,8 @@
-## 更新提示：关于带机械爪、真空吸头的Moveit规划:
-&ensp;&ensp;如果您在使用Moveit对装载机械爪或真空吸头的xArm进行路径规划, 请留意在**2021年1月6日**之后的更新中, 由于moveit configuration的修改，pose指令、反馈会将**工具TCP偏移**计算在内！
-
 ## 重要提示:
 &ensp;&ensp;由于机械臂通信格式修改, 建议在***2019年6月前发货***的xArm 早期用户尽早 ***升级*** 控制器固件程序，这样才能在以后的更新中正常驱动机械臂运动以及使用最新开发的各种功能。请联系我们获得升级的详细指示。 当前ROS库主要的分支已不支持旧版本，先前版本的ROS驱动包还保留在 ***'legacy'*** 分支中, 但不会再有更新。    
 &ensp;&ensp;在使用xarm_ros之前，请务必按照第3节**准备工作**的指示安装必要的第三方支持库，否则使用时会出现错误。  
 &ensp;&ensp;如果使用**Moveit**开发, 请尽量在PC和控制器之间使用**网线直连方式**, 不要使用交换机等中间设备, 否则引入的通信延迟可能会对Moveit轨迹执行造成不良影响。  
+&ensp;&ensp; 更新本仓库代码时, 请记得同时[检查submodule更新](#421-更新代码包)  
 
 # 目录:  
 * [1. 简介](#1-简介)
@@ -57,7 +55,8 @@
    * 添加 vacuum gripper（真空吸头）3D模型以及 xArm-with-vacuum-gripper Moveit开发包 (位于 /examples 路径下)。
    * 在[Microsoft IoT](https://github.com/ms-iot)的帮助下, xarm_ros 现已能够在 Windows平台编译和运行。
    * 添加关节空间和笛卡尔空间的速度控制模式。(需要**控制器固件版本 >= 1.6.8**)
-   * 支持[Moveit添加其它模型到末端](#551-moveit加载其它自定义模型到机械臂末端)
+   * 支持[Moveit添加其它模型到末端](#551-moveit加载其它自定义模型到机械臂末端)  
+   * 添加带超时版本的速度模式控制。(需要**控制器固件版本 >= 1.8.0**)  
 
 # 3. 准备工作
 
@@ -256,10 +255,10 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 * `move_servo_cart/move_servoj`: （固定）高频率的笛卡尔或关节轨迹指令，分别对应SDK里的set_servo_cartesian()和set_servo_angle_j()，需要机械臂工作在**模式1**，可以间接实现速度控制。在使用这两个服务功能之前，务必做好**风险评估**并且仔细阅读第[7.2-7.3节](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)的使用方法。  
 
 #### 手臂模式4:
-* `velo_move_joint`: 指定所有关节目标转速(单位: rad/s)的运动, 最大关节加速度可以通过 `set_max_acc_joint` 服务设定。（[例子](#5-关节旋转速度控制)）  
+* `velo_move_joint/velo_move_joint_timed`: 指定所有关节目标转速(单位: rad/s)的运动, 最大关节加速度可以通过 `set_max_acc_joint` 服务设定。（[例子](#5-关节旋转速度控制)）  
 
 #### 手臂模式5:
-* `velo_move_line:` 指定TCP笛卡尔线速度（mm/s）和姿态角速度（rad/s，**轴-角速度**表示）的运动, 最大关节加速度可以通过`set_max_acc_line` 服务设定。（[例子](#6-笛卡尔线速度控制)）  
+* `velo_move_line/velo_move_line_timed:` 指定TCP笛卡尔线速度（mm/s）和姿态角速度（rad/s，**轴-角速度**表示）的运动, 最大关节加速度可以通过`set_max_acc_line` 服务设定。（[例子](#6-笛卡尔线速度控制)）  
 
 
 #### 使用ROS Service启动 xArm:
@@ -325,7 +324,10 @@ $ rosservice call /xarm/move_line_aa [0,122,0,-0.5,0,0] 30.0 100.0 0.0 0 1
 ##### 5. 关节旋转速度控制:
 &ensp;&ensp;（需要**控制器固件版本 >= 1.6.8**）如果需要对关节速度进行控制, 请先根据[模式切换](#6-模式切换)设置为**Mode 4**, 使用前请阅读[MoveVelo.srv](./xarm_msgs/srv/MoveVelo.srv)并理解速度控制服务输入参数的含义。对于关节速度控制, 如果多于一个关节参与运动，可以设置**jnt_sync** 参数为 1 来确保每个运动关节同步进行加、减速，否则每个关节会以自己最快的方式达到指定速度。***coord*** 参数在这里没有意义，设为0即可。例如: 
 ```bash
+# 无超时版本： (手臂在收到全零指令前不会停止运动!)
 $ rosservice call /xarm/velo_move_joint [0.1,-0.1,0,0,0,-0.3] 1 0
+# 带超时版本(控制器固件版本 >= 1.8.0)：(如果下一条速度指令没有在0.2秒以内收到, xArm将会停止)
+$ rosservice call /xarm/velo_move_joint_timed [0.1,-0.1,0,0,0,-0.3] 1 0 0.2
 ``` 
 会命令对应的关节(for xArm6)以对应的速度(in rad/s)运动，并且所有关节会同步达到指定速度。最大关节加速度可以用以下方法设置，单位rad/s^2:  
 ```bash
@@ -335,7 +337,10 @@ $ rosservice call /xarm/set_max_acc_joint 10.0  (maximum: 20.0 rad/s^2)
 ##### 6. 笛卡尔线速度控制:
 &ensp;&ensp;（需要**控制器固件版本 >= 1.6.8**）如果期望控制TCP朝着某一方向的线速度, 请先根据[模式切换](#6-模式切换)设置为**Mode 5**, 使用前请阅读[MoveVelo.srv](./xarm_msgs/srv/MoveVelo.srv)并理解速度控制服务输入参数的含义。如果指定的线速度是对应用户/基坐标系，设置 **coord** 参数为 0，如果是对应工具坐标系则设置为 1。***jnt_sync*** 参数在这里无意义，设置为0即可。例如: 
 ```bash
+# 无超时版本： (手臂在收到全零指令前不会停止运动!)
 $ rosservice call /xarm/velo_move_line [30,0,0,0,0,0] 0 1
+# 带超时版本(控制器固件版本 >= 1.8.0)：(如果下一条速度指令没有在0.2秒以内收到, xArm将会停止)
+$ rosservice call /xarm/velo_move_line_timed [30,0,0,0,0,0] 0 1 0.2
 ``` 
 会指定xArm的末端TCP沿着工具坐标系X轴以30 mm/s的速度移动，最大线性加速度可以用以下方法设置，单位mm/s^2:  
 ```bash
@@ -343,11 +348,14 @@ $ rosservice call /xarm/set_max_acc_line 5000.0  (maximum: 50000 mm/s^2)
 ``` 
 对于姿态旋转速度控制, 请留意姿态速度是以**轴-角速度**方式指定，即：[(指定坐标系下)单位旋转矢量] 乘以 [旋转角速度标量]。例如, 
 ```bash
+# 无超时版本： (手臂在收到全零指令前不会停止运动!)
 $ rosservice call /xarm/velo_move_line [0,0,0,0.707,0,0] 0 0
+# 带超时版本(控制器固件版本 >= 1.8.0)：(如果下一条速度指令没有在0.2秒以内收到, xArm将会停止)
+$ rosservice call /xarm/velo_move_line_timed [0,0,0,0.707,0,0] 0 0 0.2
 ``` 
 会命令末端TCP绕着用户/基坐标系的X轴以45度/秒速度旋转，姿态变化的最大加速度目前是一个固定值。  
 
-请注意: 速度模式下，手臂可以通过两种方式停止： 发送**全零速度**指令, 或者设置**state为4(STOP)** 然后下一次运动前再设置回0(READY)。  
+请注意: 速度模式下，无超时版本服务可以通过两种方式停止： 发送**全零速度**指令, 或者设置**state为4(STOP)** 然后下一次运动前再设置回0(READY)。但还是**推荐使用带超时的版本（固件更新至v1.8.0以上）**，这样在程序异常或通信中断等情况下可以保证安全。  
 
 
 ##### 运动服务返回值:
