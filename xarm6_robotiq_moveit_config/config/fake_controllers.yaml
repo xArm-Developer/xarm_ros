@@ -13,7 +13,7 @@ controller_list:
     joints:
       - robotiq_85_left_knuckle_joint
 initial:  # Define initial robot poses.
-  - group: xarm
+  - group: xarm6
     pose: home
   - group: robotiq_gripper
     pose: open
