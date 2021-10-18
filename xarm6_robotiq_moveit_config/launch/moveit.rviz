@@ -4,15 +4,7 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Global Options1
-        - /Status1
-        - /Grid1
         - /MotionPlanning1
-        - /MotionPlanning1/Scene Geometry1
-        - /MotionPlanning1/Planning Request1
-        - /MotionPlanning1/Planning Metrics1
-        - /MotionPlanning1/Planned Path1
-        - /MarkerArray1/Namespaces1
       Splitter Ratio: 0.7425600290298462
     Tree Height: 390
   - Class: rviz/Help
@@ -80,21 +72,6 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          left_finger:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          left_inner_knuckle:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          left_outer_knuckle:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
           link1:
             Alpha: 1
             Show Axes: false
@@ -134,21 +111,47 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-          link_tcp:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          right_finger:
+          robotiq_85_base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_inner_knuckle:
+          robotiq_85_left_finger_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_outer_knuckle:
+          robotiq_85_left_finger_tip_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          robotiq_85_left_inner_knuckle_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          robotiq_85_left_knuckle_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          robotiq_85_right_finger_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          robotiq_85_right_finger_tip_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          robotiq_85_right_inner_knuckle_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          robotiq_85_right_knuckle_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -157,11 +160,6 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-          xarm_gripper_base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
         Loop Animation: false
         Robot Alpha: 0.5
         Robot Color: 150; 50; 150
@@ -184,8 +182,8 @@ Visualization Manager:
         Goal State Color: 250; 128; 0
         Interactive Marker Size: 0
         Joint Violation Color: 255; 0; 255
-        Planning Group: xarm6
-        Query Goal State: false
+        Planning Group: robotiq_gripper
+        Query Goal State: true
         Query Start State: false
         Show Workspace: false
         Start State Alpha: 1
@@ -196,7 +194,7 @@ Visualization Manager:
         Scene Alpha: 1
         Scene Color: 50; 230; 50
         Scene Display Time: 0.20000000298023224
-        Show Scene Geometry: false
+        Show Scene Geometry: true
         Voxel Coloring: Z-Axis
         Voxel Rendering: Occupied Voxels
       Scene Robot:
@@ -207,21 +205,6 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          left_finger:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          left_inner_knuckle:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          left_outer_knuckle:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
           link1:
             Alpha: 1
             Show Axes: false
@@ -261,21 +244,47 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-          link_tcp:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          right_finger:
+          robotiq_85_base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_inner_knuckle:
+          robotiq_85_left_finger_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_outer_knuckle:
+          robotiq_85_left_finger_tip_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          robotiq_85_left_inner_knuckle_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          robotiq_85_left_knuckle_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          robotiq_85_right_finger_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          robotiq_85_right_finger_tip_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          robotiq_85_right_inner_knuckle_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          robotiq_85_right_knuckle_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -284,61 +293,11 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-          xarm_gripper_base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
         Robot Alpha: 0.5
         Show Robot Collision: false
         Show Robot Visual: true
       Value: true
       Velocity_Scaling_Factor: 1
-    - Class: rviz/MarkerArray
-      Enabled: true
-      Marker Topic: /visualization_marker_array
-      Name: MarkerArray
-      Namespaces:
-        axes: true
-        coke_can_left side: true
-        coke_can_left top: true
-        coke_can_right side: true
-        coke_can_right top: true
-        probabilities: true
-      Queue Size: 100
-      Value: true
-    - Alpha: 1
-      Arrow Length: 0.30000001192092896
-      Axes Length: 0.30000001192092896
-      Axes Radius: 0.009999999776482582
-      Class: rviz/PoseArray
-      Color: 238; 238; 236
-      Enabled: true
-      Head Length: 0.07000000029802322
-      Head Radius: 0.029999999329447746
-      Name: PoseArray
-      Shaft Length: 0.23000000417232513
-      Shaft Radius: 0.009999999776482582
-      Shape: Arrow (Flat)
-      Topic: /object_pose
-      Unreliable: false
-      Value: true
-    - Alpha: 1
-      Arrow Length: 0.30000001192092896
-      Axes Length: 0.30000001192092896
-      Axes Radius: 0.009999999776482582
-      Class: rviz/PoseArray
-      Color: 255; 25; 0
-      Enabled: false
-      Head Length: 0.07000000029802322
-      Head Radius: 0.029999999329447746
-      Name: PoseArray
-      Shaft Length: 0.23000000417232513
-      Shaft Radius: 0.009999999776482582
-      Shape: Arrow (Flat)
-      Topic: /hand_pose
-      Unreliable: false
-      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -355,25 +314,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 3.5633952617645264
+      Distance: 2.996500015258789
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.6317811608314514
-        Y: -0.11669746041297913
-        Z: -2.3990864974621218e-6
+        X: 0.11356700211763382
+        Y: 0.10592000186443329
+        Z: 2.2351800055275817e-7
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.9447959661483765
+      Pitch: 0.7647966742515564
       Target Frame: world
       Value: XYOrbit (rviz)
-      Yaw: 3.076749086380005
+      Yaw: 2.4549481868743896
     Saved: ~
 Window Geometry:
   Displays:
@@ -387,9 +346,9 @@ Window Geometry:
     collapsed: false
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002a9000003a5fc0200000007fb000000100044006900730070006c006100790073010000003d00000217000000c900fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a0056006900650077007300000003b0000000b0000000a400fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067010000025a000001880000017d00ffffff00000336000003a500000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000002a2000003a5fc0200000007fb000000100044006900730070006c006100790073010000003d00000217000000c900fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a0056006900650077007300000003b0000000b0000000a400fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067010000025a000001880000017d00ffffff0000047c000003a500000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1509
-  X: 1051
+  Width: 1828
+  X: 459
   Y: 27
