@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="xarm6_with_gripper">
+  <xacro:arg name="prefix" default=""/>
+  <xacro:arg name="ros_namespace" default="xarm"/>
+  <xacro:arg name="limited" default="false"/>
+  <xacro:arg name="effort_control" default="false"/>
+  <xacro:arg name="velocity_control" default="false"/>
+
+  <!-- load xarm6 robot -->
+  <xacro:include filename="$(find xarm_description)/urdf/xarm6_robot_macro.xacro" />
+  <xacro:include filename="$(find xarm_description)/sensors/Realsense_D435.xacro" />
+
+  <xacro:property name="camera_offset_x" value="0.1" />
+  <xacro:property name="camera_offset_y" value="0" />
+  <xacro:property name="camera_offset_z" value="0" />
+
+  <!-- realsense camera -->
+  <!-- eye to hand -->
+  <joint name="camera_joint" type="fixed">
+      <origin xyz="0.15 0.7 0.1" rpy="3.142 3.142 1.571" />
+      <parent link="$(arg prefix)link_base"/>
+      <child link="camera_base_link"/>
+  </joint>
+
+  <!-- eye in hand -->
+  <!-- <joint name="camera_joint" type="fixed">
+      <origin xyz="${camera_offset_x} ${camera_offset_y} ${camera_offset_z}" rpy="0 -1.571 0" />
+      <parent link="$(arg prefix)link6"/>
+      <child link="camera_base_link"/>
+  </joint> -->
+  
+  <!-- Attach Robotiq85 gripper --> 
+  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_85_gripper.urdf.xacro" />
+
+  <xacro:robotiq_85_gripper prefix="" parent="link6" >
+    <origin xyz="0 0 0" rpy="0 ${-pi/2} ${pi}"/>      <!-- z: 0.004-->
+  </xacro:robotiq_85_gripper> 
+  
+  <!-- Gazebo FT sensor plugin -->
+  <gazebo reference="joint6">
+    <provideFeedback>true</provideFeedback>
+  </gazebo>
+  <gazebo>
+    <plugin name="ft_sensor_plugin" filename="libgazebo_ros_ft_sensor.so">
+      <updateRate>250.0</updateRate>
+      <topicName>ft_sensor/raw</topicName>
+      <gaussianNoise>0.0</gaussianNoise>
+      <jointName>joint6</jointName>
+    </plugin>
+  </gazebo>
+  
+  <!-- Gazebo grasping plugin -->
+  <gazebo>
+    <gripper name="gazebo_gripper">
+      <grasp_check>
+        <attach_steps>2</attach_steps>    <!-- default: 20 -->
+        <detach_steps>2</detach_steps>    <!-- default: 40 -->
+        <min_contact_count>3</min_contact_count>
+      </grasp_check>
+      <gripper_link>robotiq_85_left_finger_tip_link</gripper_link>
+      <gripper_link>robotiq_85_right_finger_tip_link</gripper_link>
+      <palm_link>robotiq_85_base_link</palm_link>
+    </gripper>
+  </gazebo>
+
+  <xacro:xarm6_robot prefix="$(arg prefix)" namespace="$(arg ros_namespace)" limited="$(arg limited)" effort_control="$(arg effort_control)" velocity_control="$(arg velocity_control)"/>
+  <!-- <xacro:load_gripper attach_to="$(arg prefix)link_eef" effort_control="$(arg effort_control)" velocity_control="$(arg velocity_control)" /> -->
+  <xacro:sensor_d435 name = "camera"/>
+</robot>
