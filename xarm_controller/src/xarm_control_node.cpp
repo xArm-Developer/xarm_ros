@@ -28,6 +28,14 @@ int main(int argc, char**argv)
 	/* Wait for correct initial position to be updated to ros_controller */
 	ros::Duration(2.0).sleep();
 
+	// make sure feedback status messages are already published
+	if(!xarm_hw.wait_fbk_start(ros::Duration(5.0)))
+	{
+		ROS_ERROR("No xArm feedback message published! Failed to start xArm HW interface...");
+		ros::shutdown();
+		exit(-1);
+	}
+
 	ros::Time ts = ros::Time::now();
 	while (ros::ok())
 	{	

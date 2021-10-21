@@ -59,6 +59,7 @@ namespace xarm_control
 		void get_status(int state_mode_err[3]);
 		/* check whether the controller needs to be reset due to error or mode change */
 		bool need_reset();
+		bool wait_fbk_start(ros::Duration timeout);
 	
 	protected:
 		enum ControlMethod {POSITION, VELOCITY, EFFORT};
@@ -89,6 +90,8 @@ namespace xarm_control
 		bool initial_write_;		
 		std::mutex mutex_;
 		std::string hw_ns_;
+		bool pos_fdb_called_;
+		bool stat_fdb_called_;
 		// std::string force_torque_sensor_name_;
 		// std::string force_torque_sensor_frame_id_;
 		
