@@ -20,4 +20,17 @@ namespace xarm_control
       }
 	  return false;
 	}
+
+  bool XArmCombinedHW::wait_fbk_start(ros::Duration timeout)
+  {
+    std::vector<hardware_interface::RobotHWSharedPtr>::iterator robot_hw;
+    // TODO: change this to parallel running
+      for (robot_hw = robot_hw_list_.begin(); robot_hw != robot_hw_list_.end(); ++robot_hw)
+      {
+        xarm_control::XArmHW* xarm_hw_ptr = dynamic_cast<xarm_control::XArmHW *>((*robot_hw).get());
+        if(!xarm_hw_ptr->wait_fbk_start(timeout))
+          return false;
+      }
+    return true;
+  }
 }
