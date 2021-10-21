@@ -203,6 +203,8 @@ namespace xarm_control
 		dof_ = xarm_dof;
 		jnt_names_ = jnt_names;
 		initial_write_ = true;
+		pos_fdb_called_ = false;
+		stat_fdb_called_ = false;
 
 		std::string robot_description;
 		root_nh.getParam("/robot_description", robot_description);
@@ -229,6 +231,9 @@ namespace xarm_control
 			effort_fdb_[j] = data->effort[j];
 		}
 		last_joint_state_stamp_ = data->header.stamp;
+
+		if(!pos_fdb_called_)
+			pos_fdb_called_ = true;
 	}
 
 	void XArmHW::state_fb_cb(const xarm_msgs::RobotMsg::ConstPtr& data)
@@ -236,6 +241,26 @@ namespace xarm_control
 		curr_mode = data->mode;
 		curr_state = data->state;
 		curr_err = data->err;
+		
+		if(!stat_fdb_called_)
+			stat_fdb_called_ = true;
+	}
+
+	bool XArmHW::wait_fbk_start(ros::Duration timeout)
+	{
+		if(timeout.isZero())
+			return true;
+
+		bool started = false;
+		ros::Time end = ros::Time::now() + timeout;
+		while(ros::ok() && ros::Time::now() < end)
+		{
+			started = pos_fdb_called_ && stat_fdb_called_;
+			if(started)
+				break;
+			ros::Duration(0.1).sleep();
+		}
+		return started;
 	}
 
 	// void XArmHW::ftsensor_fb_cb(const geometry_msgs::WrenchStamped::ConstPtr& data)

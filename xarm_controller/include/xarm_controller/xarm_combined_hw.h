@@ -18,6 +18,7 @@ public:
 	~XArmCombinedHW(){};
 	
 	bool need_reset();
+	bool wait_fbk_start(ros::Duration timeout);
 };
 
 }
