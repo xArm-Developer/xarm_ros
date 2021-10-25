@@ -90,6 +90,7 @@ namespace xarm_api
     
     public:
         XArmAPI *arm;
+        const static int max_gripper_pos = 850;
 
     private:
         std::string report_type_;
@@ -99,6 +100,8 @@ namespace xarm_api
         int curr_err_;
         int curr_cmd_num_;
         int curr_mode_;
+        float init_gripper_pos_;
+        bool gripper_init_loop_;
 
         ros::NodeHandle nh_;
         ros::ServiceServer go_home_server_;

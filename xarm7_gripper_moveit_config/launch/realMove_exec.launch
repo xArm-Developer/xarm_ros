@@ -10,6 +10,7 @@
   <arg name="ext_ns" default="" />
   <arg name="velocity_control" default="false"/>
 
+  <param name="xarm/add_gripper" type="bool" value="true" />
   <!-- common: bring up node to enable real xArm control -->
   <include file="$(find xarm_bringup)/launch/xarm7_server.launch">
     <arg name="robot_ip" value="$(arg robot_ip)" />

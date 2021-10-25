@@ -65,6 +65,7 @@ namespace xarm_api
         nh_ = root_nh;
         nh_.getParam("DOF",dof_);
         root_nh.getParam("xarm_report_type", report_type_);
+
         
         arm = new XArmAPI(
             server_ip, 
@@ -208,6 +209,27 @@ namespace xarm_api
           std::bind(&XArmDriver::_handle_gripper_action_cancel, this, std::placeholders::_1),
           false));
         gripper_action_server_->start(); 
+
+        bool add_gripper = false;
+        bool rtt = nh_.getParam("add_gripper", add_gripper);
+        // has "add_gripper" parameter and its value is true.
+        if(rtt && add_gripper)
+        {
+            int ret_grip = arm->get_gripper_position(&init_gripper_pos_);
+            if(ret_grip || init_gripper_pos_<0 || init_gripper_pos_>max_gripper_pos)
+                ROS_ERROR("Abnormal when update xArm gripper initial position, ret = %d, pos = %f, please check the gripper connection!", ret_grip, init_gripper_pos_);
+            
+            gripper_init_loop_ = false;
+            std::thread([this]() {
+               
+                while (ros::ok() && !gripper_init_loop_)
+                {
+                    ros::Duration(0.1).sleep();
+                    _pub_gripper_joint_states(fabs(max_gripper_pos - init_gripper_pos_));
+                }
+            }).detach();
+        }
+        
     }
 
     void XArmDriver::_pub_gripper_joint_states(float pos)
@@ -222,6 +244,7 @@ namespace xarm_api
 
     void XArmDriver::_handle_gripper_action_goal(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh)
     {
+        gripper_init_loop_ = true;
         ros::Rate loop_rate(10);
         const auto goal = gh.getGoal();
         ROS_INFO("gripper_action_goal handle, position: %f", goal->command.position);
@@ -229,7 +252,6 @@ namespace xarm_api
         control_msgs::GripperCommandResult result;
         control_msgs::GripperCommandFeedback feedback;
 
-        const int max_pos = 850;
         int ret;
         float cur_pos = 0;
         int err = 0;
@@ -240,11 +262,11 @@ namespace xarm_api
             return;
         }
         ret = arm->get_gripper_position(&cur_pos);
-        _pub_gripper_joint_states(fabs(max_pos - cur_pos));
+        _pub_gripper_joint_states(fabs(max_gripper_pos - cur_pos));
 
         ret = arm->set_gripper_mode(0);
         if (ret != 0) {
-            result.position = fabs(max_pos - cur_pos) / 1000;
+            result.position = fabs(max_gripper_pos - cur_pos) / 1000;
             gh.setCanceled(result);
             ret = arm->get_gripper_err_code(&err);
             ROS_WARN("set_gripper_mode, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
@@ -252,7 +274,7 @@ namespace xarm_api
         }
         ret = arm->set_gripper_enable(true);
         if (ret != 0) {
-            result.position = fabs(max_pos - cur_pos) / 1000;
+            result.position = fabs(max_gripper_pos - cur_pos) / 1000;
             gh.setCanceled(result);
             ret = arm->get_gripper_err_code(&err);
             ROS_WARN("set_gripper_enable, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
@@ -260,14 +282,14 @@ namespace xarm_api
         }
         ret = arm->set_gripper_speed(3000);
         if (ret != 0) {
-            result.position = fabs(max_pos - cur_pos) / 1000;
+            result.position = fabs(max_gripper_pos - cur_pos) / 1000;
             gh.setCanceled(result);
             ret = arm->get_gripper_err_code(&err);
             ROS_WARN("set_gripper_speed, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
             return;
         }
 
-        float target_pos = fabs(max_pos - goal->command.position * 1000);
+        float target_pos = fabs(max_gripper_pos - goal->command.position * 1000);
         bool is_move = true;
         std::thread([this, &target_pos, &is_move, &cur_pos]() {
             is_move = true;
@@ -282,15 +304,15 @@ namespace xarm_api
             loop_rate.sleep();
             ret = arm->get_gripper_position(&cur_pos);
             if (ret == 0) {
-                feedback.position = fabs(max_pos - cur_pos) / 1000;
+                feedback.position = fabs(max_gripper_pos - cur_pos) / 1000;
                 gh.publishFeedback(feedback);
-                _pub_gripper_joint_states(fabs(max_pos - cur_pos));
+                _pub_gripper_joint_states(fabs(max_gripper_pos - cur_pos));
             }
         }
         arm->get_gripper_position(&cur_pos);
         ROS_INFO("move finish, cur_pos=%f", cur_pos);
         if (ros::ok()) {
-            result.position = fabs(max_pos - cur_pos) / 1000;
+            result.position = fabs(max_gripper_pos - cur_pos) / 1000;
             gh.setSucceeded(result);
             ROS_INFO("Goal succeeded");
         }
