@@ -94,9 +94,11 @@ class XArmDriverRunner
                 xarm_state_msg_.pose[i] = report_data_ptr->pose[i];
                 xarm_state_msg_.offset[i] = report_data_ptr->tcp_offset[i];
             }
+            xarm_state_msg_.header.stamp = now_;
             xarm_driver_.pub_robot_msg(xarm_state_msg_);
 
             if (report_data_ptr->total_num >= 417) {
+                cgpio_state_msg_.header.stamp = now_;
                 cgpio_state_msg_.state = report_data_ptr->cgpio_state;
                 cgpio_state_msg_.code = report_data_ptr->cgpio_code;
                 cgpio_state_msg_.input_digitals[0] = report_data_ptr->cgpio_input_digitals[0];

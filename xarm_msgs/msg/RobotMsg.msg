@@ -1,4 +1,5 @@
 # feedback information of the controlled robot
+Header header
 
 # state of robot:
 #	1: RUNNING, executing motion command.
