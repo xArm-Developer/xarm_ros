@@ -222,7 +222,14 @@ namespace xarm_control
 	void XArmHW::pos_fb_cb(const sensor_msgs::JointState::ConstPtr& data)
 	{
 		if (data->header.stamp <= last_joint_state_stamp_) return;
+		if (data->name[0]!=jnt_names_[0]) 
+		{	
+			// in case that the gripper joints are independently published, 
+			// then the index j will not be valid for xArm joints  
+			return; 
+		}
 
+		// static int call_cnt = 0;
 		std::lock_guard<std::mutex> locker(mutex_);
 		for(int j=0; j<dof_; j++)
 		{
@@ -233,7 +240,9 @@ namespace xarm_control
 		last_joint_state_stamp_ = data->header.stamp;
 
 		if(!pos_fdb_called_)
+		{
 			pos_fdb_called_ = true;
+		}
 	}
 
 	void XArmHW::state_fb_cb(const xarm_msgs::RobotMsg::ConstPtr& data)
