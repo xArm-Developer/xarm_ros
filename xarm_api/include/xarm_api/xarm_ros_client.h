@@ -56,7 +56,7 @@ public:
 
 private:
 	template<typename ServiceSrv>
-	int _call_service(ros::ServiceClient client, ServiceSrv srv);
+	int _call_service(ros::ServiceClient &client, ServiceSrv &srv);
 
 private:
 	ros::ServiceClient motion_ctrl_client_;

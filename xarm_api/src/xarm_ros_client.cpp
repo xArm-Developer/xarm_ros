@@ -69,7 +69,7 @@ void XArmROSClient::init(ros::NodeHandle& nh)
 }
 
 template<typename ServiceSrv>
-int XArmROSClient::_call_service(ros::ServiceClient client, ServiceSrv srv)
+int XArmROSClient::_call_service(ros::ServiceClient &client, ServiceSrv &srv)
 {
     if (client.isPersistent() && !client.isValid()) return SERVICE_IS_PERSISTENT_BUT_INVALID;
     if(client.call(srv))
