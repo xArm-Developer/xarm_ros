@@ -4,11 +4,7 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Global Options1
-        - /Status1
-        - /Grid1
         - /MotionPlanning1
-        - /MotionPlanning1/Scene Geometry1
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planning Metrics1
         - /MotionPlanning1/Planned Path1
@@ -299,12 +295,7 @@ Visualization Manager:
       Marker Topic: /visualization_marker_array
       Name: MarkerArray
       Namespaces:
-        axes: true
-        coke_can_left side: true
-        coke_can_left top: true
-        coke_can_right side: true
-        coke_can_right top: true
-        probabilities: true
+        {}
       Queue Size: 100
       Value: true
     - Alpha: 1
@@ -355,25 +346,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 3.5633952617645264
+      Distance: 2.6039469242095947
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.6317811608314514
-        Y: -0.11669746041297913
+        X: 0.2597702145576477
+        Y: 0.2586096525192261
         Z: -2.3990864974621218e-6
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.9447959661483765
+      Pitch: 0.37979650497436523
       Target Frame: world
       Value: XYOrbit (rviz)
-      Yaw: 3.076749086380005
+      Yaw: 2.586747407913208
     Saved: ~
 Window Geometry:
   Displays:
