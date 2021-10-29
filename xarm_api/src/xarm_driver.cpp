@@ -180,6 +180,7 @@ namespace xarm_api
         set_reduced_mode_server_ = nh_.advertiseService("set_reduced_mode", &XArmDriver::SetReducedModeCB, this);
         set_tcp_jerk_server_ = nh_.advertiseService("set_tcp_jerk", &XArmDriver::SetTcpJerkCB, this);
         set_joint_jerk_server_ = nh_.advertiseService("set_joint_jerk", &XArmDriver::SetJointJerkCB, this);
+        get_servo_angle_ = nh_.advertiseService("get_servo_angle", &XArmDriver::GetServoAngleCB, this);
 
         // state feedback topics:
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
@@ -1110,6 +1111,18 @@ namespace xarm_api
     {
         res.ret = arm->set_joint_jerk(req.data);
         res.message = "set joint jerk: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
+        return res.ret >= 0;
+    }
+
+    bool XArmDriver::GetServoAngleCB(xarm_msgs::GetFloat32List::Request &req, xarm_msgs::GetFloat32List::Response &res)
+    {
+        res.datas.resize(7);
+        res.ret = arm->get_servo_angle(&res.datas[0]);
+        std::string tmp = "";
+        for (int i = 0; i < res.datas.size(); i++) {
+            tmp += (i == 0 ? "" : ", ") + std::to_string(res.datas[i]);
+        }
+        res.message = "datas=[ " + tmp + " ]";
         return res.ret >= 0;
     }
 

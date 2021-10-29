@@ -1,0 +1,11 @@
+# This format is suitable for the following services
+#   - get_position
+#   - get_servo_angle
+#   - get_position_aa
+
+---
+
+int16 ret
+string message
+
+float32[] datas

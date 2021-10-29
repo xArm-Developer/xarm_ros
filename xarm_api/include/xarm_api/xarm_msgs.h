@@ -28,5 +28,6 @@
 #include <xarm_msgs/SetMultipleInts.h>
 #include <xarm_msgs/PlayTraj.h>
 #include <xarm_msgs/SetString.h>
+#include <xarm_msgs/GetFloat32List.h>
 
 #endif // __XARM_MSGS_H
