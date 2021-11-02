@@ -21,6 +21,7 @@ COMPONENTS
     geometry_msgs
     std_msgs
     xarm_msgs
+    tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -224,11 +225,16 @@ add_executable(xarm_gripper_planner src/xarm_gripper_planner.cpp)
 add_dependencies(xarm_gripper_planner ${${PROJECT_NAME}_EXPORTED_TARGETS})
 target_link_libraries(xarm_gripper_planner ${catkin_LIBRARIES})
 
+add_executable(planner_findobj2d src/planner_test_findobj2d.cpp)
+add_dependencies(planner_findobj2d ${${PROJECT_NAME}_EXPORTED_TARGETS})
+target_link_libraries(planner_findobj2d ${catkin_LIBRARIES})
+
 install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 install(TARGETS
   xarm_simple_planner
   xarm_simple_planner_test
   xarm_gripper_planner
+  planner_findobj2d
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

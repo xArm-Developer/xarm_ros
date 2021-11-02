@@ -50,7 +50,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/base_link.STL" />
+          filename="package://xarm_gripper/meshes/base_link_collision.STL" />
       </geometry>
     </collision>
   </link>
