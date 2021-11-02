@@ -84,6 +84,15 @@ namespace xarm_control
 		std::vector<double> velocity_fdb_;
 		std::vector<double> effort_fdb_;
 
+		bool first_read_;
+		long int read_cnts_;
+		double read_max_time_;
+		double read_total_time_;
+		std::vector<float> prev_read_angles_;
+		std::vector<float> curr_read_angles_;
+		ros::Duration read_duration_;
+		bool initial_read_;
+
 		// double force_[3];
 		// double torque_[3];
 
@@ -132,6 +141,8 @@ namespace xarm_control
 		void _reset_limits(void);
 		void _enforce_limits(const ros::Duration& period);
 		bool _check_cmds_is_change(std::vector<float> prev, std::vector<float> cur, double threshold = 0.0001);
+
+		bool _xarm_is_not_ready(void);
 	};
 
 }

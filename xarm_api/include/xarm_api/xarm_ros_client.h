@@ -53,10 +53,11 @@ public:
 	int setJointJerk(float jerk);
 	int setTcpMaxAcc(float maxacc);
 	int setJointMaxAcc(float maxacc);
+	int getServoAngle(std::vector<float>& angles);
 
 private:
 	template<typename ServiceSrv>
-	int _call_service(ros::ServiceClient client, ServiceSrv srv);
+	int _call_service(ros::ServiceClient &client, ServiceSrv &srv);
 
 private:
 	ros::ServiceClient motion_ctrl_client_;
@@ -93,6 +94,7 @@ private:
 	ros::ServiceClient set_joint_jerk_client_;
 	ros::ServiceClient set_tcp_maxacc_client_;
 	ros::ServiceClient set_joint_maxacc_client_;
+	ros::ServiceClient get_servo_angle_client_;
 
     xarm_msgs::SetAxis set_axis_srv_;
     xarm_msgs::SetInt16 set_int16_srv_;
@@ -112,6 +114,7 @@ private:
 	xarm_msgs::SetString set_string_srv_;
 	xarm_msgs::PlayTraj play_traj_srv_;
 	xarm_msgs::SetFloat32 set_float32_srv_;
+	xarm_msgs::GetFloat32List get_float32_list_srv_;
 
     ros::NodeHandle nh_;
 };

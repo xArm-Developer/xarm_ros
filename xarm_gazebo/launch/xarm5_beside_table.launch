@@ -12,6 +12,7 @@
   <arg name="xarm_velocity_control" value="$(eval arg('velocity_control') and not arg('run_demo'))" />
 
   <rosparam file="$(find xarm5_moveit_config)/config/xarm5_params.yaml" command="load" ns="$(arg namespace)"/>
+  <rosparam if="$(arg add_gripper)" file="$(find xarm_controller)/config/gripper_gazebo_ros_control.yaml" command="load"/>
   <!-- startup simulated world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find xarm_gazebo)/worlds/xarm_example1_table.world"/>

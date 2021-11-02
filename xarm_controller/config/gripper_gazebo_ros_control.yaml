@@ -1,0 +1,10 @@
+# No Pid gains specified error fix
+gazebo_ros_control:
+  pid_gains:
+    drive_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    left_finger_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    left_inner_knuckle_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    right_outer_knuckle_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    right_finger_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    right_inner_knuckle_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    
