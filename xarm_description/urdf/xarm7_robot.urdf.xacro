@@ -18,11 +18,14 @@
   <xacro:arg name="geometry_mesh_origin_rpy" default="0 0 0"/>
   <xacro:arg name="geometry_mesh_tcp_xyz" default="0 0 0"/>
   <xacro:arg name="geometry_mesh_tcp_rpy" default="0 0 0"/>
+  
+  <xacro:arg name="add_realsense_d435i" default="false"/>
 
   <!-- load xarm7 robot -->
   <xacro:include filename="$(find xarm_description)/urdf/xarm7_robot_macro.xacro" />
   <xacro:xarm7_robot prefix="$(arg prefix)" namespace="$(arg ros_namespace)" limited="$(arg limited)" 
     effort_control="$(arg effort_control)" velocity_control="$(arg velocity_control)"
+    rs_d435i="$(arg add_realsense_d435i)"
     add_other_geometry="$(arg add_other_geometry)" 
     geometry_type="$(arg geometry_type)" geometry_mass="$(arg geometry_mass)"
     geometry_height="$(arg geometry_height)" geometry_radius="$(arg geometry_radius)"

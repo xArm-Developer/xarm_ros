@@ -187,12 +187,13 @@ namespace xarm_control
 			ROS_ERROR("ROS Parameter xarm_robot_ip not specified!");
 			return false;
 		}
+		// commented because now read() will check integrity before write() 
 		// If there is no /robot_description parameter, moveit controller may send zero command even controller fails to initialize
-		if(!robot_hw_nh.hasParam("/robot_description"))
-		{
-			ROS_ERROR("ROS Parameter /robot_description not specified!");
-			return false;
-		}
+		// if(!robot_hw_nh.hasParam("/robot_description"))
+		// {
+		// 	ROS_ERROR("ROS Parameter /robot_description not specified!");
+		// 	return false;
+		// }
 
 		/* getParam forbids to change member */
 		robot_hw_nh.getParam("DOF", xarm_dof);

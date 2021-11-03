@@ -66,7 +66,7 @@ void XArmROSClient::init(ros::NodeHandle& nh)
     set_joint_jerk_client_ = nh_.serviceClient<xarm_msgs::SetFloat32>("set_joint_jerk");
     set_tcp_maxacc_client_ = nh_.serviceClient<xarm_msgs::SetFloat32>("set_tcp_maxacc");
     set_joint_maxacc_client_ = nh_.serviceClient<xarm_msgs::SetFloat32>("set_joint_maxacc");
-    get_servo_angle_client_ = nh_.serviceClient<xarm_msgs::GetFloat32List>("get_servo_angle");
+    get_servo_angle_client_ = nh_.serviceClient<xarm_msgs::GetFloat32List>("get_servo_angle",true);
 }
 
 template<typename ServiceSrv>
