@@ -1,6 +1,7 @@
 sensors:
   - sensor_plugin: occupancy_map_monitor/DepthImageOctomapUpdater
-    image_topic: /camera/depth/image_raw
+    image_topic: /camera/depth/image_raw   
+    # image_topic: /image_proc_resize/image
     queue_size: 5
     near_clipping_plane_distance: 0.3
     far_clipping_plane_distance: 3.0
