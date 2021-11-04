@@ -357,10 +357,10 @@ namespace xarm_control
 			read_duration_ -= read_duration_;
 		}
 		else {
-			// initial_read_ = false;
+			initial_read_ = false;
+			ROS_ERROR("xArmHW::Read() returns: %d", ret);
 			// TODO: copy position_cmd_float_ to position_fdb_ ?
 		}
-		// basically the above feedback callback functions have done the job
 	}
 
 	void XArmHW::write(const ros::Time& time, const ros::Duration& period)

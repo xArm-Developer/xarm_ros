@@ -23,6 +23,7 @@ void XArmROSClient::init(ros::NodeHandle& nh)
     ros::service::waitForService(client_ns+"set_state");
     ros::service::waitForService(client_ns+"set_mode");
     ros::service::waitForService(client_ns+"move_servoj");
+    ros::service::waitForService(client_ns+"get_servo_angle");
 
 	motion_ctrl_client_ = nh_.serviceClient<xarm_msgs::SetAxis>("motion_ctrl");
 	set_mode_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_mode");
