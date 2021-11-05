@@ -1,4 +1,5 @@
 ## 重要提示:
+&ensp;&ensp;使用xArm C++ SDK作为子模块后，**/xarm/set_tool_modbus**服务的使用有所修改，相比之前版本，回复中多余的0x09字节将**不再需要***！  
 &ensp;&ensp;由于机械臂通信格式修改, 建议在***2019年6月前发货***的xArm 早期用户尽早 ***升级*** 控制器固件程序，这样才能在以后的更新中正常驱动机械臂运动以及使用最新开发的各种功能。请联系我们获得升级的详细指示。 当前ROS库主要的分支已不支持旧版本，先前版本的ROS驱动包还保留在 ***'legacy'*** 分支中, 但不会再有更新。    
 &ensp;&ensp;在使用xarm_ros之前，请务必按照第3节**准备工作**的指示安装必要的第三方支持库，否则使用时会出现错误。  
 &ensp;&ensp;如果使用**Moveit**开发, 请尽量在PC和控制器之间使用**网线直连方式**, 不要使用交换机等中间设备, 否则引入的通信延迟可能会对Moveit轨迹执行造成不良影响。  
@@ -30,12 +31,17 @@
 * [6. 模式切换](#6-模式切换)
     * [6.1 模式介绍](#61-模式介绍)
     * [6.2 切换模式的正确方法](#62-切换模式的正确方法)
-* [7. 其他示例](#7-其他示例)
-  * [7.1 两台xArm5 (两进程独立控制)](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#1-multi_xarm5-controlled-separately)
-    * [7.2 Servo_Cartesian 笛卡尔位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
-    * [7.3 Servo_Joint 关节位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#3-servo_joint-streamed-joint-space-trajectory)
-    * [7.4 使用同一个moveGroup节点控制xArm6双臂](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#4-dual-xarm6-controlled-with-one-movegroup-node)
-    * [7.5 用Moveit展示xarm7冗余解的示例](https://github.com/xArm-Developer/xarm_ros/tree/master/examples/xarm7_redundancy_res)
+* [7. xArm视觉 (***NEW***)](#7-xArm视觉)
+    * [7.1 相关依赖库和ros包的安装](#71-相关依赖库和ros包的安装)
+    * [7.2 手眼标定示例](#72-手眼标定示例)
+    * [7.3 3D视觉抓取示例](#73-3D视觉抓取示例)
+    * [7.4 在仿真的xArm模型末端添加RealSense D435i模型](#74-在仿真的xarm模型末端添加realsense-d435i模型)
+* [8. 其他示例](#8-其他示例)
+    * [8.1 两台xArm5 (两进程独立控制)](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#1-multi_xarm5-controlled-separately)
+    * [8.2 Servo_Cartesian 笛卡尔位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
+    * [8.3 Servo_Joint 关节位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#3-servo_joint-streamed-joint-space-trajectory)
+    * [8.4 使用同一个moveGroup节点控制xArm6双臂](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#4-dual-xarm6-controlled-with-one-movegroup-node)
+    * [8.5 用Moveit展示xarm7冗余解的示例](https://github.com/xArm-Developer/xarm_ros/tree/master/examples/xarm7_redundancy_res)
 
 # 1. 简介：
    &ensp;&ensp;此代码库包含xArm模型文件以及相关的控制、规划等示例开发包。开发及测试使用的环境为 Ubuntu 16.04 + ROS Kinetic/Melodic。
@@ -57,6 +63,7 @@
    * 添加关节空间和笛卡尔空间的速度控制模式。(需要**控制器固件版本 >= 1.6.8**)
    * 支持[Moveit添加其它模型到末端](#551-moveit加载其它自定义模型到机械臂末端)  
    * 添加带超时版本的速度模式控制。(需要**控制器固件版本 >= 1.8.0**)  
+   * 添加xArm Vision和RealSense D435i相关demo，将之前的"xarm_device"内容转移至 xarm_vision/camera_demo。
 
 # 3. 准备工作
 
@@ -505,12 +512,12 @@ $ rosservice call /xarm/config_tool_modbus 115200 20
 
 设置完成后，modbus通信可以这样通过rosservice进行 (参考 [SetToolModbus.srv](/xarm_msgs/srv/SetToolModbus.srv)):  
 ```bash
-$ rosservice call /xarm/set_tool_modbus [0x01,0x06,0x00,0x0A,0x00,0x03] 7
+$ rosservice call /xarm/set_tool_modbus [0x01,0x06,0x00,0x0A,0x00,0x03] 6
 ```
-第一个参数是要发送的通讯字节序列, 第二个参数是需要接收的回复字节数量. **这个数字应该是期望收到的数据字节数+1 (不含CRC校验字符)**. 来自末端modbus返回的数据会在最前面添加值为**0x09**的一个字节, 剩余的即为设备返回的数据。 举例来说，对于某个测试设备，上面的指令可能返回:  
+第一个参数是要发送的通讯字节序列, 第二个参数是需要接收的回复字节数量. **这个数字应该是期望收到的数据字节数 (不含CRC校验字符)**. 举例来说，对于某个测试设备，上面的指令可能返回:  
 ```bash
 ret: 0
-respond_data: [9, 1, 6, 0, 10, 0, 3]
+respond_data: [1, 6, 0, 10, 0, 3]
 ```
 其中实际收到的数据帧为: [0x01, 0x06, 0x00, 0x0A, 0x00, 0x03]，长度为6.  
 
@@ -543,6 +550,91 @@ $ rosservice call /xarm/set_mode 2
 $ rosservice call /xarm/set_state 0
 ```
 
-# 7. 其他示例
+# 7. xArm视觉
+提供xArm扩展视觉应用的基础示例，包括手眼标定和视觉抓取，例程主要基于[Intel RealSense D435i](https://www.intelrealsense.com/depth-camera-d435i/)深度相机。 
+
+## 7.1 相关依赖库和ros包的安装：
+
+首先进入ros工作空间：
+```bash
+$ cd ~/catkin_ws/src/
+```
+
+### 7.1.1 安装RealSense 开发支持库和ROS软件包： 
+请依照[官方指示步骤](https://github.com/IntelRealSense/realsense-ros)正确安装。
+
+### 7.1.2 安装aruco_ros, 用于手眼标定：
+参考[官方Github](https://github.com/pal-robotics/aruco_ros):
+```bash
+$ git clone -b kinetic-devel https://github.com/pal-robotics/aruco_ros.git
+```
+### 7.1.3 安装easy_handeye, 用于手眼标定：
+参考[官方Github](https://github.com/IFL-CAMP/easy_handeye):
+```bash
+$ git clone https://github.com/IFL-CAMP/easy_handeye
+``` 
+### 7.1.4 安装vision_visp 支持包：
+参考[官方Github](https://github.com/lagadic/vision_visp):
+```bash
+$ git clone -b kinetic-devel https://github.com/lagadic/vision_visp.git
+```
+### 7.1.5 安装find_object_2d包，用于物体识别：
+参考[官方Github](https://github.com/introlab/find-object/tree/kinetic-devel):
+```bash
+$ sudo apt-get install ros-kinetic-find-object-2d
+```
+### 7.1.6 安装其他依赖包：
+```bash
+$ cd ~/catkin_ws
+```
+然后请参考[4.3节内容](#43-安装其他依赖包).
+
+### 7.1.7 编译整个工作区：
+```bash
+$ catkin_make
+```
+
+## 7.2 手眼标定示例：
+如果使用RealSense D435i相机配合固定工件安装在手臂末端，即“**眼在手上**”，确保相机与电脑通信正常且手臂正常上电后，可以参考和使用如下launch脚本进行手眼标定：
+```bash
+$ roslaunch d435i_xarm_setup d435i_xarm_auto_calib.launch robot_dof:=your_xArm_DOF robot_ip:=your_xArm_IP
+```
+标定使用的aruco二维码可以在[这里下载](https://chev.me/arucogen/)，请记住自己下载的`marker ID`和`marker size`，并在以上launch文件中修改。参考[官方](https://github.com/IFL-CAMP/easy_handeye#calibration)或其他网络教程通过图形界面进行标定，标定完成并确认保存后，默认会在 `~/.ros/easy_handeye`目录下生成`.yaml`后缀的结果文档，供后续与手臂一起进行坐标变换使用。如果固定件用的是UFACTORY提供的[camera_stand](https://www.ufactory.cc/products/xarm-camera-module-2020)，在xarm_vision/d435i_xarm_setup/config/[xarm_realsense_handeyecalibration_eye_on_hand_sample_result.yaml](./xarm_vision/d435i_xarm_setup/config/xarm_realsense_handeyecalibration_eye_on_hand_sample_result.yaml)中保存了参考的标定结果。  
+
+## 7.3 3D视觉抓取示例：
+本部分提供利用[***find_object_2d***](http://introlab.github.io/find-object/)进行简单的物体识别和抓取的示例程序。使用了RealSense D435i深度相机，UFACTORY camera_stand以及xArm官方机械爪。  
+
+1.使用moveit驱动手臂动作，如果规划成功会保证无碰撞和奇异点的轨迹执行, 但对网络通信稳定性要求较高：
+```bash
+$ roslaunch d435i_xarm_setup d435i_findobj2d_xarm_moveit_planner.launch robot_dof:=your_xArm_DOF robot_ip:=your_xArm_IP
+```
+如果目标物体可以正常识别，执行抓取节点:  
+```bash
+$ rosrun d435i_xarm_setup findobj2d_grasp_moveit
+```
+请注意在其中包含的[publish_handeye_tf.launch](./d435i_xarm_setup/launch/publish_handeye_tf.launch)中，默认使用前面提到的参考标定结果，将识别的物体从相机坐标映射到机械臂基坐标系，可以按照需要改为其他标定结果yaml文件。节点代码可以参考d435i_xarm_setup/src/[findobj_grasp_moveit_planner.cpp](./d435i_xarm_setup/src/findobj_grasp_moveit_planner.cpp).  
+
+2.或者使用xarm_api提供的ros service驱动手臂动作，网络稳定性要求不高，但部分时候执行过程中可能报错（奇异点或将要发生自碰撞等）：
+```bash
+$ roslaunch d435i_xarm_setup d435i_findobj2d_xarm_api.launch robot_dof:=your_xArm_DOF robot_ip:=your_xArm_IP
+```
+如果目标物体可以正常识别，执行抓取节点:  
+```bash
+$ roslaunch d435i_xarm_setup grasp_node_xarm_api.launch
+```
+请注意在其中包含的[publish_handeye_tf.launch](./d435i_xarm_setup/launch/publish_handeye_tf.launch)中，默认使用前面提到的参考标定结果，将识别的物体从相机坐标映射到机械臂基坐标系，可以按照需要改为其他标定结果yaml文件。节点代码可以参考d435i_xarm_setup/src/[findobj_grasp_xarm_api.cpp](./d435i_xarm_setup/src/findobj_grasp_moveit_xarm_api.cpp).  
+
+***实际应用之前，请先读懂对应的代码，并针对自己的场景做出必要的修改***，比如抓取准备位置，姿态，抓取深度以及移动速度等等。代码中使用的识别目标名称为“object_1”，对应/objects目录下的`1.png`，用户可以根据实际应用在find_object_2d的图形界面中添加新的目标并修改节点程序中的`source_frame`，来识别感兴趣的物体。  
+
+***Tips***: 应注意背景尽量干净而且颜色与被识别物体有区分度，如果目标物体有比较丰富的文理，识别率会更高。
+
+## 7.4 在仿真的xArm模型末端添加RealSense D435i模型：
+如果使用UFACTORY提供的camera stand固定，可以通过以下设置添加到虚拟模型（以xarm7为例）：  
+1.同时带机械爪的模型： 设置[xarm7_with_gripper.xacro](./xarm_description/urdf/xarm7_with_gripper.xacro)的`add_realsense_d435i`参数为`true`。  
+2.同时带真空吸头的模型： 设置[xarm7_with_vacuum_gripper.xacro](./xarm_description/urdf/xarm7_with_vacuum_gripper.xacro)的`add_realsense_d435i`参数为`true`。  
+3.单纯附加相机在末端： 设置[xarm7_robot_macro.xacro](./xarm_description/urdf/xarm7_robot_macro.xacro)中`rs_d435i`的默认值为`true`。  
+
+
+# 8. 其他示例
 &ensp;&ensp;[在examples路径下](./examples)会陆续更新一些其他应用的demo例程，欢迎前去探索研究。
 

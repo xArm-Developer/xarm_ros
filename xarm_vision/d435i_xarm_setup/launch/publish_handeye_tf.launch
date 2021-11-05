@@ -12,7 +12,7 @@
     
     <arg name="inverse" default="false" />
     <!-- <arg name="calibration_file" default="" /> -->
-    <!-- here, use the sample eye-on-hand calibration result -->
+    <!-- here, use the sample eye-on-hand calibration result, please change with your own result -->
     <arg name="calibration_file" default="$(find d435i_xarm_setup)/config/xarm_realsense_handeyecalibration_eye_on_hand_sample_result.yaml" />
     
     <!--publish hand-eye calibration-->
