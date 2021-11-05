@@ -65,10 +65,11 @@ namespace xarm_control
 		enum ControlMethod {POSITION, VELOCITY, EFFORT};
 
 	private:
-		int curr_state;
-		int curr_mode;
-		int curr_err;
-		int service_fail_ret;
+		int curr_state_;
+		int curr_mode_;
+		int curr_err_;
+		int read_code_;
+		int write_code_;
 
 		unsigned int dof_;
 		std::vector<std::string> jnt_names_;
@@ -91,7 +92,11 @@ namespace xarm_control
 		std::vector<float> prev_read_angles_;
 		std::vector<float> curr_read_angles_;
 		ros::Duration read_duration_;
-		bool initial_read_;
+		bool read_succeed_;
+		long int read_failed_cnts_;
+		bool initital_check_;
+
+		bool enforce_limits_;
 
 		// double force_[3];
 		// double torque_[3];
@@ -143,6 +148,7 @@ namespace xarm_control
 		bool _check_cmds_is_change(std::vector<float> prev, std::vector<float> cur, double threshold = 0.0001);
 
 		bool _xarm_is_not_ready(void);
+		bool _wait_xarm_ready(double timeout);
 	};
 
 }

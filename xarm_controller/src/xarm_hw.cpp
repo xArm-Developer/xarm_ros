@@ -82,9 +82,11 @@ namespace xarm_control
 
 		prev_cmds_float_.resize(dof_);
 
-		curr_err = 0;
-		curr_state = 4;
-		service_fail_ret = 0;
+		curr_err_ = 0;
+		curr_state_ = 4;
+		curr_mode_ = 0;
+		read_code_ = 0;
+		write_code_ = 0;
 
 		// pos_sub_ = root_nh.subscribe(jnt_state_topic, 100, &XArmHW::pos_fb_cb, this);
 		state_sub_ = root_nh.subscribe(xarm_state_topic, 100, &XArmHW::state_fb_cb, this);
@@ -139,16 +141,6 @@ namespace xarm_control
 	  	int ret1 = xarm.motionEnable(1);
 	  	int ret2 = xarm.setMode(ctrl_method_ == VELOCITY ? XARM_MODE::VELO_JOINT : XARM_MODE::SERVO);
 	  	int ret3 = xarm.setState(XARM_STATE::START);
-
-	  	if(ret3)
-	  	{
-	  		ROS_ERROR("The Xarm may not be properly connected (ret = 3) or hardware Error/Warning (ret = 1 or 2) exists, PLEASE CHECK or RESTART HARDWARE!!!");
-	  		ROS_ERROR(" ");
-	  		ROS_ERROR("Did you specify the correct ros param xarm_robot_ip ? Exitting...");
-	  		ros::shutdown();
-	  		exit(1);
-	  	}
-
 	}
 
 	bool XArmHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
@@ -216,6 +208,13 @@ namespace xarm_control
 		prev_read_angles_.resize(dof_);
 		curr_read_angles_.resize(dof_);
 		read_duration_ = ros::Duration(0);
+		read_failed_cnts_ = 0;
+		initital_check_ = false;
+
+		enforce_limits_ = true;
+		if (robot_hw_nh.hasParam("enforce_limits")) {
+			robot_hw_nh.getParam("enforce_limits", enforce_limits_);
+		}
 
 		std::string robot_description;
 		root_nh.getParam("/robot_description", robot_description);
@@ -258,9 +257,9 @@ namespace xarm_control
 
 	void XArmHW::state_fb_cb(const xarm_msgs::RobotMsg::ConstPtr& data)
 	{
-		curr_mode = data->mode;
-		curr_state = data->state;
-		curr_err = data->err;
+		curr_mode_ = data->mode;
+		curr_state_ = data->state;
+		curr_err_ = data->err;
 		
 		if(!stat_fdb_called_)
 			stat_fdb_called_ = true;
@@ -281,6 +280,29 @@ namespace xarm_control
 			ros::Duration(0.1).sleep();
 		}
 		return started;
+	}
+
+	bool XArmHW::_wait_xarm_ready(double timeout)
+	{
+		if(timeout <= 0)
+			return ros::ok() && !_xarm_is_not_ready();
+
+		ros::Time end = ros::Time::now() + ros::Duration(timeout);
+		int ready_cnts = 0;
+		while(ros::ok() && ros::Time::now() < end)
+		{
+			if (_xarm_is_not_ready()) {
+				ready_cnts = 0;
+			}
+			else {
+				ready_cnts += 1;
+				if (ready_cnts >= 20) {
+					break;
+				}
+			}
+			ros::Duration(0.1).sleep();
+		}
+		return ros::ok() && !_xarm_is_not_ready();
 	}
 
 	// void XArmHW::ftsensor_fb_cb(const geometry_msgs::WrenchStamped::ConstPtr& data)
@@ -305,6 +327,7 @@ namespace xarm_control
 
 	void XArmHW::_enforce_limits(const ros::Duration& period)
 	{
+		if (!enforce_limits_) return;
 		switch (ctrl_method_)
 		{
 		case EFFORT:
@@ -331,21 +354,32 @@ namespace xarm_control
 
 	void XArmHW::read(const ros::Time& time, const ros::Duration& period)
 	{
-		initial_read_ = !_xarm_is_not_ready();
+		if (!initital_check_) {
+			initital_check_ = true;
+			if (!_wait_xarm_ready(5.0)) {
+				ROS_ERROR("The Xarm may not be properly connected (ret = 3) or hardware Error/Warning (ret = 1 or 2) exists, PLEASE CHECK or RESTART HARDWARE!!!");
+				ROS_ERROR(" ");
+				ROS_ERROR("Did you specify the correct ros param xarm_robot_ip ? Exitting...");
+				ros::shutdown();
+				exit(1);
+			}
+		}
+
+	  	
 
 		read_cnts_ += 1;
 		ros::Time start = ros::Time::now();
-		int ret = xarm.getServoAngle(curr_read_angles_);
+		read_code_ = xarm.getServoAngle(curr_read_angles_);
 		double time_sec = (ros::Time::now() - start).toSec();
 		read_total_time_ += time_sec;
 		if (time_sec > read_max_time_) {
 			read_max_time_ = time_sec;
 		}
 		if (read_cnts_ % 6000 == 0) {
-			ROS_INFO("[READ] cnt: %ld, max: %f, mean: %f", read_cnts_, read_max_time_, read_total_time_ / read_cnts_);
+			ROS_INFO("[READ] cnt: %ld, max: %f, mean: %f, failed: %ld", read_cnts_, read_max_time_, read_total_time_ / read_cnts_, read_failed_cnts_);
 		}
 		read_duration_ += period;
-		if (ret == 0) {
+		if (read_code_ == 0) {
 			for (int j = 0; j < dof_; j++) {
 				position_fdb_[j] = curr_read_angles_[j];
 				velocity_fdb_[j] = first_read_ ? 0.0 : (curr_read_angles_[j] - prev_read_angles_[j]) / read_duration_.toSec();
@@ -356,7 +390,7 @@ namespace xarm_control
 			read_duration_ -= read_duration_;
 		}
 		else {
-			// initial_read_ = false;
+			read_failed_cnts_ += 1;
 			// TODO: copy position_cmd_float_ to position_fdb_ ?
 		}
 		// basically the above feedback callback functions have done the job
@@ -365,18 +399,6 @@ namespace xarm_control
 	void XArmHW::write(const ros::Time& time, const ros::Duration& period)
 	{
 		if (need_reset()) return;
-		// if(initial_write_ || need_reset())
-		// {
-		// 	std::lock_guard<std::mutex> locker(mutex_);
-		// 	for(int k=0; k<dof_; k++)
-		// 	{
-		// 		position_cmd_float_[k] = (float)position_fdb_[k];
-		// 		velocity_cmd_float_[k] = 0;
-		// 	}
-		// 	_reset_limits();
-		// 	initial_write_ = false;
-		// 	return;
-		// }
 
 		_enforce_limits(period);
 
@@ -395,7 +417,7 @@ namespace xarm_control
 				for (int k = 0; k < dof_; k++) { position_cmd_float_[k] = (float)position_cmd_[k]; }
 				cur_time_ = ros::Time::now();
 				elapsed_ = cur_time_ - prev_time_;
-				if (true || elapsed_.toSec() > 1 || _check_cmds_is_change(prev_cmds_float_, position_cmd_float_)) {
+				if (elapsed_.toSec() > 1 || _check_cmds_is_change(prev_cmds_float_, position_cmd_float_)) {
 					cmd_ret = xarm.setServoJ(position_cmd_float_);
 					if (cmd_ret == 0) {
 						prev_time_ = cur_time_;
@@ -410,23 +432,8 @@ namespace xarm_control
 
 		if (cmd_ret != 0 && cmd_ret != UXBUS_STATE::WAR_CODE) {
 			// to reset controller, preempt current goal
-			service_fail_ret = cmd_ret;
+			write_code_ = cmd_ret;
 		}
-		// for(int k=0; k<dof_; k++)
-		// {
-		// 	// make sure no abnormal command will be written into joints, check if cmd velocity > [180 deg/sec * (1+10%)]
-		// 	if(fabs(position_cmd_float_[k]-(float)position_cmd_[k])/(period.toSec()) > 3.14*1.25  && !initial_write_)
-		// 	{
-		// 		ROS_WARN("joint %d abnormal command! previous: %f, this: %f\n", k+1, position_cmd_float_[k], (float)position_cmd_[k]);
-		// 		// return;
-		// 	}
-
-		// 	position_cmd_float_[k] = (float)position_cmd_[k];
-		// }
-
-		// xarm.setServoJ(position_cmd_float_);
-		
-		// initial_write_ = false;
 	}
 
 	bool XArmHW::_check_cmds_is_change(std::vector<float> prev, std::vector<float> cur, double threshold)
@@ -439,28 +446,28 @@ namespace xarm_control
 
 	void XArmHW::get_status(int state_mode_err[3])
 	{
-		state_mode_err[0] = curr_state;
-		state_mode_err[1] = curr_mode;
-		state_mode_err[2] = curr_err;
+		state_mode_err[0] = curr_state_;
+		state_mode_err[1] = curr_mode_;
+		state_mode_err[2] = curr_err_;
 	}
 
 	bool XArmHW::_xarm_is_not_ready(void)
 	{
 		static int last_err = 0;
-		if (curr_err != 0) {
+		if (curr_err_ != 0) {
 			// not ready because error_code != 0
-			if (last_err != curr_err) {
-				ROS_ERROR("[ns: %s] xArm Error detected! Code: %d", hw_ns_.c_str(), curr_err);
-				last_err = curr_err;
+			if (last_err != curr_err_) {
+				ROS_ERROR("[ns: %s] xArm Error detected! Code: %d", hw_ns_.c_str(), curr_err_);
+				last_err = curr_err_;
 			}
 			return true;
 		}
 		last_err = 0;
-		if (curr_state != 0 && curr_state != 1 && curr_state != 2) {
+		if (curr_state_ != 0 && curr_state_ != 1 && curr_state_ != 2) {
 			// not ready because current state can not motion
 			return true; 
 		}
-		if ((ctrl_method_ == VELOCITY ? curr_mode != XARM_MODE::VELO_JOINT : curr_mode != XARM_MODE::SERVO)) {
+		if ((ctrl_method_ == VELOCITY ? curr_mode_ != XARM_MODE::VELO_JOINT : curr_mode_ != XARM_MODE::SERVO)) {
 			// not ready because current mode is not correct
 			return true;
 		}
@@ -469,47 +476,19 @@ namespace xarm_control
 
 	bool XArmHW::need_reset()
 	{
-		bool reset_flag = _xarm_is_not_ready();
-		if (service_fail_ret != 0) {
+		bool is_not_ready = _xarm_is_not_ready();
+		bool write_succeed = write_code_ == 0;
+		if (!write_succeed) {
 			int ret = xarm.setState(XARM_STATE::STOP);
-			ROS_ERROR("XArmHW::Write() failed, failed_ret=%d !, Setting Robot State to STOP... (ret: %d)", service_fail_ret, ret);
-			if (service_fail_ret == SERVICE_IS_PERSISTENT_BUT_INVALID || service_fail_ret == SERVICE_CALL_FAILED) {
+			ROS_ERROR("XArmHW::Write() failed, failed_ret=%d !, Setting Robot State to STOP... (ret: %d)", write_code_, ret);
+			if (write_code_ == SERVICE_IS_PERSISTENT_BUT_INVALID || write_code_ == SERVICE_CALL_FAILED) {
 				ROS_ERROR("service is invaild, ros shutdown");
 				ros::shutdown();
 				exit(1);
 			}
-			service_fail_ret = 0;
-			reset_flag = true;
+			write_code_ = 0;
 		}
-		return reset_flag || !initial_read_;
-
-		// static int last_err = 0;
-		// if((ctrl_method_ == VELOCITY ? curr_mode != XARM_MODE::VELO_JOINT : curr_mode != XARM_MODE::SERVO) 
-		// 	|| curr_state==4 || curr_state==5 || curr_err || service_fail_ret)
-		// {
-		// 	if(last_err != curr_err && curr_err)
-		// 	{
-		// 		ROS_ERROR("[ns: %s] xArm Error detected! Code: %d", hw_ns_.c_str(), curr_err);
-		// 		last_err = curr_err;
-		// 	}
-		// 	if (service_fail_ret != 0) {
-		// 		int ret = xarm.setState(XARM_STATE::STOP);
-		// 		ROS_ERROR("XArmHW::Write() failed, failed_ret=%d !, Setting Robot State to STOP... (ret: %d)", service_fail_ret, ret);
-		// 		if (service_fail_ret == SERVICE_IS_PERSISTENT_BUT_INVALID || service_fail_ret == SERVICE_CALL_FAILED) {
-		// 			ROS_ERROR("service is invaild, ros shutdown");
-		// 			ros::shutdown();
-	  	// 			exit(1);
-		// 		}
-		// 		service_fail_ret = 0;
-		// 	}
-		// 	// ROS_ERROR("Need Reset returns true! ctrl_method_: %d, curr_mode: %d, curr_state: %d, curr_err: %d", ctrl_method_, curr_mode, curr_state, curr_err);
-		// 	return true;
-		// }
-		// else
-		// {
-		// 	last_err = 0;
-		// 	return false;
-		// }
+		return is_not_ready || !write_succeed || read_code_ != 0;
 	}
 }
 
