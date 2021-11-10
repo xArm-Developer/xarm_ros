@@ -12,6 +12,12 @@
   <arg name="no_gui_plan" default="false" />
   <arg name="velocity_control_1" default="false"/>
   <arg name="velocity_control_2" default="false"/>
+  <arg name="enforce_limits_1" default="true" />
+  <arg name="enforce_limits_2" default="true" />
+  <arg name="baud_checkset_1" default="true" />
+  <arg name="baud_checkset_2" default="true" />
+	<arg name="default_gripper_baud_1" default="2000000" />
+	<arg name="default_gripper_baud_2" default="2000000" />
 
     <!-- startup 2 xarm6s in moveit -->
   <group ns="$(arg ns_1)">
@@ -25,6 +31,9 @@
       <arg name="no_gui_plan" value="$(arg no_gui_plan)"/>
       <arg name="ext_ns" value="$(arg ns_1)" />
       <arg name="velocity_control" value="$(arg velocity_control_1)" />
+      <arg name="enforce_limits" value="$(arg enforce_limits_1)" />
+      <arg name="baud_checkset" value="$(arg baud_checkset_1)" />
+      <arg name="default_gripper_baud" value="$(arg default_gripper_baud_1)" />
     </include>
   </group>
 
@@ -39,6 +48,9 @@
       <arg name="no_gui_plan" value="$(arg no_gui_plan)"/>
       <arg name="ext_ns" value="$(arg ns_2)" />
       <arg name="velocity_control" value="$(arg velocity_control_2)" />
+      <arg name="enforce_limits" value="$(arg enforce_limits_2)" />
+      <arg name="baud_checkset" value="$(arg baud_checkset_2)" />
+      <arg name="default_gripper_baud" value="$(arg default_gripper_baud_2)" />
     </include>
   </group>
 

@@ -9,6 +9,9 @@
   <arg name="xarm_hw_ns" default="xarm" />
   <arg name="ext_ns" default="" />
   <arg name="velocity_control" default="false"/>
+  <arg name="enforce_limits" default="true" />
+  <arg name="baud_checkset" default="true" />
+	<arg name="default_gripper_baud" default="2000000" />
 
   <arg name="add_other_geometry" default="false"/>
   <arg name="geometry_type" default="box"/>
@@ -30,6 +33,9 @@
     <arg name="use_moveit" value="true" />
     <arg name="ns" value="$(arg xarm_hw_ns)" />
     <arg name="velocity_control" value="$(arg velocity_control)" />
+    <arg name="enforce_limits" value="$(arg enforce_limits)" />
+    <arg name="baud_checkset" value="$(arg baud_checkset)" />
+    <arg name="default_gripper_baud" value="$(arg default_gripper_baud)" />
   </include>
 
   <!-- load the joint trajectory controller specified in yaml -->

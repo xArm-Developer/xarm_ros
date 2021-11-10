@@ -6,6 +6,13 @@
   <arg name="report_type_2" default="normal" />	
   <arg name="hw_ns_1" default="L_xarm6" />
   <arg name="hw_ns_2" default="R_xarm6" />
+  <arg name="enforce_limits_1" default="true" />
+	<arg name="enforce_limits_2" default="true" />
+  <arg name="baud_checkset_1" default="true" />
+	<arg name="baud_checkset_2" default="true" />
+	<arg name="default_gripper_baud_1" default="2000000" />
+  <arg name="default_gripper_baud_2" default="2000000" />
+  
   <!-- Important: currently real xArm can be either controlled by API service or Moveit planner, but not at the same time! -->
   <!-- If you use moveit, use the launch file in xarm*_moveit_config package for startup! -->
   <arg name="use_moveit" default="false" />
@@ -20,6 +27,9 @@
     <arg name="dof" value="6" />
     <arg name="use_moveit" value="$(arg use_moveit)" />
     <arg name="namespace" value="$(arg hw_ns_1)" />
+    <arg name="enforce_limits" value="$(arg enforce_limits_1)" />
+    <arg name="baud_checkset" value="$(arg baud_checkset_1)" />
+    <arg name="default_gripper_baud" value="$(arg default_gripper_baud_1)" />
   </include>
 
   <include file="$(find xarm_bringup)/launch/xarm_driver_common.launch">
@@ -28,6 +38,9 @@
     <arg name="dof" value="6" />
     <arg name="use_moveit" value="$(arg use_moveit)" />
     <arg name="namespace" value="$(arg hw_ns_2)" />
+    <arg name="enforce_limits" value="$(arg enforce_limits_2)" />
+    <arg name="baud_checkset" value="$(arg baud_checkset_2)" />
+    <arg name="default_gripper_baud" value="$(arg default_gripper_baud_2)" />
   </include>
 
 </launch>

@@ -65,7 +65,14 @@ namespace xarm_api
         nh_ = root_nh;
         nh_.getParam("DOF",dof_);
         root_nh.getParam("xarm_report_type", report_type_);
-
+        bool baud_checkset = true;
+        if (root_nh.hasParam("baud_checkset")) {
+            root_nh.getParam("baud_checkset", baud_checkset);
+        }
+        int default_gripper_baud = 2000000;
+        if (root_nh.hasParam("default_gripper_baud")) {
+            root_nh.getParam("default_gripper_baud", default_gripper_baud);
+        }
         
         arm = new XArmAPI(
             server_ip, 
@@ -83,6 +90,8 @@ namespace xarm_api
             DEBUG_MODE, // debug
             report_type_ // report_type
         );
+        arm->set_baud_checkset_enable(baud_checkset);
+        arm->set_checkset_default_baud(1, default_gripper_baud);
         arm->release_connect_changed_callback(true);
         arm->release_report_data_callback(true);
         // arm->register_connect_changed_callback(std::bind(&XArmDriver::_report_connect_changed_callback, this, std::placeholders::_1, std::placeholders::_2));

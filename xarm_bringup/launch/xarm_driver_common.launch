@@ -5,6 +5,9 @@
   <arg name="use_moveit" default="false" />
   <arg name="namespace" default="xarm" />
   <arg name="velocity_control" default="false"/>
+  <arg name="enforce_limits" default="true" />
+  <arg name="baud_checkset" default="true" />
+	<arg name="default_gripper_baud" default="2000000" />
 
   <!-- run xarm driver -->
   <include file="$(find xarm_bringup)/launch/xarm_robot.launch">
@@ -12,10 +15,13 @@
     <arg name="report_type" value="$(arg report_type)" />
     <arg name="hw_ns" value="$(arg namespace)" />
     <arg name="publish_tf" value="false"/>
+    <arg name="baud_checkset" value="$(arg baud_checkset)"/>
+    <arg name="default_gripper_baud" value="$(arg default_gripper_baud)"/>
   </include>
 
   <!-- run xarm_traj_controller from HW interface, enable direct command to real robot arm -->  
   <param name = "$(arg namespace)/velocity_control" type="bool" value = "$(arg velocity_control)"/>
+  <param name = "$(arg namespace)/enforce_limits" type="bool" value = "$(arg enforce_limits)"/>
   <node if="$(arg use_moveit)" name="xarm_traj_controller" pkg="xarm_controller" type="xarm_traj_controller" args="ip=$(arg robot_ip)" ns="$(arg namespace)" respawn="false" output="screen" />
 
 </launch>

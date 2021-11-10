@@ -5,6 +5,12 @@
   <arg name="report_type_2" default="normal" />	
   <arg name="hw_ns_1" default="L_xarm6" />
   <arg name="hw_ns_2" default="R_xarm6" />
+  <arg name="enforce_limits_1" default="true" />
+  <arg name="enforce_limits_2" default="true" />
+  <arg name="baud_checkset_1" default="true" />
+	<arg name="baud_checkset_2" default="true" />
+	<arg name="default_gripper_baud_1" default="2000000" />
+  <arg name="default_gripper_baud_2" default="2000000" />
   <!-- load the default move_group planner (not xarm_simple_planner) -->
   <arg name="show_rviz" default="true" />
   <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
@@ -19,6 +25,12 @@
     <arg name="report_type_2" value="$(arg report_type_2)" />
     <arg name="hw_ns_1" value="$(arg hw_ns_1)" />
     <arg name="hw_ns_2" value="$(arg hw_ns_2)" />
+    <arg name="enforce_limits_1" value="$(arg enforce_limits_1)" />
+    <arg name="enforce_limits_2" value="$(arg enforce_limits_2)" />
+    <arg name="baud_checkset_1" value="$(arg baud_checkset_1)" />
+    <arg name="baud_checkset_2" value="$(arg baud_checkset_2)" />
+    <arg name="default_gripper_baud_1" value="$(arg default_gripper_baud_1)" />
+    <arg name="default_gripper_baud_2" value="$(arg default_gripper_baud_2)" />
     <arg name="use_moveit" value="false" />
   </include>
 
