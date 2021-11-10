@@ -1,0 +1,6 @@
+<launch>
+
+<!-- run findobj2d_grasp_api node under namespace "xarm" -->
+  <node name="grasp_test_xarm_api" pkg="d435i_xarm_setup" type="findobj2d_grasp_api" respawn="false" output="screen" ns="xarm"/>
+
+</launch>

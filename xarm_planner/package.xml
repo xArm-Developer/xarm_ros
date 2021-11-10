@@ -21,6 +21,7 @@
   <build_depend>geometry_msgs</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>xarm_msgs</build_depend>
+  <build_depend>tf</build_depend>
 
   <exec_depend>pluginlib</exec_depend>
   <exec_depend>moveit_core</exec_depend>
@@ -35,5 +36,6 @@
   <exec_depend>ros_controllers</exec_depend>
   <exec_depend>ros_control</exec_depend>
   <exec_depend>xarm_msgs</exec_depend>
+  <build_depend>tf</build_depend>
   
 </package>

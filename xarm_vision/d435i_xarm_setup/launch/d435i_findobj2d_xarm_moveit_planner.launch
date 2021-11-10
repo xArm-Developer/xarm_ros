@@ -1,0 +1,25 @@
+<launch>
+  <arg name="robot_ip" />
+  <arg name="robot_dof" />
+  
+  <!-- launch realsense camera -->
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <!-- <arg name="filters" value="pointcloud" /> -->
+    <arg name="align_depth" value="true" />
+    <!-- <arg name="enable_sync" default="true"/> -->
+  </include>
+
+  <!-- launch find_object_2d with gui -->
+  <include file="$(find d435i_xarm_setup)/launch/start_find_obj_2d.launch" />
+
+  <!-- launch xArm moveit simple planner -->
+  <include file="$(find xarm_planner)/launch/xarm_planner_realHW.launch">
+    <arg name="robot_ip" value="$(arg robot_ip)" />
+    <arg name="robot_dof" value="$(arg robot_dof)" />
+    <arg name="add_gripper" value="true" />
+  </include>
+
+  <!-- publish extrinsics -->
+  <include file="$(find d435i_xarm_setup)/launch/publish_handeye_tf.launch" />
+
+</launch>

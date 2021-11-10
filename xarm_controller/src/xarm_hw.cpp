@@ -179,12 +179,13 @@ namespace xarm_control
 			ROS_ERROR("ROS Parameter xarm_robot_ip not specified!");
 			return false;
 		}
+		// commented because now read() will check integrity before write() 
 		// If there is no /robot_description parameter, moveit controller may send zero command even controller fails to initialize
-		if(!robot_hw_nh.hasParam("/robot_description"))
-		{
-			ROS_ERROR("ROS Parameter /robot_description not specified!");
-			return false;
-		}
+		// if(!robot_hw_nh.hasParam("/robot_description"))
+		// {
+		// 	ROS_ERROR("ROS Parameter /robot_description not specified!");
+		// 	return false;
+		// }
 
 		/* getParam forbids to change member */
 		robot_hw_nh.getParam("DOF", xarm_dof);
@@ -365,8 +366,6 @@ namespace xarm_control
 			}
 		}
 
-	  	
-
 		read_cnts_ += 1;
 		ros::Time start = ros::Time::now();
 		read_code_ = xarm.getServoAngle(curr_read_angles_);
@@ -375,9 +374,9 @@ namespace xarm_control
 		if (time_sec > read_max_time_) {
 			read_max_time_ = time_sec;
 		}
-		if (read_cnts_ % 6000 == 0) {
-			ROS_INFO("[READ] cnt: %ld, max: %f, mean: %f, failed: %ld", read_cnts_, read_max_time_, read_total_time_ / read_cnts_, read_failed_cnts_);
-		}
+		// if (read_cnts_ % 6000 == 0) {
+		// 	ROS_INFO("[READ] cnt: %ld, max: %f, mean: %f, failed: %ld", read_cnts_, read_max_time_, read_total_time_ / read_cnts_, read_failed_cnts_);
+		// }
 		read_duration_ += period;
 		if (read_code_ == 0) {
 			for (int j = 0; j < dof_; j++) {
@@ -391,9 +390,8 @@ namespace xarm_control
 		}
 		else {
 			read_failed_cnts_ += 1;
-			// TODO: copy position_cmd_float_ to position_fdb_ ?
+			ROS_ERROR("xArmHW::Read() returns: %d", read_code_);
 		}
-		// basically the above feedback callback functions have done the job
 	}
 
 	void XArmHW::write(const ros::Time& time, const ros::Duration& period)

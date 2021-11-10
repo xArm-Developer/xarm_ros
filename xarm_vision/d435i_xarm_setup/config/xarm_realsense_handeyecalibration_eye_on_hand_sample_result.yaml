@@ -1,0 +1,18 @@
+parameters:
+  eye_on_hand: true
+  freehand_robot_movement: false
+  move_group: xarm7
+  move_group_namespace: /
+  namespace: /xarm_realsense_handeyecalibration_eye_on_hand/
+  robot_base_frame: link_base
+  robot_effector_frame: link_eef
+  tracking_base_frame: camera_color_optical_frame
+  tracking_marker_frame: camera_marker
+transformation:
+  qw: 0.7013088518485089
+  qx: 0.0039751934245023735
+  qy: -0.003477682492098677
+  qz: 0.7128379885223908
+  x: 0.0629845508606165
+  y: -0.03221690881661964
+  z: 0.019403200790438897

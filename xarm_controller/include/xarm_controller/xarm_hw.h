@@ -29,6 +29,7 @@
 // #include <geometry_msgs/WrenchStamped.h>
 // for mutex
 #include <mutex>
+#include <thread>
 // xarm
 #include "xarm/core/instruction/uxbus_cmd_config.h"
 #include "xarm_api/xarm_ros_client.h"

@@ -23,6 +23,7 @@ void XArmROSClient::init(ros::NodeHandle& nh)
     ros::service::waitForService(client_ns+"set_state");
     ros::service::waitForService(client_ns+"set_mode");
     ros::service::waitForService(client_ns+"move_servoj");
+    ros::service::waitForService(client_ns+"get_servo_angle");
 
 	motion_ctrl_client_ = nh_.serviceClient<xarm_msgs::SetAxis>("motion_ctrl");
 	set_mode_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_mode");
@@ -66,7 +67,7 @@ void XArmROSClient::init(ros::NodeHandle& nh)
     set_joint_jerk_client_ = nh_.serviceClient<xarm_msgs::SetFloat32>("set_joint_jerk");
     set_tcp_maxacc_client_ = nh_.serviceClient<xarm_msgs::SetFloat32>("set_tcp_maxacc");
     set_joint_maxacc_client_ = nh_.serviceClient<xarm_msgs::SetFloat32>("set_joint_maxacc");
-    get_servo_angle_client_ = nh_.serviceClient<xarm_msgs::GetFloat32List>("get_servo_angle");
+    get_servo_angle_client_ = nh_.serviceClient<xarm_msgs::GetFloat32List>("get_servo_angle",true);
 }
 
 template<typename ServiceSrv>

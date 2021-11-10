@@ -1,0 +1,31 @@
+<launch>
+  <arg name="robot_ip" />
+  <arg name="robot_dof" />
+  
+  <!-- launch realsense camera -->
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <!-- <arg name="filters" value="pointcloud" /> -->
+    <arg name="align_depth" value="true" />
+    <!-- <arg name="enable_sync" default="true"/> -->
+  </include>
+
+  <!-- launch find_object_2d with gui -->
+  <include file="$(find d435i_xarm_setup)/launch/start_find_obj_2d.launch" />
+
+  <!-- launch xArm driver -->
+  <!-- <remap from="/xarm/joint_states" to="/joint_states" /> -->
+  <include file="$(find xarm_bringup)/launch/xarm$(arg robot_dof)_server.launch" >
+    <arg name="robot_ip" value="$(arg robot_ip)" />
+  </include>
+
+  <include file="$(find xarm_description)/launch/xarm$(arg robot_dof)_rviz_display.launch" >
+    <arg name="limited" value="false" />
+    <arg name="add_gripper" value="true" />
+    <arg name="joint_state_source" value="[xarm/joint_states]"/>
+    <arg name="joint_state_publisher_gui" value="false" />
+  </include>
+
+  <!-- publish extrinsics -->
+  <include file="$(find d435i_xarm_setup)/launch/publish_handeye_tf.launch" />
+
+</launch>

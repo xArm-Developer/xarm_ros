@@ -1,0 +1,27 @@
+<launch>
+  <arg name="robot_ip" />
+  <arg name="robot_dof" />
+  
+  <!-- launch realsense camera -->
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <arg name="filters" value="pointcloud" />
+    <arg name="align_depth" value="true" />
+    <!-- <arg name="enable_sync" default="true"/> -->
+  </include>
+
+  <!-- launch xArm + moveit -->
+  <include file="$(find xarm$(arg robot_dof)_moveit_config)/launch/realMove_exec.launch">
+  	<arg name="robot_ip" value="$(arg robot_ip)" />
+  </include>
+
+  <!-- publish extrinsics -->
+  <include file="$(find d435i_xarm_setup)/launch/publish_handeye_tf.launch" />
+
+  <!-- run linemod detection -->
+  <node name="ork_linemod_detection" pkg="object_recognition_core" type="detection" respawn="false"
+	args="-c $(find object_recognition_linemod)/conf/detection.ros.ork" output="screen" />
+
+  <!-- object position tf broadcast -->
+  <node name="object_tf" pkg="d435i_xarm_setup" type="obj2base" respawn="false" output="screen" />
+
+</launch>

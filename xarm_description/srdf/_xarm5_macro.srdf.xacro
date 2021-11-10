@@ -137,6 +137,9 @@
       <disable_collisions link1="${prefix}left_outer_knuckle" link2="${prefix}right_inner_knuckle" reason="Never" />
       <disable_collisions link1="${prefix}left_outer_knuckle" link2="${prefix}right_outer_knuckle" reason="Never" />
       <disable_collisions link1="${prefix}left_outer_knuckle" link2="${prefix}xarm_gripper_base_link" reason="Adjacent" />
+      <disable_collisions link1="${prefix}link_eef" link2="${prefix}left_finger" reason="Never" />
+      <disable_collisions link1="${prefix}link_eef" link2="${prefix}left_inner_knuckle" reason="Never" />
+      <disable_collisions link1="${prefix}link_eef" link2="${prefix}left_outer_knuckle" reason="Never" />
 
       <disable_collisions link1="${prefix}link4" link2="${prefix}right_finger" reason="Never" />
       <disable_collisions link1="${prefix}link4" link2="${prefix}right_inner_knuckle" reason="Never" />
@@ -145,13 +148,17 @@
       <disable_collisions link1="${prefix}link5" link2="${prefix}right_finger" reason="Never" />
       <disable_collisions link1="${prefix}link5" link2="${prefix}right_inner_knuckle" reason="Never" />
       <disable_collisions link1="${prefix}link5" link2="${prefix}right_outer_knuckle" reason="Never" />
-      <disable_collisions link1="${prefix}link5" link2="${prefix}xarm_gripper_base_link" reason="Adjacent" />
+      <disable_collisions link1="${prefix}link5" link2="${prefix}xarm_gripper_base_link" reason="Never" />
       <disable_collisions link1="${prefix}right_finger" link2="${prefix}right_inner_knuckle" reason="Default" />
       <disable_collisions link1="${prefix}right_finger" link2="${prefix}right_outer_knuckle" reason="Adjacent" />
       <disable_collisions link1="${prefix}right_finger" link2="${prefix}xarm_gripper_base_link" reason="Never" />
       <disable_collisions link1="${prefix}right_inner_knuckle" link2="${prefix}right_outer_knuckle" reason="Never" />
       <disable_collisions link1="${prefix}right_inner_knuckle" link2="${prefix}xarm_gripper_base_link" reason="Adjacent" />
       <disable_collisions link1="${prefix}right_outer_knuckle" link2="${prefix}xarm_gripper_base_link" reason="Adjacent" />
+      <disable_collisions link1="${prefix}link_eef" link2="${prefix}xarm_gripper_base_link" reason="Adjacent" />
+      <disable_collisions link1="${prefix}link_eef" link2="${prefix}right_finger" reason="Never" />
+      <disable_collisions link1="${prefix}link_eef" link2="${prefix}right_inner_knuckle" reason="Never" />
+      <disable_collisions link1="${prefix}link_eef" link2="${prefix}right_outer_knuckle" reason="Never" />
     </xacro:if>
 
     <!-- vacuum gripper -->
@@ -162,7 +169,8 @@
       <end_effector name="${prefix}vacuum_gripper" parent_link="${prefix}link_tcp" group="${prefix}vacuum_gripper" />
       <passive_joint name="${prefix}vacuum_gripper_fix" />
       <disable_collisions link1="${prefix}link4" link2="${prefix}xarm_vacuum_gripper_link" reason="Never" />
-      <disable_collisions link1="${prefix}link5" link2="${prefix}xarm_vacuum_gripper_link" reason="Adjacent" />
+      <disable_collisions link1="${prefix}link5" link2="${prefix}xarm_vacuum_gripper_link" reason="Never" />
+      <disable_collisions link1="${prefix}link_eef" link2="${prefix}xarm_vacuum_gripper_link" reason="Adjacent" />
     </xacro:if>
 
     <!-- other box -->
@@ -173,7 +181,8 @@
       <end_effector name="${prefix}other_geometry" parent_link="${prefix}link_tcp" group="${prefix}other_geometry" />
       <passive_joint name="${prefix}other_geometry_fix" />
       <disable_collisions link1="${prefix}link4" link2="${prefix}other_geometry_link" reason="Never" />
-      <disable_collisions link1="${prefix}link5" link2="${prefix}other_geometry_link" reason="Adjacent" />
+      <disable_collisions link1="${prefix}link5" link2="${prefix}other_geometry_link" reason="Never" />
+      <disable_collisions link1="${prefix}link_eef" link2="${prefix}other_geometry_link" reason="Adjacent" />
     </xacro:if>
 
     <disable_collisions link1="${prefix}link1" link2="${prefix}link2" reason="Adjacent" />
@@ -184,5 +193,7 @@
     <disable_collisions link1="${prefix}link3" link2="${prefix}link4" reason="Adjacent" />
     <disable_collisions link1="${prefix}link3" link2="${prefix}link5" reason="Never" />
     <disable_collisions link1="${prefix}link4" link2="${prefix}link5" reason="Adjacent" />
+    <disable_collisions link1="${prefix}link4" link2="${prefix}link_eef" reason="Never" />
+    <disable_collisions link1="${prefix}link5" link2="${prefix}link_eef" reason="Adjacent" />
   </xacro:macro>
 </robot>

@@ -129,4 +129,20 @@
     <disable_collisions link1="right_inner_knuckle" link2="right_outer_knuckle" reason="Never" />
     <disable_collisions link1="right_inner_knuckle" link2="xarm_gripper_base_link" reason="Adjacent" />
     <disable_collisions link1="right_outer_knuckle" link2="xarm_gripper_base_link" reason="Adjacent" />
+    <disable_collisions link1="link3" link2="link_eef" reason="Never" />
+    <disable_collisions link1="link4" link2="link_eef" reason="Never" />
+    <disable_collisions link1="link6" link2="link_eef" reason="Never" />
+    <disable_collisions link1="link7" link2="link_eef" reason="Adjacent" />
+
+    <disable_collisions link1="link3" link2="link_eef" reason="Never" />
+    <disable_collisions link1="link4" link2="link_eef" reason="Never" />
+    <disable_collisions link1="link6" link2="link_eef" reason="Never" />
+    <disable_collisions link1="link7" link2="link_eef" reason="Adjacent" />
+    <disable_collisions link1="link_eef" link2="xarm_gripper_base_link" reason="Adjacent" />
+    <disable_collisions link1="link_eef" link2="right_finger" reason="Never" />
+    <disable_collisions link1="link_eef" link2="right_inner_knuckle" reason="Never" />
+    <disable_collisions link1="link_eef" link2="right_outer_knuckle" reason="Never" />
+    <disable_collisions link1="link_eef" link2="left_finger" reason="Never" />
+    <disable_collisions link1="link_eef" link2="left_inner_knuckle" reason="Never" />
+    <disable_collisions link1="link_eef" link2="left_outer_knuckle" reason="Never" />
 </robot>

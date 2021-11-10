@@ -12,7 +12,8 @@
     joint3_lower_limit:=${-3.927}  joint3_upper_limit:=${0.19198}
     joint4_lower_limit:=${-2.0*pi}  joint4_upper_limit:=${2.0*pi}
     joint5_lower_limit:=${-1.69297}  joint5_upper_limit:=${pi}
-    joint6_lower_limit:=${-2.0*pi}  joint6_upper_limit:=${2.0*pi}">
+    joint6_lower_limit:=${-2.0*pi}  joint6_upper_limit:=${2.0*pi}
+    rs_d435i:=false">
 
     <material name="${prefix}Black">
       <color rgba="0.0 0.0 0.0 1.0"/>
@@ -276,7 +277,7 @@
       </visual>
       <collision>
         <geometry>
-          <mesh filename="package://xarm_description/meshes/xarm6/visual/link6.stl"/>
+          <mesh filename="package://xarm_description/meshes/collision/end_tool.STL"/>
         </geometry>
         <origin xyz="0 0 0" rpy="0 0 0"/>
       </collision>
@@ -309,7 +310,33 @@
       <dynamics damping="1.0" friction="1.0"/>
     </joint>
 
-  <link name="${prefix}link_eef" />
+  <xacro:if value="${rs_d435i}">
+    <link name="${prefix}link_eef">
+      <visual>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <mesh
+            filename="package://d435i_xarm_setup/mesh/d435_with_cam_stand.STL" />
+        </geometry>
+        <material name="Silver" />
+      </visual>
+      <collision>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <mesh
+            filename="package://d435i_xarm_setup/mesh/d435_with_cam_stand_collision.STL" />
+        </geometry>
+      </collision>
+    </link>
+  </xacro:if>
+
+  <xacro:unless value="${rs_d435i}">
+    <link name="${prefix}link_eef"/>
+  </xacro:unless>
 
   <joint
     name="${prefix}joint_eef"

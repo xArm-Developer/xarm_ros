@@ -1,0 +1,55 @@
+<launch>
+    <arg name="namespace_prefix" default="xarm_realsense_handeyecalibration" />
+    <arg name="robot_ip" doc="The IP address of the xarm robot" />
+    <arg name="robot_dof" doc="The degree of freedom of the xarm" />
+    <!-- PLEASE USE THE PROPER MARKER CONFIGURATION ! -->
+    <arg name="marker_size" doc="Size of the ArUco marker used, in meters" default="0.1" />
+    <arg name="marker_id" doc="The ID of the ArUco marker used" default="105"/>
+
+    <!-- start the Realsense435 -->
+    <include file="$(find realsense2_camera)/launch/rs_camera.launch" />
+
+    <!-- start ArUco -->
+    <node name="aruco_tracker" pkg="aruco_ros" type="single">
+        <remap from="/camera_info" to="/camera/color/camera_info" />
+        <remap from="/image" to="/camera/color/image_raw" />
+        <param name="image_is_rectified" value="true"/> <!-- no distortion? -->
+        <param name="marker_size"        value="$(arg marker_size)"/>
+        <param name="marker_id"          value="$(arg marker_id)"/>
+        <param name="reference_frame"    value="camera_color_optical_frame"/>
+        <param name="camera_frame"       value="camera_color_optical_frame"/>
+        <param name="marker_frame"       value="camera_marker" />
+    </node>
+
+    <!-- start the robot -->
+    <include if="$(eval arg('robot_dof')==7)" file="$(find xarm7_moveit_config)/launch/realMove_exec.launch">
+        <arg name="robot_ip" value="$(arg robot_ip)" />
+        <arg name="show_rviz" value="false" />
+    </include>
+    <include if="$(eval arg('robot_dof')==6)" file="$(find xarm6_moveit_config)/launch/realMove_exec.launch">
+        <arg name="robot_ip" value="$(arg robot_ip)" />
+        <arg name="show_rviz" value="false" />
+    </include>
+    <include if="$(eval arg('robot_dof')==5)" file="$(find xarm5_moveit_config)/launch/realMove_exec.launch">
+        <arg name="robot_ip" value="$(arg robot_ip)" />
+        <arg name="show_rviz" value="false" />
+    </include>
+
+    <!-- start easy_handeye -->
+    <include file="$(find easy_handeye)/launch/calibrate.launch" >
+        <arg name="namespace_prefix" value="$(arg namespace_prefix)" />
+        <!-- eye on hand: true -->        
+        <arg name="eye_on_hand" value="true" />
+        <arg name="tracking_base_frame" value="camera_color_optical_frame" />
+        <arg name="tracking_marker_frame" value="camera_marker" />
+        <arg name="robot_base_frame" value="link_base" />
+        <arg name="robot_effector_frame" value="link_eef" />
+
+        <arg name="freehand_robot_movement" value="false" />
+        <arg name="robot_velocity_scaling" value="0.1" />
+        <arg name="robot_acceleration_scaling" value="0.1" />
+        <arg name="move_group" value="xarm$(arg robot_dof)" />
+    </include>
+    <!-- in case rqt_easy_handeye image viewer fails to open: -->
+    <node name="recognition_view" pkg="image_view" type="image_view" args="image:=/aruco_tracker/result" />
+</launch>

@@ -25,7 +25,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES xarm_ros_client
-  CATKIN_DEPENDS roscpp std_msgs actionlib actionlib_msgs control_msgs xarm_sdk
+  CATKIN_DEPENDS roscpp std_msgs actionlib actionlib_msgs control_msgs xarm_sdk xarm_msgs
 #  DEPENDS system_lib
 )
 

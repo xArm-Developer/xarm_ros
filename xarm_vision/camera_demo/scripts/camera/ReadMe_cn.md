@@ -49,7 +49,7 @@ $ roscore
 * 运行example1_identify_color.py
 
 ```
-$ rosrun xarm_device example1_identify_color.py
+$ rosrun camera_demo example1_identify_color.py
 ```
 
 会看到摄像头的原始视频流和识别到的蓝色物体

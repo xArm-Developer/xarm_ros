@@ -1,0 +1,15 @@
+<launch>
+	<!-- Example finding 3D poses of the objects detected -->
+	
+	<node name="find_object_3d" pkg="find_object_2d" type="find_object_2d" output="screen">
+		<param name="gui" value="true" type="bool"/>
+		<param name="settings_path" value="~/.ros/find_object_2d.ini" type="str"/>
+		<param name="subscribe_depth" value="true" type="bool"/>
+		<param name="objects_path" value="$(find d435i_xarm_setup)/objects" type="str"/>
+		<param name="object_prefix" value="object" type="str"/>
+		
+		<remap from="rgb/image_rect_color" to="/camera/color/image_raw"/>
+		<remap from="depth_registered/image_raw" to="/camera/aligned_depth_to_color/image_raw"/>
+		<remap from="depth_registered/camera_info" to="/camera/aligned_depth_to_color/camera_info"/>
+	</node>
+</launch>

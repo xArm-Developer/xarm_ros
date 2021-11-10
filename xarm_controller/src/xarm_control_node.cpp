@@ -79,9 +79,9 @@ int main(int argc, char**argv)
 		if (elapsed > max_duration) {
 			max_duration = elapsed;
 		}
-		if (cnts % 6000 == 0) {
-			ROS_INFO("[CTRL] cnt: %ld, max: %f, mean: %f", cnts, max_duration.toSec(), total_duration.toSec() / cnts);
-		}
+		// if (cnts % 6000 == 0) {
+		// 	ROS_INFO("[CTRL] cnt: %ld, max: %f, mean: %f", cnts, max_duration.toSec(), total_duration.toSec() / cnts);
+		// }
 
 		std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
         std::this_thread::sleep_for(
