@@ -49,7 +49,7 @@ void XArmROSClient::init(ros::NodeHandle& nh)
     send_modbus_client_ = nh_.serviceClient<xarm_msgs::SetToolModbus>("set_tool_modbus");
 
     // velocity control
-    velo_move_joint_client_ = nh_.serviceClient<xarm_msgs::MoveVelocity>("velo_move_joint_timed");
+    velo_move_joint_client_ = nh_.serviceClient<xarm_msgs::MoveVelocity>("velo_move_joint_timed",true);
     velo_move_line_client_ = nh_.serviceClient<xarm_msgs::MoveVelocity>("velo_move_line_timed");
 
     traj_record_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_recording");

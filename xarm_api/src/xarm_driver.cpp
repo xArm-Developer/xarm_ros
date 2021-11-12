@@ -221,10 +221,12 @@ namespace xarm_api
         gripper_action_server_->start(); 
 
         bool add_gripper = false;
+        gripper_added_ = false;
         bool rtt = nh_.getParam("add_gripper", add_gripper);
         // has "add_gripper" parameter and its value is true.
         if(rtt && add_gripper)
-        {
+        {   
+            gripper_added_ = true;
             int ret_grip = arm->get_gripper_position(&init_gripper_pos_);
             if(ret_grip || init_gripper_pos_<0 || init_gripper_pos_>max_gripper_pos)
                 ROS_ERROR("Abnormal when update xArm gripper initial position, ret = %d, pos = %f, please check the gripper connection!", ret_grip, init_gripper_pos_);
@@ -342,7 +344,9 @@ namespace xarm_api
     bool XArmDriver::ClearErrCB(xarm_msgs::ClearErr::Request& req, xarm_msgs::ClearErr::Response& res)
     {
         // First clear controller warning and error:
-        int ret1 = arm->clean_gripper_error();
+        if(gripper_added_)
+            int ret1 = arm->clean_gripper_error();
+
         int ret2 = arm->clean_error(); 
         int ret3 = arm->clean_warn();
 
@@ -362,7 +366,10 @@ namespace xarm_api
     {
         if(ClearErrCB(req, res))
         {
-            arm->set_mode(XARM_MODE::SERVO);
+            bool v_control = false;
+            nh_.getParam("velocity_control", v_control);
+
+            arm->set_mode(v_control ? XARM_MODE::VELO_JOINT : XARM_MODE::SERVO);
             int ret = arm->set_state(XARM_STATE::START);
             return ret == 0;
         }
