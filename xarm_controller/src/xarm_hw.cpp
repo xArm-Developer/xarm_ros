@@ -326,6 +326,7 @@ namespace xarm_control
 		pj_limits_interface_.reset();
 	}
 
+	// Keep velocity and position within Moveit "joint_limits" configuration
 	void XArmHW::_enforce_limits(const ros::Duration& period)
 	{
 		if (!enforce_limits_) return;

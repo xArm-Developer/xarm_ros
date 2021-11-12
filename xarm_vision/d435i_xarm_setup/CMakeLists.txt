@@ -33,7 +33,7 @@ COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES d435i_xarm_setup
- CATKIN_DEPENDS sensor_msgs std_msgs xarm_planner xarm_msgs
+ CATKIN_DEPENDS sensor_msgs std_msgs xarm_planner xarm_msgs xarm_api
 #  DEPENDS system_lib
 )
 
@@ -45,6 +45,17 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
 include
+
+${xarm_sdk_INCLUDE_DIRS}
+${xarm_api_INCLUDE_DIRS}
+
+# catkin_make_isolated --install
+${xarm_sdk_INCLUDE_DIRS}/xarm_sdk
+${xarm_sdk_INCLUDE_DIRS}/xarm_api
+
+# colcon build
+${xarm_sdk_INCLUDE_DIRS}/../../xarm_api/include/xarm_api
+
 ${catkin_INCLUDE_DIRS}
 )
 
