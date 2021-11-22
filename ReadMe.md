@@ -628,7 +628,7 @@ If target object can be properly detected, to run the Grasping node:
 $ rosrun d435i_xarm_setup findobj2d_grasp_moveit
 ```
 
-Please note it will use previously mentioned sample handeye calibration result, you can change it at [publish_handeye_tf.launch](./d435i_xarm_setup/launch/publish_handeye_tf.launch). For node program source code, refer to: d435i_xarm_setup/src/[findobj_grasp_moveit_planner.cpp](./d435i_xarm_setup/src/findobj_grasp_moveit_planner.cpp).  
+Please note it will use previously mentioned sample handeye calibration result, you can change it at [publish_handeye_tf.launch](./xarm_vision/d435i_xarm_setup/launch/publish_handeye_tf.launch). For node program source code, refer to: d435i_xarm_setup/src/[findobj_grasp_moveit_planner.cpp](./xarm_vision/d435i_xarm_setup/src/findobj_grasp_moveit_planner.cpp).  
 
 2.Alternatively, to drive xArm motion with ros service provided by 'xarm_api', in this way, real-time performance of network will not be required so strict as moveit way, but execution may fail in the middle if singularity or self-collision is about to occur. 
 ```bash
@@ -638,7 +638,7 @@ If target object can be properly detected, to run the Grasping node:
 ```bash
 $ roslaunch d435i_xarm_setup grasp_node_xarm_api.launch
 ```
-Please note it will use previously mentioned sample handeye calibration result, you can change it at [publish_handeye_tf.launch](./d435i_xarm_setup/launch/publish_handeye_tf.launch). For node program source code, refer to: d435i_xarm_setup/src/[findobj_grasp_xarm_api.cpp](./d435i_xarm_setup/src/findobj_grasp_moveit_xarm_api.cpp).  
+Please note it will use previously mentioned sample handeye calibration result, you can change it at [publish_handeye_tf.launch](./xarm_vision/d435i_xarm_setup/launch/publish_handeye_tf.launch). For node program source code, refer to: d435i_xarm_setup/src/[findobj_grasp_xarm_api.cpp](./xarm_vision/d435i_xarm_setup/src/findobj_grasp_moveit_xarm_api.cpp).  
 
 ***Please read and comprehend the source code and make necessary modifications before real application test***, necessary modifications include preparation pose, grasping orientation, grasping depth, motion speed and so on. The identification target name in the code is "object_1", which corresponds to `1.png` in /objects directory, users can add their own target in "find_object_2d" GUI, then modify the `source_frame` inside the code, for costomized application.  
 
@@ -648,7 +648,7 @@ Please note it will use previously mentioned sample handeye calibration result, 
 For installation with camera stand provided by UFACTORY, the cam model can be attached by following modifications (use xarm7 as example):    
 1.Together with xArm Gripper model: Set `add_realsense_d435i` default value to be `true` in [xarm7_with_gripper.xacro](./xarm_description/urdf/xarm7_with_gripper.xacro).  
 2.Together with xArm Vacuum Gripper model: Set `add_realsense_d435i` default value to be `true` in [xarm7_with_vacuum_gripper.xacro](./xarm_description/urdf/xarm7_with_vacuum_gripper.xacro).  
-3.Purely the d435i: Set `rs_d435i` default value to be `true` in [xarm7_robot_macro.xacro](./xarm_description/urdf/xarm7_robot_macro.xacro).  
+3.Purely the d435i: Set `add_realsense_d435i` default value to be `true` in [xarm7_robot.urdf.xacro](./xarm_description/urdf/xarm7_robot.urdf.xacro).  
 
 
 # 8. Other Examples

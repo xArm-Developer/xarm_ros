@@ -322,10 +322,26 @@ namespace xarm_control
 
 	void XArmHW::_reset_limits(void)
 	{
-		pj_sat_interface_.reset();
-		pj_limits_interface_.reset();
+		if (!enforce_limits_) return;
+		switch (ctrl_method_)
+		{
+		case EFFORT:
+			// no reset() interface
+			break;
+		case VELOCITY:
+			// no reset() interface
+			break;
+		case POSITION:
+		default:
+			{
+				pj_sat_interface_.reset();
+				pj_limits_interface_.reset();
+			}
+			break;
+		}
 	}
 
+	// Keep velocity and position within Moveit "joint_limits" configuration
 	void XArmHW::_enforce_limits(const ros::Duration& period)
 	{
 		if (!enforce_limits_) return;

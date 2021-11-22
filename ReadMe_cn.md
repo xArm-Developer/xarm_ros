@@ -612,7 +612,7 @@ $ roslaunch d435i_xarm_setup d435i_findobj2d_xarm_moveit_planner.launch robot_do
 ```bash
 $ rosrun d435i_xarm_setup findobj2d_grasp_moveit
 ```
-请注意在其中包含的[publish_handeye_tf.launch](./d435i_xarm_setup/launch/publish_handeye_tf.launch)中，默认使用前面提到的参考标定结果，将识别的物体从相机坐标映射到机械臂基坐标系，可以按照需要改为其他标定结果yaml文件。节点代码可以参考d435i_xarm_setup/src/[findobj_grasp_moveit_planner.cpp](./d435i_xarm_setup/src/findobj_grasp_moveit_planner.cpp).  
+请注意在其中包含的[publish_handeye_tf.launch](./xarm_vision/d435i_xarm_setup/launch/publish_handeye_tf.launch)中，默认使用前面提到的参考标定结果，将识别的物体从相机坐标映射到机械臂基坐标系，可以按照需要改为其他标定结果yaml文件。节点代码可以参考d435i_xarm_setup/src/[findobj_grasp_moveit_planner.cpp](./xarm_vision/d435i_xarm_setup/src/findobj_grasp_moveit_planner.cpp).  
 
 2.或者使用xarm_api提供的ros service驱动手臂动作，网络稳定性要求不高，但部分时候执行过程中可能报错（奇异点或将要发生自碰撞等）：
 ```bash
@@ -622,7 +622,7 @@ $ roslaunch d435i_xarm_setup d435i_findobj2d_xarm_api.launch robot_dof:=your_xAr
 ```bash
 $ roslaunch d435i_xarm_setup grasp_node_xarm_api.launch
 ```
-请注意在其中包含的[publish_handeye_tf.launch](./d435i_xarm_setup/launch/publish_handeye_tf.launch)中，默认使用前面提到的参考标定结果，将识别的物体从相机坐标映射到机械臂基坐标系，可以按照需要改为其他标定结果yaml文件。节点代码可以参考d435i_xarm_setup/src/[findobj_grasp_xarm_api.cpp](./d435i_xarm_setup/src/findobj_grasp_moveit_xarm_api.cpp).  
+请注意在其中包含的[publish_handeye_tf.launch](./xarm_vision/d435i_xarm_setup/launch/publish_handeye_tf.launch)中，默认使用前面提到的参考标定结果，将识别的物体从相机坐标映射到机械臂基坐标系，可以按照需要改为其他标定结果yaml文件。节点代码可以参考d435i_xarm_setup/src/[findobj_grasp_xarm_api.cpp](./xarm_vision/d435i_xarm_setup/src/findobj_grasp_moveit_xarm_api.cpp).  
 
 ***实际应用之前，请先读懂对应的代码，并针对自己的场景做出必要的修改***，比如抓取准备位置，姿态，抓取深度以及移动速度等等。代码中使用的识别目标名称为“object_1”，对应/objects目录下的`1.png`，用户可以根据实际应用在find_object_2d的图形界面中添加新的目标并修改节点程序中的`source_frame`，来识别感兴趣的物体。  
 
@@ -632,7 +632,7 @@ $ roslaunch d435i_xarm_setup grasp_node_xarm_api.launch
 如果使用UFACTORY提供的camera stand固定，可以通过以下设置添加到虚拟模型（以xarm7为例）：  
 1.同时带机械爪的模型： 设置[xarm7_with_gripper.xacro](./xarm_description/urdf/xarm7_with_gripper.xacro)的`add_realsense_d435i`参数为`true`。  
 2.同时带真空吸头的模型： 设置[xarm7_with_vacuum_gripper.xacro](./xarm_description/urdf/xarm7_with_vacuum_gripper.xacro)的`add_realsense_d435i`参数为`true`。  
-3.单纯附加相机在末端： 设置[xarm7_robot_macro.xacro](./xarm_description/urdf/xarm7_robot_macro.xacro)中`rs_d435i`的默认值为`true`。  
+3.单纯附加相机在末端： 设置[xarm7_robot.urdf.xacro](./xarm_description/urdf/xarm7_robot.urdf.xacro)中`add_realsense_d435i`的默认值为`true`。  
 
 
 # 8. 其他示例

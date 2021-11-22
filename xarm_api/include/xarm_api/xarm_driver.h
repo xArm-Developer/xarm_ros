@@ -104,6 +104,7 @@ namespace xarm_api
         int curr_mode_;
         float init_gripper_pos_;
         bool gripper_init_loop_;
+        bool gripper_added_;
 
         ros::NodeHandle nh_;
         ros::ServiceServer go_home_server_;
