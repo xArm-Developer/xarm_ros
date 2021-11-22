@@ -396,7 +396,10 @@ namespace xarm_control
 
 	void XArmHW::write(const ros::Time& time, const ros::Duration& period)
 	{
-		if (need_reset()) return;
+		if (need_reset()) {
+			_reset_limits();
+			return;
+		}
 
 		_enforce_limits(period);
 
