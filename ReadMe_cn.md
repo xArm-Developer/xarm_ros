@@ -632,7 +632,7 @@ $ roslaunch d435i_xarm_setup grasp_node_xarm_api.launch
 如果使用UFACTORY提供的camera stand固定，可以通过以下设置添加到虚拟模型（以xarm7为例）：  
 1.同时带机械爪的模型： 设置[xarm7_with_gripper.xacro](./xarm_description/urdf/xarm7_with_gripper.xacro)的`add_realsense_d435i`参数为`true`。  
 2.同时带真空吸头的模型： 设置[xarm7_with_vacuum_gripper.xacro](./xarm_description/urdf/xarm7_with_vacuum_gripper.xacro)的`add_realsense_d435i`参数为`true`。  
-3.单纯附加相机在末端： 设置[xarm7_robot_macro.xacro](./xarm_description/urdf/xarm7_robot_macro.xacro)中`rs_d435i`的默认值为`true`。  
+3.单纯附加相机在末端： 设置[xarm7_robot.urdf.xacro](./xarm_description/urdf/xarm7_robot.urdf.xacro)中`add_realsense_d435i`的默认值为`true`。  
 
 
 # 8. 其他示例

@@ -648,7 +648,7 @@ Please note it will use previously mentioned sample handeye calibration result, 
 For installation with camera stand provided by UFACTORY, the cam model can be attached by following modifications (use xarm7 as example):    
 1.Together with xArm Gripper model: Set `add_realsense_d435i` default value to be `true` in [xarm7_with_gripper.xacro](./xarm_description/urdf/xarm7_with_gripper.xacro).  
 2.Together with xArm Vacuum Gripper model: Set `add_realsense_d435i` default value to be `true` in [xarm7_with_vacuum_gripper.xacro](./xarm_description/urdf/xarm7_with_vacuum_gripper.xacro).  
-3.Purely the d435i: Set `rs_d435i` default value to be `true` in [xarm7_robot_macro.xacro](./xarm_description/urdf/xarm7_robot_macro.xacro).  
+3.Purely the d435i: Set `add_realsense_d435i` default value to be `true` in [xarm7_robot.urdf.xacro](./xarm_description/urdf/xarm7_robot.urdf.xacro).  
 
 
 # 8. Other Examples
