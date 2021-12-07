@@ -18,8 +18,20 @@
 
   <param name="robot_description"
     command="$(find xacro)/xacro
-    --inorder '$(find xarm_description)/urdf/xarm$(arg robot_dof)_with_gripper.xacro'
+    --inorder '$(find xarm_description)/urdf/xarm$(arg robot_dof)_with_gripper.xacro' limited:=true
     effort_control:=$(arg effort_control) velocity_control:=$(arg velocity_control) use_gazebo_camera:=true" />
+  
+  <param name="robot_description_semantic" 
+    command="$(find xacro)/xacro --inorder '$(find xarm_description)/srdf/xarm.srdf.xacro' dof:=$(arg robot_dof) add_gripper:=true" />
+
+  <group ns="robot_description_planning">
+    <rosparam file="$(eval find('xarm' + str(arg('robot_dof')) + '_gripper_moveit_config') + '/config/joint_limits.yaml')" command="load"/>
+  </group>
+
+  <!-- Load default settings for kinematics; these settings are overridden by settings in a node's namespace -->
+  <group ns="robot_description_kinematics">
+    <rosparam file="$(eval find('xarm' + str(arg('robot_dof')) + '_gripper_moveit_config') + '/config/kinematics.yaml')" command="load"/>
+  </group>
 
   <!-- spawn robot model in gazebo, located on the table -->
   <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model"

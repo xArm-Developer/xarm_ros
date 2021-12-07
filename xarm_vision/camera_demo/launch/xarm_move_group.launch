@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_dof" />
+  <arg name="robot_ip" />
+  <arg name="report_type" default="normal" />
+  <arg name="xarm_hw_ns" default="xarm" />
+  <arg name="velocity_control" default="false"/>
+  <arg name="enforce_limits" default="true" />
+  <arg name="baud_checkset" default="true" />
+  <arg name="default_gripper_baud" default="2000000" />
+
+  <include file="$(eval find('xarm' + str(arg('robot_dof')) + '_gripper_moveit_config') + '/launch/realMove_exec.launch')">
+    <arg name="robot_ip" value="$(arg robot_ip)" />
+    <arg name="report_type" value="$(arg report_type)" />
+    <arg name="show_rviz" value="true"/>
+    <arg name="no_gui_plan" value="true"/>
+    <arg name="xarm_hw_ns" value="$(arg xarm_hw_ns)"/>
+    <arg name="velocity_control" value="$(arg velocity_control)"/>
+    <arg name="enforce_limits" value="$(arg enforce_limits)"/>
+    <arg name="baud_checkset" value="$(arg baud_checkset)"/>
+    <arg name="default_gripper_baud" value="$(arg default_gripper_baud)"/>
+  </include>
+
+</launch>

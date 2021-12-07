@@ -638,3 +638,21 @@ $ roslaunch d435i_xarm_setup grasp_node_xarm_api.launch
 # 8. 其他示例
 &ensp;&ensp;[在examples路径下](./examples)会陆续更新一些其他应用的demo例程，欢迎前去探索研究。
 
+## 8.1 颜色块抓取例子
+- ### Gazebo仿真
+   ```bash
+   # 初始化gazebo场景和move_group
+   $ roslaunch xarm_gazebo xarm_camera_scene.launch robot_dof:=6
+
+   # 运行颜色块识别抓取脚本
+   $ rosrun xarm_gazebo color_recognition.py
+   ```
+- ### 真机+realsense_d435i
+   ```bash
+   # 启动move_group
+   $ roslaunch camera_demo xarm_move_group.launch robot_ip:=192.168.1.15 robot_dof:=6
+
+   # 运行颜色块识别抓取脚本(根据输出交互使用)
+   $ rosrun camera_demo color_recognition.py
+   ```
+
