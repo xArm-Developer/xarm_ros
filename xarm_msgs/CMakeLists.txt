@@ -82,6 +82,7 @@ find_package(catkin REQUIRED COMPONENTS
    SetString.srv
    PlayTraj.srv
    GetFloat32List.srv
+   GetInt32.srv
  )
 
 ## Generate actions in the 'action' folder

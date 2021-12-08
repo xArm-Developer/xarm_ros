@@ -54,6 +54,8 @@ public:
 	int setTcpMaxAcc(float maxacc);
 	int setJointMaxAcc(float maxacc);
 	int getServoAngle(std::vector<float>& angles);
+	int getPositionRPY(std::vector<float>& pos);
+	int getPositionAxisAngle(std::vector<float>& pos);
 
 private:
 	template<typename ServiceSrv>
@@ -95,6 +97,8 @@ private:
 	ros::ServiceClient set_tcp_maxacc_client_;
 	ros::ServiceClient set_joint_maxacc_client_;
 	ros::ServiceClient get_servo_angle_client_;
+	ros::ServiceClient get_position_rpy_client_;
+	ros::ServiceClient get_position_aa_client_;
 
     xarm_msgs::SetAxis set_axis_srv_;
     xarm_msgs::SetInt16 set_int16_srv_;
