@@ -5,19 +5,21 @@ import time
 import rospy
 from xarm_msgs.srv import *
 
-def servo_cartesian_tool(step, freq, time_secs):
+def servo_cartesian_tool(start_pose, freq, time_secs):
 	servo_cart = rospy.ServiceProxy('/xarm/move_servo_cart', Move)
 	req = MoveRequest() 
-	req.pose = step
+	req.pose = start_pose
 	req.mvvelo = 0
 	req.mvacc = 0
-	req.mvtime = 1 # tool coordinate motion
+	req.mvtime = 0 
 	loop_num = time_secs*float(freq)
 	sleep_sec = 1.0/float(freq)
 	ret = 0
+	step = 0.3
 
 	try:
 		for i in range(int(loop_num)):
+			req.pose[0] += step
 			res = servo_cart(req)
 			if res.ret:
 				print("Something Wrong happened calling servo_cart service, index is %d, ret = %d"%(i, res.ret))
@@ -39,6 +41,7 @@ if __name__ == "__main__":
 	motion_en = rospy.ServiceProxy('/xarm/motion_ctrl', SetAxis)
 	set_mode = rospy.ServiceProxy('/xarm/set_mode', SetInt16)
 	set_state = rospy.ServiceProxy('/xarm/set_state', SetInt16)
+	get_position = rospy.ServiceProxy('/xarm/get_position_rpy', GetFloat32List)
 	home = rospy.ServiceProxy('/xarm/go_home', Move)
 
 	try:
@@ -59,13 +62,14 @@ if __name__ == "__main__":
 	set_mode(1)
 	set_state(0)
 
-	# relative step for servo_cartesian in TOOL Coordinate (req.mvtime = 1)
-	step = [0.3, 0, 0, 0, 0, 0]
+	# starting position for servo_cartesian in Base Coordinate
+	start_pose = list(get_position().datas)
+	
 	# publish frequency in Hz:
 	freq = 100 
 	# publish time in seconds:
 	time_secs = 5.0
 
 	time.sleep(2.0)
-	if servo_cartesian_tool(step, freq, time_secs) == 0:
+	if servo_cartesian_tool(start_pose, freq, time_secs) == 0:
 		print("execution finished successfully!")

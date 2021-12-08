@@ -75,6 +75,9 @@ namespace xarm_api
         bool SetJointJerkCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res);
 
         bool GetServoAngleCB(xarm_msgs::GetFloat32List::Request &req, xarm_msgs::GetFloat32List::Response &res);
+        bool GetPositionRPYCB(xarm_msgs::GetFloat32List::Request &req, xarm_msgs::GetFloat32List::Response &res);
+        bool GetPositionAACB(xarm_msgs::GetFloat32List::Request &req, xarm_msgs::GetFloat32List::Response &res);
+        bool GetTgpioBaudRateCB(xarm_msgs::GetInt32::Request &req, xarm_msgs::GetInt32::Response &res);
 
         void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
         void pub_joint_state(sensor_msgs::JointState &js_msg);
@@ -166,6 +169,9 @@ namespace xarm_api
         ros::ServiceServer set_joint_jerk_server_;
 
         ros::ServiceServer get_servo_angle_;
+        ros::ServiceServer get_position_rpy_server_;
+        ros::ServiceServer get_position_aa_server_;
+        ros::ServiceServer get_tgpio_baudrate_server_;
 
         ros::Publisher joint_state_;
         ros::Publisher robot_rt_state_; 

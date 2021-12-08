@@ -72,6 +72,7 @@ FOREACH(exec ${link_xarm_sdk_exec_list})
   add_executable(${exec} 
     test/${exec}.cpp
   )
+  add_dependencies(${exec} xarm_msgs_generate_messages_cpp)
   target_link_libraries(${exec} 
     ${xarm_sdk_LIBRARIES}
     ${catkin_LIBRARIES}
@@ -89,6 +90,7 @@ FOREACH(exec ${link_xarm_ros_client_exec_list})
   add_executable(${exec} 
     test/${exec}.cpp
   )
+  add_dependencies(${exec} xarm_msgs_generate_messages_cpp)
   target_link_libraries(${exec} 
     xarm_ros_client
     ${catkin_LIBRARIES}
