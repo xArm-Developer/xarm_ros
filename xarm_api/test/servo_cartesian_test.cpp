@@ -9,7 +9,7 @@
 
 int go_home_test(xarm_msgs::Move &srv, ros::ServiceClient &client)
 {
-    srv.request.mvvelo = 20.0 / 57.0;
+    srv.request.mvvelo = 20.0 * M_PI / 180.0;
     srv.request.mvacc = 1000;
     srv.request.mvtime = 0;
     if(client.call(srv))
@@ -24,25 +24,27 @@ int go_home_test(xarm_msgs::Move &srv, ros::ServiceClient &client)
     return 0;
 }
 
-int servo_cart_test(xarm_msgs::Move &srv, ros::ServiceClient &client)
+int servo_cart_test(std::vector<float> &start_pos, xarm_msgs::Move &srv, ros::ServiceClient &client)
 {
-    std::vector<float> inc = {0.3, 0, 0, 0, 0, 0}; 
+    float inc = 0.3; 
 
     srv.request.mvvelo = 0;
     srv.request.mvacc = 0;
-    srv.request.mvtime = 1;
+    srv.request.mvtime = 0;
 
-    srv.request.pose = inc;
+    srv.request.pose = start_pos;
 
     for (int i = 0; i < 500; i++) 
-    {
+    {   
+        srv.request.pose[0] += inc;
+
         if(client.call(srv))
         {
             ROS_INFO("%s\n", srv.response.message.c_str());
         }
         else
         {
-            ROS_ERROR("Failed to call service move_servoj");
+            ROS_ERROR("Failed to call service move_servo_cart");
             return 1;
         }
         ros::Duration(0.01).sleep(); //10ms
@@ -62,10 +64,12 @@ int main(int argc, char **argv)
 	ros::ServiceClient set_state_client_ = nh.serviceClient<xarm_msgs::SetInt16>("/xarm/set_state");
   	ros::ServiceClient go_home_client_ = nh.serviceClient<xarm_msgs::Move>("/xarm/go_home");
 	ros::ServiceClient servo_cart_client_ = nh.serviceClient<xarm_msgs::Move>("/xarm/move_servo_cart");
+    ros::ServiceClient get_position_client_ = nh.serviceClient<xarm_msgs::GetFloat32List>("/xarm/get_position_rpy");
 
     xarm_msgs::SetAxis set_axis_srv_;
     xarm_msgs::SetInt16 set_int16_srv_;
     xarm_msgs::Move move_srv_;
+    xarm_msgs::GetFloat32List get_position_srv_;
     
 
     // STEP 1: Motion Enable
@@ -135,7 +139,11 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    // STEP 7: Call SERVO_CARTESIAN service in a loop
-    return servo_cart_test(move_srv_, servo_cart_client_);
+    // STEP 7: Get current position
+    get_position_client_.call(get_position_srv_);
+    std::vector<float> curr_pos(get_position_srv_.response.datas);
+
+    // STEP 8: Call SERVO_CARTESIAN service in a loop
+    return servo_cart_test(curr_pos, move_srv_, servo_cart_client_);
 
 }

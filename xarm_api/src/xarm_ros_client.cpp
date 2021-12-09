@@ -24,6 +24,7 @@ void XArmROSClient::init(ros::NodeHandle& nh)
     ros::service::waitForService(client_ns+"set_mode");
     ros::service::waitForService(client_ns+"move_servoj");
     ros::service::waitForService(client_ns+"get_servo_angle");
+    ros::service::waitForService(client_ns+"xarm_cgpio_states"); // last one in driver
 
 	motion_ctrl_client_ = nh_.serviceClient<xarm_msgs::SetAxis>("motion_ctrl");
 	set_mode_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_mode");
@@ -68,6 +69,8 @@ void XArmROSClient::init(ros::NodeHandle& nh)
     set_tcp_maxacc_client_ = nh_.serviceClient<xarm_msgs::SetFloat32>("set_tcp_maxacc");
     set_joint_maxacc_client_ = nh_.serviceClient<xarm_msgs::SetFloat32>("set_joint_maxacc");
     get_servo_angle_client_ = nh_.serviceClient<xarm_msgs::GetFloat32List>("get_servo_angle",true);
+    get_position_rpy_client_ = nh_.serviceClient<xarm_msgs::GetFloat32List>("get_position_rpy");
+    get_position_aa_client_ = nh_.serviceClient<xarm_msgs::GetFloat32List>("get_position_axis_angle");
 }
 
 template<typename ServiceSrv>
@@ -375,6 +378,24 @@ int XArmROSClient::getServoAngle(std::vector<float>& angles)
     int ret = _call_service(get_servo_angle_client_, get_float32_list_srv_);
     angles.resize(7);
     angles.swap(get_float32_list_srv_.response.datas);
+    get_float32_list_srv_.response.datas.clear();
+    return ret;
+}
+
+int XArmROSClient::getPositionRPY(std::vector<float>& pos)
+{
+    int ret = _call_service(get_position_rpy_client_, get_float32_list_srv_);
+    pos.resize(6);
+    pos.swap(get_float32_list_srv_.response.datas);
+    get_float32_list_srv_.response.datas.clear();
+    return ret;
+}
+
+int XArmROSClient::getPositionAxisAngle(std::vector<float>& pos)
+{
+    int ret = _call_service(get_position_aa_client_, get_float32_list_srv_);
+    pos.resize(6);
+    pos.swap(get_float32_list_srv_.response.datas);
     get_float32_list_srv_.response.datas.clear();
     return ret;
 }

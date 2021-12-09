@@ -218,6 +218,7 @@ target_link_libraries(xarm_simple_planner ${catkin_LIBRARIES})
 
 add_executable(xarm_simple_planner_test src/xarm_simple_planner_test.cpp)
 add_dependencies(xarm_simple_planner_test ${${PROJECT_NAME}_EXPORTED_TARGETS})
+add_dependencies(xarm_simple_planner_test xarm_msgs_generate_messages_cpp)
 target_link_libraries(xarm_simple_planner_test ${catkin_LIBRARIES})
 
 add_executable(xarm_gripper_planner src/xarm_gripper_planner.cpp)

@@ -190,6 +190,9 @@ namespace xarm_api
         set_tcp_jerk_server_ = nh_.advertiseService("set_tcp_jerk", &XArmDriver::SetTcpJerkCB, this);
         set_joint_jerk_server_ = nh_.advertiseService("set_joint_jerk", &XArmDriver::SetJointJerkCB, this);
         get_servo_angle_ = nh_.advertiseService("get_servo_angle", &XArmDriver::GetServoAngleCB, this);
+        get_position_rpy_server_ = nh_.advertiseService("get_position_rpy", &XArmDriver::GetPositionRPYCB, this);
+        get_position_aa_server_ = nh_.advertiseService("get_position_axis_angle", &XArmDriver::GetPositionAACB, this); // aa for axis-angle
+        get_tgpio_baudrate_server_ = nh_.advertiseService("get_tgpio_modbus_baudrate", &XArmDriver::GetTgpioBaudRateCB, this);
 
         // state feedback topics:
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
@@ -1145,7 +1148,40 @@ namespace xarm_api
         for (int i = 0; i < res.datas.size(); i++) {
             tmp += (i == 0 ? "" : ", ") + std::to_string(res.datas[i]);
         }
-        res.message = "datas=[ " + tmp + " ]";
+        res.message = "angles=[ " + tmp + " ]";
+        return true;
+    }
+
+    bool XArmDriver::GetPositionRPYCB(xarm_msgs::GetFloat32List::Request &req, xarm_msgs::GetFloat32List::Response &res)
+    {
+        res.datas.resize(6);
+        res.ret = arm->get_position(&res.datas[0]);
+        std::string tmp = "";
+        for (int i = 0; i < res.datas.size(); i++) {
+            tmp += (i == 0 ? "" : ", ") + std::to_string(res.datas[i]);
+        }
+        res.message = "position=[ " + tmp + " ]";
+        return true;
+    }
+
+    bool XArmDriver::GetPositionAACB(xarm_msgs::GetFloat32List::Request &req, xarm_msgs::GetFloat32List::Response &res)
+    {
+        res.datas.resize(6);
+        res.ret = arm->get_position_aa(&res.datas[0]);
+        std::string tmp = "";
+        for (int i = 0; i < res.datas.size(); i++) {
+            tmp += (i == 0 ? "" : ", ") + std::to_string(res.datas[i]);
+        }
+        res.message = "position=[ " + tmp + " ]";
+        return true;
+    }
+
+    bool XArmDriver::GetTgpioBaudRateCB(xarm_msgs::GetInt32::Request &req, xarm_msgs::GetInt32::Response &res)
+    {
+        int baud_rate = 0;
+        res.ret = arm->get_tgpio_modbus_baudrate(&baud_rate);
+        res.data = baud_rate;
+        res.message = "ret = " + std::to_string(res.ret) + ", current baud_rate = " + std::to_string(baud_rate);
         return true;
     }
 

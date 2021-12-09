@@ -29,5 +29,6 @@
 #include <xarm_msgs/PlayTraj.h>
 #include <xarm_msgs/SetString.h>
 #include <xarm_msgs/GetFloat32List.h>
+#include <xarm_msgs/GetInt32.h>
 
 #endif // __XARM_MSGS_H
