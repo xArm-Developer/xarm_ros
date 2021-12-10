@@ -360,7 +360,7 @@ namespace xarm_api
         {
             res.message = "clear err, ret = "  + std::to_string(res.ret);
         }
-        return res.ret >= 0;
+        return true;
 
         // After calling this service, user should check '/xarm_states' again to make sure 'err' field is 0, to confirm success.
     }
@@ -373,8 +373,8 @@ namespace xarm_api
             nh_.getParam("velocity_control", v_control);
 
             arm->set_mode(v_control ? XARM_MODE::VELO_JOINT : XARM_MODE::SERVO);
-            int ret = arm->set_state(XARM_STATE::START);
-            return ret == 0;
+            res.ret = arm->set_state(XARM_STATE::START);
+            return true;
         }
         return false;
 
@@ -399,7 +399,7 @@ namespace xarm_api
         {
             res.message = "motion disable, ret = " + std::to_string(res.ret);
         }
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetModeCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
@@ -441,7 +441,7 @@ namespace xarm_api
             }
         }
 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetStateCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
@@ -467,7 +467,7 @@ namespace xarm_api
             }
         }
 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetTCPOffsetCB(xarm_msgs::TCPOffset::Request &req, xarm_msgs::TCPOffset::Response &res)
@@ -477,7 +477,7 @@ namespace xarm_api
         if (res.ret >= 0)
             arm->save_conf();
         res.message = "set tcp offset: ret = " + std::to_string(res.ret); 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetLoadCB(xarm_msgs::SetLoad::Request &req, xarm_msgs::SetLoad::Response &res)
@@ -488,7 +488,7 @@ namespace xarm_api
         if (res.ret >= 0)
             arm->save_conf();
         res.message = "set load: ret = " + std::to_string(res.ret); 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetControllerDOutCB(xarm_msgs::SetDigitalIO::Request &req, xarm_msgs::SetDigitalIO::Response &res)
@@ -497,10 +497,12 @@ namespace xarm_api
         {
             res.ret = arm->set_cgpio_digital(req.io_num-1, req.value);
             res.message = "set Controller digital Output "+ std::to_string(req.io_num) +" to "+ std::to_string(req.value) + " : ret = " + std::to_string(res.ret); 
-            return res.ret >= 0;
+            return true;
         }
         ROS_WARN("Controller Digital IO io_num: from 1 to 16");
-        return false;
+        res.ret = PARAM_ERROR;
+        res.message = "Controller Digital IO io_num: from 1 to 16";
+        return true;
     }
 
     bool XArmDriver::GetControllerDInCB(xarm_msgs::GetControllerDigitalIO::Request &req, xarm_msgs::GetControllerDigitalIO::Response &res)
@@ -523,11 +525,14 @@ namespace xarm_api
             return res.ret >= 0;
         }
         ROS_WARN("Controller Digital IO io_num: from 1 to 16");
-        return false;
+        res.ret = PARAM_ERROR;
+        res.message = "Controller Digital IO io_num: from 1 to 16";
+        return true;
     }
 
     bool XArmDriver::GetControllerAInCB(xarm_msgs::GetAnalogIO::Request &req, xarm_msgs::GetAnalogIO::Response &res)
     {
+        res.ret = PARAM_ERROR;
         switch (req.port_num)
         {
             case 1:
@@ -536,14 +541,15 @@ namespace xarm_api
                 break;
             default:
                 res.message = "GetAnalogIO Fail: port number incorrect ! Must be 1 or 2";
-                return false;
+                return true;
         }
         res.message = "get controller analog port " + std::to_string(req.port_num) + ", ret = " + std::to_string(res.ret); 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetControllerAOutCB(xarm_msgs::SetControllerAnalogIO::Request &req, xarm_msgs::SetControllerAnalogIO::Response &res)
     {
+        res.ret = PARAM_ERROR;
         switch (req.port_num)
         {
             case 1:
@@ -552,28 +558,29 @@ namespace xarm_api
                 break;
             default:
                 res.message = "SetAnalogIO Fail: port number incorrect ! Must be 1 or 2";
-                return false;
+                return true;
         }
         res.message = "Set controller analog port " + std::to_string(req.port_num) + ", ret = " + std::to_string(res.ret); 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetDigitalIOCB(xarm_msgs::SetDigitalIO::Request &req, xarm_msgs::SetDigitalIO::Response &res)
     {
         res.ret = arm->set_tgpio_digital(req.io_num-1, req.value);
         res.message = "set Digital port "+ std::to_string(req.io_num) +" to "+ std::to_string(req.value) + " : ret = " + std::to_string(res.ret); 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::GetDigitalIOCB(xarm_msgs::GetDigitalIO::Request &req, xarm_msgs::GetDigitalIO::Response &res)
     {
         res.ret = arm->get_tgpio_digital(&res.digital_1, &res.digital_2);
         res.message = "get Digital port ret = " + std::to_string(res.ret); 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::GetAnalogIOCB(xarm_msgs::GetAnalogIO::Request &req, xarm_msgs::GetAnalogIO::Response &res)
     {
+        res.ret = PARAM_ERROR;
         switch (req.port_num)
         {
             case 1:
@@ -582,10 +589,10 @@ namespace xarm_api
                 break;
             default:
                 res.message = "GetAnalogIO Fail: port number incorrect ! Must be 1 or 2";
-                return false;
+                return true;
         }
         res.message = "get tool analog port " + std::to_string(req.port_num) + ", ret = " + std::to_string(res.ret); 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetModbusCB(xarm_msgs::SetToolModbus::Request &req, xarm_msgs::SetToolModbus::Response &res)
@@ -607,7 +614,7 @@ namespace xarm_api
 
         delete [] tx_data;
         delete [] rx_data;
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::ConfigModbusCB(xarm_msgs::ConfigToolModbus::Request &req, xarm_msgs::ConfigToolModbus::Response &res)
@@ -625,14 +632,14 @@ namespace xarm_api
         res.message = "set_modbus_baudrate, ret="+ std::to_string(ret);
         res.message += (std::string(" | set_modbus_timeout, ret=") + std::to_string(ret2));
 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::GoHomeCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
     {
         res.ret = arm->move_gohome(req.mvvelo, req.mvacc, req.mvtime, _get_wait_param());
         res.message = "go home, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::MoveJointCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
@@ -641,7 +648,7 @@ namespace xarm_api
         int index = 0;
         if(req.pose.size() != dof_)
         {
-            res.ret = req.pose.size();
+            res.ret = PARAM_ERROR;
             res.message = "pose parameters incorrect! Expected: "+std::to_string(dof_);
             return false;
         }
@@ -658,7 +665,7 @@ namespace xarm_api
         }
         res.ret = arm->set_servo_angle(joint, req.mvvelo, req.mvacc, req.mvtime, _get_wait_param());
         res.message = "move joint, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::MoveLineCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
@@ -669,7 +676,7 @@ namespace xarm_api
         {
             res.ret = PARAM_ERROR;
             res.message = "number of parameters incorrect!";
-            return false;
+            return true;
         }
         else
         {
@@ -680,7 +687,7 @@ namespace xarm_api
         }
         res.ret = arm->set_position(pose, -1, req.mvvelo, req.mvacc, req.mvtime, _get_wait_param());
         res.message = "move line, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::MoveLineToolCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
@@ -691,7 +698,7 @@ namespace xarm_api
         {
             res.ret = PARAM_ERROR;
             res.message = "number of parameters incorrect!";
-            return false;
+            return true;
         }
         else
         {
@@ -702,7 +709,7 @@ namespace xarm_api
         }
         res.ret = arm->set_tool_position(pose, req.mvvelo, req.mvacc, req.mvtime, _get_wait_param());
         res.message = "move line tool, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::MoveLinebCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
@@ -713,7 +720,7 @@ namespace xarm_api
         {
             res.ret = PARAM_ERROR;
             res.message = "number of parameters incorrect!";
-            return false;
+            return true;
         }
         else
         {
@@ -725,7 +732,7 @@ namespace xarm_api
         float mvradii = req.mvradii >= 0 ? req.mvradii : 0;
         res.ret = arm->set_position(pose, mvradii, req.mvvelo, req.mvacc, req.mvtime);        
         res.message = "move lineb, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::MoveJointbCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
@@ -734,9 +741,9 @@ namespace xarm_api
         int index = 0;
         if(req.pose.size() != dof_)
         {
-            res.ret = req.pose.size();
+            res.ret = PARAM_ERROR;
             res.message = "number of joint parameters incorrect! Expected: "+std::to_string(dof_);
-            return false;
+            return true;
         }
         else
         {
@@ -751,7 +758,7 @@ namespace xarm_api
         float mvradii = req.mvradii >= 0 ? req.mvradii : 0;
         res.ret = arm->set_servo_angle(joint, req.mvvelo, req.mvacc, req.mvtime, _get_wait_param(), 0, mvradii);
         res.message = "move jointB, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::MoveServoJCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
@@ -760,9 +767,9 @@ namespace xarm_api
         int index = 0;
         if(req.pose.size() != dof_)
         {
-            res.ret = req.pose.size();
+            res.ret = PARAM_ERROR;
             res.message = "pose parameters incorrect! Expected: "+std::to_string(dof_);
-            return false;
+            return true;
         }
         else
         {
@@ -777,7 +784,7 @@ namespace xarm_api
 
         res.ret = arm->set_servo_angle_j(pose, req.mvvelo, req.mvacc, req.mvtime);
         res.message = "move servoj, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::MoveServoCartCB(xarm_msgs::Move::Request &req, xarm_msgs::Move::Response &res)
@@ -788,7 +795,7 @@ namespace xarm_api
         {
             res.ret = PARAM_ERROR;
             res.message = "MoveServoCartCB parameters incorrect!";
-            return false;
+            return true;
         }
         else
         {
@@ -800,7 +807,7 @@ namespace xarm_api
 
         res.ret = arm->set_servo_cartesian(pose, req.mvvelo, req.mvacc, req.mvtime);
         res.message = "move servo_cartesian, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::MoveLineAACB(xarm_msgs::MoveAxisAngle::Request &req, xarm_msgs::MoveAxisAngle::Response &res)
@@ -811,7 +818,7 @@ namespace xarm_api
         {
             res.ret = PARAM_ERROR;
             res.message = "MoveServoCartCB parameters incorrect!";
-            return false;
+            return true;
         }
         else
         {
@@ -822,7 +829,7 @@ namespace xarm_api
         }
         res.ret = arm->set_position_aa(pose, req.mvvelo, req.mvacc, req.mvtime, req.coord, req.relative, _get_wait_param());
         res.message = "move_line_aa, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::MoveServoCartAACB(xarm_msgs::MoveAxisAngle::Request &req, xarm_msgs::MoveAxisAngle::Response &res)
@@ -833,7 +840,7 @@ namespace xarm_api
         {
             res.ret = PARAM_ERROR;
             res.message = "MoveServoCartAACB parameters incorrect!";
-            return false;
+            return true;
         }
         else
         {
@@ -844,7 +851,7 @@ namespace xarm_api
         }
         res.ret = arm->set_servo_cartesian_aa(pose, req.mvvelo, req.mvacc, req.coord, req.relative);
         res.message = "move_servo_cart_aa, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::VeloMoveJointCB(xarm_msgs::MoveVelo::Request &req, xarm_msgs::MoveVelo::Response &res)
@@ -853,9 +860,9 @@ namespace xarm_api
         int index = 0;
         if(req.velocities.size() < dof_)
         {
-            res.ret = req.velocities.size();
+            res.ret = PARAM_ERROR;
             res.message = "pose parameters incorrect! Expected: "+std::to_string(dof_);
-            return false;
+            return true;
         }
         else
         {
@@ -871,7 +878,7 @@ namespace xarm_api
 
         res.ret = arm->vc_set_joint_velocity(jnt_v, req.jnt_sync);
         res.message = "velocity move joint, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::VeloMoveLineVCB(xarm_msgs::MoveVelo::Request &req, xarm_msgs::MoveVelo::Response &res)
@@ -882,7 +889,7 @@ namespace xarm_api
         {
             res.ret = PARAM_ERROR;
             res.message = "number of parameters incorrect!";
-            return false;
+            return true;
         }
         else
         {
@@ -894,7 +901,7 @@ namespace xarm_api
 
         res.ret = arm->vc_set_cartesian_velocity(line_v, req.coord);
         res.message = "velocity move line, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::VCSetJointVelocityCB(xarm_msgs::MoveVelocity::Request &req, xarm_msgs::MoveVelocity::Response &res)
@@ -903,9 +910,9 @@ namespace xarm_api
         int index = 0;
         if(req.speeds.size() < dof_)
         {
-            res.ret = req.speeds.size();
+            res.ret = PARAM_ERROR;
             res.message = "pose parameters incorrect! Expected: "+std::to_string(dof_);
-            return false;
+            return true;
         }
         else
         {
@@ -921,7 +928,7 @@ namespace xarm_api
 
         res.ret = arm->vc_set_joint_velocity(jnt_v, req.is_sync, req.duration);
         res.message = "velocity move joint, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
     
     bool XArmDriver::VCSetCartesianVelocityCB(xarm_msgs::MoveVelocity::Request &req, xarm_msgs::MoveVelocity::Response &res)
@@ -932,7 +939,7 @@ namespace xarm_api
         {
             res.ret = PARAM_ERROR;
             res.message = "number of parameters incorrect!";
-            return false;
+            return true;
         }
         else
         {
@@ -944,7 +951,7 @@ namespace xarm_api
 
         res.ret = arm->vc_set_cartesian_velocity(line_v, req.is_tool_coord, req.duration);
         res.message = "velocity move line, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetMaxJAccCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res)
@@ -953,11 +960,11 @@ namespace xarm_api
         {
             res.ret = PARAM_ERROR;
             res.message = "set max joint acc: " + std::to_string(req.data) + "error! Proper range is: 0-20.0 rad/s^2";
-            return false;
+            return true;
         }
         res.ret = arm->set_joint_maxacc(req.data);
         res.message = "set max joint acc: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetMaxLAccCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res)
@@ -966,11 +973,11 @@ namespace xarm_api
         {
             res.ret = PARAM_ERROR;
             res.message = "set max linear acc: " + std::to_string(req.data) + "error! Proper range is: 0-50000.0 mm/s^2";
-            return false;
+            return true;
         }
         res.ret = arm->set_tcp_maxacc(req.data);
         res.message = "set max linear acc: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::GripperConfigCB(xarm_msgs::GripperConfig::Request &req, xarm_msgs::GripperConfig::Response &res)
@@ -987,7 +994,7 @@ namespace xarm_api
 
         res.ret = (ret1 == 0 && ret2 == 0) ? ret3 : (ret1 == 0 && ret3 == 0) ? ret2 : ret1;
         res.message = "gripper_config, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::GripperMoveCB(xarm_msgs::GripperMove::Request &req, xarm_msgs::GripperMove::Response &res)
@@ -999,7 +1006,7 @@ namespace xarm_api
 
         res.ret = arm->set_gripper_position(req.pulse_pos);
         res.message = "gripper_move, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::GripperStateCB(xarm_msgs::GripperState::Request &req, xarm_msgs::GripperState::Response &res)
@@ -1013,14 +1020,14 @@ namespace xarm_api
         res.err_code = err_code;
         res.curr_pos = pos_now;
         // fprintf(stderr, "gripper_pos: %f, gripper_err: %d\n", res.curr_pos, res.err_code);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::VacuumGripperCB(xarm_msgs::SetInt16::Request &req, xarm_msgs::SetInt16::Response &res)
     {
         res.ret = arm->set_vacuum_gripper(req.data);
         res.message = "set vacuum gripper: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetRecordingCB(xarm_msgs::SetInt16::Request &req, xarm_msgs::SetInt16::Response &res)
@@ -1030,7 +1037,7 @@ namespace xarm_api
         else
             res.ret = arm->stop_record_trajectory(); // stop recording
         res.message = "set trajectory recording: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SaveTrajCB(xarm_msgs::SetString::Request &req, xarm_msgs::SetString::Response &res)
@@ -1039,7 +1046,7 @@ namespace xarm_api
         {
             res.ret = PARAM_ERROR;
             res.message = "Save Trajectory ERROR: name length should be within 80 characrters!";
-            return false;
+            return true;
         }
         char file_name[81]={0};
         req.str_data.copy(file_name, req.str_data.size(), 0);
@@ -1047,7 +1054,7 @@ namespace xarm_api
         if (timeout <= 0.1) timeout = 10;
         res.ret = arm->save_record_trajectory(file_name, timeout);
         res.message = "save trajectory file: " + req.str_data + " ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::LoadNPlayTrajCB(xarm_msgs::PlayTraj::Request &req, xarm_msgs::PlayTraj::Response &res)
@@ -1058,7 +1065,7 @@ namespace xarm_api
             res.ret = PARAM_ERROR;
             res.message = "Load Trajectory ERROR: name length should be within 80 characrters!";
             ROS_ERROR("%s", res.message.c_str());
-            return false;
+            return true;
         }
 
         if(req.speed_factor != 1 && req.speed_factor != 2 && req.speed_factor != 4)
@@ -1066,7 +1073,7 @@ namespace xarm_api
             res.ret = PARAM_ERROR;
             res.message = "PlayBack Trajectory ERROR: please check given speed_factor (int: 1, 2 or 4)";
             ROS_ERROR("%s", res.message.c_str());
-            return false;
+            return true;
         }
 
         char file_name[81]={0};
@@ -1075,26 +1082,26 @@ namespace xarm_api
         res.ret = arm->playback_trajectory(req.repeat_times, file_name, true, req.speed_factor);
 
         res.message = "PlayBack Trajectory, ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
 
     }
 
     bool XArmDriver::SetReboundCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
     {
         res.ret = arm->set_collision_rebound((bool)req.data); 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetCollSensCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
     {
         res.ret = arm->set_collision_sensitivity(req.data); 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetTeachSensCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
     {
         res.ret = arm->set_teach_sensitivity(req.data); 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetWorldOffsetCB(xarm_msgs::TCPOffset::Request &req, xarm_msgs::TCPOffset::Response &res)
@@ -1104,33 +1111,33 @@ namespace xarm_api
         if (res.ret >= 0)
             arm->save_conf();
         res.message = "set world offset: ret = " + std::to_string(res.ret); 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetFenceModeCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
     {
         res.ret = arm->set_fence_mode((bool)req.data);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetReducedModeCB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
     {
         res.ret = arm->set_reduced_mode((bool)req.data); 
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetTcpJerkCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res)
     {
         res.ret = arm->set_tcp_jerk(req.data);
         res.message = "set tcp jerk: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::SetJointJerkCB(xarm_msgs::SetFloat32::Request &req, xarm_msgs::SetFloat32::Response &res)
     {
         res.ret = arm->set_joint_jerk(req.data);
         res.message = "set joint jerk: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::GetServoAngleCB(xarm_msgs::GetFloat32List::Request &req, xarm_msgs::GetFloat32List::Response &res)
@@ -1142,7 +1149,7 @@ namespace xarm_api
             tmp += (i == 0 ? "" : ", ") + std::to_string(res.datas[i]);
         }
         res.message = "angles=[ " + tmp + " ]";
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::GetPositionRPYCB(xarm_msgs::GetFloat32List::Request &req, xarm_msgs::GetFloat32List::Response &res)
@@ -1154,7 +1161,7 @@ namespace xarm_api
             tmp += (i == 0 ? "" : ", ") + std::to_string(res.datas[i]);
         }
         res.message = "position=[ " + tmp + " ]";
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::GetPositionAACB(xarm_msgs::GetFloat32List::Request &req, xarm_msgs::GetFloat32List::Response &res)
@@ -1166,7 +1173,7 @@ namespace xarm_api
             tmp += (i == 0 ? "" : ", ") + std::to_string(res.datas[i]);
         }
         res.message = "position=[ " + tmp + " ]";
-        return res.ret >= 0;
+        return true;
     }
 
     bool XArmDriver::GetTgpioBaudRateCB(xarm_msgs::GetInt32::Request &req, xarm_msgs::GetInt32::Response &res)
@@ -1175,7 +1182,7 @@ namespace xarm_api
         res.ret = arm->get_tgpio_modbus_baudrate(&baud_rate);
         res.data = baud_rate;
         res.message = "ret = " + std::to_string(res.ret) + ", current baud_rate = " + std::to_string(baud_rate);
-        return res.ret >= 0;
+        return true;
     }
 
     void XArmDriver::pub_robot_msg(xarm_msgs::RobotMsg &rm_msg)
