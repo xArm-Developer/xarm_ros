@@ -253,7 +253,8 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 #### 手臂模式0:
 * `move_joint`: 关节空间的点到点运动, 用户仅需要给定目标关节位置，运动过程最大关节速度/加速度即可， 对应SDK里的set_servo_angle()函数。 
 * `move_line`: 笛卡尔空间的直线轨迹运动，用户需要给定工具中心点（TCP）目标位置以及笛卡尔速度、加速度，对应SDK里的set_position()函数【不指定交融半径】。  
-* `move_lineb`: 圆弧交融的直线运动，给定一系列中间点以及目标位置。 每两个中间点间为直线轨迹，但在中间点处做一个圆弧过渡（需给定半径）来保证速度连续，对应SDK里的set_position()函数【指定了交融半径】。代码示例请参考[move_test.cpp](./xarm_api/test/move_test.cpp)  
+* `move_lineb`: 笛卡尔空间的直线轨迹运动, 同时与下一条运动指令做交融连续。可以准备一系列已知的中间点以及目标位置。 每两个中间点间为直线轨迹，但在中间点处做一个圆弧过渡（需给定半径）来保证速度连续，对应SDK里的set_position()函数【指定了交融半径和wait=false】。代码示例请参考[move_test.cpp](./xarm_api/test/move_test.cpp) 和 [blended_motion_test.py](./xarm_api/test/blended_motion_test.py)，为了提前进行交融运算，`/xarm/wait_for_finish` 参数必须设置为`false`。    
+* `move_jointb`: 关节空间的点到点运动, 同时与下一条运动指令做交融连续。可以与"move_lineb"混用实现关节和线性运动的交融，只要中间点位已知且交融半径正确设置, 速度将在执行过程中保持连续而不停顿。对应SDK里的set_servo_angle()函数【指定了交融半径和wait=false】。代码示例请参考[blended_motion_test.py](./xarm_api/test/blended_motion_test.py)，为了提前进行交融运算，`/xarm/wait_for_finish` 参数必须设置为`false`。    
 * `move_line_tool`: 基于工具坐标系（而不是基坐标系）的直线运动。对应SDK里的set_tool_position()函数。  
 另外需要 ***注意*** 的是，使用以上4种service之前，需要通过service依次将机械臂模式(mode)设置为0，然后状态(state)设置为0。这些运动指令的意义和详情可以参考产品使用指南。除此之外还提供了其他xarm编程API支持的service调用, 对于相关ros service的定义在 [xarm_msgs目录](./xarm_msgs/)中。  
 * `move_line_aa`: 笛卡尔空间的直线轨迹运动，姿态使用**轴-角** 而不是roll-pitch-yaw欧拉角，在使用此命令之前请仔细查阅xArm用户手册关于轴-角的解释。  
@@ -637,4 +638,22 @@ $ roslaunch d435i_xarm_setup grasp_node_xarm_api.launch
 
 # 8. 其他示例
 &ensp;&ensp;[在examples路径下](./examples)会陆续更新一些其他应用的demo例程，欢迎前去探索研究。
+
+## 8.1 颜色块抓取例子
+- ### Gazebo仿真
+   ```bash
+   # 初始化gazebo场景和move_group
+   $ roslaunch xarm_gazebo xarm_camera_scene.launch robot_dof:=6
+
+   # 运行颜色块识别抓取脚本
+   $ rosrun xarm_gazebo color_recognition.py
+   ```
+- ### 真机+realsense_d435i
+   ```bash
+   # 启动move_group
+   $ roslaunch camera_demo xarm_move_group.launch robot_ip:=192.168.1.15 robot_dof:=6
+
+   # 运行颜色块识别抓取脚本(根据输出交互使用)
+   $ rosrun camera_demo color_recognition.py
+   ```
 

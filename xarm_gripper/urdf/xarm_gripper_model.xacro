@@ -9,7 +9,7 @@
   <xacro:include filename="$(find xarm_gripper)/urdf/xarm_gripper.transmission.xacro" />
   <xacro:include filename="$(find xarm_gripper)/urdf/xarm_gripper.gazebo.xacro" />
 
-  <xacro:macro name="load_gripper" params="prefix:='' attach_to:='' ns:='xarm' xyz:='0 0 0' rpy:='0 0 0' effort_control:='false' velocity_control:='false' ">
+  <xacro:macro name="load_gripper" params="prefix:='' attach_to:='' ns:='xarm' xyz:='0 0 0' rpy:='0 0 0' effort_control:='false' velocity_control:='false' robot_dof:=7 ">
     <!-- gazebo plugin -->
     <!-- <xacro:gazebo_ros_control_plugin namespace="${ns}"/> -->
 
@@ -18,27 +18,28 @@
     <xacro:xarm_gripper_transmission prefix="${prefix}" hard_interface="$(eval 'EffortJointInterface' if ${effort_control} else 'VelocityJointInterface' if ${velocity_control} else 'PositionJointInterface')" />
 
     <xacro:xarm_gripper_gazebo prefix="${prefix}" />
+    <xacro:xarm_gazebo_grasp_fix prefix="${prefix}" palm_link="${prefix}link${robot_dof}" />
 
     <!-- mimic_joint_plugin has to be installed: -->
     <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}left_finger_joint"
-    following_joint="${prefix}drive_joint" mimic_joint="${prefix}left_finger_joint"
-    has_pid="true" multiplier="1.0" max_effort="10.0" />
+      following_joint="${prefix}drive_joint" mimic_joint="${prefix}left_finger_joint"
+      has_pid="false" multiplier="1.0" max_effort="10.0" />
 
     <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}left_inner_knuckle_joint"
-    following_joint="${prefix}drive_joint" mimic_joint="${prefix}left_inner_knuckle_joint"
-    has_pid="true" multiplier="1.0" max_effort="10.0" />
+      following_joint="${prefix}drive_joint" mimic_joint="${prefix}left_inner_knuckle_joint"
+      has_pid="false" multiplier="1.0" max_effort="10.0" />
 
     <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}right_outer_knuckle_joint"
-    following_joint="${prefix}drive_joint" mimic_joint="${prefix}right_outer_knuckle_joint"
-    has_pid="true" multiplier="1.0" max_effort="10.0" />
+      following_joint="${prefix}drive_joint" mimic_joint="${prefix}right_outer_knuckle_joint"
+      has_pid="false" multiplier="1.0" max_effort="10.0" />
 
     <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}right_finger_joint"
-    following_joint="${prefix}drive_joint" mimic_joint="${prefix}right_finger_joint"
-    has_pid="true" multiplier="1.0" max_effort="10.0" />
+      following_joint="${prefix}drive_joint" mimic_joint="${prefix}right_finger_joint"
+      has_pid="false" multiplier="1.0" max_effort="10.0" />
 
     <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}right_inner_knuckle_joint"
-    following_joint="${prefix}drive_joint" mimic_joint="${prefix}right_inner_knuckle_joint"
-    has_pid="true" multiplier="1.0" max_effort="10.0" />
+      following_joint="${prefix}drive_joint" mimic_joint="${prefix}right_inner_knuckle_joint"
+      has_pid="false" multiplier="1.0" max_effort="10.0" />
 
   </xacro:macro>
 </robot>

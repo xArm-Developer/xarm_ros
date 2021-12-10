@@ -412,8 +412,7 @@ namespace xarm_control
 
 	void XArmHW::write(const ros::Time& time, const ros::Duration& period)
 	{
-		if (need_reset())
-		{
+		if (need_reset()) {
 			_reset_limits();
 			return;
 		}
@@ -471,24 +470,45 @@ namespace xarm_control
 
 	bool XArmHW::_xarm_is_not_ready(void)
 	{
-		static int last_err = 0;
-		if (curr_err_ != 0) {
-			// not ready because error_code != 0
+		static int last_err = curr_err_;
+		static int last_state = curr_state_;
+		static int last_mode = curr_mode_;
+		static bool last_not_ready = false;
+
+		bool ready = curr_err_ == 0;
+		if (!ready) {
 			if (last_err != curr_err_) {
-				ROS_ERROR("[ns: %s] xArm Error detected! Code: %d", hw_ns_.c_str(), curr_err_);
 				last_err = curr_err_;
+				ROS_ERROR("[ns: %s] xArm Error detected! Code: %d", hw_ns_.c_str(), curr_err_);
 			}
+			last_not_ready = true;
 			return true;
 		}
 		last_err = 0;
-		if (curr_state_ != 0 && curr_state_ != 1 && curr_state_ != 2) {
-			// not ready because current state can not motion
-			return true; 
-		}
-		if ((ctrl_method_ == VELOCITY ? curr_mode_ != XARM_MODE::VELO_JOINT : curr_mode_ != XARM_MODE::SERVO)) {
-			// not ready because current mode is not correct
+		ready = curr_state_ == 0 || curr_state_ == 1 || curr_state_ == 2;
+		if (!ready) {
+			if (last_state != curr_state_) {
+				last_state = curr_state_;
+				ROS_ERROR("[ns: %s] xArm State detected! State: %d", hw_ns_.c_str(), curr_state_);
+			}
+			last_not_ready = true;
 			return true;
 		}
+		last_state = curr_state_;
+		ready = ctrl_method_ == VELOCITY ? curr_mode_ == XARM_MODE::VELO_JOINT : curr_mode_ == XARM_MODE::SERVO;
+		if (!ready) {
+			if (last_mode != curr_mode_) {
+				last_mode = curr_mode_;
+				ROS_ERROR("[ns: %s] xArm Mode detected! Mode: %d", hw_ns_.c_str(), curr_mode_);
+			}
+			last_not_ready = true;
+			return true;
+		}
+		last_mode = curr_mode_;
+		if (last_not_ready) {
+			ROS_INFO("[ns: %s] xArm is Ready", hw_ns_.c_str());
+		}
+		last_not_ready = false;
 		return false;
 	}
 
