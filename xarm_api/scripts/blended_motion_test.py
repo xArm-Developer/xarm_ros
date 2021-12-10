@@ -84,4 +84,4 @@ if __name__ == "__main__":
 	if blended_motions(dof) == 0:
 		print("execution finished!")
 
-	rospy.set_param('/xarm/wait_for_finish', True) # After sending all blending motion commands, set wait_for_finish back to true.
+	rospy.set_param('/xarm/wait_for_finish', True) # After sending all blending motion commands, you can set wait_for_finish back to true if needed.
