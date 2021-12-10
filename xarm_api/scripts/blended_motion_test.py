@@ -15,10 +15,10 @@ def blended_motions(axis_num):
 	req_lineb.mvacc = 1000 # mm/s^2
 	req_lineb.mvtime = 0 
 	req_lineb.mvradii = 25 # blending radius: 25 mm
-
-	position_list = [[300, 0, 100, -3.14, 0, 0], [300, 200, 100, -3.14, 0, 0], [500, 200, 100, -3.14, 0, 0], [500, -200, 100, -3.14, 0, 0], [300, -200, 100, -3.14, 0, 0]]
+	position_list = [[300, 200, 100, -3.14, 0, 0], [500, 200, 100, -3.14, 0, 0], [500, -200, 100, -3.14, 0, 0], [300, -200, 100, -3.14, 0, 0]]
+	
 	req_jointb = MoveRequest() 
-	req_jointb.mvvelo = 0.35 # rad/s
+	req_jointb.mvvelo = 0.4 # rad/s
 	req_jointb.mvacc = 30 # rad/s^2
 	req_jointb.mvtime = 0 
 	req_jointb.mvradii = 25 # blending radius: 25 mm
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
 	dof = int(sys.argv[1])
 	
-	rospy.wait_for_service('/xarm/move_servo_cart')
+	rospy.wait_for_service('/xarm/move_jointb')
 	rospy.set_param('/xarm/wait_for_finish', True) # return after motion service finish
 	
 	motion_en = rospy.ServiceProxy('/xarm/motion_ctrl', SetAxis)
