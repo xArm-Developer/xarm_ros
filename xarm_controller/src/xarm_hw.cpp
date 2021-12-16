@@ -9,6 +9,7 @@
 
 #define SERVICE_CALL_FAILED 999
 #define SERVICE_IS_PERSISTENT_BUT_INVALID 998
+#define XARM_IS_DISCONNECTED -1
 #define VELO_DURATION 1
 
 namespace xarm_control
@@ -71,16 +72,16 @@ namespace xarm_control
 
 	void XArmHW::clientInit(const std::string& robot_ip, ros::NodeHandle& root_nh)
 	{
-		position_cmd_.resize(dof_);
-		position_cmd_float_.resize(dof_); // command vector must have 7 dimention!
-		position_fdb_.resize(dof_);
-		velocity_cmd_.resize(dof_);
-		velocity_cmd_float_.resize(dof_);
-		velocity_fdb_.resize(dof_);
-		effort_cmd_.resize(dof_);
-		effort_fdb_.resize(dof_);
-
 		prev_cmds_float_.resize(dof_);
+		cmds_float_.resize(dof_); // command vector must have 7 dimention!
+
+		position_cmds_.resize(dof_);
+		velocity_cmds_.resize(dof_);
+		effort_cmds_.resize(dof_);
+
+		position_states_.resize(dof_);
+		velocity_states_.resize(dof_);
+		effort_states_.resize(dof_);
 
 		curr_err_ = 0;
 		curr_state_ = 4;
@@ -95,24 +96,24 @@ namespace xarm_control
 		for(unsigned int j=0; j < dof_; j++)
 	  	{
 			// Create joint state interface for all joints
-			js_interface_.registerHandle(hardware_interface::JointStateHandle(jnt_names_[j], &position_fdb_[j], &velocity_fdb_[j], &effort_fdb_[j]));
+			js_interface_.registerHandle(hardware_interface::JointStateHandle(jnt_names_[j], &position_states_[j], &velocity_states_[j], &effort_states_[j]));
 			switch (ctrl_method_)
 			{
 			case EFFORT:
 				{
-					ej_interface_.registerHandle(hardware_interface::JointHandle(js_interface_.getHandle(jnt_names_[j]), &effort_cmd_[j]));
+					ej_interface_.registerHandle(hardware_interface::JointHandle(js_interface_.getHandle(jnt_names_[j]), &effort_cmds_[j]));
 				}
 				break;
 			case VELOCITY:
 				{
-					vj_interface_.registerHandle(hardware_interface::JointHandle(js_interface_.getHandle(jnt_names_[j]), &velocity_cmd_[j]));
+					vj_interface_.registerHandle(hardware_interface::JointHandle(js_interface_.getHandle(jnt_names_[j]), &velocity_cmds_[j]));
 				}
 				break;
 			case POSITION:
 			default:
 				{
 					ctrl_method_ = POSITION;
-					pj_interface_.registerHandle(hardware_interface::JointHandle(js_interface_.getHandle(jnt_names_[j]), &position_cmd_[j]));
+					pj_interface_.registerHandle(hardware_interface::JointHandle(js_interface_.getHandle(jnt_names_[j]), &position_cmds_[j]));
 				}
 				break;
 			}
@@ -200,17 +201,16 @@ namespace xarm_control
 		pos_fdb_called_ = false;
 		stat_fdb_called_ = false;
 
-		first_read_ = true;
 		read_cnts_ = 0;
 		read_max_time_ = 0;
 		read_total_time_ = 0;
-		std::vector<float> prev_read_angles_;
-		std::vector<float> curr_read_angles_;
 		prev_read_angles_.resize(dof_);
 		curr_read_angles_.resize(dof_);
 		read_duration_ = ros::Duration(0);
 		read_failed_cnts_ = 0;
-		initital_check_ = false;
+
+		initialized_ = false;
+		read_ready_ = false;
 
 		enforce_limits_ = true;
 		if (robot_hw_nh.hasParam("enforce_limits")) {
@@ -244,9 +244,9 @@ namespace xarm_control
 		std::lock_guard<std::mutex> locker(mutex_);
 		for(int j=0; j<dof_; j++)
 		{
-			position_fdb_[j] = data->position[j];
-			velocity_fdb_[j] = data->velocity[j];
-			effort_fdb_[j] = data->effort[j];
+			position_states_[j] = data->position[j];
+			velocity_states_[j] = data->velocity[j];
+			effort_states_[j] = data->effort[j];
 		}
 		last_joint_state_stamp_ = data->header.stamp;
 
@@ -281,29 +281,6 @@ namespace xarm_control
 			ros::Duration(0.1).sleep();
 		}
 		return started;
-	}
-
-	bool XArmHW::_wait_xarm_ready(double timeout)
-	{
-		if(timeout <= 0)
-			return ros::ok() && !_xarm_is_not_ready();
-
-		ros::Time end = ros::Time::now() + ros::Duration(timeout);
-		int ready_cnts = 0;
-		while(ros::ok() && ros::Time::now() < end)
-		{
-			if (_xarm_is_not_ready()) {
-				ready_cnts = 0;
-			}
-			else {
-				ready_cnts += 1;
-				if (ready_cnts >= 20) {
-					break;
-				}
-			}
-			ros::Duration(0.1).sleep();
-		}
-		return ros::ok() && !_xarm_is_not_ready();
 	}
 
 	// void XArmHW::ftsensor_fb_cb(const geometry_msgs::WrenchStamped::ConstPtr& data)
@@ -371,20 +348,11 @@ namespace xarm_control
 
 	void XArmHW::read(const ros::Time& time, const ros::Duration& period)
 	{
-		if (!initital_check_) {
-			initital_check_ = true;
-			if (!_wait_xarm_ready(5.0)) {
-				ROS_ERROR("The Xarm may not be properly connected (ret = 3) or hardware Error/Warning (ret = 1 or 2) exists, PLEASE CHECK or RESTART HARDWARE!!!");
-				ROS_ERROR(" ");
-				ROS_ERROR("Did you specify the correct ros param xarm_robot_ip ? Exitting...");
-				ros::shutdown();
-				exit(1);
-			}
-		}
-
 		read_cnts_ += 1;
 		ros::Time start = ros::Time::now();
+		read_ready_ = _xarm_is_ready_read();
 		read_code_ = xarm.getServoAngle(curr_read_angles_);
+		read_ready_ = read_ready_ && _xarm_is_ready_read();
 		double time_sec = (ros::Time::now() - start).toSec();
 		read_total_time_ += time_sec;
 		if (time_sec > read_max_time_) {
@@ -394,28 +362,40 @@ namespace xarm_control
 		// 	ROS_INFO("[READ] cnt: %ld, max: %f, mean: %f, failed: %ld", read_cnts_, read_max_time_, read_total_time_ / read_cnts_, read_failed_cnts_);
 		// }
 		read_duration_ += period;
-		if (read_code_ == 0) {
+		if (read_code_ == 0 && read_ready_) {
 			for (int j = 0; j < dof_; j++) {
-				position_fdb_[j] = curr_read_angles_[j];
-				velocity_fdb_[j] = first_read_ ? 0.0 : (curr_read_angles_[j] - prev_read_angles_[j]) / read_duration_.toSec();
-				effort_fdb_[j] = 0.0;
+				position_states_[j] = curr_read_angles_[j];
+				velocity_states_[j] = !initialized_ ? 0.0 : (curr_read_angles_[j] - prev_read_angles_[j]) / read_duration_.toSec();
+				effort_states_[j] = 0.0;
 			}
-			first_read_ = false;
+			if (!initialized_) {
+                // initialized_ = _xarm_is_ready_write();
+                for (uint i = 0; i < position_states_.size(); i++) {
+                    position_cmds_[i] = position_states_[i];
+                    velocity_cmds_[i] = 0.0;
+                }
+            }
 			prev_read_angles_.swap(curr_read_angles_);
 			read_duration_ -= read_duration_;
 		}
 		else {
-			read_failed_cnts_ += 1;
-			ROS_ERROR("xArmHW::Read() returns: %d", read_code_);
+			// initialized_ = read_ready_ && _xarm_is_ready_write();
+			if (read_code_) {
+				read_failed_cnts_ += 1;
+				ROS_ERROR("xArmHW::Read() returns: %d", read_code_);
+			}
 		}
 	}
 
 	void XArmHW::write(const ros::Time& time, const ros::Duration& period)
 	{
+		write_duration_ += period;
 		if (need_reset()) {
+			initialized_ = false;
 			_reset_limits();
 			return;
 		}
+		initialized_ = true;
 
 		_enforce_limits(period);
 
@@ -424,22 +404,20 @@ namespace xarm_control
 		{
 		case VELOCITY:
 			{
-				for (int k = 0; k < dof_; k++) { velocity_cmd_float_[k] = (float)velocity_cmd_[k]; }
-				cmd_ret = xarm.veloMoveJoint(velocity_cmd_float_, true, VELO_DURATION);
+				for (int k = 0; k < dof_; k++) { cmds_float_[k] = (float)velocity_cmds_[k]; }
+				cmd_ret = xarm.veloMoveJoint(cmds_float_, true, VELO_DURATION);
 			}
 			break;
 		case POSITION:
 		default:
 			{
-				for (int k = 0; k < dof_; k++) { position_cmd_float_[k] = (float)position_cmd_[k]; }
-				cur_time_ = ros::Time::now();
-				elapsed_ = cur_time_ - prev_time_;
-				if (elapsed_.toSec() > 1 || _check_cmds_is_change(prev_cmds_float_, position_cmd_float_)) {
-					cmd_ret = xarm.setServoJ(position_cmd_float_);
+				for (int k = 0; k < dof_; k++) { cmds_float_[k] = (float)position_cmds_[k]; }
+				if (write_duration_.toSec() > 1 || _check_cmds_is_change(prev_cmds_float_, cmds_float_)) {
+					cmd_ret = xarm.setServoJ(cmds_float_);
 					if (cmd_ret == 0) {
-						prev_time_ = cur_time_;
+						write_duration_ -= write_duration_;
 						for (int i = 0; i < prev_cmds_float_.size(); i++) { 
-							prev_cmds_float_[i] = (float)position_cmd_float_[i];
+							prev_cmds_float_[i] = (float)cmds_float_[i];
 						}
 					}
 				}	
@@ -461,6 +439,56 @@ namespace xarm_control
         return false;
     }
 
+	bool XArmHW::_xarm_is_ready_read(void)
+    {
+        static int last_err = curr_err_;
+        if (curr_err_ != 0) {
+            if (last_err != curr_err_) {
+                ROS_ERROR("[ns: %s] xArm Error detected! Code: %d", hw_ns_.c_str(), curr_err_);
+            }
+        }
+        last_err = curr_err_;
+        return last_err == 0;
+    }
+
+    bool XArmHW::_xarm_is_ready_write(void)
+    {
+        static bool last_not_ready = false;
+        static int last_state = curr_state_;
+        static int last_mode = curr_mode_;
+
+        if (!_xarm_is_ready_read()) {
+            last_not_ready = true;
+            return false;
+        }
+
+        if (curr_state_ > 2) {
+            if (last_state != curr_state_) {
+                last_state = curr_state_;
+                ROS_ERROR("[ns: %s] xArm State detected! State: %d", hw_ns_.c_str(), curr_state_);
+            }
+            last_not_ready = true;
+            return false;
+        }
+        last_state = curr_state_;
+
+        if (!(ctrl_method_ == VELOCITY ? curr_mode_ == 4 : curr_mode_ == 1)) {
+            if (last_mode != curr_mode_) {
+                last_mode = curr_mode_;
+                ROS_ERROR("[ns: %s] xArm Mode detected! Mode: %d", hw_ns_.c_str(), curr_mode_);
+            }
+            last_not_ready = true;
+            return false;
+        }
+        last_mode = curr_mode_;
+
+        if (last_not_ready) {
+            ROS_INFO("[ns: %s] xArm is Ready", hw_ns_.c_str());
+        }
+        last_not_ready = false;
+        return true;
+    }
+
 	void XArmHW::get_status(int state_mode_err[3])
 	{
 		state_mode_err[0] = curr_state_;
@@ -468,53 +496,9 @@ namespace xarm_control
 		state_mode_err[2] = curr_err_;
 	}
 
-	bool XArmHW::_xarm_is_not_ready(void)
-	{
-		static int last_err = curr_err_;
-		static int last_state = curr_state_;
-		static int last_mode = curr_mode_;
-		static bool last_not_ready = false;
-
-		bool ready = curr_err_ == 0;
-		if (!ready) {
-			if (last_err != curr_err_) {
-				last_err = curr_err_;
-				ROS_ERROR("[ns: %s] xArm Error detected! Code: %d", hw_ns_.c_str(), curr_err_);
-			}
-			last_not_ready = true;
-			return true;
-		}
-		last_err = 0;
-		ready = curr_state_ == 0 || curr_state_ == 1 || curr_state_ == 2;
-		if (!ready) {
-			if (last_state != curr_state_) {
-				last_state = curr_state_;
-				ROS_ERROR("[ns: %s] xArm State detected! State: %d", hw_ns_.c_str(), curr_state_);
-			}
-			last_not_ready = true;
-			return true;
-		}
-		last_state = curr_state_;
-		ready = ctrl_method_ == VELOCITY ? curr_mode_ == XARM_MODE::VELO_JOINT : curr_mode_ == XARM_MODE::SERVO;
-		if (!ready) {
-			if (last_mode != curr_mode_) {
-				last_mode = curr_mode_;
-				ROS_ERROR("[ns: %s] xArm Mode detected! Mode: %d", hw_ns_.c_str(), curr_mode_);
-			}
-			last_not_ready = true;
-			return true;
-		}
-		last_mode = curr_mode_;
-		if (last_not_ready) {
-			ROS_INFO("[ns: %s] xArm is Ready", hw_ns_.c_str());
-		}
-		last_not_ready = false;
-		return false;
-	}
-
 	bool XArmHW::need_reset()
 	{
-		bool is_not_ready = _xarm_is_not_ready();
+		bool is_not_ready = !_xarm_is_ready_write();
 		bool write_succeed = write_code_ == 0;
 		if (!write_succeed) {
 			int ret = xarm.setState(XARM_STATE::STOP);
@@ -524,9 +508,14 @@ namespace xarm_control
 				ros::shutdown();
 				exit(1);
 			}
+			else if (write_code_ == XARM_IS_DISCONNECTED) {
+				ROS_ERROR("xArm is disconnected, ros shutdown");
+				ros::shutdown();
+				exit(1);
+			}
 			write_code_ = 0;
 		}
-		return is_not_ready || !write_succeed || read_code_ != 0;
+		return is_not_ready || !write_succeed || read_code_ != 0 || !read_ready_;
 	}
 }
 

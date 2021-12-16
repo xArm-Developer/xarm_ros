@@ -74,29 +74,29 @@ namespace xarm_control
 
 		unsigned int dof_;
 		std::vector<std::string> jnt_names_;
-		std::vector<double> position_cmd_;
-		std::vector<float> position_cmd_float_;
-		std::vector<double> velocity_cmd_;
-		std::vector<float> velocity_cmd_float_;
-		std::vector<double> effort_cmd_;
 
 		std::vector<float> prev_cmds_float_;
+        std::vector<float> cmds_float_;
+        std::vector<double> position_cmds_;
+        std::vector<double> velocity_cmds_;
+        std::vector<double> effort_cmds_;
+        std::vector<double> position_states_;
+        std::vector<double> velocity_states_;
+        std::vector<double> effort_states_;
 
-		std::vector<double> position_fdb_;
-		std::vector<double> velocity_fdb_;
-		std::vector<double> effort_fdb_;
+		bool initialized_;
+		bool read_ready_;
 
-		bool first_read_;
 		long int read_cnts_;
+		long int read_failed_cnts_;
 		double read_max_time_;
 		double read_total_time_;
 		std::vector<float> prev_read_angles_;
 		std::vector<float> curr_read_angles_;
-		ros::Duration read_duration_;
-		bool read_succeed_;
-		long int read_failed_cnts_;
-		bool initital_check_;
 
+		ros::Duration read_duration_;
+		ros::Duration write_duration_;
+		
 		bool enforce_limits_;
 
 		// double force_[3];
@@ -112,10 +112,6 @@ namespace xarm_control
 		
 		ros::Time last_joint_state_stamp_;
 		// ros::Time last_ftsensor_stamp_;
-
-		ros::Time cur_time_;
-		ros::Time prev_time_;
-		ros::Duration elapsed_;
 		
 		xarm_api::XArmROSClient xarm;
 
@@ -147,9 +143,8 @@ namespace xarm_control
 		void _reset_limits(void);
 		void _enforce_limits(const ros::Duration& period);
 		bool _check_cmds_is_change(std::vector<float> prev, std::vector<float> cur, double threshold = 0.0001);
-
-		bool _xarm_is_not_ready(void);
-		bool _wait_xarm_ready(double timeout);
+		bool _xarm_is_ready_read(void);
+        bool _xarm_is_ready_write(void);
 	};
 
 }
