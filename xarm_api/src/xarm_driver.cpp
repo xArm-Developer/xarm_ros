@@ -272,7 +272,11 @@ namespace xarm_api
         int err = 0;
         ret = arm->get_gripper_err_code(&err);
         if (err != 0) {
-            gh.setCanceled(result);
+            try {
+                gh.setCanceled(result);
+            } catch (std::exception &e) {
+                ROS_ERROR("goal_handle setCanceled exception, ex=%s", e.what());
+            }
             ROS_ERROR("get_gripper_err_code, ret=%d, err=%d", ret, err);
             return;
         }
@@ -282,7 +286,11 @@ namespace xarm_api
         ret = arm->set_gripper_mode(0);
         if (ret != 0) {
             result.position = fabs(max_gripper_pos - cur_pos) / 1000;
-            gh.setCanceled(result);
+            try {
+                gh.setCanceled(result);
+            } catch (std::exception &e) {
+                ROS_ERROR("goal_handle setCanceled exception, ex=%s", e.what());
+            }
             ret = arm->get_gripper_err_code(&err);
             ROS_WARN("set_gripper_mode, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
             return;
@@ -290,7 +298,11 @@ namespace xarm_api
         ret = arm->set_gripper_enable(true);
         if (ret != 0) {
             result.position = fabs(max_gripper_pos - cur_pos) / 1000;
-            gh.setCanceled(result);
+            try {
+                gh.setCanceled(result);
+            } catch (std::exception &e) {
+                ROS_ERROR("goal_handle setCanceled exception, ex=%s", e.what());
+            }
             ret = arm->get_gripper_err_code(&err);
             ROS_WARN("set_gripper_enable, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
             return;
@@ -298,7 +310,11 @@ namespace xarm_api
         ret = arm->set_gripper_speed(3000);
         if (ret != 0) {
             result.position = fabs(max_gripper_pos - cur_pos) / 1000;
-            gh.setCanceled(result);
+            try {
+                gh.setCanceled(result);
+            } catch (std::exception &e) {
+                ROS_ERROR("goal_handle setCanceled exception, ex=%s", e.what());
+            }
             ret = arm->get_gripper_err_code(&err);
             ROS_WARN("set_gripper_speed, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
             return;
@@ -320,7 +336,11 @@ namespace xarm_api
             ret = arm->get_gripper_position(&cur_pos);
             if (ret == 0) {
                 feedback.position = fabs(max_gripper_pos - cur_pos) / 1000;
-                gh.publishFeedback(feedback);
+                try {
+                    gh.publishFeedback(feedback);
+                } catch (std::exception &e) {
+                    ROS_ERROR("goal_handle publishFeedback exception, ex=%s", e.what());
+                }
                 _pub_gripper_joint_states(fabs(max_gripper_pos - cur_pos));
             }
         }
@@ -328,7 +348,11 @@ namespace xarm_api
         ROS_INFO("move finish, cur_pos=%f", cur_pos);
         if (ros::ok()) {
             result.position = fabs(max_gripper_pos - cur_pos) / 1000;
-            gh.setSucceeded(result);
+            try {
+                gh.setSucceeded(result);
+            } catch (std::exception &e) {
+                ROS_ERROR("goal_handle setSucceeded exception, ex=%s", e.what());
+            }
             ROS_INFO("Goal succeeded");
         }
     }
