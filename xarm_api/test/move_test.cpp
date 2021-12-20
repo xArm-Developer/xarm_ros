@@ -25,31 +25,6 @@ int go_home_test(xarm_msgs::Move srv, ros::ServiceClient client)
     return 0;
 }
 
-int servoj_test(xarm_msgs::Move srv, ros::ServiceClient client)
-{
-        std::vector<float> joint[2] = {{0, 0, 0, 0, 0, 0, 0}, 
-                                 {0, -0.3, 0, 0, 0, 0, 0}};
-
-    srv.request.mvvelo = 0;
-    srv.request.mvacc = 0;
-    srv.request.mvtime = 0;
-    for (int i = 0; i < 2; i++) 
-    {
-        srv.request.pose = joint[i];
-        if(client.call(srv))
-        {
-            ROS_INFO("%s\n", srv.response.message.c_str());
-        }
-        else
-        {
-            ROS_ERROR("Failed to call service move_servoj");
-            return 1;
-        }
-        ros::Duration(2).sleep(); //2s
-    }
-    return 0;
-}
-
 int move_lineb_test(xarm_msgs::Move srv, ros::ServiceClient client)
 {
 	std::vector<float> pose[5] = {  {300, 0, 100, -3.14, 0, 0},

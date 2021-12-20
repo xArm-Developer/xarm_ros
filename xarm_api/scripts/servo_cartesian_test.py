@@ -5,7 +5,7 @@ import time
 import rospy
 from xarm_msgs.srv import *
 
-def servo_cartesian_tool(start_pose, freq, time_secs):
+def servo_cartesian_motion(start_pose, freq, time_secs):
 	servo_cart = rospy.ServiceProxy('/xarm/move_servo_cart', Move)
 	req = MoveRequest() 
 	req.pose = start_pose
@@ -29,7 +29,7 @@ def servo_cartesian_tool(start_pose, freq, time_secs):
 		return ret
 
 	except rospy.ServiceException as e:
-		print("servo_cartesian (tool) Service call failed: %s"%e)
+		print("servo_cartesian Service call failed: %s"%e)
 		return -1
 
 
@@ -71,5 +71,5 @@ if __name__ == "__main__":
 	time_secs = 5.0
 
 	time.sleep(2.0)
-	if servo_cartesian_tool(start_pose, freq, time_secs) == 0:
+	if servo_cartesian_motion(start_pose, freq, time_secs) == 0:
 		print("execution finished successfully!")
