@@ -6,9 +6,8 @@ Panels:
       Expanded:
         - /MotionPlanning1
         - /MotionPlanning1/Planning Request1
-        - /MotionPlanning1/Planning Metrics1
-        - /MotionPlanning1/Planned Path1
         - /MarkerArray1/Namespaces1
+        - /TF1/Frames1
       Splitter Ratio: 0.7425600290298462
     Tree Height: 390
   - Class: rviz/Help
@@ -192,7 +191,7 @@ Visualization Manager:
         Scene Alpha: 1
         Scene Color: 50; 230; 50
         Scene Display Time: 0.20000000298023224
-        Show Scene Geometry: false
+        Show Scene Geometry: true
         Voxel Coloring: Z-Axis
         Voxel Rendering: Occupied Voxels
       Scene Robot:
@@ -295,7 +294,13 @@ Visualization Manager:
       Marker Topic: /visualization_marker_array
       Name: MarkerArray
       Namespaces:
-        {}
+        axes: true
+        bowl top left: true
+        bowl top right: true
+        chips can side: true
+        mug side: true
+        mug top: true
+        probabilities: true
       Queue Size: 100
       Value: true
     - Alpha: 1
@@ -304,7 +309,7 @@ Visualization Manager:
       Axes Radius: 0.009999999776482582
       Class: rviz/PoseArray
       Color: 238; 238; 236
-      Enabled: true
+      Enabled: false
       Head Length: 0.07000000029802322
       Head Radius: 0.029999999329447746
       Name: PoseArray
@@ -313,7 +318,7 @@ Visualization Manager:
       Shape: Arrow (Flat)
       Topic: /object_pose
       Unreliable: false
-      Value: true
+      Value: false
     - Alpha: 1
       Arrow Length: 0.30000001192092896
       Axes Length: 0.30000001192092896
@@ -330,6 +335,111 @@ Visualization Manager:
       Topic: /hand_pose
       Unreliable: false
       Value: false
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic: /camera/pointcloud
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
+    - Class: rviz/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+        left_finger:
+          Value: false
+        left_inner_knuckle:
+          Value: false
+        left_outer_knuckle:
+          Value: false
+        link1:
+          Value: false
+        link2:
+          Value: false
+        link3:
+          Value: false
+        link4:
+          Value: false
+        link5:
+          Value: false
+        link6:
+          Value: false
+        link_base:
+          Value: false
+        link_eef:
+          Value: false
+        link_tcp:
+          Value: false
+        right_finger:
+          Value: false
+        right_inner_knuckle:
+          Value: false
+        right_outer_knuckle:
+          Value: false
+        world:
+          Value: false
+        xarm_gripper_base_link:
+          Value: false
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        world:
+          link_base:
+            link1:
+              link2:
+                link3:
+                  link4:
+                    link5:
+                      link6:
+                        link_eef:
+                          xarm_gripper_base_link:
+                            left_inner_knuckle:
+                              {}
+                            left_outer_knuckle:
+                              left_finger:
+                                {}
+                            link_tcp:
+                              {}
+                            right_inner_knuckle:
+                              {}
+                            right_outer_knuckle:
+                              right_finger:
+                                {}
+      Update Interval: 0
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /mode_switch_text
+      Name: Marker
+      Namespaces:
+        teleop_mode: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -346,25 +456,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.6039469242095947
+      Distance: 2.792236566543579
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.2597702145576477
-        Y: 0.2586096525192261
-        Z: -2.3990864974621218e-6
+        X: 0.22327226400375366
+        Y: -0.09467828273773193
+        Z: -2.2798772079113405e-6
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.37979650497436523
+      Pitch: 1.009796142578125
       Target Frame: world
       Value: XYOrbit (rviz)
-      Yaw: 2.586747407913208
+      Yaw: 3.1217501163482666
     Saved: ~
 Window Geometry:
   Displays:
@@ -382,5 +492,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1509
-  X: 1051
-  Y: 27
+  X: 2560
+  Y: 0

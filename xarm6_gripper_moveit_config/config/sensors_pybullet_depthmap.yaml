@@ -1,12 +1,12 @@
 sensors:
   - sensor_plugin: occupancy_map_monitor/DepthImageOctomapUpdater
-    image_topic: /camera/depth/image_raw   
+    image_topic: /camera/depth/image_raw  #/camera/depth/color/image_raw   
     # image_topic: /image_proc_resize/image
     queue_size: 5
     near_clipping_plane_distance: 0.3
     far_clipping_plane_distance: 3.0
-    shadow_threshold: 0.2
-    padding_scale: 4.0
-    padding_offset: 0.05  # in cm
-    max_update_rate: 0.5   # in Hz
+    shadow_threshold: 0.3
+    padding_scale: 1.0
+    padding_offset: 0.01  # in m
+    max_update_rate: 1   # in Hz
     filtered_cloud_topic: filtered_cloud
