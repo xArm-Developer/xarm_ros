@@ -640,7 +640,17 @@ $ roslaunch d435i_xarm_setup grasp_node_xarm_api.launch
 &ensp;&ensp;[在examples路径下](./examples)会陆续更新一些其他应用的demo例程，欢迎前去探索研究。
 
 ## 8.1 颜色块抓取例子
-- ### Gazebo仿真
+- ### 下载gazebo_grasp_plugin插件(melodic以上支持)
+   ```bash
+   # 进入ros命名空间src目录
+   $ cd ~/catkin_ws/src/
+   # 下载(针对不同ros版本请切换到对应分支)
+   $ git clone https://github.com/JenniferBuehler/gazebo-pkgs.git
+   # 编译
+   $ cd ..
+   $ catkin_make
+   ```
+- ### Gazebo仿真(melodic以上支持)
    ```bash
    # 初始化gazebo场景和move_group
    $ roslaunch xarm_gazebo xarm_camera_scene.launch robot_dof:=6

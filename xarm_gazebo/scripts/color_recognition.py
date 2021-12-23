@@ -1,14 +1,23 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import cv2
+import sys
 import rospy
 import math
-import time
-import queue
 import random
 import threading
 import numpy as np
 import moveit_commander
 from cv_bridge import CvBridge
 from sensor_msgs.msg import CompressedImage
+
+if sys.version_info < (3, 0):
+    PY3 = False
+    import Queue as queue
+else:
+    PY3 = True
+    import queue
+    
 
 COLOR_DICT = {
     'red': {'lower': np.array([0, 43, 46]), 'upper': np.array([10, 255, 255])},
@@ -51,6 +60,7 @@ class GripperCtrl(object):
 class XArmCtrl(object):
     def __init__(self, dof):
         self._commander = moveit_commander.move_group.MoveGroupCommander('xarm{}'.format(dof))
+        self.dof = int(dof)
         self._init()
     
     def _init(self):
@@ -92,26 +102,34 @@ class XArmCtrl(object):
         try:
             pose_target = self._commander.get_current_pose().pose
             if relative:
-                pose_target.position.x += x / 1000 if x is not None else 0
-                pose_target.position.y += y / 1000 if y is not None else 0
-                pose_target.position.z += z / 1000 if z is not None else 0
+                pose_target.position.x += x / 1000.0 if x is not None else 0
+                pose_target.position.y += y / 1000.0 if y is not None else 0
+                pose_target.position.z += z / 1000.0 if z is not None else 0
                 pose_target.orientation.x += ox if ox is not None else 0
                 pose_target.orientation.y += oy if oy is not None else 0
                 pose_target.orientation.z += oz if oz is not None else 0
             else:
-                pose_target.position.x = x / 1000 if x is not None else pose_target.position.x
-                pose_target.position.y = y / 1000 if y is not None else pose_target.position.y
-                pose_target.position.z = z / 1000 if z is not None else pose_target.position.z
+                pose_target.position.x = x / 1000.0 if x is not None else pose_target.position.x
+                pose_target.position.y = y / 1000.0 if y is not None else pose_target.position.y
+                pose_target.position.z = z / 1000.0 if z is not None else pose_target.position.z
                 pose_target.orientation.x = ox if ox is not None else pose_target.orientation.x
                 pose_target.orientation.y = oy if oy is not None else pose_target.orientation.y
                 pose_target.orientation.z = oz if oz is not None else pose_target.orientation.z
             print('move to position=[{:.2f}, {:.2f}, {:.2f}], orientation=[{:.6f}, {:.6f}, {:.6f}]'.format(
-                pose_target.position.x * 1000, pose_target.position.y * 1000, pose_target.position.z * 1000,
+                pose_target.position.x * 1000.0, pose_target.position.y * 1000.0, pose_target.position.z * 1000.0,
                 pose_target.orientation.x, pose_target.orientation.y, pose_target.orientation.z
             ))
-            self._commander.set_pose_target(pose_target)
-            ret = self._commander.go(wait=wait)
-            print('move to finish, ret={}'.format(ret))
+            if self.dof == 7:
+                path, fraction = self._commander.compute_cartesian_path([pose_target], 0.005, 0.0)
+                if fraction < 0.9:
+                    ret = False
+                else:
+                    ret = self._commander.execute(path, wait=wait)
+                print('move to finish, ret={}, fraction={}'.format(ret, fraction))
+            else:
+                self._commander.set_pose_target(pose_target)
+                ret = self._commander.go(wait=wait)
+                print('move to finish, ret={}'.format(ret))
             return ret
         except Exception as e:
             print('[Ex] moveto exception: {}'.format(e))
@@ -132,11 +150,11 @@ class GazeboMotionThread(threading.Thread):
     
     @staticmethod
     def _rect_to_move_params(rect):
-        return int((466 - rect[0][1]) * 900 / 460 + 253.3), int((552 - rect[0][0]) * 900 / 460 - 450), rect[2] - 90
+        return int((466 - rect[0][1]) * 900.0 / 460.0 + 253.3), int((552 - rect[0][0]) * 900.0 / 460.0 - 450), rect[2] - 90
 
     def run(self):
         while True:
-            self._xarm_ctrl.set_joint(0)
+            # self._xarm_ctrl.set_joint(0)
             self._gripper_ctrl.open()
             if not self._xarm_ctrl.moveto(z=self._safe_z):
                 continue
@@ -155,9 +173,9 @@ class GazeboMotionThread(threading.Thread):
             ret = self._xarm_ctrl.moveto(x=x, y=y, z=self._safe_z)
             if not ret:
                 continue
-            ret = self._xarm_ctrl.set_joint(angle)
-            if not ret:
-                continue
+            # ret = self._xarm_ctrl.set_joint(angle)
+            # if not ret:
+            #     continue
             ret = self._xarm_ctrl.moveto(x=x, y=y, z=self._grab_z)
             if not ret:
                 continue
@@ -201,7 +219,10 @@ def get_recognition_rect(frame, lower=COLOR_DICT['red']['lower'], upper=COLOR_DI
         if rect[1][0] < 20 or rect[1][1] < 20:
             continue
         # print(rect)
-        box = cv2.boxPoints(rect)
+        if PY3:
+            box = cv2.boxPoints(rect)
+        else:
+            box = cv2.cv.BoxPoints(rect)
         cv2.drawContours(frame, [np.int0(box)], -1, (0, 255, 255), 1)
         rects.append(rect)
     
