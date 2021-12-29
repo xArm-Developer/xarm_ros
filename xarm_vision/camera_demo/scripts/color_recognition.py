@@ -1,15 +1,23 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import sys
 import os
 import cv2
 import rospy
 import time
 import math
-import queue
 import yaml
 import random
 import threading
 import numpy as np
 import moveit_commander
+
+if sys.version_info < (3, 0):
+    PY3 = False
+    import Queue as queue
+else:
+    PY3 = True
+    import queue
 
 COLOR_DICT = {
     'red': {'lower': np.array([0, 43, 46]), 'upper': np.array([10, 255, 255])},
@@ -94,21 +102,21 @@ class XArmCtrl(object):
         try:
             pose_target = self._commander.get_current_pose().pose
             if relative:
-                pose_target.position.x += x / 1000 if x is not None else 0
-                pose_target.position.y += y / 1000 if y is not None else 0
-                pose_target.position.z += z / 1000 if z is not None else 0
+                pose_target.position.x += x / 1000.0 if x is not None else 0
+                pose_target.position.y += y / 1000.0 if y is not None else 0
+                pose_target.position.z += z / 1000.0 if z is not None else 0
                 pose_target.orientation.x += ox if ox is not None else 0
                 pose_target.orientation.y += oy if oy is not None else 0
                 pose_target.orientation.z += oz if oz is not None else 0
             else:
-                pose_target.position.x = x / 1000 if x is not None else pose_target.position.x
-                pose_target.position.y = y / 1000 if y is not None else pose_target.position.y
-                pose_target.position.z = z / 1000 if z is not None else pose_target.position.z
+                pose_target.position.x = x / 1000.0 if x is not None else pose_target.position.x
+                pose_target.position.y = y / 1000.0 if y is not None else pose_target.position.y
+                pose_target.position.z = z / 1000.0 if z is not None else pose_target.position.z
                 pose_target.orientation.x = ox if ox is not None else pose_target.orientation.x
                 pose_target.orientation.y = oy if oy is not None else pose_target.orientation.y
                 pose_target.orientation.z = oz if oz is not None else pose_target.orientation.z
             print('move to position=[{:.2f}, {:.2f}, {:.2f}], orientation=[{:.6f}, {:.6f}, {:.6f}]'.format(
-                pose_target.position.x * 1000, pose_target.position.y * 1000, pose_target.position.z * 1000,
+                pose_target.position.x * 1000.0, pose_target.position.y * 1000.0, pose_target.position.z * 1000.0,
                 pose_target.orientation.x, pose_target.orientation.y, pose_target.orientation.z
             ))
             self._commander.set_pose_target(pose_target)
@@ -122,7 +130,10 @@ class XArmCtrl(object):
 
 class MotionThread(threading.Thread):
     def __init__(self, que, **kwargs):
-        super().__init__()
+        if PY3:
+            super().__init__()
+        else:
+            super(MotionThread, self).__init__()
         self.que = que
         self.daemon = True
         self.in_motion = True
@@ -302,7 +313,7 @@ class MotionThread(threading.Thread):
             self._fixed_point,  # Fixed Point
         ]
         for p in tmp_poses:
-            poses.append([(poses[0][0] + p[0]) / 2, (poses[0][1] + p[1]) / 2, p[2]])
+            poses.append([(poses[0][0] + p[0]) / 2.0, (poses[0][1] + p[1]) / 2.0, p[2]])
             poses.append(p)
 
         for p in poses:
@@ -314,15 +325,15 @@ class MotionThread(threading.Thread):
         params = []
 
         for i in range(1, len(rects), 2):
-            xp1 = abs(poses[0][0] - poses[i][0]) / abs(rects[0][0][1] - rects[i][0][1])
-            yp1 = abs(poses[0][1] - poses[i][1]) / abs(rects[0][0][0] - rects[i][0][0])
-            xp = abs(poses[0][0] - poses[i+1][0]) / abs(rects[0][0][1] - rects[i+1][0][1])
-            yp = abs(poses[0][1] - poses[i+1][1]) / abs(rects[0][0][0] - rects[i+1][0][0])
+            xp1 = abs(poses[0][0] - poses[i][0]) / float(abs(rects[0][0][1] - rects[i][0][1]))
+            yp1 = abs(poses[0][1] - poses[i][1]) / float(abs(rects[0][0][0] - rects[i][0][0]))
+            xp = abs(poses[0][0] - poses[i+1][0]) / float(abs(rects[0][0][1] - rects[i+1][0][1]))
+            yp = abs(poses[0][1] - poses[i+1][1]) / float(abs(rects[0][0][0] - rects[i+1][0][0]))
 
             print('[{}] Xp1: {}, Yp1: {}, Xp: {}, Yp: {}'.format(i, xp1, yp1, xp, yp))
             params.append([
-                (xp, (xp1 - xp) / abs(rects[i][0][1] - rects[i-1][0][1])),
-                (yp, (yp1 - yp) / abs(rects[i][0][0] - rects[i-1][0][0])),
+                (xp, (xp1 - xp) / float(abs(rects[i][0][1] - rects[i-1][0][1]))),
+                (yp, (yp1 - yp) / float(abs(rects[i][0][0] - rects[i-1][0][0]))),
             ])
 
         self._params = {
@@ -423,7 +434,10 @@ def get_recognition_rect(frame, lower=COLOR_DICT['red']['lower'], upper=COLOR_DI
         if rect[1][0] < 20 or rect[1][1] < 20:
             continue
         # print(rect)
-        box = cv2.boxPoints(rect)
+        if PY3:
+            box = cv2.boxPoints(rect)
+        else:
+            box = cv2.cv.BoxPoints(rect)
         cv2.drawContours(frame, [np.int0(box)], -1, (0, 255, 255), 1)
         rects.append(rect)
     

@@ -29,6 +29,6 @@
     <xacro:kinect_v2  parent="link_base">
     </xacro:kinect_v2> -->
     <xacro:include filename="$(find xarm_description)/urdf/camera.gazebo.xacro" />
-    <xacro:camera_gazebo prefix="${prefix}" />
+    <xacro:camera_gazebo prefix="$(arg prefix)" />
   </xacro:if>
 </robot>

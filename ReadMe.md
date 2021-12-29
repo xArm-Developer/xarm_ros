@@ -41,6 +41,7 @@ For simplified Chinese version: [简体中文版](./ReadMe_cn.md)
     * [7.2 Hand-eye Calibration Demo](#72-hand-eye-calibration-demo)
     * [7.3 Vision Guided Grasping Demo](#73-vision-guided-grasping-demo)
     * [7.4 Adding RealSense D435i model to simulated xArm](#74-adding-realsense-d435i-model-to-simulated-xarm)
+    * [7.5 Color Cube Grasping Demo (Simulation + Real Hardware)](#75-color-cube-grasping-demo)
 * [8. Other Examples](#8-other-examples)
     * [8.1 Multi-xArm5 (separate control)](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#1-multi_xarm5-controlled-separately)
     * [8.2 Servo_Cartesian](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
@@ -49,7 +50,7 @@ For simplified Chinese version: [简体中文版](./ReadMe_cn.md)
     * [8.5 An example of demonstrating redundancy resolution using MoveIt](https://github.com/xArm-Developer/xarm_ros/tree/master/examples/xarm7_redundancy_res)
 
 # 1. Introduction
-   &ensp;&ensp;This repository contains the 3D models of xArm series and demo packages for ROS development and simulations.Developing and testing environment: Ubuntu 16.04 + ROS Kinetic/Melodic.  
+   &ensp;&ensp;This repository contains the 3D models of xArm series and demo packages for ROS development and simulations.Developing and testing environment: Ubuntu 16.04/18.04/20.04 + ROS Kinetic/Melodic/Noetic.  
    ***Instructions below is based on xArm7, other model user can replace 'xarm7' with 'xarm6' or 'xarm5' where applicable.***
 
 # 2. Update Summary
@@ -650,6 +651,35 @@ For installation with camera stand provided by UFACTORY, the cam model can be at
 1.Together with xArm Gripper model: Set `add_realsense_d435i` default value to be `true` in [xarm7_with_gripper.xacro](./xarm_description/urdf/xarm7_with_gripper.xacro).  
 2.Together with xArm Vacuum Gripper model: Set `add_realsense_d435i` default value to be `true` in [xarm7_with_vacuum_gripper.xacro](./xarm_description/urdf/xarm7_with_vacuum_gripper.xacro).  
 3.Purely the d435i: Set `add_realsense_d435i` default value to be `true` in [xarm7_robot.urdf.xacro](./xarm_description/urdf/xarm7_robot.urdf.xacro).  
+
+## 7.5 Color Cube Grasping Demo
+
+### 7.5.1 Download 'gazebo_grasp_plugin' for successful grasp simulation (ROS Melodic and later)
+```bash
+ # enter source directory of ROS workspace:
+ $ cd ~/catkin_ws/src/
+ # Download through git (mind to checkout the proper branch):
+ $ git clone https://github.com/JenniferBuehler/gazebo-pkgs.git
+ # Compile:
+ $ cd ..
+ $ catkin_make
+```
+### 7.5.2 Gazebo grasping simulation (ROS Melodic and later)
+```bash
+ # Initialize gazebo scene and move_group:
+ $ roslaunch xarm_gazebo xarm_camera_scene.launch robot_dof:=6
+
+ # In another terminal, run the color recognition and grasping script:
+ $ rosrun xarm_gazebo color_recognition.py
+```
+### 7.5.3 Real xArm and Intel realsense_d435i hardware
+```bash
+ # launch move_group:
+ $ roslaunch camera_demo xarm_move_group.launch robot_ip:=192.168.1.15 robot_dof:=6
+
+ # In another terminal, run the color recognition and grasping script (use with interaction prompt):
+ $ rosrun camera_demo color_recognition.py
+```
 
 
 # 8. Other Examples

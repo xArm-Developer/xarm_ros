@@ -46,7 +46,7 @@
     <arg name="add_gripper" value="true" />
   </include>
 
-  <arg name="xarm_traj_controller" value="$(eval 'xarm' + str(arg('robot_dof')) + '_traj_controller_velocity' if arg('velocity_control') else 'xarm6_traj_controller')" />
+  <arg name="xarm_traj_controller" value="$(eval 'xarm' + str(arg('robot_dof')) + ('_traj_controller_velocity' if arg('velocity_control') else '_traj_controller'))" />
   <arg name="gripper_trajectory_controller" value="$(eval 'gripper_trajectory_controller_velocity' if arg('velocity_control') else 'gripper_trajectory_controller')" />
   <remap from="arm_controller/follow_joint_trajectory" to="/$(arg namespace)/$(arg xarm_traj_controller)/follow_joint_trajectory"/>
   <remap from="gripper_controller/follow_joint_trajectory" to="/$(arg namespace)/$(arg gripper_trajectory_controller)/follow_joint_trajectory"/>

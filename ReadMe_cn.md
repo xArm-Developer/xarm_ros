@@ -36,6 +36,7 @@
     * [7.2 手眼标定示例](#72-手眼标定示例)
     * [7.3 3D视觉抓取示例](#73-3D视觉抓取示例)
     * [7.4 在仿真的xArm模型末端添加RealSense D435i模型](#74-在仿真的xarm模型末端添加realsense-d435i模型)
+    * [7.5 颜色块抓取例子 (仿真+真机)](#75-颜色块抓取例子)
 * [8. 其他示例](#8-其他示例)
     * [8.1 两台xArm5 (两进程独立控制)](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#1-multi_xarm5-controlled-separately)
     * [8.2 Servo_Cartesian 笛卡尔位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
@@ -635,25 +636,34 @@ $ roslaunch d435i_xarm_setup grasp_node_xarm_api.launch
 2.同时带真空吸头的模型： 设置[xarm7_with_vacuum_gripper.xacro](./xarm_description/urdf/xarm7_with_vacuum_gripper.xacro)的`add_realsense_d435i`参数为`true`。  
 3.单纯附加相机在末端： 设置[xarm7_robot.urdf.xacro](./xarm_description/urdf/xarm7_robot.urdf.xacro)中`add_realsense_d435i`的默认值为`true`。  
 
+## 7.5 颜色块抓取例子
+
+### 7.5.1 下载gazebo_grasp_plugin插件, 用于抓取仿真(melodic以上支持)
+```bash
+ # 进入ros命名空间src目录
+ $ cd ~/catkin_ws/src/
+ # 下载(针对不同ros版本请切换到对应分支)
+ $ git clone https://github.com/JenniferBuehler/gazebo-pkgs.git
+ # 编译
+ $ cd ..
+ $ catkin_make
+```
+### 7.5.2 Gazebo仿真(melodic以上支持)
+```bash
+ # 初始化gazebo场景和move_group
+ $ roslaunch xarm_gazebo xarm_camera_scene.launch robot_dof:=6
+
+ # 运行颜色块识别抓取脚本
+ $ rosrun xarm_gazebo color_recognition.py
+```
+### 7.5.3 真机+realsense_d435i
+```bash
+ # 启动move_group
+ $ roslaunch camera_demo xarm_move_group.launch robot_ip:=192.168.1.15 robot_dof:=6
+
+ # 运行颜色块识别抓取脚本(根据输出交互使用)
+ $ rosrun camera_demo color_recognition.py
+```
 
 # 8. 其他示例
 &ensp;&ensp;[在examples路径下](./examples)会陆续更新一些其他应用的demo例程，欢迎前去探索研究。
-
-## 8.1 颜色块抓取例子
-- ### Gazebo仿真
-   ```bash
-   # 初始化gazebo场景和move_group
-   $ roslaunch xarm_gazebo xarm_camera_scene.launch robot_dof:=6
-
-   # 运行颜色块识别抓取脚本
-   $ rosrun xarm_gazebo color_recognition.py
-   ```
-- ### 真机+realsense_d435i
-   ```bash
-   # 启动move_group
-   $ roslaunch camera_demo xarm_move_group.launch robot_ip:=192.168.1.15 robot_dof:=6
-
-   # 运行颜色块识别抓取脚本(根据输出交互使用)
-   $ rosrun camera_demo color_recognition.py
-   ```
-
