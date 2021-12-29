@@ -130,7 +130,10 @@ class XArmCtrl(object):
 
 class MotionThread(threading.Thread):
     def __init__(self, que, **kwargs):
-        super().__init__()
+        if PY3:
+            super().__init__()
+        else:
+            super(MotionThread, self).__init__()
         self.que = que
         self.daemon = True
         self.in_motion = True
