@@ -1,0 +1,20 @@
+<launch>
+    <arg name ="robot_ip" default = "192.168.1.201"/>
+    <arg name="show_rviz" default="false" />
+    <arg name="cloud_topic" default="camera/depth/color/points"/>
+
+    <!-- launch realsense camera -->
+    <!-- <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+        <arg name="filters" value="pointcloud"/>
+        <arg name="align_depth" value="true"/>
+    </include> -->
+
+    <!-- launch transform broadcasters -->
+    <!-- <include file="$(find aruco_ros)/launch/single.launch"/> -->
+
+    <!-- launch real arm -->
+    <include file="$(find xarm6_gripper_moveit_config)/launch/realMove_exec.launch">
+        <arg name="robot_ip" value="$(arg robot_ip)"/>
+        <arg name="show_rviz" default="$(arg show_rviz)"/>
+    </include>
+</launch>
