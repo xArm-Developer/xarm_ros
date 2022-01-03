@@ -4,12 +4,13 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /MotionPlanning1
+        - /Global Options1
+        - /Status1
+        - /MotionPlanning1/Scene Geometry1
         - /MotionPlanning1/Planning Request1
-        - /MarkerArray1/Namespaces1
         - /TF1/Frames1
       Splitter Ratio: 0.7425600290298462
-    Tree Height: 390
+    Tree Height: 364
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -54,8 +55,6 @@ Visualization Manager:
       MoveIt_Planning_Time: 5
       MoveIt_Use_Cartesian_Path: false
       MoveIt_Use_Constraint_Aware_IK: true
-      MoveIt_Warehouse_Host: 127.0.0.1
-      MoveIt_Warehouse_Port: 33829
       MoveIt_Workspace:
         Center:
           X: 0
@@ -180,7 +179,7 @@ Visualization Manager:
         Interactive Marker Size: 0
         Joint Violation Color: 255; 0; 255
         Planning Group: xarm6
-        Query Goal State: false
+        Query Goal State: true
         Query Start State: false
         Show Workspace: false
         Start State Alpha: 1
@@ -191,7 +190,7 @@ Visualization Manager:
         Scene Alpha: 1
         Scene Color: 50; 230; 50
         Scene Display Time: 0.20000000298023224
-        Show Scene Geometry: true
+        Show Scene Geometry: false
         Voxel Coloring: Z-Axis
         Voxel Rendering: Occupied Voxels
       Scene Robot:
@@ -289,36 +288,59 @@ Visualization Manager:
         Show Robot Visual: true
       Value: true
       Velocity_Scaling_Factor: 1
-    - Class: rviz/MarkerArray
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: RGB8
+      Decay Time: 0
       Enabled: true
-      Marker Topic: /visualization_marker_array
-      Name: MarkerArray
-      Namespaces:
-        axes: true
-        bowl top left: true
-        bowl top right: true
-        chips can side: true
-        mug side: true
-        mug top: true
-        probabilities: true
-      Queue Size: 100
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: Camera PC2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic: /camera/depth/color/points
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
       Value: true
     - Alpha: 1
       Arrow Length: 0.30000001192092896
       Axes Length: 0.30000001192092896
       Axes Radius: 0.009999999776482582
       Class: rviz/PoseArray
-      Color: 238; 238; 236
-      Enabled: false
+      Color: 255; 25; 0
+      Enabled: true
       Head Length: 0.07000000029802322
       Head Radius: 0.029999999329447746
-      Name: PoseArray
+      Name: Goal Gen Grasps
+      Queue Size: 10
       Shaft Length: 0.23000000417232513
       Shaft Radius: 0.009999999776482582
       Shape: Arrow (Flat)
-      Topic: /object_pose
+      Topic: /front_grasps
       Unreliable: false
-      Value: false
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /detect_grasps_custom/plot_grasps
+      Name: GPD Grasps
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
     - Alpha: 1
       Arrow Length: 0.30000001192092896
       Axes Length: 0.30000001192092896
@@ -328,13 +350,47 @@ Visualization Manager:
       Enabled: false
       Head Length: 0.07000000029802322
       Head Radius: 0.029999999329447746
-      Name: PoseArray
+      Name: HO Grasps
+      Queue Size: 10
       Shaft Length: 0.23000000417232513
       Shaft Radius: 0.009999999776482582
       Shape: Arrow (Flat)
       Topic: /hand_pose
       Unreliable: false
       Value: false
+    - Class: rviz/TF
+      Enabled: false
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+      Marker Alpha: 1
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        {}
+      Update Interval: 0
+      Value: false
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /visualization_marker_array
+      Name: HO Markers
+      Namespaces:
+        axes: true
+        cup side: true
+        probabilities: true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /mode_switch_text
+      Name: Teleop Mode
+      Namespaces:
+        teleop_mode: true
+      Queue Size: 100
+      Value: true
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -351,94 +407,28 @@ Visualization Manager:
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Min Color: 0; 0; 0
-      Name: PointCloud2
+      Name: Object PC2
       Position Transformer: XYZ
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
       Size (m): 0.009999999776482582
       Style: Flat Squares
-      Topic: /camera/pointcloud
+      Topic: /object_point_cloud
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
       Value: false
-    - Class: rviz/TF
+    - Alpha: 1
+      Class: rviz/PointStamped
+      Color: 204; 41; 204
       Enabled: true
-      Frame Timeout: 15
-      Frames:
-        All Enabled: false
-        left_finger:
-          Value: false
-        left_inner_knuckle:
-          Value: false
-        left_outer_knuckle:
-          Value: false
-        link1:
-          Value: false
-        link2:
-          Value: false
-        link3:
-          Value: false
-        link4:
-          Value: false
-        link5:
-          Value: false
-        link6:
-          Value: false
-        link_base:
-          Value: false
-        link_eef:
-          Value: false
-        link_tcp:
-          Value: false
-        right_finger:
-          Value: false
-        right_inner_knuckle:
-          Value: false
-        right_outer_knuckle:
-          Value: false
-        world:
-          Value: false
-        xarm_gripper_base_link:
-          Value: false
-      Marker Scale: 1
-      Name: TF
-      Show Arrows: true
-      Show Axes: true
-      Show Names: true
-      Tree:
-        world:
-          link_base:
-            link1:
-              link2:
-                link3:
-                  link4:
-                    link5:
-                      link6:
-                        link_eef:
-                          xarm_gripper_base_link:
-                            left_inner_knuckle:
-                              {}
-                            left_outer_knuckle:
-                              left_finger:
-                                {}
-                            link_tcp:
-                              {}
-                            right_inner_knuckle:
-                              {}
-                            right_outer_knuckle:
-                              right_finger:
-                                {}
-      Update Interval: 0
-      Value: true
-    - Class: rviz/Marker
-      Enabled: true
-      Marker Topic: /mode_switch_text
-      Name: Marker
-      Namespaces:
-        teleop_mode: true
-      Queue Size: 100
+      History Length: 1
+      Name: Sampled Points
+      Queue Size: 10
+      Radius: 0.009999999776482582
+      Topic: /points
+      Unreliable: false
       Value: true
   Enabled: true
   Global Options:
@@ -456,30 +446,30 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.792236566543579
+      Distance: 1.9165668487548828
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
+      Field of View: 0.7853981852531433
       Focal Point:
         X: 0.22327226400375366
         Y: -0.09467828273773193
-        Z: -2.2798772079113405e-6
+        Z: -2.2798772079113405e-06
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.009796142578125
+      Pitch: 0.7202032208442688
       Target Frame: world
-      Value: XYOrbit (rviz)
-      Yaw: 3.1217501163482666
+      Yaw: 3.536757469177246
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1023
+  Height: 997
   Help:
     collapsed: false
   Hide Left Dock: false
@@ -488,9 +478,9 @@ Window Geometry:
     collapsed: false
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002a9000003a5fc0200000007fb000000100044006900730070006c006100790073010000003d00000217000000c900fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a0056006900650077007300000003b0000000b0000000a400fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067010000025a000001880000017d00ffffff00000336000003a500000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000002a90000038bfc0200000007fb000000100044006900730070006c006100790073010000003d000001fd000000c900fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a0056006900650077007300000003b0000000b0000000a400fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e00670100000240000001880000017d00ffffff000003360000038b00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
   Width: 1509
-  X: 2560
-  Y: 0
+  X: 2320
+  Y: 418
