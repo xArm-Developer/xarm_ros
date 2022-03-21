@@ -65,6 +65,7 @@
    * 支持[Moveit添加其它模型到末端](#551-moveit加载其它自定义模型到机械臂末端)  
    * 添加带超时版本的速度模式控制。(需要**控制器固件版本 >= 1.8.0**)  
    * 添加xArm Vision和RealSense D435i相关demo，将之前的"xarm_device"内容转移至 xarm_vision/camera_demo。
+   * xarm_controler (xarm_hw)不再通过service和topic的方式来使用SDK，而是直接调用SDK的接口
 
 # 3. 准备工作
 

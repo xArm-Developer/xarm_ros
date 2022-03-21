@@ -70,6 +70,7 @@ For simplified Chinese version: [简体中文版](./ReadMe_cn.md)
    * Add support for [custom tool model for Moveit](#551-add-custom-tool-model-for-moveit)  
    * Add timed-out version of velocity control mode, for better safety consideration. (**xArm controller firmware version >= 1.8.0** required)  
    * Add xArm Vision and RealSense D435i related demo. Migrate previous "xarm_device" into xarm_vision/camera_demo.
+   * xarm_controler (xarm_hw) no longer uses the SDK through service and topic, but directly calls the SDK interface
 
 
 # 3. Preparations before using this package
