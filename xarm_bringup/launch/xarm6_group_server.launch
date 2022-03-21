@@ -6,6 +6,8 @@
   <arg name="enforce_limits" default="true" />
   <arg name="baud_checkset" default="true" />
 	<arg name="default_gripper_baud" default="2000000" />
+  <arg name="show_rviz" default="false" />
+  <arg name="add_gripper" default="false" />
  
   <group ns="$(arg group_name)">
     <remap from="/tf" to="$(arg group_name)/tf" />
@@ -16,6 +18,8 @@
       <arg name="enforce_limits" value="$(arg enforce_limits)" />
       <arg name="baud_checkset" value="$(arg baud_checkset)" />
       <arg name="default_gripper_baud" value="$(arg default_gripper_baud)" />
+      <arg name="show_rviz" value="$(arg show_rviz)" />
+      <arg name="add_gripper" value="$(arg add_gripper)" />
     </include>
   </group>
 
