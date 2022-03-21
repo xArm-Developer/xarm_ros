@@ -32,7 +32,8 @@
 #include <thread>
 // xarm
 #include "xarm/core/instruction/uxbus_cmd_config.h"
-#include "xarm_api/xarm_ros_client.h"
+// #include "xarm_api/xarm_ros_client.h"
+#include "xarm_api/xarm_driver.h"
 
 
 namespace xarm_control
@@ -75,8 +76,10 @@ namespace xarm_control
 		unsigned int dof_;
 		std::vector<std::string> jnt_names_;
 
-		std::vector<float> prev_cmds_float_;
-        std::vector<float> cmds_float_;
+		// std::vector<float> prev_cmds_float_;
+        // std::vector<float> cmds_float_;
+		float prev_cmds_float_[7];
+		float cmds_float_[7];
         std::vector<double> position_cmds_;
         std::vector<double> velocity_cmds_;
         std::vector<double> effort_cmds_;
@@ -87,12 +90,15 @@ namespace xarm_control
 		bool initialized_;
 		bool read_ready_;
 
-		long int read_cnts_;
-		long int read_failed_cnts_;
+		unsigned long long read_cnts_;
+		unsigned long long read_failed_cnts_;
 		double read_max_time_;
 		double read_total_time_;
-		std::vector<float> prev_read_angles_;
-		std::vector<float> curr_read_angles_;
+
+		float prev_read_position_[7];
+		float curr_read_position_[7];
+		float curr_read_velocity_[7];
+		float curr_read_effort_[7];
 
 		ros::Duration read_duration_;
 		ros::Duration write_duration_;
@@ -113,7 +119,8 @@ namespace xarm_control
 		ros::Time last_joint_state_stamp_;
 		// ros::Time last_ftsensor_stamp_;
 		
-		xarm_api::XArmROSClient xarm;
+		// xarm_api::XArmROSClient xarm;
+		xarm_api::XArmDriver xarm_driver_;
 
 		urdf::ModelInterfaceSharedPtr model_ptr_;
 		ControlMethod ctrl_method_;
@@ -142,9 +149,10 @@ namespace xarm_control
 		void _register_joint_limits(ros::NodeHandle &root_nh, std::string joint_name, const ControlMethod ctrl_method);
 		void _reset_limits(void);
 		void _enforce_limits(const ros::Duration& period);
-		bool _check_cmds_is_change(std::vector<float> prev, std::vector<float> cur, double threshold = 0.0001);
+		bool _check_cmds_is_change(float *prev, float *cur, double threshold = 0.0001);
 		bool _xarm_is_ready_read(void);
         bool _xarm_is_ready_write(void);
+		bool _firmware_version_is_ge(int major, int minor, int revision);
 	};
 
 }

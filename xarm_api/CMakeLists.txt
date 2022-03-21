@@ -24,7 +24,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES xarm_ros_client
+  LIBRARIES xarm_ros_driver xarm_ros_client
   CATKIN_DEPENDS roscpp std_msgs actionlib actionlib_msgs control_msgs xarm_sdk xarm_msgs
 #  DEPENDS system_lib
 )
@@ -41,24 +41,33 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+# xarm_ros_driver: add library and add dependencies and set link libraries
+add_library(xarm_ros_driver
+  src/xarm_driver.cpp
+)
+add_dependencies(xarm_ros_driver xarm_msgs_generate_messages_cpp)
+target_link_libraries(xarm_ros_driver 
+  ${xarm_sdk_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
+
 # xarm_ros_client: add library and add dependencies and set link libraries
 add_library(xarm_ros_client
   src/xarm_ros_client.cpp
 )
 add_dependencies(xarm_ros_client xarm_msgs_generate_messages_cpp)
-target_link_libraries(xarm_ros_client 
-  ${xarm_sdk_LIBRARIES}
-  ${catkin_LIBRARIES}
-)
+# target_link_libraries(xarm_ros_client 
+#   ${xarm_sdk_LIBRARIES}
+#   ${catkin_LIBRARIES}
+# )
 
 # xarm_driver_node: add executable and add dependencies and set link libraries
 add_executable(xarm_driver_node
   src/xarm_driver_node.cpp
-  src/xarm_driver.cpp
 )
 add_dependencies(xarm_driver_node xarm_msgs_generate_messages_cpp)
 target_link_libraries(xarm_driver_node 
-  ${xarm_sdk_LIBRARIES}
+  xarm_ros_driver
   ${catkin_LIBRARIES}
 )
 
@@ -104,6 +113,7 @@ install(DIRECTORY include/
 
 # install the library and executable
 install(TARGETS
+  xarm_ros_driver
   xarm_driver_node
   xarm_ros_client
   ${link_xarm_sdk_exec_list}
