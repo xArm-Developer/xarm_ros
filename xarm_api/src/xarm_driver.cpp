@@ -932,8 +932,8 @@ namespace xarm_api
                 pose[index] = req.pose[index];
             }
         }
-
-        res.ret = arm->set_servo_cartesian(pose, req.mvvelo, req.mvacc, req.mvtime);
+        bool is_tool_coord = (req.mvtime != 0.0);
+        res.ret = arm->set_servo_cartesian(pose, req.mvvelo, req.mvacc, req.mvtime, is_tool_coord);
         res.message = "move servo_cartesian, ret = " + std::to_string(res.ret);
         return true;
     }
