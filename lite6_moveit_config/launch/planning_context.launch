@@ -1,0 +1,56 @@
+<launch>
+  <!-- By default we do not overwrite the URDF. Change the following to true to change the default behavior -->
+  <arg name="load_robot_description" default="false"/>
+
+  <!-- The name of the parameter under which the URDF is loaded -->
+  <arg name="robot_description" default="robot_description"/>
+  
+  <arg name="add_other_geometry" default="false"/>
+  <arg name="geometry_type" default="box"/>
+  <arg name="geometry_mass" default="0.1"/>
+  <arg name="geometry_height" default="0.1"/>
+  <arg name="geometry_radius" default="0.1"/>
+  <arg name="geometry_length" default="0.1"/>
+  <arg name="geometry_width" default="0.1"/>
+  <arg name="geometry_mesh_filename" default=""/>
+  <arg name="geometry_mesh_origin_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_origin_rpy" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
+
+  <!-- Load universal robot description format (URDF) -->
+  <param if="$(arg load_robot_description)" name="$(arg robot_description)" 
+    command="xacro --inorder  '$(find xarm_description)/urdf/lite6_robot.urdf.xacro' limited:=true
+      add_other_geometry:=$(arg add_other_geometry)
+      geometry_type:=$(arg geometry_type)
+      geometry_mass:=$(arg geometry_mass)
+      geometry_height:=$(arg geometry_height)
+      geometry_radius:=$(arg geometry_radius)
+      geometry_length:=$(arg geometry_length)
+      geometry_width:=$(arg geometry_width)
+      geometry_mesh_filename:=$(arg geometry_mesh_filename)
+      geometry_mesh_origin_xyz:=$(arg geometry_mesh_origin_xyz)
+      geometry_mesh_origin_rpy:=$(arg geometry_mesh_origin_rpy)
+      geometry_mesh_tcp_xyz:=$(arg geometry_mesh_tcp_xyz)
+      geometry_mesh_tcp_rpy:=$(arg geometry_mesh_tcp_rpy)
+    "/>
+
+  <param if="$(arg load_robot_description)" name="$(arg robot_description)_semantic" 
+    command="xacro --inorder  '$(find xarm_description)/srdf/xarm.srdf.xacro' dof:=6 robot_type:=lite
+      add_other_geometry:=$(arg add_other_geometry)
+  "/>
+
+  <!-- The semantic description that corresponds to the URDF -->
+  <!-- <param name="$(arg robot_description)_semantic" textfile="$(find lite6_moveit_config)/config/xarm6.srdf" /> -->
+
+  <!-- Load updated joint limits (override information from URDF) -->
+  <group ns="$(arg robot_description)_planning">
+    <rosparam command="load" file="$(find lite6_moveit_config)/config/joint_limits.yaml"/>
+  </group>
+
+  <!-- Load default settings for kinematics; these settings are overridden by settings in a node's namespace -->
+  <group ns="$(arg robot_description)_kinematics">
+    <rosparam command="load" file="$(find lite6_moveit_config)/config/kinematics.yaml"/>
+  </group>
+
+</launch>

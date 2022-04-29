@@ -1,0 +1,19 @@
+controller_list:
+  - name: arm_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+
+  - name: gripper_controller
+    # action_ns: gripper_action
+    # type: GripperCommand
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    joints:
+     - drive_joint
