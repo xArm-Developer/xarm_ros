@@ -1,0 +1,72 @@
+# xarm:
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50
+  
+lite6_traj_controller:
+  type: position_controllers/JointTrajectoryController
+  joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+  constraints:
+      goal_time: 0.5
+      stopped_velocity_tolerance: 0.05
+      joint1: {trajectory: 1, goal: 0.01}
+      joint2: {trajectory: 1, goal: 0.01}
+      joint3: {trajectory: 1, goal: 0.01}
+      joint4: {trajectory: 1, goal: 0.01}
+      joint5: {trajectory: 1, goal: 0.01}
+      joint6: {trajectory: 1, goal: 0.01}
+  stop_trajectory_duration: 0.2
+  state_publish_rate:  25
+  action_monitor_rate: 10
+
+lite6_traj_controller_velocity:
+  type: velocity_controllers/JointTrajectoryController
+  joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+  gains:
+    joint1: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+    joint2: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+    joint3: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+    joint4: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+    joint5: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+    joint6: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+  velocity_ff:
+    joint1: 0.25
+    joint2: 0.25
+    joint3: 0.25
+    joint4: 0.25
+    joint5: 0.25
+    joint6: 0.25
+  constraints:
+    goal_time: 0.5
+    stopped_velocity_tolerance: 0.01
+    joint1: {trajectory: 1, goal: 0.01}
+    joint2: {trajectory: 1, goal: 0.01}
+    joint3: {trajectory: 1, goal: 0.01}
+    joint4: {trajectory: 1, goal: 0.01}
+    joint5: {trajectory: 1, goal: 0.01}
+    joint6: {trajectory: 1, goal: 0.01}
+  stop_trajectory_duration: 0.2
+  state_publish_rate:  25
+  action_monitor_rate: 10
+
+# No Pid gains specified error fix
+# gazebo_ros_control:
+#   pid_gains:
+#     joint1: {p: 1200.0, i: 5.0, d: 10.0}
+#     joint2: {p: 1400.0, i: 5.0, d: 10.0}
+#     joint3: {p: 1200.0, i: 5.0, d: 5.0}
+#     joint4: {p: 850.0, i: 3.0, d: 5.0}
+#     joint5: {p: 500.0, i: 3.0, d: 1.0}
+#     joint6: {p: 500.0, i: 1.0, d: 1.0}
