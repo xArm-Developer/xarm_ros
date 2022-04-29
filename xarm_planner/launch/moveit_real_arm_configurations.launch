@@ -5,9 +5,10 @@
   <arg name="show_rviz" default="true" />
   <arg name="no_gui_plan" default="true" />
   <arg name="report_type" default="normal" />
+  <arg name="robot_type" default="xarm" />
   <arg name="ext_ns" default="" />
 
-  <include file="$(eval find('xarm' + str(arg('arm_dof')) + arg('end_effector') + '_moveit_config') + '/launch/realMove_exec.launch')">
+  <include file="$(eval find(str(arg('robot_type')) + str(arg('arm_dof')) + arg('end_effector') + '_moveit_config') + '/launch/realMove_exec.launch')">
     <arg name="robot_ip" value="$(arg robot_ip)" />
     <!-- load the default move_group planner (not xarm_simple_planner) -->
     <arg name="show_rviz" value="$(arg show_rviz)" />
