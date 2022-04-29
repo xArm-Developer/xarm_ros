@@ -6,10 +6,12 @@
   <arg name="add_gripper" default="false" doc="If true, will load xarm6 with gripper from UFACTORY attached." />
   <arg name="joint_state_source" default="[/joint_states]" />
   <arg name="joint_state_publisher_gui" default="true" />
+  <arg name="robot_type" default="xarm" />
 
   <include file="$(find xarm_description)/launch/xarm6_upload.launch" >
     <arg name="limited" value="$(arg limited)"/>
     <arg name="add_gripper" value="$(arg add_gripper)" />
+    <arg name="robot_type" value="$(arg robot_type)" />
   </include>
 
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
