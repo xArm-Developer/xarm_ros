@@ -37,7 +37,7 @@
 
   <param if="$(arg load_robot_description)" name="$(arg robot_description)_semantic" 
     command="xacro --inorder  '$(find xarm_description)/srdf/xarm.srdf.xacro' dof:=5
-      add_other_geometry:=$(arg add_other_geometry)
+      add_other_geometry:=$(arg add_other_geometry) robot_type:=xarm
   "/>
 
   <!-- The semantic description that corresponds to the URDF -->

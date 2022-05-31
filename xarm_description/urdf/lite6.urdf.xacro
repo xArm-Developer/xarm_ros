@@ -23,7 +23,7 @@
           xyz="-0.00829544579053192 3.26357432323433E-05 0.0631194584987089"
           rpy="0 0 0" />
         <mass
-          value="1.65393501783165" />
+          value="2.11" />
         <inertia
           ixx="0"
           ixy="0"
@@ -46,17 +46,17 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://xarm_description/meshes/lite6/visual/base.stl"/>
+          <mesh filename="package://xarm_description/meshes/lite6/collision/base.stl"/>
         </geometry>
       </collision>
     </link>
     <link name="${prefix}link1">
       <inertial>
         <origin
-          xyz="-0.00036 0.03788 -0.0027"
+          xyz="-0.00036 0.042 -0.0025"
           rpy="0 0 0" />
         <mass
-          value="1.169" />
+          value="1.411" />
         <inertia
           ixx="1.45164E-03"
           ixy="1.24E-05"
@@ -79,13 +79,13 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://xarm_description/meshes/lite6/visual/link1.stl"/>
+          <mesh filename="package://xarm_description/meshes/lite6/collision/link1.stl"/>
         </geometry>
       </collision>
     </link>
     <joint name="${prefix}joint1" type="revolute">
       <origin
-        xyz="0 0 0.2435"
+        xyz="0 0 0.2433"
         rpy="0 0 0" />
       <parent
         link="${prefix}link_base" />
@@ -96,17 +96,17 @@
       <limit
         lower="${joint1_lower_limit}"
         upper="${joint1_upper_limit}"
-        effort="50.0"
+        effort="32.0"
         velocity="3.14"/>
       <dynamics damping="1.0" friction="1.0"/>
     </joint>
     <link name="${prefix}link2">
       <inertial>
         <origin
-          xyz="0.178 0.0 0.0576"
+          xyz="0.179 0.0 0.0584"
           rpy="0 0 0" />
         <mass
-          value="1.192" />
+          value="1.34" />
         <inertia
           ixx="1.5854E-03"
           ixy="-6.766E-06"
@@ -129,7 +129,7 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://xarm_description/meshes/lite6/visual/link2.stl"/>
+          <mesh filename="package://xarm_description/meshes/lite6/collision/link2.stl"/>
         </geometry>
       </collision>
     </link>
@@ -146,17 +146,17 @@
       <limit
         lower="${joint2_lower_limit}"
         upper="${joint2_upper_limit}"
-        effort="50.0"
+        effort="32.0"
         velocity="3.14"/>
       <dynamics damping="1.0" friction="1.0"/>
     </joint>
     <link name="${prefix}link3">
       <inertial>
         <origin
-          xyz="0.07285 -0.030 -0.0009"
+          xyz="0.072 -0.036 -0.001"
           rpy="0 0 0" />
         <mass
-          value="0.930" />
+          value="0.953" />
         <inertia
           ixx="8.861E-04"
           ixy="-3.9287E-04"
@@ -179,13 +179,13 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://xarm_description/meshes/lite6/visual/link3.stl"/>
+          <mesh filename="package://xarm_description/meshes/lite6/collision/link3.stl"/>
         </geometry>
       </collision>
     </link>
     <joint name="${prefix}joint3" type="revolute">
       <origin
-        xyz="0.2002 0 0"
+        xyz="0.2 0 0"
         rpy="-3.1416 0 1.5708" />
       <parent
         link="${prefix}link2" />
@@ -196,17 +196,17 @@
       <limit
         lower="${joint3_lower_limit}"
         upper="${joint3_upper_limit}"
-        effort="32.0"
+        effort="18.0"
         velocity="3.14"/>
       <dynamics damping="1.0" friction="1.0"/>
     </joint>
     <link name="${prefix}link4">
       <inertial>
         <origin
-          xyz="-0.0004 -0.0275 -0.0817"
+          xyz="-0.002 -0.0285 -0.0813"
           rpy="0 0 0" />
         <mass
-          value="1.31" />
+          value="1.284" />
         <inertia
           ixx="3.705E-03"
           ixy="-2.0E-06"
@@ -229,13 +229,13 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://xarm_description/meshes/lite6/visual/link4.stl"/>
+          <mesh filename="package://xarm_description/meshes/lite6/collision/link4.stl"/>
         </geometry>
       </collision>
     </link>
     <joint name="${prefix}joint4" type="revolute">
       <origin
-        xyz="0.087 -0.22761 0"
+        xyz="0.087 -0.2276 0"
         rpy="1.5708 0 0" />
       <parent
         link="${prefix}link3" />
@@ -246,9 +246,9 @@
       <limit
         lower="${joint4_lower_limit}"
         upper="${joint4_upper_limit}"
-        effort="32.0"
+        effort="2.5"
         velocity="3.14"/>
-      <dynamics damping="1.0" friction="1.0"/>
+      <dynamics damping="0.1" friction="0.1"/>
     </joint>
     <link name="${prefix}link5">
       <inertial>
@@ -256,7 +256,7 @@
           xyz="0.0 0.010 0.0019"
           rpy="0 0 0" />
         <mass
-          value="0.784" />
+          value="0.804" />
         <inertia
           ixx="5.668E-04"
           ixy="6E-07"
@@ -272,14 +272,14 @@
         <geometry>
           <mesh filename="package://xarm_description/meshes/lite6/visual/link5.stl"/>
         </geometry>
-        <material name="${prefix}White" />
+        <material name="${prefix}Silver" />
       </visual>
       <collision>
         <origin
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://xarm_description/meshes/lite6/visual/link5.stl"/>
+          <mesh filename="package://xarm_description/meshes/lite6/collision/link5.stl"/>
         </geometry>
       </collision>
     </link>
@@ -296,9 +296,9 @@
       <limit
         lower="${joint5_lower_limit}"
         upper="${joint5_upper_limit}"
-        effort="32.0"
+        effort="2.5"
         velocity="3.14"/>
-      <dynamics damping="1.0" friction="1.0"/>
+      <dynamics damping="0.1" friction="0.1"/>
     </joint>
     <link name="${prefix}link6">
       <inertial>
@@ -329,13 +329,13 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://xarm_description/meshes/lite6/visual/link6.stl"/>
+          <mesh filename="package://xarm_description/meshes/lite6/collision/link6.stl"/>
         </geometry>
       </collision>
     </link>
     <joint name="${prefix}joint6" type="revolute">
       <origin
-        xyz="0 0.0625 0"
+        xyz="0 0.0615 0"
         rpy="-1.5708 0 0" />
       <parent
         link="${prefix}link5" />
@@ -346,9 +346,9 @@
       <limit
         lower="${joint6_lower_limit}"
         upper="${joint6_upper_limit}"
-        effort="20.0"
+        effort="2.5"
         velocity="3.14"/>
-      <dynamics damping="1.0" friction="1.0"/>
+      <dynamics damping="0.1" friction="0.1"/>
     </joint>
 
     <xacro:if value="${rs_d435i}">

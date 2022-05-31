@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 
   ros::Subscriber joint_state_sub = nh.subscribe("joint_states", 100, joint_states_callback);
   ros::Subscriber xarm_state_sub = nh.subscribe("xarm_states", 100, xarm_states_callback);
-  ros::Subscriber cgpio_sub = nh.subscribe("xarm_cgpio_states", 100, xarm_cgpio_states_callback);
+  ros::Subscriber cgpio_sub = nh.subscribe("controller_gpio_states", 100, xarm_cgpio_states_callback);
   ros::spin();
 
   ROS_INFO("test_xarm_states over");

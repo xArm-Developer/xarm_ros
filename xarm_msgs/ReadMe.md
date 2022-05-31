@@ -36,4 +36,4 @@
 
 Refer to [RobotMsg](./msg/RobotMsg.msg) for robot feedback information contents published through topic "/xarm/xarm_states".  
 
-Refer to [CIOState](./msg/CIOState.msg) for the gpio of the control box feedback information contents published through topic "/xarm/xarm_cgpio_states".  
+Refer to [CIOState](./msg/CIOState.msg) for the gpio of the control box feedback information contents published through topic "/xarm/controller_gpio_states".  

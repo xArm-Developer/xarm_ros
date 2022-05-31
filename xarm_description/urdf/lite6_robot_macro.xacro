@@ -36,12 +36,12 @@
 
     <xacro:if value="${limited}">
       <xacro:lite6_urdf prefix="${prefix}"
-        joint1_lower_limit="${-2.0*pi}"   joint1_upper_limit="${2.0*pi}"
+        joint1_lower_limit="${-pi}"   joint1_upper_limit="${pi}"
         joint2_lower_limit="${-2.61799}"  joint2_upper_limit="${2.61799}"
         joint3_lower_limit="${-0.061087}" joint3_upper_limit="${5.235988}"
-        joint4_lower_limit="${-2.0*pi}"   joint4_upper_limit="${2.0*pi}"
+        joint4_lower_limit="${-pi}"   joint4_upper_limit="${pi}"
         joint5_lower_limit="${-2.1642}"   joint5_upper_limit="${2.1642}"
-        joint6_lower_limit="${-2.0*pi}"   joint6_upper_limit="${2.0*pi}"
+        joint6_lower_limit="${-pi}"   joint6_upper_limit="${pi}"
         rs_d435i="${rs_d435i}"/>
     </xacro:if>
     <xacro:unless value="${limited}">

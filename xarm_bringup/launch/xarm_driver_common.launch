@@ -21,8 +21,8 @@
   <param name="$(arg namespace)/add_gripper" type="bool" value = "$(arg add_gripper)"/>
 
   <node if="$(arg publish_tf)" name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
-  <node if="$(arg use_moveit)" name="xarm_traj_controller" pkg="xarm_controller" type="xarm_traj_controller" args="ip=$(arg robot_ip)" ns="$(arg namespace)" respawn="false" output="screen" />
-  <node unless="$(arg use_moveit)" name="xarm_driver" pkg="xarm_api" ns="$(arg namespace)" type="xarm_driver_node" output="screen" />
+  <node if="$(arg use_moveit)" name="uf_ros_controller" pkg="xarm_controller" type="uf_ros_controller" args="ip=$(arg robot_ip)" ns="$(arg namespace)" respawn="false" output="screen" />
+  <node unless="$(arg use_moveit)" name="uf_driver" pkg="xarm_api" ns="$(arg namespace)" type="xarm_driver_node" output="screen" />
 
   <include if="$(arg show_rviz)" file="$(find xarm_description)/launch/xarm$(arg dof)_rviz_display.launch">
     <arg name="joint_state_source" value="[/$(arg namespace)/joint_states]" />

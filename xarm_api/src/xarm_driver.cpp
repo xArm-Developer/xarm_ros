@@ -88,7 +88,6 @@ namespace xarm_api
         }
         xarm_state_msg_.header.stamp = now;
         pub_robot_msg(xarm_state_msg_);
-
         if (report_data_ptr->total_num >= 417) {
             cgpio_state_msg_.header.stamp = now;
             cgpio_state_msg_.state = report_data_ptr->cgpio_state;
@@ -214,7 +213,7 @@ namespace xarm_api
         // state feedback topics:
         joint_state_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 10, true);
         robot_rt_state_ = nh_.advertise<xarm_msgs::RobotMsg>("xarm_states", 10, true);
-        cgpio_state_ = nh_.advertise<xarm_msgs::CIOState>("xarm_cgpio_states", 10, true);
+        cgpio_state_ = nh_.advertise<xarm_msgs::CIOState>("controller_gpio_states", 10, true);
         // ftsensor_state_ = nh_.advertise<geometry_msgs::WrenchStamped>("xarm_ftsensor_states", 10, true);
     }
     
@@ -308,6 +307,14 @@ namespace xarm_api
 
     void XArmDriver::_init_gripper(void)
     {
+        std::string uf_model;
+        nh_.getParam("uf_model", uf_model);
+        // ROS_INFO("UF_MODEL: %s\n", uf_model.c_str());
+        if(uf_model != "XARM")
+        {
+            return; // only for xArm Gripper
+        }
+
         ros::NodeHandle gripper_node("xarm_gripper");
 
         gripper_joint_state_msg_.header.stamp = ros::Time::now();

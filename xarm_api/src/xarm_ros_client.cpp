@@ -24,7 +24,7 @@ void XArmROSClient::init(ros::NodeHandle& nh)
     ros::service::waitForService(client_ns+"set_mode");
     ros::service::waitForService(client_ns+"move_servoj");
     ros::service::waitForService(client_ns+"get_servo_angle");
-    // ros::service::waitForService(client_ns+"xarm_cgpio_states"); // last one in driver
+    // ros::service::waitForService(client_ns+"controller_gpio_states"); // last one in driver
 
 	motion_ctrl_client_ = nh_.serviceClient<xarm_msgs::SetAxis>("motion_ctrl");
 	set_mode_client_ = nh_.serviceClient<xarm_msgs::SetInt16>("set_mode");

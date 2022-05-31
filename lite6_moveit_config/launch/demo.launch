@@ -1,6 +1,8 @@
 <launch>
   <arg name="ns" default="" />
 
+  <arg name="add_gripper" default="false" />
+  <arg name="add_vacuum_gripper" default="false" />
   <arg name="add_other_geometry" default="false"/>
   <arg name="geometry_type" default="box"/>
   <arg name="geometry_mass" default="0.1"/>
@@ -21,7 +23,8 @@
     <arg name="load_move_group" value="true" />
     <!-- whether to use fake_execution controller to drive the motion -->
     <arg name="fake_execution" value="true" />
-
+    <arg name="add_gripper" default="$(arg add_gripper)" />
+    <arg name="add_vacuum_gripper" default="$(arg add_vacuum_gripper)" />
     <arg name="add_other_geometry" default="$(arg add_other_geometry)"/>
     <arg name="geometry_type" default="$(arg geometry_type)"/>
     <arg name="geometry_mass" default="$(arg geometry_mass)"/>

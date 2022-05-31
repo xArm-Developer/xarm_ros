@@ -24,6 +24,9 @@
   <!-- option to show rviz or not -->
   <arg name="show_rviz" default="true" />
 
+  <arg name="add_gripper" default="false" />
+  <arg name="add_vacuum_gripper" default="false" />
+
   <arg name="add_other_geometry" default="false"/>
   <arg name="geometry_type" default="box"/>
   <arg name="geometry_mass" default="0.1"/>
@@ -40,7 +43,8 @@
   <!-- Load the URDF, SRDF and other .yaml configuration files on the param server, limit joint range within [-pi, pi] -->
   <include file="$(find lite6_moveit_config)/launch/planning_context.launch">
     <arg name="load_robot_description" value="true"/>
-
+    <arg name="add_gripper" default="$(arg add_gripper)" />
+    <arg name="add_vacuum_gripper" default="$(arg add_vacuum_gripper)" />
     <arg name="add_other_geometry" default="$(arg add_other_geometry)"/>
     <arg name="geometry_type" default="$(arg geometry_type)"/>
     <arg name="geometry_mass" default="$(arg geometry_mass)"/>

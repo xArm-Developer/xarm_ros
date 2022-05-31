@@ -4,6 +4,8 @@
 
   <!-- The name of the parameter under which the URDF is loaded -->
   <arg name="robot_description" default="robot_description"/>
+  <arg name="add_gripper" default="false" />
+  <arg name="add_vacuum_gripper" default="false" />
   
   <arg name="add_other_geometry" default="false"/>
   <arg name="geometry_type" default="box"/>
@@ -21,6 +23,8 @@
   <!-- Load universal robot description format (URDF) -->
   <param if="$(arg load_robot_description)" name="$(arg robot_description)" 
     command="xacro --inorder  '$(find xarm_description)/urdf/lite6_robot.urdf.xacro' limited:=true
+      add_gripper:=$(arg add_gripper)
+      add_vacuum_gripper:=$(arg add_vacuum_gripper)
       add_other_geometry:=$(arg add_other_geometry)
       geometry_type:=$(arg geometry_type)
       geometry_mass:=$(arg geometry_mass)
@@ -37,7 +41,7 @@
 
   <param if="$(arg load_robot_description)" name="$(arg robot_description)_semantic" 
     command="xacro --inorder  '$(find xarm_description)/srdf/xarm.srdf.xacro' dof:=6 robot_type:=lite
-      add_other_geometry:=$(arg add_other_geometry)
+      add_gripper:=$(arg add_gripper) add_vacuum_gripper:=$(arg add_vacuum_gripper) add_other_geometry:=$(arg add_other_geometry)
   "/>
 
   <!-- The semantic description that corresponds to the URDF -->

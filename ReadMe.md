@@ -1,6 +1,9 @@
 For simplified Chinese version: [简体中文版](./ReadMe_cn.md)    
+For UFACTORY Lite 6 users, make sure you have followed the instructions before chapter 4.7 on this page, then switch to [ReadMe for other UFACTORY models](./ReadMe_others.md).  
 
 ## Important Notice:
+&ensp;&ensp;Topic "**xarm_cgpio_states**" has been renamed to "**controller_gpio_states**".  
+
 &ensp;&ensp;After using xArm C++ SDK as sub-module, the use of **/xarm/set_tool_modbus** service has been modified, compared with old version, the redundant '***0x09***' byte in response data has been ***removed***！  
 &ensp;&ensp;Due to robot communication data format change, ***early users*** (xArm shipped ***before June 2019***) are encouraged to ***upgrade*** their controller firmware immediately to drive the robot normally in future updates as well as to use newly developed functions. Please contact our staff to get instructions of the upgrade process. The old version robot driver can still be available in ***'legacy'*** branch, however, it will not be updated any more.   
 

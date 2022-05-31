@@ -153,6 +153,7 @@ namespace xarm_control
 		bool _xarm_is_ready_read(void);
         bool _xarm_is_ready_write(void);
 		bool _firmware_version_is_ge(int major, int minor, int revision);
+		std::string _controller_error_interpreter(int err);
 	};
 
 }

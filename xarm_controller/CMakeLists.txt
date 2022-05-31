@@ -224,8 +224,8 @@ target_link_libraries(xarm_combined_hw xarm_hw)
 add_executable(sample_motion src/sample_motion.cpp)
 target_link_libraries(sample_motion ${catkin_LIBRARIES})
 
-add_executable(xarm_traj_controller src/xarm_control_node.cpp)
-target_link_libraries(xarm_traj_controller xarm_hw ${catkin_LIBRARIES})
+add_executable(uf_ros_controller src/xarm_control_node.cpp)
+target_link_libraries(uf_ros_controller xarm_hw ${catkin_LIBRARIES})
 
 add_executable(xarm_combined_traj_controller src/xarm_combined_control_node.cpp)
 target_link_libraries(xarm_combined_traj_controller xarm_combined_hw ${catkin_LIBRARIES})
@@ -244,7 +244,7 @@ install(TARGETS
   xarm_hw
   xarm_combined_hw
   sample_motion
-  xarm_traj_controller
+  uf_ros_controller
   xarm_combined_traj_controller
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

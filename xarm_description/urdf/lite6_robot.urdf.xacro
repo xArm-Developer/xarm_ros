@@ -5,6 +5,8 @@
   <xacro:arg name="limited" default="false"/>
   <xacro:arg name="effort_control" default="false"/>
   <xacro:arg name="velocity_control" default="false"/>
+  <xacro:arg name="add_gripper" default="false"/>
+  <xacro:arg name="add_vacuum_gripper" default="false"/>
 
   <xacro:arg name="add_other_geometry" default="false"/>
   <xacro:arg name="geometry_type" default="box"/>
@@ -33,5 +35,17 @@
     geometry_mesh_filename="$(arg geometry_mesh_filename)"
     geometry_mesh_origin_xyz="$(arg geometry_mesh_origin_xyz)" geometry_mesh_origin_rpy="$(arg geometry_mesh_origin_rpy)"
     geometry_mesh_tcp_xyz="$(arg geometry_mesh_tcp_xyz)" geometry_mesh_tcp_rpy="$(arg geometry_mesh_tcp_rpy)" />
+
+  <xacro:if value="$(arg add_gripper)">
+    <xacro:include filename="$(find xarm_description)/urdf/lite_gripper.urdf.xacro" />
+    <xacro:uflite_gripper_urdf attach_to="$(arg prefix)link_eef" />
+  </xacro:if>
+
+  <xacro:unless value="$(arg add_gripper)">
+    <xacro:if value="$(arg add_vacuum_gripper)" >
+      <xacro:include filename="$(find xarm_description)/urdf/lite_vacuum_gripper.urdf.xacro" />
+      <xacro:uflite_vacuum_gripper_urdf attach_to="$(arg prefix)link_eef" />
+    </xacro:if>
+  </xacro:unless>
 
 </robot>

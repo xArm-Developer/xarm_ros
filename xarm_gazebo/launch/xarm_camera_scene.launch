@@ -22,7 +22,7 @@
     effort_control:=$(arg effort_control) velocity_control:=$(arg velocity_control) use_gazebo_camera:=true" />
   
   <param name="robot_description_semantic" 
-    command="$(find xacro)/xacro --inorder '$(find xarm_description)/srdf/xarm.srdf.xacro' dof:=$(arg robot_dof) add_gripper:=true" />
+    command="$(find xacro)/xacro --inorder '$(find xarm_description)/srdf/xarm.srdf.xacro' dof:=$(arg robot_dof) add_gripper:=true robot_type:=xarm" />
 
   <group ns="robot_description_planning">
     <rosparam file="$(eval find('xarm' + str(arg('robot_dof')) + '_gripper_moveit_config') + '/config/joint_limits.yaml')" command="load"/>

@@ -1,7 +1,8 @@
 <launch>
   <arg name="velocity_control" default="false"/>
   <arg name="namespace" default="xarm"/>
-
+  <arg name="add_gripper" default="false" />
+  <arg name="add_vacuum_gripper" default="false" />
   <arg name="add_other_geometry" default="false"/>
   <arg name="geometry_type" default="box"/>
   <arg name="geometry_mass" default="0.1"/>
@@ -24,7 +25,8 @@
     <arg name="jnt_stat_source" value="[/$(arg namespace)/joint_states]" />
     <arg name="load_move_group" value="true" />
     <arg name="pub_tf" value="false" />
-
+    <arg name="add_gripper" default="$(arg add_gripper)" />
+    <arg name="add_vacuum_gripper" default="$(arg add_vacuum_gripper)" />
     <arg name="add_other_geometry" default="$(arg add_other_geometry)"/>
     <arg name="geometry_type" default="$(arg geometry_type)"/>
     <arg name="geometry_mass" default="$(arg geometry_mass)"/>
