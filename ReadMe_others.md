@@ -54,10 +54,14 @@ $ rosservice call /ufactory/motion_ctrl 8 1
 ```
 All the xArm services (joint/cartesian motion, velocity motion, servo motions, etc) including [mode operations](https://github.com/xArm-Developer/xarm_ros#6-mode-change) can be directly used on new models like Lite 6, just replace previous namespace `/xarm` with `/ufactory`. 
 
+Another difference from xArm version is the topic **`/xarm/xarm_states`** has been changed to **`/ufactory/robot_states`** (with default namespace attached).
+
 # 2.2 Moveit control:
 First make sure the robot and controller box are powered on, then execute:
 ```bash
 $ roslaunch lite6_moveit_config realMove_exec.launch robot_ip:=192.168.1.xxx [add_gripper:=true] [add_vacuum_gripper:=true]
 ```
-`add_gripper` and `add_vacuum_gripper` are optional available arguments if you have installed UFACTORY provided tool accessory. Only one end tool shall be installed. Below is the network diagram from `rqt_graph` output:
+`add_gripper` and `add_vacuum_gripper` are optional available arguments if you have installed UFACTORY provided tool accessory. Only one end tool shall be installed. Below is the network diagram from `rqt_graph` output:  
+  
+
 ![uf_moveit_rqt_graph](./doc/uf_moveit_rqt_graph.png) 

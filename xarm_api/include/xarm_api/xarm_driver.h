@@ -85,6 +85,7 @@ namespace xarm_api
         // void pub_ftsensor_state(geometry_msgs::WrenchStamped &wrench_msg);
 
         bool is_connected(void);
+        std::string controller_error_interpreter(int err=-1);
 
     private:
         void _report_connect_changed_callback(bool connected, bool reported);

@@ -1,5 +1,5 @@
 For simplified Chinese version: [简体中文版](./ReadMe_cn.md)    
-For UFACTORY Lite 6 users, make sure you have followed the instructions before chapter 4.7 on this page, then switch to [ReadMe for other UFACTORY models](./ReadMe_others.md).  
+For **UFACTORY Lite 6** users, make sure you have followed the instructions before chapter 4.7 on this page, then switch to [ReadMe for Lite6](./ReadMe_others.md).  
 
 ## Important Notice:
 &ensp;&ensp;Topic "**xarm_cgpio_states**" has been renamed to "**controller_gpio_states**".  
@@ -73,8 +73,9 @@ For UFACTORY Lite 6 users, make sure you have followed the instructions before c
    * Add support for [custom tool model for Moveit](#551-add-custom-tool-model-for-moveit)  
    * Add timed-out version of velocity control mode, for better safety consideration. (**xArm controller firmware version >= 1.8.0** required)  
    * Add xArm Vision and RealSense D435i related demo. Migrate previous "xarm_device" into xarm_vision/camera_demo.
-   * xarm_controler (xarm_hw) no longer uses the SDK through service and topic, but directly calls the SDK interface
-
+   * xarm_controler (xarm_hw) no longer uses the SDK through service and topic, but directly calls the SDK interface.
+   * Add text interpretation for Controller Error code, returned from "get_err" service.
+   * Support UFACTORY Lite 6 model. 
 
 # 3. Preparations before using this package
 
