@@ -1,6 +1,6 @@
 <launch>
   <arg name="velocity_control" default="false"/>
-  <arg name="namespace" default="xarm"/>
+  <arg name="namespace" default="ufactory"/>
   <arg name="add_gripper" default="false" />
   <arg name="add_vacuum_gripper" default="false" />
   <arg name="add_other_geometry" default="false"/>
@@ -18,8 +18,8 @@
 
   <!-- Remap the name space so it can send command to gazebo loaded controller -->
   <!-- this remap must appear BEFORE move_group launch -->
-  <arg name="xarm_traj_controller" value="$(eval 'lite6_traj_controller_velocity' if arg('velocity_control') else 'lite6_traj_controller')" />
-  <remap from="/follow_joint_trajectory" to="/$(arg namespace)/$(arg xarm_traj_controller)/follow_joint_trajectory"/>
+  <arg name="uf_traj_controller" value="$(eval 'lite6_traj_controller_velocity' if arg('velocity_control') else 'lite6_traj_controller')" />
+  <remap from="/follow_joint_trajectory" to="/$(arg namespace)/$(arg uf_traj_controller)/follow_joint_trajectory"/>
 
   <include file="$(find lite6_moveit_config)/launch/moveit_rviz_common.launch">
     <arg name="jnt_stat_source" value="[/$(arg namespace)/joint_states]" />

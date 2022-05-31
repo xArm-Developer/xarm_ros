@@ -47,6 +47,7 @@
     <arg name="effort_control" value="$(arg effort_control)"/>
     <arg name="velocity_control" value="$(arg xarm_velocity_control)"/>
     <arg name="add_gripper" value="$(arg add_gripper)" />
+    <arg name="namespace" value="$(arg namespace)" />
   </include>
 
 </launch>
