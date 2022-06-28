@@ -26,9 +26,9 @@ For **UFACTORY Lite 6** users, make sure you have followed the instructions befo
     * [5.5 ***xarm7_moveit_config***](#55-xarm7_moveit_config)  
         * [5.5.1 Add Custom Tool Model For Moveit](#551-add-custom-tool-model-for-moveit)  
     * [5.6 ***xarm_planner***](#56-xarm_planner)  
-    * [5.7 ***xarm_api/xarm_msgs***](#57-xarm_apixarm_msgs)  
+    * [5.7 ***xarm_api/xarm_msgs (Joint Online Planning in Mode 6 Added)***](#57-xarm_apixarm_msgs)  
         * [5.7.1 Starting xArm by ROS service (***priority for the following operations***)](#starting-xarm-by-ros-service)  
-        * [5.7.2 Joint space or Cartesian space command example(**Velocity Control** Added)](#joint-space-or-cartesian-space-command-example)
+        * [5.7.2 Joint space or Cartesian space command example](#joint-space-or-cartesian-space-command-example)
         * [5.7.3 Tool/Controller I/O Operations](#tool-io-operations)  
         * [5.7.4 Getting status feedback](#getting-status-feedback)  
         * [5.7.5 Setting Tool Center Point Offset](#setting-tool-center-point-offset)  
@@ -36,10 +36,10 @@ For **UFACTORY Lite 6** users, make sure you have followed the instructions befo
         * [5.7.7 Gripper Control](#gripper-control)
         * [5.7.8 Vacuum Gripper Control](#vacuum-gripper-control)
         * [5.7.9 Tool Modbus communication](#tool-modbus-communication)
-* [6. Mode Change](#6-mode-change)
+* [6. Mode Change(***Updated***)](#6-mode-change)
     * [6.1 Mode Explanation](#61-mode-explanation)
     * [6.2 Proper way to change modes](#62-proper-way-to-change-modes)
-* [7. xArm Vision (***NEW***)](#7-xarm-vision)
+* [7. xArm Vision](#7-xarm-vision)
     * [7.1 Installation of dependent packages](#71-installation-of-dependent-packages)
     * [7.2 Hand-eye Calibration Demo](#72-hand-eye-calibration-demo)
     * [7.3 Vision Guided Grasping Demo](#73-vision-guided-grasping-demo)
@@ -279,7 +279,10 @@ Please ***keep in mind that*** before calling the 4 motion services above, first
 * <font color=blue>[velo_move_joint/velo_move_joint_timed](#5-joint-velocity-control):</font> Joint motion with specified velocity for each joint (unit: rad/s), with maximum joint acceleration configurable by `set_max_acc_joint` service.  
 
 #### Robot Mode 5:
-* <font color=blue>[velo_move_line/velo_move_line_timed](#6-cartesian-velocity-control):</font> Linear motion of TCP with specified velocity in mm/s (position) and rad/s (orientation in **axis-angular_velocity**), with maximum linear acceleration configurable by `set_max_acc_line` service. 
+* <font color=blue>[velo_move_line/velo_move_line_timed](#6-cartesian-velocity-control):</font> Linear motion of TCP with specified velocity in mm/s (position) and rad/s (orientation in **axis-angular_velocity**), with maximum linear acceleration configurable by `set_max_acc_line` service.  
+
+#### Robot Mode 6: (Firmware >= v1.10.0)
+* <font color=blue>[move_joint](#1-joint-space-motion):</font> Online joint space replanning to the new joint angles, with new max joint velocity and acceleration. Joint velocities and accelerations are continuous during transition, however the velocity profiles may not be synchronous and the final reached positions may have small errors. **This function is mainly for dynamic response without self trajectory planning requirement like servo joint commands**. `/xarm/wait_for_finish` parameter has to be `false` for successful transition. Corresponding function in SDK is "set_servo_angle(wait=false)" under mode 6.   
 
 #### Starting xArm by ROS service:
 
@@ -552,8 +555,9 @@ and actual feedback data frame is: [0x01, 0x06, 0x00, 0x0A, 0x00, 0x03], with th
 &ensp;&ensp; ***Mode 3*** : Reserved.  
 &ensp;&ensp; ***Mode 4*** : Joint velocity control mode.  
 &ensp;&ensp; ***Mode 5*** : Cartesian velocity control mode.  
+&ensp;&ensp; ***Mode 6*** : Joint space online planning mode. (Firmware >= v1.10.0)  
 
-&ensp;&ensp;***Mode 0*** is the default when system initiates, and when error occurs(collision, overload, overspeed, etc), system will automatically switch to Mode 0. Also, all the motion plan services in [xarm_api](./xarm_api/) package or the [SDK](https://github.com/xArm-Developer/xArm-Python-SDK) motion functions demand xArm to operate in Mode 0. ***Mode 1*** is for external trajectory planner like Moveit! to bypass the integrated xArm planner to control the robot. ***Mode 2*** is to enable free-drive operation, robot will enter Gravity compensated mode, however, be sure the mounting direction and payload are properly configured before setting to mode 2. ***Mode 4*** is to control arm velocity in joint space. ***Mode 5*** is to control arm (linear) velocity in Cartesian space.
+&ensp;&ensp;***Mode 0*** is the default when system initiates, and when error occurs(collision, overload, overspeed, etc), system will automatically switch to Mode 0. Also, all the motion plan services in [xarm_api](./xarm_api/) package or the [SDK](https://github.com/xArm-Developer/xArm-Python-SDK) motion functions demand xArm to operate in Mode 0. ***Mode 1*** is for external trajectory planner like Moveit! to bypass the integrated xArm planner to control the robot. ***Mode 2*** is to enable free-drive operation, robot will enter Gravity compensated mode, however, be sure the mounting direction and payload are properly configured before setting to mode 2. ***Mode 4*** is to control arm velocity in joint space. ***Mode 5*** is to control arm (linear) velocity in Cartesian space. ***Mode 6*** is for dynamic realtime response to newly generated joint target, with automatic trajectoty re-planning.
 
 ### 6.2 Proper way to change modes:  
 &ensp;&ensp;If collision or other error happens during the execution of a Moveit! planned trajectory, Mode will automatically switch from 1 to default mode 0 for safety purpose, and robot state will change to 4 (error state). The robot will not be able to execute any Moveit command again unless the mode is set back to 1. The following are the steps to switch back and enable Moveit control again:  
