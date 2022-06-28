@@ -435,7 +435,7 @@ namespace xarm_api
         bool is_move = true;
         std::thread([this, &target_pos, &is_move, &cur_pos]() {
             is_move = true;
-            int ret2 = arm->set_gripper_position(target_pos, true);
+            int ret2 = arm->set_gripper_position(target_pos, true, -1, false); // set wait_motion=false
             int err;
             arm->get_gripper_err_code(&err);
             ROS_INFO("set_gripper_position, ret=%d, err=%d, cur_pos=%f", ret2, err, cur_pos);
