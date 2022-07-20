@@ -570,6 +570,14 @@ namespace xarm_api
 			{
 				res.message = "cartesian velocity, ret = " + std::to_string(res.ret);
 			} break;
+            case 6:
+            {
+                res.message = "joint online, ret = " + std::to_string(res.ret);
+            } break;
+            case 7:
+            {
+                res.message = "cartesian online, ret = " + std::to_string(res.ret);
+            } break;
             default:
             {
                 res.message = "the failed mode, ret = " + std::to_string(res.ret);
