@@ -7,7 +7,7 @@
 #include <actionlib/server/action_server.h>
 #include <std_msgs/Float32.h>
 #include <sensor_msgs/JointState.h>
-// #include <geometry_msgs/WrenchStamped.h>
+#include <geometry_msgs/WrenchStamped.h>
 #include "xarm_api/xarm_msgs.h"
 #include "xarm/wrapper/xarm_api.h"
 
@@ -82,7 +82,8 @@ namespace xarm_api
         void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
         void pub_joint_state(sensor_msgs::JointState &js_msg);
         void pub_cgpio_state(xarm_msgs::CIOState &cio_msg);
-        // void pub_ftsensor_state(geometry_msgs::WrenchStamped &wrench_msg);
+        void pub_ftsensor_ext_state(geometry_msgs::WrenchStamped &wrench_msg);
+        void pub_ftsensor_raw_state(geometry_msgs::WrenchStamped &wrench_msg);
 
         bool is_connected(void);
         std::string controller_error_interpreter(int err=-1);
@@ -116,6 +117,7 @@ namespace xarm_api
         sensor_msgs::JointState joint_state_msg_;
         xarm_msgs::RobotMsg xarm_state_msg_;
         xarm_msgs::CIOState cgpio_state_msg_;
+        geometry_msgs::WrenchStamped ftsensor_msg_;
         std::vector<std::string> joint_names_;
 
         ros::AsyncSpinner spinner_;
@@ -192,7 +194,8 @@ namespace xarm_api
         ros::Publisher robot_rt_state_; 
         ros::Publisher end_input_state_;
         ros::Publisher cgpio_state_;
-        // ros::Publisher ftsensor_state_;
+        ros::Publisher ftsensor_ext_state_;
+        ros::Publisher ftsensor_raw_state_;
 
         ros::Subscriber sleep_sub_;
 

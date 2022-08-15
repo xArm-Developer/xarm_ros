@@ -12,6 +12,7 @@
   <depend>actionlib</depend>
   <depend>actionlib_msgs</depend>
   <depend>control_msgs</depend> 
+  <depend>geometry_msgs</depend> 
   <depend>std_srvs</depend>
   <depend>genmsg</depend>
   <depend>xarm_sdk</depend>

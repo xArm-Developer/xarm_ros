@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   genmsg
   xarm_msgs
   sensor_msgs
+  geometry_msgs
   actionlib
   actionlib_msgs
   control_msgs
