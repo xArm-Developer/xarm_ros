@@ -1,7 +1,7 @@
 catkin-pkg==0.4.22
 distro==1.5.0
 docutils==0.16
-numpy==1.16.6
+numpy==1.22.0
 pyassimp==4.1.4
 pyparsing==2.4.7
 python-dateutil==2.8.1

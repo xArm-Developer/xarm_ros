@@ -76,6 +76,7 @@ For **UFACTORY Lite 6** users, make sure you have followed the instructions befo
    * xarm_controler (xarm_hw) no longer uses the SDK through service and topic, but directly calls the SDK interface.
    * Add text interpretation for Controller Error code, returned from "get_err" service.
    * Support UFACTORY Lite 6 model. 
+   * [Beta] Added two more torque-related topics (temporarily do not support third-party torque sensors): /xarm/uf_ftsensor_raw_states (raw data) and /xarm/uf_ftsensor_ext_states (filtered data)
 
 # 3. Preparations before using this package
 

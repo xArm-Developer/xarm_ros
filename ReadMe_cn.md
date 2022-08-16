@@ -68,6 +68,8 @@
    * 添加带超时版本的速度模式控制。(需要**控制器固件版本 >= 1.8.0**)  
    * 添加xArm Vision和RealSense D435i相关demo，将之前的"xarm_device"内容转移至 xarm_vision/camera_demo。
    * xarm_controler (xarm_hw)不再通过service和topic的方式来使用SDK，而是直接调用SDK的接口
+   * 支持Lite6模型
+   * [Beta]新增连个力矩相关的主题（暂时不支持第三方力矩传感器）: /xarm/uf_ftsensor_raw_states(原始数据)和/xarm/uf_ftsensor_ext_states(经过滤波后的数据)
 
 # 3. 准备工作
 
