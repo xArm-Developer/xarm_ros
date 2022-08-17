@@ -121,3 +121,27 @@ $ rosservice call /xarm/set_mode 0
 $ rosservice call /xarm/set_state 0
 $ rosservice call /xarm/play_traj 'my_recording.traj' 1 (repeat times)  1 (speed-up factor: 1x,2x or 4x speed)
 ``` 
+
+# 6. Online Target Update:
+To satisfy the need for **dynamic following task**, we now provide alternative methods other than servo_joint and servo_cartesian which require high-frequency update and trajectroy planning capability at user level. Now xArm controller (after firmware **v1.11.0**) supports Online Trajectory Generation (**OTG**) for both joint space and Cartesian space. The newly genated target from sensors can be sent to the arm even when previous trajectory is not finished, upon receiving the new target, xArm will automatically move towards the latest command point(with newly specified speed and acceleration) in a smooth transition.   
+
+1.For joint space, simply switch to **Mode 6** and give the latest joint targets whenever switching needed, the command service is still `move_joint`.
+
+```bash
+# for xArm7:
+$ rosservice call /xarm/set_mode 6
+$ rosservice call /xarm/set_state 0
+$ rosservice call /xarm/move_joint [0,0,0,0,0,0,0] 0.2 7 0 0
+# after a certain period while the last target has not been reached
+$ rosservice call /xarm/move_joint [-0.2775,-0.55,-0.452,1.05,-0.23,1.55,-0.665] 0.35 10 0 0
+```  
+2.For Cartesian space, switch to **Mode 7** and then update the latest Cartesian target as needed, with the `move_line` service used in mode 0.
+
+```bash
+$ rosservice call /xarm/set_mode 7
+$ rosservice call /xarm/set_state 0
+$ rosservice call /xarm/move_line [250,100,300,3.14,0,0] 100 2000 0 0
+# after a certain period while the last target has not been reached
+$ rosservice call /xarm/move_line [250,-100,400,3.14,0,0] 200 5000 0 0
+```  
+For both modes the speed is continuous at command transition, acceleration is continuous for joint space but not for Cartesian space. Refer to [this paper](https://www-cs.stanford.edu/group/manips/publications/pdfs/Kroeger_2010_TRO.pdf) which categorize OTG methods, our joint OTG is **type IV** and Cartesian OTG is **type II**.

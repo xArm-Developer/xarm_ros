@@ -47,7 +47,7 @@ Using the Rviz move_it interface, move the xarm to a position you are happy with
 $ source /opt/ros/your_ros_version/setup.bash
 $ source your_ws/devel/setup.bash
 $ source  ros_py27/bin/activate
-(your-venv)$ rosrun examples robot_jogging.py -q 30.0 -i 1 -a -1.1
+(your-venv)$ rosrun xarm7_redundancy_res robot_jogging.py -q 30.0 -i 1 -a -1.1
 ```
 In the above command line, the -q option is the desired angle change, the -i option indicates the ith joint, and the -a option is the stepsize alpha.
 

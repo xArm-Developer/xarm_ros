@@ -266,7 +266,7 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 * `move_line_aa`: 笛卡尔空间的直线轨迹运动，姿态使用**轴-角** 而不是roll-pitch-yaw欧拉角，在使用此命令之前请仔细查阅xArm用户手册关于轴-角的解释。  
 
 #### 手臂模式1:
-* `move_servo_cart/move_servoj`: （固定）高频率的笛卡尔或关节轨迹指令，分别对应SDK里的set_servo_cartesian()和set_servo_angle_j()，需要机械臂工作在**模式1**，可以间接实现速度控制。在使用这两个服务功能之前，务必做好**风险评估**并且仔细阅读第[7.2-7.3节](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)的使用方法。  
+* `move_servo_cart/move_servoj`: （固定）高频率的笛卡尔或关节轨迹指令，分别对应SDK里的set_servo_cartesian()和set_servo_angle_j()，需要机械臂工作在**模式1**，可以间接实现速度控制。在使用这两个服务功能之前，务必做好**风险评估**并且仔细阅读[其他示例 2-3节](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)的使用方法。    
 
 #### 手臂模式4:
 * `velo_move_joint/velo_move_joint_timed`: 指定所有关节目标转速(单位: rad/s)的运动, 最大关节加速度可以通过 `set_max_acc_joint` 服务设定。（[例子](#5-关节旋转速度控制)）  
