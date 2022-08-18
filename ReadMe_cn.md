@@ -20,7 +20,7 @@
     * [5.5 ***xarm7_moveit_config***](#55-xarm7_moveit_config)  
         * [5.5.1 Moveit加载其它自定义模型到机械臂末端](#551-moveit加载其它自定义模型到机械臂末端)
     * [5.6 ***xarm_planner***](#56-xarm_planner)  
-    * [5.7 ***xarm_api/xarm_msgs(新增关节在线规划)***](#57-xarm_apixarm_msgs)  
+    * [5.7 ***xarm_api/xarm_msgs(新增关节/笛卡尔在线规划)***](#57-xarm_apixarm_msgs)  
         * [5.7.1 使用ROS Service启动 xArm (***后续指令执行的前提***)](#使用ros-service启动-xarm)  
         * [5.7.2 关节空间和笛卡尔空间运动指令的示例](#关节空间和笛卡尔空间运动指令的示例)
         * [5.7.3 I/O 操作](#工具-io-操作)  
@@ -30,6 +30,7 @@
         * [5.7.7 机械爪控制](#机械爪控制)  
         * [5.7.8 真空吸头控制](#真空吸头控制)  
         * [5.7.9 末端工具Modbus通信](#末端工具modbus通信)
+        * [5.7.10 'report_type'启动参数](#report_type-启动参数)
 * [6. 模式切换(***更新***)](#6-模式切换)
     * [6.1 模式介绍](#61-模式介绍)
     * [6.2 切换模式的正确方法](#62-切换模式的正确方法)
@@ -40,11 +41,13 @@
     * [7.4 在仿真的xArm模型末端添加RealSense D435i模型](#74-在仿真的xarm模型末端添加realsense-d435i模型)
     * [7.5 颜色块抓取例子 (仿真+真机)](#75-颜色块抓取例子)
 * [8. 其他示例](#8-其他示例)
+    * [8.0 用Moveit展示xarm7冗余解的示例](https://github.com/xArm-Developer/xarm_ros/tree/master/examples/xarm7_redundancy_res)
     * [8.1 两台xArm5 (两进程独立控制)](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#1-multi_xarm5-controlled-separately)
     * [8.2 Servo_Cartesian 笛卡尔位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#2-servo_cartesian-streamed-cartesian-trajectory)
     * [8.3 Servo_Joint 关节位置伺服](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#3-servo_joint-streamed-joint-space-trajectory)
     * [8.4 使用同一个moveGroup节点控制xArm6双臂](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#4-dual-xarm6-controlled-with-one-movegroup-node)
-    * [8.5 用Moveit展示xarm7冗余解的示例](https://github.com/xArm-Developer/xarm_ros/tree/master/examples/xarm7_redundancy_res)
+    * [8.5 轨迹录制和回放](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#5-run-recorded-trajectory-beta)
+    * [8.6 可用于动态跟踪的在线轨迹规划(**NEW**)](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#6-online-target-update)
 
 # 1. 简介：
    &ensp;&ensp;此代码库包含xArm模型文件以及相关的控制、规划等示例开发包。开发及测试使用的环境为 Ubuntu 16.04 + ROS Kinetic/Melodic。
@@ -196,9 +199,10 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 #### Moveit!图形控制界面 + xArm 真实机械臂:
    首先, 检查并确认xArm电源和控制器已上电开启, 然后运行:  
    ```bash
-   $ roslaunch xarm7_moveit_config realMove_exec.launch robot_ip:=<控制盒的局域网IP地址>
+   $ roslaunch xarm7_moveit_config realMove_exec.launch robot_ip:=<控制盒的局域网IP地址> [velocity_control:=false] [report_type:=normal]
    ```
-   检查terminal中的输出看看有无错误信息。如果启动无误，您可以将RViz中通过Moveit规划好的轨迹通过'Execute'按钮下发给机械臂执行。***但一定确保它不会与周围环境发生碰撞！***  
+   检查terminal中的输出看看有无错误信息。如果启动无误，您可以将RViz中通过Moveit规划好的轨迹通过'Execute'按钮下发给机械臂执行。***但一定确保它不会与周围环境发生碰撞！***   
+   `velocity_control`为可选参数, 如果设置为`true`, velocity controller 和 velocity interface 就会取代默认的位置控制接口； `report_type`同样为可选参数, 具体请参考[这里](#report_type-启动参数).  
 
 #### Moveit!图形控制界面 + 安装了UFACTORY机械爪的xArm真实机械臂:  
    首先, 检查并确认xArm电源和控制器已上电开启, 然后运行:  
@@ -275,14 +279,19 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 * `velo_move_line/velo_move_line_timed:` 指定TCP笛卡尔线速度（mm/s）和姿态角速度（rad/s，**轴-角速度**表示）的运动, 最大关节加速度可以通过`set_max_acc_line` 服务设定。（[例子](#6-笛卡尔线速度控制)）  
 
 #### 手臂模式6: 
-* `move_joint`: 关节在线轨迹规划（需要**控制器固件版本 >= v1.10.0**），在模式6下，可以随时发送新的关节目标位置，最大速度和加速度，控制器可以在线重新规划轨迹。目标更改后关节速度加速度连续，但可能不再同步加减速，最终到达的位置可能会稍有误差。**本功能主要是实现关节指令的动态响应，而不像servo指令需要用户自己规划轨迹并高频更新**。 `/xarm/wait_for_finish` 需要设置为 `false` 以随时打断现有目标轨迹，对应的SDK函数仍然是"set_servo_angle(wait=false)"。  
+* `move_joint`: 关节在线轨迹规划（需要**控制器固件版本 >= v1.10.0**），在模式6下，可以随时发送新的关节目标位置，最大速度和加速度，控制器可以在线重新规划轨迹。目标更改后关节速度加速度连续，但可能不再同步加减速，最终到达的位置可能会稍有误差。**本功能主要是实现关节指令的动态响应，而不像servo_joint指令需要用户自己规划轨迹并高频更新**。 `/xarm/wait_for_finish` 需要设置为 `false` 以随时打断现有目标轨迹，对应的SDK函数仍然是"set_servo_angle(wait=false)"。（[例子](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#6-online-target-update)）  
+
+#### 手臂模式7:
+* `move_line`： 笛卡尔空间路径在线规划（需要**控制器固件版本 >= v1.11.0**），在模式7下，可以随时更新目标笛卡尔坐标，以及期望的最大速度和加速度，控制器可以及时在线重新规划路径，以线速度连续的方式过渡到新的目标位置。 **本功能主要是实现笛卡尔指令的动态响应，而不像servo_cartesian指令需要用户自己规划轨迹并高频更新**. `/xarm/wait_for_finish` 需要设置为 `false` 以随时打断现有目标轨迹，对应的SDK函数仍然是"set_position(wait=false)"。（[例子](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#6-online-target-update)）  
 
 #### 使用ROS Service启动 xArm:
 
 &ensp;&ensp;首先启动xarm7 service server, 以下ip地址只是举例:  
 ```bash
-$ roslaunch xarm_bringup xarm7_server.launch robot_ip:=192.168.1.128
+$ roslaunch xarm_bringup xarm7_server.launch robot_ip:=192.168.1.128 report_type:=normal
 ```
+`report_type`为可选参数，参考[这里](#report_type-启动参数)  
+
 &ensp;&ensp;然后确保每个关节的控制已经使能, 参考[SetAxis.srv](/xarm_msgs/srv/SetAxis.srv):
 ```bash
 $ rosservice call /xarm/motion_ctrl 8 1
@@ -430,7 +439,7 @@ $ rosservice call /xarm/set_controller_aout 2 3.3  (设定输出端口 AO1 为 3
 #### 获得反馈状态信息:
 &ensp;&ensp;如果通过运行'xarm7_server.launch'连接了一台xArm机械臂，用户可以通过订阅 ***"xarm/xarm_states"*** topic 获得机械臂当前的各种状态信息， 包括关节角度、工具坐标点的位置、错误、警告信息等等。具体的信息列表请参考[RobotMsg.msg](./xarm_msgs/msg/RobotMsg.msg).  
 &ensp;&ensp;另一种选择是订阅 ***"/joint_states"*** topic, 它是以[JointState.msg](http://docs.ros.org/jade/api/sensor_msgs/html/msg/JointState.html)格式发布数据的, 但是当前 ***只有 "position" 是有效数据***; "velocity" 是没有经过任何滤波的基于相邻两组位置数据进行的数值微分, "effort" 的反馈数据是基于电流的估计值，而不是直接从力矩传感器获得，因而它们只能作为参考。
-&ensp;&ensp;基于运行时性能考虑，目前以上两个topic的数据更新率固定为 ***5Hz***.  
+&ensp;&ensp;基于运行时性能考虑，目前以上两个topic的数据更新率固定为 ***5Hz***。状态反馈的频率和内容可以有其他选择，参考[report_type参数](#report_type-启动参数)。  
 
 #### 关于设定末端工具偏移量(适用于xarm_api service控制):  
 &ensp;&ensp;末端工具的偏移量可以也通过'/xarm/set_tcp_offset'服务来设定,参考下图，请注意这一坐标偏移量是基于 ***默认工具坐标系*** (坐标系B)描述的，它位于末端法兰中心，并且相对基坐标系(坐标系A)有（PI, 0, 0)的RPY旋转偏移。
@@ -530,6 +539,20 @@ respond_data: [1, 6, 0, 10, 0, 3]
 ```
 其中实际收到的数据帧为: [0x01, 0x06, 0x00, 0x0A, 0x00, 0x03]，长度为6.  
 
+#### "report_type" 启动参数:
+当启动xArm真机的ROS应用时, 可以选择性的指定"report_type"参数。它决定了状态上报的内容和频率。具体请参考[开发者手册](https://www.cn.ufactory.cc/_files/ugd/896670_8c25a14281ce4b63814c1730c3fd82c4.pdf)中的**2.1.6. 自动上报数据格式**章节查看三种上报类型(`normal/rich/dev`)的内容区别, 默认使用的类型为 "normal"。  
+
+* 对于需要高频率状态反馈的用户, 在启动时可以指定`report_type:=dev`, 这样`/xarm/xarm_states`和`/xarm/joint_states`话题会以**100Hz**频率更新。  
+* 对于需要使用`/xarm/controller_gpio_states`话题实时查看控制器GPIO状态的用户, 请指定`report_type:=rich`, 可以在开发者手册中看到这个类型反馈的信息是最全的。  
+* 不同上报类型的更新频率:   
+
+|   type   |    port No.   | Frequency |
+|:---------|:-------------:|----------:|
+|   normal |     30001     |    5Hz    |
+|   rich   |     30002     |    5Hz    |
+|   dev    |     30003     |    100Hz  |
+
+
 # 6. 模式切换
 &ensp;&ensp;xArm 在不同的控制方式下可能会工作在不同的模式中，当前的模式可以通过topic "xarm/xarm_states" 的内容查看。在某些情况下，需要用户主动切换模式以达到继续正常工作的目的。
 
@@ -541,9 +564,10 @@ respond_data: [1, 6, 0, 10, 0, 3]
 &ensp;&ensp; ***Mode 3*** : 保留；  
 &ensp;&ensp; ***Mode 4*** : 关节速度控制模式；  
 &ensp;&ensp; ***Mode 5*** : 笛卡尔速度控制模式；  
-&ensp;&ensp; ***Mode 6*** : 关节在线规划模式。（控制器固件版本>=v1.10.0） 
+&ensp;&ensp; ***Mode 6*** : 关节在线规划模式；（控制器固件版本>=v1.10.0） 
+&ensp;&ensp; ***Mode 7*** : 笛卡尔路径在线规划模式。(控制器固件版本>= v1.11.0)  
 
-&ensp;&ensp;***Mode 0*** 是系统初始化的默认模式，当机械臂发生错误(碰撞、过载、超速等等),系统也会自动切换到模式0。并且对于[xarm_api](./xarm_api/)包和[SDK](https://github.com/xArm-Developer/xArm-Python-SDK)中提供的运动指令都要求xArm工作在模式0来执行。***Mode 1*** 是为了方便像 Moveit! 一样的第三方规划器绕过xArm控制器的规划去执行轨迹。 ***Mode 2*** 可以打开自由拖动模式, 机械臂会进入零重力状态方便拖动示教, 但需注意在进入模式2之前确保机械臂安装方式和负载均已正确设置。 ***Mode 4*** 可以直接给定关节期望速度来控制手臂。***Mode 5*** 可以给定末端笛卡尔线速度来控制手臂运动。***Mode 6***可以随时动态更新关节指令，控制器自动规划并执行到新的目标。
+&ensp;&ensp;***Mode 0*** 是系统初始化的默认模式，当机械臂发生错误(碰撞、过载、超速等等),系统也会自动切换到模式0。并且对于[xarm_api](./xarm_api/)包和[SDK](https://github.com/xArm-Developer/xArm-Python-SDK)中提供的运动指令都要求xArm工作在模式0来执行。***Mode 1*** 是为了方便像 Moveit! 一样的第三方规划器绕过xArm控制器的规划去执行轨迹。 ***Mode 2*** 可以打开自由拖动模式, 机械臂会进入零重力状态方便拖动示教, 但需注意在进入模式2之前确保机械臂安装方式和负载均已正确设置。 ***Mode 4*** 可以直接给定关节期望速度来控制手臂。***Mode 5*** 可以给定末端笛卡尔线速度来控制手臂运动。***Mode 6 和 Mode 7***对应关节和笛卡尔在线规划模式，可以随时动态更新指令，控制器自动规划并执行到新的目标。
 
 ### 6.2 切换模式的正确方法:  
 &ensp;&ensp;如果在执行Moveit!规划的轨迹期间发生碰撞等错误, 为了安全考虑，当前模式将被自动从1切换到0, 同时robot state将变为 4 (错误状态)。这时即使碰撞已经解除，机械臂在重新回到模式1之前也无法执行任何Moveit!或者servoj指令。请依次按照下列指示切换模式:  

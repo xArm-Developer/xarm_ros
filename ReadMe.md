@@ -36,6 +36,7 @@ For **UFACTORY Lite 6** users, make sure you have followed the instructions befo
         * [5.7.7 Gripper Control](#gripper-control)
         * [5.7.8 Vacuum Gripper Control](#vacuum-gripper-control)
         * [5.7.9 Tool Modbus communication](#tool-modbus-communication)
+        * [5.7.10 'report_type' argument](#report_type-argument)
 * [6. Mode Change(***Updated***)](#6-mode-change)
     * [6.1 Mode Explanation](#61-mode-explanation)
     * [6.2 Proper way to change modes](#62-proper-way-to-change-modes)
@@ -204,9 +205,11 @@ Please note: xarm_moveit_config related packages will limit all joints within `[
 #### To run Moveit! motion planner to control the real xArm:  
    First make sure the xArm and the controller box are powered on, then execute:  
    ```bash
-   $ roslaunch xarm7_moveit_config realMove_exec.launch robot_ip:=<your controller box LAN IP address>
+   $ roslaunch xarm7_moveit_config realMove_exec.launch robot_ip:=<your controller box LAN IP address> [velocity_control:=false] [report_type:=normal]
    ```
-   Examine the terminal output and see if any error occured during the launch. If not, just play with the robot in Rviz and you can execute the sucessfully planned trajectory on real arm. But be sure it will not hit any surroundings before execution!  
+   Examine the terminal output and see if any error occured during the launch. If not, just play with the robot in Rviz and you can execute the sucessfully planned trajectory on real arm. But be sure it will not hit any surroundings before execution!   
+
+   `velocity_control` is optional, if set to `true`, velocity controller and velocity interface will be used rather than position control. `report_type` is also optional, refer [here](#report_type-argument).  
 
 #### To run Moveit! motion planner to control the real xArm with xArm Gripper attached:  
    First make sure the xArm and the controller box are powered on, then execute:  
@@ -285,17 +288,19 @@ Please ***keep in mind that*** before calling the 4 motion services above, first
 * <font color=blue>[velo_move_line/velo_move_line_timed](#6-cartesian-velocity-control):</font> Linear motion of TCP with specified velocity in mm/s (position) and rad/s (orientation in **axis-angular_velocity**), with maximum linear acceleration configurable by `set_max_acc_line` service.  
 
 #### Robot Mode 6: (Firmware >= v1.10.0)
-* <font color=blue>[move_joint](#1-joint-space-motion):</font> Online joint space replanning to the new joint angles, with new max joint velocity and acceleration. Joint velocities and accelerations are continuous during transition, however the velocity profiles may not be synchronous and the final reached positions may have small errors. **This function is mainly for dynamic response without self trajectory planning requirement like servo joint commands**. `/xarm/wait_for_finish` parameter has to be `false` for successful transition. Corresponding function in SDK is "set_servo_angle(wait=false)" under mode 6.   
+* <font color=blue>[move_joint](#1-joint-space-motion):</font> Online joint space replanning to the new joint angles, with new max joint velocity and acceleration. Joint velocities and accelerations are continuous during transition, however the velocity profiles may not be synchronous and the final reached positions may have small errors. **This function is mainly for dynamic response without self trajectory planning requirement like servo joint commands**. `/xarm/wait_for_finish` parameter has to be `false` for successful transition. Corresponding function in SDK is "set_servo_angle(wait=false)" under mode 6. [Instructions](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#6-online-target-update) 
 
-#### Robot Mode 7: (Firmware >= v1.10.0)
-* <font color=blue>[move_line](#2-cartesian-space-motion-in-Base-coordinate):</font> Online Cartesian space replanning to the new target coordinate, with new max linear velocity and acceleration. Velocities and accelerations are continuous during transition, **This function is mainly for dynamic response without self trajectory planning requirement like servo cartesian commands**. `/xarm/wait_for_finish` parameter has to be `false` for successful transition. Corresponding function in SDK is "set_position(wait=false)" under mode 7.   
+#### Robot Mode 7: (Firmware >= v1.11.0)
+* <font color=blue>[move_line](#2-cartesian-space-motion-in-Base-coordinate):</font> Online Cartesian space replanning to the new target coordinate, with new max linear velocity and acceleration. Velocities and accelerations are continuous during transition, **This function is mainly for dynamic response without self trajectory planning requirement like servo cartesian commands**. `/xarm/wait_for_finish` parameter has to be `false` for successful transition. Corresponding function in SDK is "set_position(wait=false)" under mode 7. [Instructions](https://github.com/xArm-Developer/xarm_ros/tree/master/examples#6-online-target-update)   
 
 #### Starting xArm by ROS service:
 
 &ensp;&ensp;First startup the service server for xarm7, ip address is just an example:  
 ```bash
-$ roslaunch xarm_bringup xarm7_server.launch robot_ip:=192.168.1.128
+$ roslaunch xarm_bringup xarm7_server.launch robot_ip:=192.168.1.128 report_type:=normal
 ```
+The argument `report_type` is explained [here](#report_type-argument).  
+
 &ensp;&ensp;Then make sure all the servo motors are enabled, refer to [SetAxis.srv](/xarm_msgs/srv/SetAxis.srv):
 ```bash
 $ rosservice call /xarm/motion_ctrl 8 1
@@ -445,7 +450,7 @@ $ rosservice call /xarm/set_controller_aout 2 3.3  (Setting port AO1 to be 3.3)
 #### Getting status feedback:
 &ensp;&ensp;Having connected with a real xArm robot by running 'xarm7_server.launch', user can subscribe to the topic ***"xarm/xarm_states"*** for feedback information about current robot states, including joint angles, TCP position, error/warning code, etc. Refer to [RobotMsg.msg](./xarm_msgs/msg/RobotMsg.msg) for content details.  
 &ensp;&ensp;Another option is subscribing to ***"/joint_states"*** topic, which is reporting in [JointState.msg](http://docs.ros.org/jade/api/sensor_msgs/html/msg/JointState.html), however, currently ***only "position" field is valid***; "velocity" is non-filtered numerical differentiation based on 2 adjacent position data, and "effort" feedback are current-based estimated values, not from direct torque sensor, so they are just for reference.
-&ensp;&ensp;In consideration of performance, current update rate of above two topics are set at ***5Hz***.  
+&ensp;&ensp;In consideration of performance, default update rate of above two topics are set at ***5Hz***. The report content and frequency have other options, refer to [report_type argument](#report_type-argument)  
 
 #### Setting Tool Center Point Offset(only effective for xarm_api ROS service control):
 &ensp;&ensp;The tool tip point offset values can be set by calling service "/xarm/set_tcp_offset". Refer to the figure below, please note this offset coordinate is expressed with respect to ***default tool frame*** (Frame B), which is located at flange center, with roll, pitch, yaw rotations of (PI, 0, 0) from base frame (Frame A).   
@@ -548,6 +553,19 @@ ret: 0
 respond_data: [1, 6, 0, 10, 0, 3]
 ```
 and actual feedback data frame is: [0x01, 0x06, 0x00, 0x0A, 0x00, 0x03], with the length of 6 bytes.   
+
+#### "report_type" argument:
+When launching real xArm ROS applications, the argument "report_type" can be specified. It decides the state feedback rate and content. Refer to the [developer manual](https://www.ufactory.cc/_files/ugd/896670_1f106918b523404284c6916de025cf28.pdf) at chapter **2.1.6 Automatic Reporting Format** for the report contents of the three available report type (`normal/rich/dev`), default type using is "normal".  
+
+* For users who demand high-frequency feedback, `report_type:=dev` can be specified, then the topics `/xarm/xarm_states` and `/xarm/joint_states` will be published at **100Hz**.  
+* For users who want the gpio states being updated at `/xarm/controller_gpio_states` topic, please use `report_type:=rich`, since this reports the fullest information from the controller. As can be seen in developer manual.  
+* The report rate of the three types: 
+
+|   type   |    port No.   | Frequency |
+|:---------|:-------------:|----------:|
+|   normal |     30001     |    5Hz    |
+|   rich   |     30002     |    5Hz    |
+|   dev    |     30003     |    100Hz  |
 
 
 # 6. Mode Change
