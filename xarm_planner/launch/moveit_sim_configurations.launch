@@ -4,8 +4,26 @@
   <arg name="namespace" default="xarm"/>
   <arg name="robot_type" default="xarm" />
 
-  <rosparam file="$(eval find(str(arg('robot_type')) + str(arg('arm_dof')) + arg('end_effector') + '_moveit_config') + '/config/' + str(arg('robot_type')) + str(arg('arm_dof')) + '_params.yaml')" command="load" ns="$(arg namespace)"/>
-  <include file="$(eval find(str(arg('robot_type')) + str(arg('arm_dof')) + arg('end_effector') + '_moveit_config') + '/launch/moveit_rviz_common.launch')">
+  <!-- lite6 -->
+  <rosparam if="$(eval robot_type == 'lite')" file="$(eval find(str(arg('robot_type')) + str(arg('arm_dof')) + '_moveit_config') + '/config/' + str(arg('robot_type')) + str(arg('arm_dof')) + '_params.yaml')" command="load" ns="$(arg namespace)"/>
+  <include if="$(eval robot_type == 'lite')" file="$(eval find(str(arg('robot_type')) + str(arg('arm_dof')) + '_moveit_config') + '/launch/moveit_rviz_common.launch')">
+    <arg name="jnt_stat_source" value="[/move_group/fake_controller_joint_states]" />
+    <!-- whether to use fake_execution controller to drive the motion -->
+    <arg name="fake_execution" value="true" />
+    <!-- option to publish tf topic or not -->
+    <arg name="pub_tf" value="true" />
+    <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
+    <arg name="NO_GUI_CTRL" value="true"/>
+    <!-- option to show rviz or not -->
+    <arg name="show_rviz" value="true" />
+    <!-- option to load gripper controller in simulation -->
+    <arg name="add_gripper" value="true" if="$(eval end_effector=='_gripper')" />
+    <arg name="add_vacuum_gripper" value="true" if="$(eval end_effector=='_vacuum_gripper')" />
+  </include>
+
+  <!-- xarm -->
+  <rosparam if="$(eval robot_type != 'lite')" file="$(eval find(str(arg('robot_type')) + str(arg('arm_dof')) + arg('end_effector') + '_moveit_config') + '/config/' + str(arg('robot_type')) + str(arg('arm_dof')) + '_params.yaml')" command="load" ns="$(arg namespace)"/>
+  <include if="$(eval robot_type != 'lite')" file="$(eval find(str(arg('robot_type')) + str(arg('arm_dof')) + arg('end_effector') + '_moveit_config') + '/launch/moveit_rviz_common.launch')">
     <arg name="jnt_stat_source" value="[/move_group/fake_controller_joint_states]" />
     <!-- whether to use fake_execution controller to drive the motion -->
     <arg name="fake_execution" value="true" />
