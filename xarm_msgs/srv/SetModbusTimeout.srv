@@ -1,0 +1,10 @@
+# configure the timeout parameter in modbus communication, in milliseconds
+int32 timeout_ms
+
+# whether the set timeout is the timeout of transparent transmission
+bool is_transparent_transmission
+
+---
+
+string message
+int16 ret
