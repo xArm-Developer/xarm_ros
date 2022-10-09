@@ -200,30 +200,39 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "xarm_move_group_planner");
   ros::NodeHandle nh;
-  int jnt_num;
-  nh.getParam("DOF", jnt_num);
-  switch(jnt_num)
-  {
-    case 7:
-    {
-      XArmSimplePlanner::PLANNING_GROUP = "xarm7";
-      break;
-    }
-    case 6:
-    {
-      XArmSimplePlanner::PLANNING_GROUP = "xarm6";
-      break;
-    }
-    case 5:
-    {
-      XArmSimplePlanner::PLANNING_GROUP = "xarm5";
-      break;
-    }
-    default:
-    {
-      ROS_ERROR("ROS parameter DOF not correct, please CHECK!!");
-    }
+  int robot_dof;
+  nh.getParam("robot_dof", robot_dof);
+  std::string robot_type;
+  nh.getParam("robot_type", robot_type);
+  if (robot_dof != 5 && robot_dof != 6 && robot_dof != 7) {
+    ROS_ERROR("ROS parameter robot_dof not correct, please CHECK!!");
   }
+  else {
+    XArmSimplePlanner::PLANNING_GROUP = robot_type + std::to_string(robot_dof);
+  }
+  
+  // switch(robot_dof)
+  // {
+  //   case 7:
+  //   {
+  //     XArmSimplePlanner::PLANNING_GROUP = "xarm7";
+  //     break;
+  //   }
+  //   case 6:
+  //   {
+  //     XArmSimplePlanner::PLANNING_GROUP = "xarm6";
+  //     break;
+  //   }
+  //   case 5:
+  //   {
+  //     XArmSimplePlanner::PLANNING_GROUP = "xarm5";
+  //     break;
+  //   }
+  //   default:
+  //   {
+  //     ROS_ERROR("ROS parameter robot_dof not correct, please CHECK!!");
+  //   }
+  // }
 
   XArmSimplePlanner planner;
 

@@ -6,11 +6,11 @@
 ## 启动simple planner:
 如果希望在仿真环境中使用，运行:
 ```bash
-   $ roslaunch xarm_planner xarm_planner_rviz_sim.launch robot_dof:=<7|6|5> add_gripper:=<true|false> add_vacuum_gripper:=<true|false>
+   $ roslaunch xarm_planner xarm_planner_rviz_sim.launch robot_dof:=<7|6|5> robot_type:=<xarm|lite>  add_gripper:=<true|false> add_vacuum_gripper:=<true|false>
 ```
 或者如果希望直接控制真机，运行:  
 ```bash
-   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5> add_gripper:=<true|false> add_vacuum_gripper:=<true|false>
+   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5> robot_type:=<xarm|lite> add_gripper:=<true|false> add_vacuum_gripper:=<true|false>
 ```   
 'robot_dof'参数指的是xArm的关节数目 (默认值为7)，'add_gripper'和'add_vacuum_gripper'参数是为了手臂末端安装了UF末端执行器的情况准备的，只能加载一种末端执行器。  
 

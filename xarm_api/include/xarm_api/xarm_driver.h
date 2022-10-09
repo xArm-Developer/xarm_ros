@@ -79,6 +79,9 @@ namespace xarm_api
         bool GetPositionAACB(xarm_msgs::GetFloat32List::Request &req, xarm_msgs::GetFloat32List::Response &res);
         bool GetTgpioBaudRateCB(xarm_msgs::GetInt32::Request &req, xarm_msgs::GetInt32::Response &res);
 
+        bool SetModbusToutCB(xarm_msgs::SetModbusTimeout::Request &req, xarm_msgs::SetModbusTimeout::Response &res);
+        bool GetSetModbusCB(xarm_msgs::GetSetModbusData::Request &req, xarm_msgs::GetSetModbusData::Response &res);
+
         void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
         void pub_joint_state(sensor_msgs::JointState &js_msg);
         void pub_cgpio_state(xarm_msgs::CIOState &cio_msg);
@@ -158,6 +161,9 @@ namespace xarm_api
         ros::ServiceServer get_controller_din_server_;
         ros::ServiceServer set_controller_aout_server_;
         ros::ServiceServer get_controller_ain_server_;
+
+        ros::ServiceServer set_modbus_timeout_server_;
+        ros::ServiceServer getset_tgpio_modbus_server_;
 
         // ros::ServiceServer tgpio_delay_set_digital_server_;
         // ros::ServiceServer cgpio_delay_set_digital_server_;

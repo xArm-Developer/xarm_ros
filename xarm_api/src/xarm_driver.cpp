@@ -203,6 +203,9 @@ namespace xarm_api
         get_position_rpy_server_ = nh_.advertiseService("get_position_rpy", &XArmDriver::GetPositionRPYCB, this);
         get_position_aa_server_ = nh_.advertiseService("get_position_axis_angle", &XArmDriver::GetPositionAACB, this); // aa for axis-angle
         get_tgpio_baudrate_server_ = nh_.advertiseService("get_tgpio_modbus_baudrate", &XArmDriver::GetTgpioBaudRateCB, this);
+        
+        set_modbus_timeout_server_ = nh_.advertiseService("set_tgpio_modbus_timeout", &XArmDriver::SetModbusToutCB, this);
+        getset_tgpio_modbus_server_ = nh_.advertiseService("getset_tgpio_modbus_data", &XArmDriver::GetSetModbusCB, this);
     }
 
     void XArmDriver::_init_publisher(void)
@@ -1334,6 +1337,35 @@ namespace xarm_api
         res.ret = arm->get_tgpio_modbus_baudrate(&baud_rate);
         res.data = baud_rate;
         res.message = "ret = " + std::to_string(res.ret) + ", current baud_rate = " + std::to_string(baud_rate);
+        return true;
+    }
+
+    bool XArmDriver::SetModbusToutCB(xarm_msgs::SetModbusTimeout::Request &req, xarm_msgs::SetModbusTimeout::Response &res)
+    {
+        res.ret = arm->set_tgpio_modbus_timeout(req.timeout_ms, req.is_transparent_transmission);
+        res.message = "set_tgpio_modbus_timeout, ret="+ std::to_string(res.ret);
+        return true;
+    }
+
+    bool XArmDriver::GetSetModbusCB(xarm_msgs::GetSetModbusData::Request &req, xarm_msgs::GetSetModbusData::Response &res)
+    {
+        int send_len = req.send_data.size();
+        int recv_len = req.respond_len;
+        unsigned char * tx_data = new unsigned char [send_len]{0};
+        unsigned char * rx_data = new unsigned char [recv_len]{0};
+
+        for(int i=0; i<send_len; i++)
+        {
+            tx_data[i] = req.send_data[i];
+        }
+        res.ret = arm->getset_tgpio_modbus_data(tx_data, send_len, rx_data, recv_len, req.host_id, req.is_transparent_transmission, req.use_503_port);
+        for(int i=0; i<recv_len; i++)
+        {
+           res.respond_data.push_back(rx_data[i]);
+        }
+
+        delete [] tx_data;
+        delete [] rx_data;
         return true;
     }
 

@@ -1,0 +1,21 @@
+# unsigned char data to be sent to tool device through modbus
+uint8[] send_data
+
+# Specify the anticipated maximum respond data length in bytes
+int16 respond_len
+
+# host id, 9: END RS485, 10: Controller RS485
+uint8 host_id
+
+# whether to choose transparent transmission
+bool is_transparent_transmission
+
+# whether to use port 503 for communication
+# if it is true, it will connect to 503 port for communication when it is used for the first time, which is generally only useful for transparent transmission
+bool use_503_port
+
+---
+
+int16 ret
+string message
+uint8[] respond_data

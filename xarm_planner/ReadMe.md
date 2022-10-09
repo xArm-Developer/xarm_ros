@@ -7,11 +7,11 @@
 ## Launch the simple planner node:
 If you want to try it in simulation, run:
 ```bash
-   $ roslaunch xarm_planner xarm_planner_rviz_sim.launch robot_dof:=<7|6|5> add_gripper:=<true|false> add_vacuum_gripper:=<true|false>
+   $ roslaunch xarm_planner xarm_planner_rviz_sim.launch robot_dof:=<7|6|5> robot_type:=<xarm|lite>  add_gripper:=<true|false> add_vacuum_gripper:=<true|false>
 ```
 Or, if you would work with real xArm, run:  
 ```bash
-   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5> add_gripper:=<true|false> add_vacuum_gripper:=<true|false>
+   $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5> robot_type:=<xarm|lite> add_gripper:=<true|false> add_vacuum_gripper:=<true|false>
 ```
 Argument 'robot_dof' specifies the number of joints of your xArm (default is 7). 'add_gripper' and 'add_vacuum_gripper' are for the cases with UF end-effector attached, only one end-effector can be attached.   
 
