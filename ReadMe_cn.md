@@ -546,11 +546,13 @@ respond_data: [1, 6, 0, 10, 0, 3]
 * 对于需要使用`/xarm/controller_gpio_states`话题实时查看控制器GPIO状态的用户, 请指定`report_type:=rich`, 可以在开发者手册中看到这个类型反馈的信息是最全的。  
 * 不同上报类型的更新频率:   
 
-|   type   |    port No.   | Frequency |
-|:---------|:-------------:|----------:|
-|   normal |     30001     |    5Hz    |
-|   rich   |     30002     |    5Hz    |
-|   dev    |     30003     |    100Hz  |
+|   type   |    port No.   | Frequency |  GPIO topic  | F/T sensor topic | 
+|:---------|:-------------:|:---------:|:------------:|-----------------:|
+|   normal |     30001     |    5Hz    |     不可用    |      不可用        |
+|   rich   |     30002     |    5Hz    |      可用     |       可用        | 
+|   dev    |     30003     |    100Hz  |     不可用    |        可用        |
+
+注: **GPIO topic** => `xarm/controller_gpio_states`. **F/T sensor topic** =>  `xarm/uf_ftsensor_ext_states` and `xarm/uf_ftsensor_raw_states`。
 
 
 # 6. 模式切换
