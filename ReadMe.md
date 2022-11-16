@@ -564,12 +564,13 @@ When launching real xArm ROS applications, the argument "report_type" can be spe
 * For users who want the gpio states being updated at `/xarm/controller_gpio_states` topic, please use `report_type:=rich`, since this reports the fullest information from the controller. As can be seen in developer manual.  
 * The report rate of the three types: 
 
-|   type   |    port No.   | Frequency |
-|:---------|:-------------:|----------:|
-|   normal |     30001     |    5Hz    |
-|   rich   |     30002     |    5Hz    |
-|   dev    |     30003     |    100Hz  |
+|   type   |    port No.   | Frequency |  GPIO topic   | F/T sensor topic | 
+|:---------|:-------------:|:---------:|:-------------:|-----------------:|
+|   normal |     30001     |    5Hz    | Not Available |   Not Available  |
+|   rich   |     30002     |    5Hz    |   Available   |     Available    | 
+|   dev    |     30003     |    100Hz  | Not Available |     Available    |
 
+Note: **GPIO topic** => `xarm/controller_gpio_states`. **F/T sensor topic** =>  `xarm/uf_ftsensor_ext_states` and `xarm/uf_ftsensor_raw_states`.
 
 # 6. Mode Change
 &ensp;&ensp;xArm may operate under different modes depending on different controling methods. Current mode can be checked in the message of topic "xarm/xarm_states". And there are circumstances that demand user to switch between operation modes. 
