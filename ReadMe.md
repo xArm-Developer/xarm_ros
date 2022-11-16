@@ -82,6 +82,7 @@ For **UFACTORY Lite 6** users, make sure you have followed the instructions befo
    * [Beta] Added two more torque-related topics (temporarily do not support third-party torque sensors): /xarm/uf_ftsensor_raw_states (raw data) and /xarm/uf_ftsensor_ext_states (filtered and compensated data)
    * (2022-09-07) Add service(__set_tgpio_modbus_timeout__/__getset_tgpio_modbus_data__), choose whether to transparently transmit Modbus data according to different parameters
    * (2022-09-07) Update submodule xarm-sdk to version 1.11.0
+   * (2022-11-16) Add torque related services: /xarm/ft_sensor_enable, /xarm/ft_sensor_app_set, /xarm/ft_sensor_set_zero, /xarm/ft_sensor_cali_load, /xarm/get_ft_sensor_error
 
 # 3. Preparations before using this package
 

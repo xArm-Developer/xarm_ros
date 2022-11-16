@@ -75,6 +75,7 @@
    * [Beta]新增连个力矩相关的主题（暂时不支持第三方力矩传感器）: /xarm/uf_ftsensor_raw_states(原始数据)和/xarm/uf_ftsensor_ext_states(经过滤波后的数据)
    * (2022-09-07) 新增service(__set_tgpio_modbus_timeout__/__getset_tgpio_modbus_data__)，根据参数选择是否透传Modbus数据
    * (2022-09-07) 更新子模块xarm-sdk到1.11.0版本
+   * (2022-11-16) 增加力矩相关services: /xarm/ft_sensor_enable, /xarm/ft_sensor_app_set, /xarm/ft_sensor_set_zero, /xarm/ft_sensor_cali_load, /xarm/get_ft_sensor_error
 
 # 3. 准备工作
 

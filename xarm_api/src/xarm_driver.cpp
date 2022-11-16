@@ -206,6 +206,16 @@ namespace xarm_api
         
         set_modbus_timeout_server_ = nh_.advertiseService("set_tgpio_modbus_timeout", &XArmDriver::SetModbusToutCB, this);
         getset_tgpio_modbus_server_ = nh_.advertiseService("getset_tgpio_modbus_data", &XArmDriver::GetSetModbusCB, this);
+    
+        ft_sensor_enable_server_ = nh_.advertiseService("ft_sensor_enable", &XArmDriver::FtSensorEnable, this);
+        ft_sensor_app_set_server_ = nh_.advertiseService("ft_sensor_app_set", &XArmDriver::FtSensorAppSet, this);
+        ft_sensor_set_zero_server_ = nh_.advertiseService("ft_sensor_set_zero", &XArmDriver::FtSensorSetZero, this);
+        ft_sensor_cali_load_server_ = nh_.advertiseService("ft_sensor_cali_load", &XArmDriver::FtSensorCaliLoad, this);
+        get_ft_sensor_error_server_ = nh_.advertiseService("get_ft_sensor_error", &XArmDriver::GetFtSensorError, this);
+
+        // open_lite6_gripper_server_ = nh_.advertiseService("open_lite6_gripper", &XArmDriver::OpenLite6Gripper, this);
+        // close_lite6_gripper_server_ = nh_.advertiseService("close_lite6_gripper", &XArmDriver::CloseLite6Gripper, this);
+        // stop_lite6_gripper_server_ = nh_.advertiseService("stop_lite6_gripper", &XArmDriver::StopLite6Gripper, this);
     }
 
     void XArmDriver::_init_publisher(void)
@@ -1368,6 +1378,70 @@ namespace xarm_api
         delete [] rx_data;
         return true;
     }
+
+    bool XArmDriver::FtSensorEnable(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
+    {
+        res.ret = arm->ft_sensor_enable(req.data);
+        res.message = "ft_sensor_enable, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XArmDriver::FtSensorAppSet(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
+    {
+        res.ret = arm->ft_sensor_app_set(req.data);
+        res.message = "ft_sensor_app_set, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XArmDriver::FtSensorSetZero(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res)
+    {
+        res.ret = arm->ft_sensor_set_zero();
+        res.message = "ft_sensor_set_zero, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XArmDriver::FtSensorCaliLoad(xarm_msgs::FtCaliLoad::Request& req, xarm_msgs::FtCaliLoad::Response& res)
+    {
+        if (req.datas.size() < 10) {
+            res.ret = PARAM_ERROR;
+            return true;
+        }
+
+        res.ret = arm->ft_sensor_cali_load(&req.datas[0], req.association_setting_tcp_load);
+        // res.ret = arm->ft_sensor_cali_load(&req.datas[0], req.association_setting_tcp_load, req.m, req.x, req.y, req.z);
+        res.message = "ft_sensor_cali_load, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XArmDriver::GetFtSensorError(xarm_msgs::GetErr::Request& req, xarm_msgs::GetErr::Response& res)
+    {
+        int err;
+        res.ret = arm->get_ft_sensor_error(&err);
+        res.err = (signed short)err;
+        res.message = "get_ft_sensor_error, ret = " + std::to_string(res.ret) + ", err = " + std::to_string(res.err);
+        return true;
+    }
+
+    // bool XArmDriver::OpenLite6Gripper(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res)
+    // {
+    //     res.ret = arm->open_lite6_gripper();
+    //     res.message = "open_lite6_gripper, ret = " + std::to_string(res.ret);
+    //     return true;
+    // }
+
+    // bool XArmDriver::CloseLite6Gripper(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res)
+    // {
+    //     res.ret = arm->close_lite6_gripper();
+    //     res.message = "close_lite6_gripper, ret = " + std::to_string(res.ret);
+    //     return true;
+    // }
+
+    // bool XArmDriver::StopLite6Gripper(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res)
+    // {
+    //     res.ret = arm->stop_lite6_gripper();
+    //     res.message = "stop_lite6_gripper, ret = " + std::to_string(res.ret);
+    //     return true;
+    // }
 
     void XArmDriver::pub_robot_msg(xarm_msgs::RobotMsg &rm_msg)
     {   

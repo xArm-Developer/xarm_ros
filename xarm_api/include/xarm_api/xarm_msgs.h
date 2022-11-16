@@ -32,5 +32,7 @@
 #include <xarm_msgs/GetInt32.h>
 #include <xarm_msgs/SetModbusTimeout.h>
 #include <xarm_msgs/GetSetModbusData.h>
+#include <xarm_msgs/Call.h>
+#include <xarm_msgs/FtCaliLoad.h>
 
 #endif // __XARM_MSGS_H
