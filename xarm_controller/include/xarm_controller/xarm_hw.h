@@ -102,6 +102,8 @@ namespace xarm_control
 
 		ros::Duration read_duration_;
 		ros::Duration write_duration_;
+
+		ros::NodeHandle hw_nh_;
 		
 		bool enforce_limits_;
 

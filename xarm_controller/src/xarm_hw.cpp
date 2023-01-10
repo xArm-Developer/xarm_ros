@@ -152,6 +152,7 @@ namespace xarm_control
 
 	bool XArmHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
 	{
+		hw_nh_ = robot_hw_nh;
 		bool velocity_control = false;
 		robot_hw_nh.getParam("velocity_control", velocity_control);
 		// ctrl_method_ = EFFORT; // INVALID
@@ -430,7 +431,9 @@ namespace xarm_control
 			{
 				for (int k = 0; k < dof_; k++) { cmds_float_[k] = (float)velocity_cmds_[k]; }
 				// cmd_ret = xarm.veloMoveJoint(cmds_float_, true, VELO_DURATION);
-				cmd_ret = xarm_driver_.arm->vc_set_joint_velocity(cmds_float_, true, VELO_DURATION);
+				float velo_duration = VELO_DURATION;
+				hw_nh_.param<float>("velo_duration", velo_duration, VELO_DURATION);
+				cmd_ret = xarm_driver_.arm->vc_set_joint_velocity(cmds_float_, true, velo_duration);
 			}
 			break;
 		case POSITION:
