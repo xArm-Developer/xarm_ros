@@ -572,12 +572,12 @@ respond_data: [1, 6, 0, 10, 0, 3]
 
       ```bash
       # 控制真实xArm6机械臂
-      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 arm_dof:=6 joystick_type:=1
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 dof:=6 joystick_type:=1
       # XBOX Wired -> joystick_type=1
       # XBOX Wireless -> joystick_type=2
 
       # 或者控制真实Lite6
-      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 arm_dof:=6 joystick_type:=1 robot_type:=lite
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 dof:=6 joystick_type:=1 robot_type:=lite
       ```
 
    - #### 5.8.2 通过六维鼠标 __3Dconnexion SpaceMouse Wireless__ 来控制
@@ -587,19 +587,19 @@ respond_data: [1, 6, 0, 10, 0, 3]
 
       ```bash
       # 控制真实xArm6机械臂
-      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 arm_dof:=6 joystick_type:=3
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 dof:=6 joystick_type:=3
 
       # 或者控制真实Lite6
-      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 arm_dof:=6 joystick_type:=3 robot_type:=lite
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 dof:=6 joystick_type:=3 robot_type:=lite
       ```
 
    - #### 5.8.3 通过 __键盘输入__ 控制
       ```bash
       # 控制真实xArm6机械臂
-      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 arm_dof:=6 joystick_type:=99
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 dof:=6 joystick_type:=99
 
       # 或者控制真实Lite6
-      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 arm_dof:=6 joystick_type:=99 robot_type:=lite
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 dof:=6 joystick_type:=99 robot_type:=lite
       ```
 
 

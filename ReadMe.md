@@ -587,12 +587,12 @@ Note: **GPIO topic** => `xarm/controller_gpio_states`. **F/T sensor topic** =>  
 
       ```bash
       # For controlling real xArm: (use xArm 6 as example)
-      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 arm_dof:=6 joystick_type:=1
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 dof:=6 joystick_type:=1
       # XBOX Wired -> joystick_type=1
       # XBOX Wireless -> joystick_type=2
 
       # Or controlling real Lite6
-      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 arm_dof:=6 joystick_type:=1 robot_type:=lite
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 dof:=6 joystick_type:=1 robot_type:=lite
       ```
 
    - #### 5.8.2 Controlling with 3Dconnexion SpaceMouse Wireless
@@ -602,19 +602,19 @@ Note: **GPIO topic** => `xarm/controller_gpio_states`. **F/T sensor topic** =>  
 
       ```bash
       # For controlling real xArm: (use xArm 6 as example)
-      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 arm_dof:=6 joystick_type:=3
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 dof:=6 joystick_type:=3
 
       # Or controlling real Lite6
-      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 arm_dof:=6 joystick_type:=3 robot_type:=lite
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 dof:=6 joystick_type:=3 robot_type:=lite
       ```
 
    - #### 5.8.3 Controlling with PC keyboard
       ```bash
       # For controlling real xArm: (use xArm 6 as example)
-      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 arm_dof:=6 joystick_type:=99
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 dof:=6 joystick_type:=99
 
       # Or controlling real Lite6
-      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 arm_dof:=6 joystick_type:=99 robot_type:=lite
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 dof:=6 joystick_type:=99 robot_type:=lite
       ```
 
 # 6. Mode Change
