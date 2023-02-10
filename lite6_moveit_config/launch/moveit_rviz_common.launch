@@ -13,6 +13,7 @@
   <!-- arguments configurable by upper layers: -->
   <!-- the source topic of joint states  -->
   <arg name="jnt_stat_source" default="[/joint_states]" />
+  <arg name="jnt_stat_pub_rate" default="10" />
   <!-- option to launch move_group node or not -->
   <arg name="load_move_group" default="true" />
   <!-- whether to use fake_execution controller to drive the motion -->
@@ -64,6 +65,7 @@
   <!-- publish /joint_states from specified source topic -->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="/use_gui" value="$(arg use_gui)"/>
+    <param name="/rate" value="$(arg jnt_stat_pub_rate)"/>
     <rosparam param="/source_list" subst_value="True">$(arg jnt_stat_source)</rosparam>
   </node>
 

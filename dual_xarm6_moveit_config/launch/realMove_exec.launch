@@ -16,6 +16,7 @@
   <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
   <arg name="no_gui_plan" default="false" />
   <arg name="ext_ns" default="" />
+  <arg name="jnt_stat_pub_rate" default="10" />
 
   <!-- common: bring up node to enable real xArm control -->
   <include file="$(find xarm_bringup)/launch/dual_xarm6_server.launch">
@@ -59,6 +60,7 @@
     <arg name="jnt_stat_source" value="[$(arg hw_ns_1)/joint_states, $(arg hw_ns_2)/joint_states]" />
     <arg name="show_rviz" value="$(arg show_rviz)" />
     <arg name="NO_GUI_CTRL" value="$(arg no_gui_plan)"/>
+    <arg name="jnt_stat_pub_rate" value="$(arg jnt_stat_pub_rate)"/>
   </include>
 
 </launch>

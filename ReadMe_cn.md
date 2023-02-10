@@ -31,6 +31,7 @@
         * [5.7.8 真空吸头控制](#真空吸头控制)  
         * [5.7.9 末端工具Modbus通信](#末端工具modbus通信)
         * [5.7.10 'report_type'启动参数](#report_type-启动参数)
+    * [5.8 ***xarm_moveit_servo***](#58-xarm_moveit_servo)
 * [6. 模式切换(***更新***)](#6-模式切换)
     * [6.1 模式介绍](#61-模式介绍)
     * [6.2 切换模式的正确方法](#62-切换模式的正确方法)
@@ -76,6 +77,7 @@
    * (2022-09-07) 新增service(__set_tgpio_modbus_timeout__/__getset_tgpio_modbus_data__)，根据参数选择是否透传Modbus数据
    * (2022-09-07) 更新子模块xarm-sdk到1.11.0版本
    * (2022-11-16) 增加力矩相关services: /xarm/ft_sensor_enable, /xarm/ft_sensor_app_set, /xarm/ft_sensor_set_zero, /xarm/ft_sensor_cali_load, /xarm/get_ft_sensor_error
+   * (2023-02-10) 新增xarm_moveit_servo支持xbox手柄/SpaceMouse/键盘控制
 
 # 3. 准备工作
 
@@ -556,6 +558,49 @@ respond_data: [1, 6, 0, 10, 0, 3]
 |   dev    |     30003     |    100Hz  |     不可用    |        可用        |
 
 注: **GPIO topic** => `xarm/controller_gpio_states`. **F/T sensor topic** =>  `xarm/uf_ftsensor_ext_states` and `xarm/uf_ftsensor_raw_states`。
+
+## 5.8 xarm_moveit_servo:
+&ensp;&ensp;此模块用于通过特定外部输入设备来控制机械臂
+   - #### 5.8.1 通过 __XBOX360__ 手柄控制
+      - 左摇杆控制TCP的X和Y
+      - 右摇杆控制TCP的ROLL和PITCH
+      - [前面]左右两个触发器控制TCP的Z
+      - [前面]左右两个缓冲器控制TCP的YAW
+      - 十字键控制关节1和关节2的转动
+      - 按键X和按键B控制最后一个关节的转动
+      - 按键Y和按键A控制倒数第二个关节的转动
+
+      ```bash
+      # 控制真实xArm6机械臂
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 arm_dof:=6 joystick_type:=1
+      # XBOX Wired -> joystick_type=1
+      # XBOX Wireless -> joystick_type=2
+
+      # 或者控制真实Lite6
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 arm_dof:=6 joystick_type:=1 robot_type:=lite
+      ```
+
+   - #### 5.8.2 通过六维鼠标 __3Dconnexion SpaceMouse Wireless__ 来控制
+      - 六维鼠标的六个维度对应控制TCP的X/Y/Z/ROLL/PITCH/YAW
+      - 左边按键按下时单独控制TCP的XYZ
+      - 右边按键按下时单独控制TCP的ROLL/PITCH/YAW
+
+      ```bash
+      # 控制真实xArm6机械臂
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 arm_dof:=6 joystick_type:=3
+
+      # 或者控制真实Lite6
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 arm_dof:=6 joystick_type:=3 robot_type:=lite
+      ```
+
+   - #### 5.8.3 通过 __键盘输入__ 控制
+      ```bash
+      # 控制真实xArm6机械臂
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.206 arm_dof:=6 joystick_type:=99
+
+      # 或者控制真实Lite6
+      $ roslaunch xarm_moveit_servo xarm_moveit_servo_realmove.launch robot_ip:=192.168.1.52 arm_dof:=6 joystick_type:=99 robot_type:=lite
+      ```
 
 
 # 6. 模式切换
