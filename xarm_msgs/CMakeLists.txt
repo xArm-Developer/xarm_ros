@@ -87,6 +87,7 @@ find_package(catkin REQUIRED COMPONENTS
    GetSetModbusData.srv
    Call.srv
    FtCaliLoad.srv
+   FtIdenLoad.srv
  )
 
 ## Generate actions in the 'action' folder

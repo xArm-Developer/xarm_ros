@@ -85,6 +85,7 @@ For **UFACTORY Lite 6** users, make sure you have followed the instructions befo
    * (2022-09-07) Update submodule xarm-sdk to version 1.11.0
    * (2022-11-16) Add torque related services: /xarm/ft_sensor_enable, /xarm/ft_sensor_app_set, /xarm/ft_sensor_set_zero, /xarm/ft_sensor_cali_load, /xarm/get_ft_sensor_error
    * (2023-02-10) Added xarm_moveit_servo to support xbox controller/SpaceMouse/keyboard control
+   * (2022-02-18) Automatically saving in servie(/xarm/ft_sensor_cali_load) and add torque related service(/xarm/ft_sensor_iden_load)
 
 # 3. Preparations before using this package
 

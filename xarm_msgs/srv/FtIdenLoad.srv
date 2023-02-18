@@ -1,0 +1,11 @@
+# This format is suitable for the following services
+#   - ft_sensor_iden_load
+
+---
+
+int16 ret
+string message
+
+# the result of identification
+#   ft_sensor_iden_load: [mass(kg)，x_centroid(mm)，y_centroid(mm)，z_centroid(mm)，Fx_offset，Fy_offset，Fz_offset，Tx_offset，Ty_offset，Tz_ffset]
+float32[] datas

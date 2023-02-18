@@ -211,6 +211,7 @@ namespace xarm_api
         ft_sensor_app_set_server_ = nh_.advertiseService("ft_sensor_app_set", &XArmDriver::FtSensorAppSet, this);
         ft_sensor_set_zero_server_ = nh_.advertiseService("ft_sensor_set_zero", &XArmDriver::FtSensorSetZero, this);
         ft_sensor_cali_load_server_ = nh_.advertiseService("ft_sensor_cali_load", &XArmDriver::FtSensorCaliLoad, this);
+        ft_sensor_iden_load_server_ = nh_.advertiseService("ft_sensor_iden_load", &XArmDriver::FtSensorIdenLoad, this);
         get_ft_sensor_error_server_ = nh_.advertiseService("get_ft_sensor_error", &XArmDriver::GetFtSensorError, this);
 
         // open_lite6_gripper_server_ = nh_.advertiseService("open_lite6_gripper", &XArmDriver::OpenLite6Gripper, this);
@@ -1412,6 +1413,14 @@ namespace xarm_api
             arm->save_conf();
         // res.ret = arm->ft_sensor_cali_load(&req.datas[0], req.association_setting_tcp_load, req.m, req.x, req.y, req.z);
         res.message = "ft_sensor_cali_load, ret = " + std::to_string(res.ret);
+        return true;
+    }
+
+    bool XArmDriver::FtSensorIdenLoad(xarm_msgs::FtIdenLoad::Request& req, xarm_msgs::FtIdenLoad::Response& res)
+    {
+        res.datas.resize(10);
+        res.ret = arm->ft_sensor_iden_load(&res.datas[0]);
+        res.message = "ft_sensor_iden_load, ret = " + std::to_string(res.ret);
         return true;
     }
 
