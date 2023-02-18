@@ -1408,6 +1408,8 @@ namespace xarm_api
         }
 
         res.ret = arm->ft_sensor_cali_load(&req.datas[0], req.association_setting_tcp_load);
+        if (res.ret >= 0)
+            arm->save_conf();
         // res.ret = arm->ft_sensor_cali_load(&req.datas[0], req.association_setting_tcp_load, req.m, req.x, req.y, req.z);
         res.message = "ft_sensor_cali_load, ret = " + std::to_string(res.ret);
         return true;
