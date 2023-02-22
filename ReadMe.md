@@ -138,7 +138,7 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
    ```bash
    $ rosdep install --from-paths . --ignore-src --rosdistro kinetic -y
    ```
-   And chane 'kinetic' to the ROS distribution you use.  
+   And change 'kinetic' to the ROS distribution you use.  
 
 ## 4.4 Build the code
    ```bash
