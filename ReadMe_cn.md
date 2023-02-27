@@ -550,7 +550,7 @@ respond_data: [1, 6, 0, 10, 0, 3]
 * 不同上报类型的更新频率:   
 
 |   type   |    port No.   | Frequency |  GPIO topic  | F/T sensor topic | 
-|:---------|:-------------:|:---------:|:------------:|-----------------:|
+|:--------:|:-------------:|:---------:|:------------:|:----------------:|
 |   normal |     30001     |    5Hz    |     不可用    |      不可用        |
 |   rich   |     30002     |    5Hz    |      可用     |       可用        | 
 |   dev    |     30003     |    100Hz  |     不可用    |        可用        |
@@ -639,6 +639,17 @@ $ catkin_make
 $ roslaunch d435i_xarm_setup d435i_xarm_auto_calib.launch robot_dof:=your_xArm_DOF robot_ip:=your_xArm_IP
 ```
 标定使用的aruco二维码可以在[这里下载](https://chev.me/arucogen/)，请记住自己下载的`marker ID`和`marker size`，并在以上launch文件中修改。参考[官方](https://github.com/IFL-CAMP/easy_handeye#calibration)或其他网络教程通过图形界面进行标定，标定完成并确认保存后，默认会在 `~/.ros/easy_handeye`目录下生成`.yaml`后缀的结果文档，供后续与手臂一起进行坐标变换使用。如果固定件用的是UFACTORY提供的[camera_stand](https://www.ufactory.cc/products/xarm-camera-module-2020)，在xarm_vision/d435i_xarm_setup/config/[xarm_realsense_handeyecalibration_eye_on_hand_sample_result.yaml](./xarm_vision/d435i_xarm_setup/config/xarm_realsense_handeyecalibration_eye_on_hand_sample_result.yaml)中保存了参考的标定结果。  
+
+### 7.2.1 关于 UFACTORY Lite6 手眼标定:
+请首先阅读和了解上面7.2章节关于xarm系列的标定示例，然后使用下面列出的替换文件应用于lite6的标定：  
+Ufactory Lite6标定启动文件:
+```bash
+$ roslaunch d435i_xarm_setup d435i_lite6_auto_calib.launch robot_ip:=your_xArm_IP
+```
+标定结果文档示例: [lite6_realsense_handeyecalibration_eye_on_hand_sample_result.yaml](./xarm_vision/d435i_xarm_setup/config/lite6_realsense_handeyecalibration_eye_on_hand_sample_result.yaml)
+
+标定结果发布启动文件示例:
+[publish_handeye_tf_lite6.launch](./xarm_vision/d435i_xarm_setup/launch/publish_handeye_tf_lite6.launch)
 
 ## 7.3 3D视觉抓取示例：
 本部分提供利用[***find_object_2d***](http://introlab.github.io/find-object/)进行简单的物体识别和抓取的示例程序。使用了RealSense D435i深度相机，UFACTORY camera_stand以及xArm官方机械爪。  

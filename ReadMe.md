@@ -565,7 +565,7 @@ When launching real xArm ROS applications, the argument "report_type" can be spe
 * The report rate of the three types: 
 
 |   type   |    port No.   | Frequency |  GPIO topic   | F/T sensor topic | 
-|:---------|:-------------:|:---------:|:-------------:|-----------------:|
+|:--------:|:-------------:|:---------:|:-------------:|:----------------:|
 |   normal |     30001     |    5Hz    | Not Available |   Not Available  |
 |   rich   |     30002     |    5Hz    |   Available   |     Available    | 
 |   dev    |     30003     |    100Hz  | Not Available |     Available    |
@@ -655,6 +655,20 @@ $ roslaunch d435i_xarm_setup d435i_xarm_auto_calib.launch robot_dof:=your_xArm_D
 The `aruco Marker` used inside can be downloaded [here](https://chev.me/arucogen/), please remember the `marker ID` and `marker size` and modify them in the launch file accordingly. Refer to [official](https://github.com/IFL-CAMP/easy_handeye#calibration)or other usage instructions online and finish the calibration with the GUI.   
 
 If calculation result is confirmed and saved，it will appear by default under `~/.ros/easy_handeye` directory and can be used for transferring object coordinates to base frame. If the [camera_stand](https://www.ufactory.cc/products/xarm-camera-module-2020) provided by UFACTORY is used for fixing camera, a sample calibration result is stored at xarm_vision/d435i_xarm_setup/config/[xarm_realsense_handeyecalibration_eye_on_hand_sample_result.yaml](./xarm_vision/d435i_xarm_setup/config/xarm_realsense_handeyecalibration_eye_on_hand_sample_result.yaml) for this case.  
+
+
+### 7.2.1 Hand-eye Calibration Demo for UFACTORY Lite6:
+Please first read through the above instruction for xarm series, and use the files listed here for Lite6 calibration.  
+
+Sample calibration launch:  
+```bash
+$ roslaunch d435i_xarm_setup d435i_lite6_auto_calib.launch robot_ip:=your_xArm_IP
+```
+Sample Calibration result file: [lite6_realsense_handeyecalibration_eye_on_hand_sample_result.yaml](./xarm_vision/d435i_xarm_setup/config/lite6_realsense_handeyecalibration_eye_on_hand_sample_result.yaml)
+
+Sample calibration result TF publication:
+[publish_handeye_tf_lite6.launch](./xarm_vision/d435i_xarm_setup/launch/publish_handeye_tf_lite6.launch)
+
 
 ## 7.3 Vision Guided Grasping Demo:
 [***find_object_2d***](http://introlab.github.io/find-object/) is used for this demo for simple object detection and grasping. Hardware used in this part: RealSense D435i depth camera, UFACTORY camera stand and the xArm Gripper.  

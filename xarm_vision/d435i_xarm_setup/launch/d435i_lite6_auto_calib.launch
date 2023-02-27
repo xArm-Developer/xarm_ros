@@ -1,7 +1,6 @@
 <launch>
     <arg name="namespace_prefix" default="xarm_realsense_handeyecalibration" />
     <arg name="robot_ip" doc="The IP address of the xarm robot" />
-    <arg name="robot_dof" doc="The degree of freedom of the xarm" />
     <!-- PLEASE USE THE PROPER MARKER CONFIGURATION ! -->
     <arg name="marker_size" doc="Size of the ArUco marker used, in meters" default="0.1" />
     <arg name="marker_id" doc="The ID of the ArUco marker used" default="105"/>
@@ -28,15 +27,7 @@
     </node>
 
     <!-- start the robot -->
-    <include if="$(eval arg('robot_dof')==7)" file="$(find xarm7_moveit_config)/launch/realMove_exec.launch">
-        <arg name="robot_ip" value="$(arg robot_ip)" />
-        <arg name="show_rviz" value="false" />
-    </include>
-    <include if="$(eval arg('robot_dof')==6)" file="$(find xarm6_moveit_config)/launch/realMove_exec.launch">
-        <arg name="robot_ip" value="$(arg robot_ip)" />
-        <arg name="show_rviz" value="false" />
-    </include>
-    <include if="$(eval arg('robot_dof')==5)" file="$(find xarm5_moveit_config)/launch/realMove_exec.launch">
+    <include file="$(find lite6_moveit_config)/launch/realMove_exec.launch">
         <arg name="robot_ip" value="$(arg robot_ip)" />
         <arg name="show_rviz" value="false" />
     </include>
@@ -54,7 +45,8 @@
         <arg name="freehand_robot_movement" value="false" />
         <arg name="robot_velocity_scaling" value="0.1" />
         <arg name="robot_acceleration_scaling" value="0.1" />
-        <arg name="move_group" value="xarm$(arg robot_dof)" />
+        <arg name="move_group" value="lite6" />
+        <arg name="publish_dummy" value="true" />  <!-- will publish dummy relationship between link_eef and camera -->
     </include>
     <!-- in case rqt_easy_handeye image viewer fails to open: -->
     <node name="recognition_view" pkg="image_view" type="image_view" args="image:=/aruco_tracker/result" />

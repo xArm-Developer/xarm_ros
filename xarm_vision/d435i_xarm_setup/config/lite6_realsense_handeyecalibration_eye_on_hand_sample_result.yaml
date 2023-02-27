@@ -1,0 +1,18 @@
+parameters:
+  eye_on_hand: true
+  freehand_robot_movement: false
+  move_group: lite6
+  move_group_namespace: /
+  namespace: /lite6_realsense_handeyecalibration_eye_on_hand/
+  robot_base_frame: link_base
+  robot_effector_frame: link_eef
+  tracking_base_frame: camera_color_optical_frame
+  tracking_marker_frame: camera_marker
+transformation:
+  qw: 0.707
+  qx: 0.0
+  qy: 0.0
+  qz: 0.707
+  x: 0.0675
+  y: -0.0325
+  z: 0.023

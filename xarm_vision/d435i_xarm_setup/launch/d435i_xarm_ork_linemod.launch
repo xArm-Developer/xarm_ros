@@ -6,6 +6,7 @@
   <include file="$(find realsense2_camera)/launch/rs_camera.launch">
     <arg name="filters" value="pointcloud" />
     <arg name="align_depth" value="true" />
+    <arg name="publish_tf" value="false" />
     <!-- <arg name="enable_sync" default="true"/> -->
   </include>
 
