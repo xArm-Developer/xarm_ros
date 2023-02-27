@@ -10,6 +10,7 @@
   <arg name="ext_ns" default="" />
   <arg name="velocity_control" default="false"/>
   <arg name="enforce_limits" default="true" />
+  <arg name="jnt_stat_pub_rate" default="10" />
   
   <!-- xArm gripper baudrate checking configurations -->
   <arg name="baud_checkset" default="true" />
@@ -52,6 +53,7 @@
   <remap from="$(arg ext_ns)/source_list" to="/source_list" />
   <include file="$(find xarm5_gripper_moveit_config)/launch/moveit_rviz_common.launch">
     <arg name="jnt_stat_source" value="[$(arg xarm_hw_ns)/joint_states]" />
+    <arg name="jnt_stat_pub_rate" value="$(arg jnt_stat_pub_rate)"/>
     <arg name="show_rviz" value="$(arg show_rviz)" />
     <arg name="NO_GUI_CTRL" value="$(arg no_gui_plan)"/>
     <arg name="gripper_controller" value="false" />

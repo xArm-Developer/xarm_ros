@@ -1,9 +1,11 @@
 <launch>
   <arg name="ns" default="" />
+  <arg name="jnt_stat_pub_rate" default="10" />
 
   <remap from="$(arg ns)/source_list" to="/source_list" />
   <include file="$(find xarm5_vacuum_gripper_moveit_config)/launch/moveit_rviz_common.launch">
     <arg name="jnt_stat_source" value="[move_group/fake_controller_joint_states]" />
+    <arg name="jnt_stat_pub_rate" value="$(arg jnt_stat_pub_rate)"/>
     <!-- option to launch move_group node or not -->
     <arg name="load_move_group" value="true" />
     <!-- whether to use fake_execution controller to drive the motion -->

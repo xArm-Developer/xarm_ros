@@ -1,0 +1,64 @@
+<launch>
+  <arg name="dof" />
+  <arg name="robot_ip" />
+  <arg name="end_effector" default="" />
+  <arg name="robot_type" default="xarm" />
+  <arg name="report_type" default="dev" />
+  <arg name="show_rviz" default="true" />
+  <arg name="no_gui_plan" default="true" />
+  <arg name="ext_ns" default="" />
+  <!-- joystick_type, 1: XBOX360_WIRED, 2: XBOX360_WIRELESS, 3: SPACEMOUSE_WIRELESS, 99: KEYBOARD -->
+  <arg name="joystick_type" default="1" />
+
+  <!-- lite6 -->
+  <include if="$(eval robot_type == 'lite')" file="$(eval find(str(arg('robot_type')) + str(arg('dof')) + '_moveit_config') + '/launch/realMove_exec.launch')">
+    <arg name="robot_ip" value="$(arg robot_ip)" />
+    <arg name="show_rviz" value="$(arg show_rviz)" />
+    <arg name="no_gui_plan" value="$(arg no_gui_plan)" />
+    <arg name="report_type" value="$(arg report_type)" />
+    <arg name="ext_ns" value="$(arg ext_ns)" />
+    <arg name="add_gripper" value="true" if="$(eval end_effector=='_gripper')" />
+    <arg name="add_vacuum_gripper" value="true" if="$(eval end_effector=='_vacuum_gripper')" />
+    <arg name="jnt_stat_pub_rate" value="100"/>
+  </include>
+
+  <!-- xarm -->
+  <include if="$(eval robot_type != 'lite')" file="$(eval find(str(arg('robot_type')) + str(arg('dof')) + arg('end_effector') + '_moveit_config') + '/launch/realMove_exec.launch')">
+    <arg name="robot_ip" value="$(arg robot_ip)" />
+    <arg name="show_rviz" value="$(arg show_rviz)" />
+    <arg name="no_gui_plan" value="$(arg no_gui_plan)" />
+    <arg name="report_type" value="$(arg report_type)" />
+    <arg name="ext_ns" value="$(arg ext_ns)" />
+    <arg name="jnt_stat_pub_rate" value="100"/>
+  </include>
+
+  <!-- joystick -->
+  <node if="$(eval joystick_type != 99)" name="joy_node" pkg="joy" type="joy_node">
+    <param name="default_trig_val" type="bool" value="true" />
+    <param name="autorepeat_rate" type="double" value="40.0" />
+    <param name="deadzone" type="double" value="0.2" />
+    <param name="coalesce_interval" type="double" value="0.025" />
+  </node>
+
+  <arg name="hw_ns" value="$(eval 'ufactory' if robot_type == 'lite' else 'xarm')" />
+
+  <node name="servo_server" pkg="moveit_servo" type="servo_server" output="screen" >
+    <rosparam command="load" file="$(find xarm_moveit_servo)/config/moveit_servo_config.yaml" />
+    <param name="move_group_name" type="string" value="$(arg robot_type)$(arg dof)" />
+    <param name="command_out_topic" type="string" value="/$(arg hw_ns)/$(arg robot_type)$(arg dof)_traj_controller/command" />
+  </node>
+
+  <!-- joystick -->
+  <node if="$(eval joystick_type != 99)" name="xarm_joy_to_servo" pkg="xarm_moveit_servo" type="xarm_joy_to_servo_node" output="screen">
+    <param name="dof" type="int" value="$(arg dof)" />
+    <param name="ros_queue_size" type="int" value="1" />
+    <param name="joystick_type" type="int" value="$(arg joystick_type)" />
+  </node>
+
+  <!-- keyboard -->
+  <node if="$(eval joystick_type == 99)" name="xarm_keyboard_to_servo" pkg="xarm_moveit_servo" type="xarm_keyboard_to_servo_node" output="screen">
+    <param name="dof" type="int" value="$(arg dof)" />
+    <param name="ros_queue_size" type="int" value="1" />
+    <param name="joystick_type" type="int" value="$(arg joystick_type)" />
+  </node>
+</launch>

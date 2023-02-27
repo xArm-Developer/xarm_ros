@@ -12,6 +12,7 @@
   <arg name="enforce_limits" default="true" />
   <arg name="baud_checkset" default="true" />
 	<arg name="default_gripper_baud" default="2000000" />
+  <arg name="jnt_stat_pub_rate" default="10" />
 
   <!-- common: bring up node to enable real xArm control -->
   <include file="$(find xarm_bringup)/launch/xarm6_server.launch">
@@ -47,6 +48,7 @@
   <remap from="$(arg ext_ns)/source_list" to="/source_list" />
   <include file="$(find xarm6_vacuum_gripper_moveit_config)/launch/moveit_rviz_common.launch">
     <arg name="jnt_stat_source" value="[$(arg xarm_hw_ns)/joint_states]" />
+    <arg name="jnt_stat_pub_rate" value="$(arg jnt_stat_pub_rate)"/>
     <arg name="show_rviz" value="$(arg show_rviz)" />
     <arg name="NO_GUI_CTRL" value="$(arg no_gui_plan)"/>
   </include>

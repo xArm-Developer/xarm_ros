@@ -86,10 +86,11 @@ namespace xarm_api
         bool FtSensorAppSet(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
         bool FtSensorSetZero(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res);
         bool FtSensorCaliLoad(xarm_msgs::FtCaliLoad::Request& req, xarm_msgs::FtCaliLoad::Response& res);
+        bool FtSensorIdenLoad(xarm_msgs::FtIdenLoad::Request& req, xarm_msgs::FtIdenLoad::Response& res);
         bool GetFtSensorError(xarm_msgs::GetErr::Request& req, xarm_msgs::GetErr::Response& res);
-        // bool OpenLite6Gripper(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res);
-        // bool CloseLite6Gripper(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res);
-        // bool StopLite6Gripper(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res);
+        bool OpenLite6Gripper(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res);
+        bool CloseLite6Gripper(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res);
+        bool StopLite6Gripper(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res);
         
         void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
         void pub_joint_state(sensor_msgs::JointState &js_msg);
@@ -209,11 +210,12 @@ namespace xarm_api
         ros::ServiceServer ft_sensor_app_set_server_;
         ros::ServiceServer ft_sensor_set_zero_server_;
         ros::ServiceServer ft_sensor_cali_load_server_;
+        ros::ServiceServer ft_sensor_iden_load_server_;
         ros::ServiceServer get_ft_sensor_error_server_;
 
-        // ros::ServiceServer open_lite6_gripper_server_;
-        // ros::ServiceServer close_lite6_gripper_server_;
-        // ros::ServiceServer stop_lite6_gripper_server_;
+        ros::ServiceServer open_lite6_gripper_server_;
+        ros::ServiceServer close_lite6_gripper_server_;
+        ros::ServiceServer stop_lite6_gripper_server_;
 
         ros::Publisher joint_state_;
         ros::Publisher robot_rt_state_; 
