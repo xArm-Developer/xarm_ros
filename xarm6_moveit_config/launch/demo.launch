@@ -1,6 +1,7 @@
 <launch>
   <arg name="ns" default="" />
   <arg name="jnt_stat_pub_rate" default="10" />
+  <arg name="model1300" default="false" />
 
   <arg name="add_other_geometry" default="false"/>
   <arg name="geometry_type" default="box"/>
@@ -23,6 +24,7 @@
     <arg name="load_move_group" value="true" />
     <!-- whether to use fake_execution controller to drive the motion -->
     <arg name="fake_execution" value="true" />
+    <arg name="model1300" value="$(arg model1300)" />
 
     <arg name="add_other_geometry" default="$(arg add_other_geometry)"/>
     <arg name="geometry_type" default="$(arg geometry_type)"/>

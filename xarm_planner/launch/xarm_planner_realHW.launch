@@ -12,6 +12,7 @@
   <arg name="report_type" default="normal" />
   <arg name="ext_ns" default="" />
   <arg name="robot_type" default="xarm"/>
+  <arg name="model1300" default="false" />
 
   <remap from="move_group/display_planned_path" to="$(arg ext_ns)/move_group/display_planned_path" />
   <include file="$(find xarm_planner)/launch/moveit_real_arm_configurations.launch">
@@ -22,6 +23,7 @@
     <arg name="report_type" value="$(arg report_type)" />
     <arg name="ext_ns" value="$(arg ext_ns)" />
     <arg name="robot_type" value="$(arg robot_type)" />
+    <arg name="model1300" value="$(arg model1300)" />
   </include>
 
   <!-- <remap from="DOF" to="$(arg ext_ns)/xarm/DOF" /> -->

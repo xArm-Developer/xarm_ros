@@ -26,10 +26,12 @@
   <arg name="show_rviz" default="true" />
   <!-- whether or not to load a moveit controller for gripper -->
   <arg name="gripper_controller" />
+  <arg name="model1300" default="false" />
 
   <!-- Load the URDF, SRDF and other .yaml configuration files on the param server, limit joint range within [-pi, pi] -->
   <include file="$(find xarm6_gripper_moveit_config)/launch/planning_context.launch">
     <arg name="load_robot_description" value="true"/>
+    <arg name="model1300" value="$(arg model1300)"/>
   </include>
 
   <!-- If needed, broadcast static tf for robot root -->
