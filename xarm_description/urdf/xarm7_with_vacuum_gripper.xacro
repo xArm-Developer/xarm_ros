@@ -7,6 +7,7 @@
   <xacro:arg name="velocity_control" default="false"/>
   <!-- To add realsense d435i and vacuum gripper, set 'add_realsense_d435i' = true -->
   <xacro:arg name="add_realsense_d435i" default="false"/>
+  <xacro:arg name="model1300" default="false"/>
 
   <!-- load xarm7 robot -->
   <xacro:include filename="$(find xarm_description)/urdf/xarm7_robot_macro.xacro" />
@@ -14,7 +15,7 @@
   <!-- Attach gripper --> 
   <xacro:include filename="$(find xarm_description)/urdf/xarm_vacuum_gripper.urdf.xacro" />
 
-  <xacro:xarm7_robot prefix="$(arg prefix)" namespace="$(arg ros_namespace)" limited="$(arg limited)" effort_control="$(arg effort_control)" velocity_control="$(arg velocity_control)" rs_d435i="$(arg add_realsense_d435i)"/>
+  <xacro:xarm7_robot prefix="$(arg prefix)" namespace="$(arg ros_namespace)" limited="$(arg limited)" effort_control="$(arg effort_control)" velocity_control="$(arg velocity_control)" rs_d435i="$(arg add_realsense_d435i)" rs_d435i="$(arg model1300)"/>
   
   <xacro:if value="$(arg add_realsense_d435i)">
     <xacro:xarm_vacuum_gripper_urdf attach_to="$(arg prefix)link_eef" xyz="0 0 0.003" effort_control="$(arg effort_control)" velocity_control="$(arg velocity_control)" />

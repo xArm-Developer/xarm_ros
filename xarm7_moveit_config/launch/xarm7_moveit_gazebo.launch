@@ -14,6 +14,8 @@
   <arg name="geometry_mesh_origin_rpy" default="'0 0 0'"/>
   <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
   <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
+
+  <arg name="model1300" default="false" />
   
   <!-- Remap the name space so it can send command to gazebo loaded controller -->
   <!-- this remap must appear BEFORE move_group launch -->
@@ -26,6 +28,7 @@
     <arg name="jnt_stat_source" value="[/$(arg namespace)/joint_states]" />
     <arg name="load_move_group" value="true" />
     <arg name="pub_tf" value="false" />
+    <arg name="model1300" value="$(arg model1300)"/>
 
     <arg name="add_other_geometry" default="$(arg add_other_geometry)"/>
     <arg name="geometry_type" default="$(arg geometry_type)"/>

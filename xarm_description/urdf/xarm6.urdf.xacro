@@ -13,7 +13,7 @@
     joint4_lower_limit:=${-2.0*pi}  joint4_upper_limit:=${2.0*pi}
     joint5_lower_limit:=${-1.69297}  joint5_upper_limit:=${pi}
     joint6_lower_limit:=${-2.0*pi}  joint6_upper_limit:=${2.0*pi}
-    rs_d435i:=false">
+    rs_d435i:=false  model1300:=false">
 
     <material name="${prefix}Black">
       <color rgba="0.0 0.0 0.0 1.0"/>
@@ -270,14 +270,24 @@
     <link name="${prefix}link6">
       <visual>
         <geometry>
-          <mesh filename="package://xarm_description/meshes/xarm6/visual/link6.stl"/>
+          <xacro:if value="${model1300}">
+            <mesh filename="package://xarm_description/meshes/end_tool/visual/end_tool_1300.STL" />
+          </xacro:if>
+          <xacro:unless value="${model1300}">
+            <mesh filename="package://xarm_description/meshes/xarm6/visual/link6.stl"/>
+          </xacro:unless>
         </geometry>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <material name="${prefix}Silver" />
       </visual>
       <collision>
         <geometry>
-          <mesh filename="package://xarm_description/meshes/collision/end_tool.STL"/>
+          <xacro:if value="${model1300}">
+            <mesh filename="package://xarm_description/meshes/end_tool/collision/end_tool_1300.STL" />
+          </xacro:if>
+          <xacro:unless value="${model1300}">
+            <mesh filename="package://xarm_description/meshes/end_tool/collision/end_tool.STL"/>
+          </xacro:unless>
         </geometry>
         <origin xyz="0 0 0" rpy="0 0 0"/>
       </collision>

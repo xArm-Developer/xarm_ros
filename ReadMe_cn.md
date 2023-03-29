@@ -81,6 +81,7 @@
    * (2023-02-10) 新增xarm_moveit_servo支持xbox手柄/SpaceMouse/键盘控制
    * (2023-02-18) 给service(/xarm/ft_sensor_cali_load)增加保存操作, 增加力矩相关service(/xarm/ft_sensor_iden_load)
    * (2023-02-27) 增加控制Lite6 Gripper的service(/ufactory/open_lite6_gripper, /ufactory/close_lite6_gripper, /ufactory/stop_lite6_gripper)(注： 一旦stop之后，close将无效，必须先open才能启用控制)
+   * (2023-03-29) 新增launch启动参数model1300(默认为false), 更换xarm机械臂末端模型为1300系列的
 
 # 3. 准备工作
 

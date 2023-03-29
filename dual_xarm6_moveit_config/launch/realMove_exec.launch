@@ -17,6 +17,7 @@
   <arg name="no_gui_plan" default="false" />
   <arg name="ext_ns" default="" />
   <arg name="jnt_stat_pub_rate" default="10" />
+  <arg name="model1300" default="false" />
 
   <!-- common: bring up node to enable real xArm control -->
   <include file="$(find xarm_bringup)/launch/dual_xarm6_server.launch">
@@ -61,6 +62,7 @@
     <arg name="show_rviz" value="$(arg show_rviz)" />
     <arg name="NO_GUI_CTRL" value="$(arg no_gui_plan)"/>
     <arg name="jnt_stat_pub_rate" value="$(arg jnt_stat_pub_rate)"/>
+    <arg name="model1300" value="$(arg model1300)"/>
   </include>
 
 </launch>

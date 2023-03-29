@@ -7,10 +7,12 @@
   <arg name="add_gripper" default="false" doc="If true, will load xarm5 with gripper from UFACTORY attached." />
   <arg name="joint_state_source" default="[/joint_states]" />
   <arg name="joint_state_publisher_gui" default="true" />
+  <arg name="model1300" default="false" doc="load the new tool end model" />
 
   <include file="$(find xarm_description)/launch/xarm7_upload.launch" >
     <arg name="limited" value="$(arg limited)"/>
     <arg name="add_gripper" value="$(arg add_gripper)" />
+    <arg name="model1300" value="$(arg model1300)" />
   </include>
 
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">

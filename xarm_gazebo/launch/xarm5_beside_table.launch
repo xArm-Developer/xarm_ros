@@ -8,6 +8,7 @@
   <arg name="add_gripper" default="false" />
   <arg name="add_vacuum_gripper" default="false" />
   <arg name="namespace" default="xarm"/>
+  <arg name="model1300" default="false" />
 
   <arg name="xarm_velocity_control" value="$(eval arg('velocity_control') and not arg('run_demo'))" />
 
@@ -24,17 +25,17 @@
   <param unless="$(eval arg('add_gripper') or arg('add_vacuum_gripper'))" name="robot_description"
     command="$(find xacro)/xacro
     --inorder '$(find xarm_description)/urdf/xarm5_robot.urdf.xacro'
-    effort_control:=$(arg effort_control) velocity_control:=$(arg xarm_velocity_control)" />
+    effort_control:=$(arg effort_control) velocity_control:=$(arg xarm_velocity_control) model1300:=$(arg model1300)" />
 
   <param if="$(arg add_gripper)" name="robot_description"
     command="$(find xacro)/xacro
     --inorder '$(find xarm_description)/urdf/xarm5_with_gripper.xacro'
-    effort_control:=$(arg effort_control) velocity_control:=$(arg xarm_velocity_control)" />
+    effort_control:=$(arg effort_control) velocity_control:=$(arg xarm_velocity_control) model1300:=$(arg model1300)" />
 
   <param if="$(arg add_vacuum_gripper)" name="robot_description"
     command="$(find xacro)/xacro
     --inorder '$(find xarm_description)/urdf/xarm5_with_vacuum_gripper.xacro'
-    effort_control:=$(arg effort_control) velocity_control:=$(arg xarm_velocity_control)" />
+    effort_control:=$(arg effort_control) velocity_control:=$(arg xarm_velocity_control) model1300:=$(arg model1300)" />
 
   <!-- spawn robot model in gazebo, located on the table -->
   <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model"

@@ -1,6 +1,7 @@
 <launch>
   <arg name="ns" default="" />
   <arg name="jnt_stat_pub_rate" default="10" />
+  <arg name="model1300" default="false" />
 
   <remap from="$(arg ns)/source_list" to="/source_list" />
   <include file="$(find dual_xarm6_moveit_config)/launch/moveit_rviz_common.launch">
@@ -10,6 +11,7 @@
     <arg name="load_move_group" value="true" />
     <!-- whether to use fake_execution controller to drive the motion -->
     <arg name="fake_execution" value="true" />
+    <arg name="model1300" value="$(arg model1300)" />
   </include>
 
 </launch>
