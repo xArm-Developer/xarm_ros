@@ -225,7 +225,7 @@ def get_recognition_rect(frame, lower=COLOR_DICT['red']['lower'], upper=COLOR_DI
         if PY3:
             box = cv2.boxPoints(rect)
         else:
-            box = cv2.cv.BoxPoints(rect)
+            box = cv2.boxPoints(rect)
         cv2.drawContours(frame, [np.int0(box)], -1, (0, 255, 255), 1)
         rects.append(rect)
     
