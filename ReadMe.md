@@ -761,6 +761,7 @@ For installation with camera stand provided by UFACTORY, the cam model can be at
  $ cd ~/catkin_ws/src/
  # Download through git (mind to checkout the proper branch):
  $ git clone https://github.com/JenniferBuehler/gazebo-pkgs.git
+ $ git clone https://github.com/JenniferBuehler/general-message-pkgs.git
  # Compile:
  $ cd ..
  $ catkin_make

@@ -29,7 +29,8 @@ COLOR_DICT = {
 
 class GripperCtrl(object):
     def __init__(self):
-        self._commander = moveit_commander.move_group.MoveGroupCommander('xarm_gripper')
+        self._commander = moveit_commander.move_group.MoveGroupCommander('tool_end')
+        # self._commander = moveit_commander.move_group.MoveGroupCommander('xarm_gripper')
         self._init()
 
     def _init(self):
@@ -38,7 +39,7 @@ class GripperCtrl(object):
     
     def open(self, wait=True):
         try:
-            self._commander.set_named_target('open')
+            # self._commander.set_named_target('open')
             ret = self._commander.go(wait=wait)
             print('gripper_open, ret={}'.format(ret))
             return ret
@@ -48,7 +49,7 @@ class GripperCtrl(object):
 
     def close(self, wait=True):
         try:
-            self._commander.set_named_target('close')
+            # self._commander.set_named_target('close')
             ret = self._commander.go(wait=wait)
             print('gripper_close, ret={}'.format(ret))
             return ret
@@ -59,7 +60,8 @@ class GripperCtrl(object):
 
 class XArmCtrl(object):
     def __init__(self, dof):
-        self._commander = moveit_commander.move_group.MoveGroupCommander('xarm{}'.format(dof))
+        self._commander = moveit_commander.move_group.MoveGroupCommander('lite6')
+        # self._commander = moveit_commander.move_group.MoveGroupCommander('xarm{}'.format(dof))
         self.dof = int(dof)
         self._init()
     
@@ -158,7 +160,7 @@ class GazeboMotionThread(threading.Thread):
     def run(self):
         while True:
             # self._xarm_ctrl.set_joint(0)
-            self._gripper_ctrl.open()
+            # self._gripper_ctrl.open()
             if not self._xarm_ctrl.moveto(z=self._safe_z):
                 continue
             if not self._xarm_ctrl.moveto(x=300, y=0, z=self._safe_z):
@@ -182,7 +184,7 @@ class GazeboMotionThread(threading.Thread):
             ret = self._xarm_ctrl.moveto(x=x, y=y, z=self._grab_z)
             if not ret:
                 continue
-            self._gripper_ctrl.close()
+            # self._gripper_ctrl.close()
             ret = self._xarm_ctrl.moveto(x=x, y=y, z=self._safe_z)
             if not ret:
                 continue
