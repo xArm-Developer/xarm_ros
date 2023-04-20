@@ -7,13 +7,13 @@
   <arg name="add_vacuum_gripper" default="false" doc="If true, will load with vacuum gripper from UFACTORY attached." />
   <arg name="joint_state_source" default="[/joint_states]" />
   <arg name="joint_state_publisher_gui" default="true" />
-  <arg name="robot_type" default="lite" />
+  <arg name="robot_sn" default="" />
 
   <include file="$(find xarm_description)/launch/lite6_upload.launch" >
     <arg name="limited" value="$(arg limited)"/>
     <arg name="add_gripper" value="$(arg add_gripper)" />
     <arg name="add_vacuum_gripper" value="$(arg add_vacuum_gripper)" />
-    <arg name="robot_type" value="$(arg robot_type)" />
+    <arg name="robot_sn" value="$(arg robot_sn)" />
   </include>
 
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >

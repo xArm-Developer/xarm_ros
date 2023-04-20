@@ -7,6 +7,7 @@
   <arg name="add_gripper" default="false" />
   <arg name="add_vacuum_gripper" default="false" />
   <arg name="namespace" default="ufactory"/>
+  <arg name="robot_sn" default="" />
   
   <rosparam file="$(find lite6_moveit_config)/config/lite6_params.yaml" command="load" ns="$(arg namespace)"/>
   <!-- <rosparam if="$(arg add_gripper)" file="$(find xarm_controller)/config/gripper_gazebo_ros_control.yaml" command="load"/> -->
@@ -19,7 +20,11 @@
 
   <!-- send robot urdf to param server, joint limit may be overwritten if use moveit planner -->
   <param name="robot_description" command="$(find xacro)/xacro
-    --inorder '$(find xarm_description)/urdf/lite6_robot.urdf.xacro' ros_namespace:=$(arg namespace) add_gripper:=$(arg add_gripper) add_vacuum_gripper:=$(arg add_vacuum_gripper) effort_control:=$(arg effort_control) velocity_control:=$(arg velocity_control)" />
+    --inorder '$(find xarm_description)/urdf/xarm_device.urdf.xacro' robot_type:=lite dof:=6 hw_ns:=$(arg namespace) 
+    add_gripper:=$(arg add_gripper) add_vacuum_gripper:=$(arg add_vacuum_gripper) 
+    effort_control:=$(arg effort_control) velocity_control:=$(arg velocity_control)
+    robot_sn:=$(arg robot_sn)
+    " />
 
   <!-- spawn robot model in gazebo, located on the table -->
   <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model"

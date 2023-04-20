@@ -24,7 +24,14 @@
   <arg name="NO_GUI_CTRL" default="false"/>
   <!-- option to show rviz or not -->
   <arg name="show_rviz" default="true" />
+  
   <arg name="model1300" default="false" />
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_camera_link" default="false" />
+  <arg name="attach_to" default="world" />
+  <arg name="attach_xyz" default="'0 0 0'" />
+  <arg name="attach_rpy" default="'0 0 0'" />
+  <arg name="robot_sn" default="" />
 
   <arg name="add_other_geometry" default="false"/>
   <arg name="geometry_type" default="box"/>
@@ -43,6 +50,12 @@
   <include file="$(find xarm7_moveit_config)/launch/planning_context.launch">
     <arg name="load_robot_description" value="true"/>
     <arg name="model1300" value="$(arg model1300)"/>
+    <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)"/>
+    <arg name="add_d435i_camera_link" value="$(arg add_d435i_camera_link)"/>
+    <arg name="attach_to" value="$(arg attach_to)"/>
+    <arg name="attach_xyz" value="$(arg attach_xyz)"/>
+    <arg name="attach_rpy" value="$(arg attach_rpy)"/>
+    <arg name="robot_sn" value="$(arg robot_sn)"/>
 
     <arg name="add_other_geometry" default="$(arg add_other_geometry)"/>
     <arg name="geometry_type" default="$(arg geometry_type)"/>

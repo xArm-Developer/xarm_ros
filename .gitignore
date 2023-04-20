@@ -1,3 +1,4 @@
 .vscode/
 .idea/
 .git_template
+**/old

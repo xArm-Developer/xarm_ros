@@ -14,6 +14,14 @@
 	<arg name="default_gripper_baud" default="2000000" />
   <arg name="jnt_stat_pub_rate" default="10" />
 
+  <arg name="model1300" default="false" />
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_camera_link" default="false" />
+  <arg name="attach_to" default="world" />
+  <arg name="attach_xyz" default="'0 0 0'" />
+  <arg name="attach_rpy" default="'0 0 0'" />
+  <arg name="robot_sn" default="" />
+
   <!-- common: bring up node to enable real xArm control -->
   <include file="$(find xarm_bringup)/launch/xarm5_server.launch">
     <arg name="robot_ip" value="$(arg robot_ip)" />
@@ -52,6 +60,13 @@
     <arg name="jnt_stat_pub_rate" value="$(arg jnt_stat_pub_rate)"/>
     <arg name="show_rviz" value="$(arg show_rviz)" />
     <arg name="NO_GUI_CTRL" value="$(arg no_gui_plan)"/>
+    <arg name="model1300" value="$(arg model1300)"/>
+    <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)"/>
+    <arg name="add_d435i_camera_link" value="$(arg add_d435i_camera_link)"/>
+    <arg name="attach_to" value="$(arg attach_to)"/>
+    <arg name="attach_xyz" value="$(arg attach_xyz)"/>
+    <arg name="attach_rpy" value="$(arg attach_rpy)"/>
+    <arg name="robot_sn" value="$(arg robot_sn)"/>
   </include>
 
 </launch>
