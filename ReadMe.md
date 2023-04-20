@@ -87,9 +87,10 @@ For **UFACTORY Lite 6** users, make sure you have followed the instructions befo
    * (2023-02-27) Added service to control Lite6 Gripper(/ufactory/open_lite6_gripper, /ufactory/close_lite6_gripper, /ufactory/stop_lite6_gripper)(Note: Once stop, close will be invalid, you must open first to enable control)
    * (2023-03-29) Added the launch parameter model1300 (default is false), and replaced the model of the end of the xarm robot arm with the 1300 series
    * (2023-04-20) Update the URDF file, adapt to ROS1 and ROS2, and load the inertia parameters of the link from the configuration file according to the SN
-   * (2023-04-20) Added the launch parameter `add_d435i_camera_link` (default is false), decide whether to increase the link relationship of D435i, it is only useful when add_realsense_d435i is true
-   * (2023-04-20) Added the launch parameter `robot_sn` to adapt the inertial parameters of the link
-   * (2023-04-20) Add launch parameters `attach_to`/`attach_xyz`/`attach_rpy` to support attaching robot models to other models
+   * (2023-04-20) Added launch parameter `add_realsense_d435i` (default is false), supports loading Realsense D435i model
+   * (2023-04-20) Added the launch parameter `add_d435i_links` (default is false), which supports adding the link relationship between D435i cameras when loading the RealSense D435i model. It is only useful when `add_realsense_d435i` is true
+   * (2023-04-20) Added the launch parameter `robot_sn`, supports loading the inertia parameters of the corresponding joint link, and automatically overrides the `model1300` parameters
+   * (2023-04-20) Added launch parameters `attach_to`/`attach_xyz`/`attach_rpy` to support attaching the robot arm model to other models
 
 # 3. Preparations before using this package
 

@@ -19,7 +19,7 @@
   <xacro:arg name="ros2_control_params" default="$(find xarm_controller)/config/xarm$(arg dof)_controllers.yaml"/>
 
   <xacro:arg name="add_realsense_d435i" default="false"/>
-  <xacro:arg name="add_d435i_camera_link" default="true"/>
+  <xacro:arg name="add_d435i_links" default="true"/>
   <xacro:arg name="use_gazebo_camera" default="false"/>
 
   <xacro:arg name="add_other_geometry" default="false"/>
@@ -50,7 +50,7 @@
     ros2_control_plugin="$(arg ros2_control_plugin)" robot_type="$(arg robot_type)" 
     load_gazebo_plugin="true" ros2_control_params="$(arg ros2_control_params)"
     add_realsense_d435i="$(arg add_realsense_d435i)" 
-    add_d435i_camera_link="$(arg add_d435i_camera_link)" 
+    add_d435i_links="$(arg add_d435i_links)" 
     add_other_geometry="$(arg add_other_geometry)" 
     geometry_type="$(arg geometry_type)" geometry_mass="$(arg geometry_mass)"
     geometry_height="$(arg geometry_height)" geometry_radius="$(arg geometry_radius)"

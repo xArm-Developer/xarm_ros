@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
-  <xacro:macro name="d435i_urdf" params="prefix:='' add_d435i_camera_link:=false">
+  <xacro:macro name="d435i_urdf" params="prefix:='' add_d435i_links:=false">
 
     <!-- define property -->
     <xacro:property name="M_PI" value="3.1415926535897931" />
@@ -17,7 +17,7 @@
         origin_rpy="0 0 0" />
     </link>
 
-    <xacro:if value="${add_d435i_camera_link}">
+    <xacro:if value="${add_d435i_links}">
 
       <link name="${prefix}camera_link"></link>
 

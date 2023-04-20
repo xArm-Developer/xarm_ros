@@ -16,6 +16,8 @@
   <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
   <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
 
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
   <arg name="robot_sn" default="" />
 
   <!-- Remap the name space so it can send command to gazebo loaded controller -->
@@ -41,6 +43,8 @@
     <arg name="geometry_mesh_origin_rpy" default="$(arg geometry_mesh_origin_rpy)"/>
     <arg name="geometry_mesh_tcp_xyz" default="$(arg geometry_mesh_tcp_xyz)"/>
     <arg name="geometry_mesh_tcp_rpy" default="$(arg geometry_mesh_tcp_rpy)"/>
+    <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)"/>
+    <arg name="add_d435i_links" value="$(arg add_d435i_links)"/>
     <arg name="robot_sn" value="$(arg robot_sn)"/>
   </include>
 

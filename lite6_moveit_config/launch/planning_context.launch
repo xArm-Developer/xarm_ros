@@ -20,6 +20,8 @@
   <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
   <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
 
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
   <arg name="attach_to" default="world" />
   <arg name="attach_xyz" default="'0 0 0'" />
   <arg name="attach_rpy" default="'0 0 0'" />
@@ -42,6 +44,8 @@
       geometry_mesh_origin_rpy:=$(arg geometry_mesh_origin_rpy)
       geometry_mesh_tcp_xyz:=$(arg geometry_mesh_tcp_xyz)
       geometry_mesh_tcp_rpy:=$(arg geometry_mesh_tcp_rpy)
+      add_realsense_d435i:=$(arg add_realsense_d435i)
+      add_d435i_links:=$(arg add_d435i_links)
       attach_to:=$(arg attach_to)
       attach_xyz:=$(arg attach_xyz)
       attach_rpy:=$(arg attach_rpy)

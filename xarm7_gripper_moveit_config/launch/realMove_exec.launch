@@ -18,7 +18,7 @@
 
   <arg name="model1300" default="false" />
   <arg name="add_realsense_d435i" default="false" />
-  <arg name="add_d435i_camera_link" default="false" />
+  <arg name="add_d435i_links" default="false" />
   <arg name="attach_to" default="world" />
   <arg name="attach_xyz" default="'0 0 0'" />
   <arg name="attach_rpy" default="'0 0 0'" />
@@ -67,7 +67,7 @@
     <arg name="gripper_controller" value="false" />
     <arg name="model1300" value="$(arg model1300)"/>
     <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)"/>
-    <arg name="add_d435i_camera_link" value="$(arg add_d435i_camera_link)"/>
+    <arg name="add_d435i_links" value="$(arg add_d435i_links)"/>
     <arg name="attach_to" value="$(arg attach_to)"/>
     <arg name="attach_xyz" value="$(arg attach_xyz)"/>
     <arg name="attach_rpy" value="$(arg attach_rpy)"/>
