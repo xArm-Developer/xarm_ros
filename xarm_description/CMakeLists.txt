@@ -197,6 +197,7 @@ include_directories(
 install(DIRECTORY 
   launch
   meshes
+  config
   urdf 
   srdf
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})

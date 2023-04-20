@@ -8,12 +8,18 @@
   <arg name="joint_state_publisher_gui" default="true" />
   <arg name="robot_type" default="xarm" />
   <arg name="model1300" default="false" doc="load the new tool end model" />
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_camera_link" default="false" />
+  <arg name="robot_sn" default="" />
 
   <include file="$(find xarm_description)/launch/xarm6_upload.launch" >
     <arg name="limited" value="$(arg limited)"/>
     <arg name="add_gripper" value="$(arg add_gripper)" />
     <arg name="robot_type" value="$(arg robot_type)" />
     <arg name="model1300" value="$(arg model1300)" />
+    <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)" />
+    <arg name="add_d435i_camera_link" value="$(arg add_d435i_camera_link)" />
+    <arg name="robot_sn" value="$(arg robot_sn)" />
   </include>
 
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >

@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="lite6" >
+  <xacro:macro name="lite6_robot" params="
+    prefix:=''
+    hw_ns:='xarm'
+    limited:=false
+    effort_control:=false 
+    velocity_control:=false
+    add_gripper:=false 
+    ros2_control_plugin:='uf_robot_hardware/UFRobotSystemHardware' 
+    robot_ip:=''
+    report_type:='normal'
+    baud_checkset:=true
+    default_gripper_baud:=2000000
+    inertial_params_filename:='' "
+    >
+
+    <!-- include lite6 relative macros: -->
+    <xacro:if value="${is_ros2}">
+      <xacro:include filename="$(find xarm_description)/urdf/lite6/lite6.ros2_control.xacro" />
+    </xacro:if>
+    <xacro:include filename="$(find xarm_description)/urdf/lite6/lite6.urdf.xacro" />
+    <xacro:include filename="$(find xarm_description)/urdf/lite6/lite6.transmission.xacro" />
+    <xacro:include filename="$(find xarm_description)/urdf/lite6/lite6.gazebo.xacro" />
+
+    <xacro:if value="${limited}">
+      <xacro:if value="${is_ros2}">
+        <xacro:lite6_ros2_control prefix="${prefix}"
+          velocity_control="${velocity_control}"
+          ros2_control_plugin="${ros2_control_plugin}"
+          hw_ns="${hw_ns}" add_gripper="${add_gripper}"
+          robot_ip="${robot_ip}" report_type="${report_type}"
+          baud_checkset="${baud_checkset}" default_gripper_baud="${default_gripper_baud}"
+          joint1_lower_limit="${-pi}" joint1_upper_limit="${pi}"
+          joint2_lower_limit="${-2.61799}" joint2_upper_limit="${2.61799}"
+          joint3_lower_limit="${-0.061087}" joint3_upper_limit="${5.235988}"
+          joint4_lower_limit="${-pi}" joint4_upper_limit="${pi}"
+          joint5_lower_limit="${-2.1642}" joint5_upper_limit="${2.1642}"
+          joint6_lower_limit="${-pi}" joint6_upper_limit="${pi}"/>
+      </xacro:if>
+      <xacro:lite6_urdf prefix="${prefix}"
+        joint1_lower_limit="${-pi}" joint1_upper_limit="${pi}"
+        joint2_lower_limit="${-2.61799}" joint2_upper_limit="${2.61799}"
+        joint3_lower_limit="${-0.061087}" joint3_upper_limit="${5.235988}"
+        joint4_lower_limit="${-pi}" joint4_upper_limit="${pi}"
+        joint5_lower_limit="${-2.1642}" joint5_upper_limit="${2.1642}"
+        joint6_lower_limit="${-pi}" joint6_upper_limit="${pi}"
+        inertial_params_filename="${inertial_params_filename}" />
+    </xacro:if>
+    <xacro:unless value="${limited}">
+      <xacro:if value="${is_ros2}">
+        <xacro:lite6_ros2_control prefix="${prefix}" velocity_control="${velocity_control}"
+          ros2_control_plugin="${ros2_control_plugin}"
+          hw_ns="${hw_ns}" add_gripper="${add_gripper}"
+          robot_ip="${robot_ip}" report_type="${report_type}"
+          baud_checkset="${baud_checkset}" default_gripper_baud="${default_gripper_baud}" />
+      </xacro:if>
+      <xacro:lite6_urdf prefix="${prefix}" inertial_params_filename="${inertial_params_filename}"/>
+    </xacro:unless>
+
+    <xacro:lite6_transmission prefix="${prefix}" hard_interface="${'EffortJointInterface' if effort_control else 'VelocityJointInterface' if velocity_control else 'PositionJointInterface'}" />
+    
+    <xacro:lite6_gazebo prefix="${prefix}" />
+
+  </xacro:macro>
+
+</robot>

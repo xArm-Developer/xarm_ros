@@ -86,6 +86,10 @@ For **UFACTORY Lite 6** users, make sure you have followed the instructions befo
    * (2022-02-18) Automatically saving in servie(/xarm/ft_sensor_cali_load) and add torque related service(/xarm/ft_sensor_iden_load)
    * (2023-02-27) Added service to control Lite6 Gripper(/ufactory/open_lite6_gripper, /ufactory/close_lite6_gripper, /ufactory/stop_lite6_gripper)(Note: Once stop, close will be invalid, you must open first to enable control)
    * (2023-03-29) Added the launch parameter model1300 (default is false), and replaced the model of the end of the xarm robot arm with the 1300 series
+   * (2023-04-20) Update the URDF file, adapt to ROS1 and ROS2, and load the inertia parameters of the link from the configuration file according to the SN
+   * (2023-04-20) Added the launch parameter `add_d435i_camera_link` (default is false), decide whether to increase the link relationship of D435i, it is only useful when add_realsense_d435i is true
+   * (2023-04-20) Added the launch parameter `robot_sn` to adapt the inertial parameters of the link
+   * (2023-04-20) Add launch parameters `attach_to`/`attach_xyz`/`attach_rpy` to support attaching robot models to other models
 
 # 3. Preparations before using this package
 
@@ -704,9 +708,9 @@ Please note it will use previously mentioned sample handeye calibration result, 
 
 ## 7.4 Adding RealSense D435i model to simulated xArm：
 For installation with camera stand provided by UFACTORY, the cam model can be attached by following modifications (use xarm7 as example):    
-1.Together with xArm Gripper model: Set `add_realsense_d435i` default value to be `true` in [xarm7_with_gripper.xacro](./xarm_description/urdf/xarm7_with_gripper.xacro).  
-2.Together with xArm Vacuum Gripper model: Set `add_realsense_d435i` default value to be `true` in [xarm7_with_vacuum_gripper.xacro](./xarm_description/urdf/xarm7_with_vacuum_gripper.xacro).  
-3.Purely the d435i: Set `add_realsense_d435i` default value to be `true` in [xarm7_robot.urdf.xacro](./xarm_description/urdf/xarm7_robot.urdf.xacro).  
+```bash
+ $ roslaunch xarm7_moveit_config demo.launch add_realsense_d435i:=true
+```
 
 ## 7.5 Color Cube Grasping Demo
 

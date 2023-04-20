@@ -1,0 +1,196 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="xarm5_urdf" params="prefix
+    joint1_lower_limit:=${-2.0*pi}  joint1_upper_limit:=${2.0*pi}
+    joint2_lower_limit:=${-2.059}  joint2_upper_limit:=${2.0944}
+    joint3_lower_limit:=${-3.927}  joint3_upper_limit:=${0.19198}
+    joint4_lower_limit:=${-1.69297}  joint4_upper_limit:=${pi}
+    joint5_lower_limit:=${-2.0*pi}  joint5_upper_limit:=${2.0*pi}
+    model1300:=false
+    inertial_params_filename:='' "
+    >
+    
+    <!-- define property -->
+    <xacro:if value="${model1300}">
+      <xacro:property name="end_tool_visual_filename" value="end_tool/visual/end_tool_1300.STL"/>
+      <xacro:property name="end_tool_collision_filename" value="end_tool/collision/end_tool_1300.STL"/>
+    </xacro:if>
+    <xacro:unless value="${model1300}">
+      <xacro:property name="end_tool_visual_filename" value="xarm5/visual/link5.STL"/>
+      <xacro:property name="end_tool_collision_filename" value="end_tool/collision/end_tool.STL"/>
+    </xacro:unless>
+
+    <!-- load params and define property -->
+    <xacro:property name="default_inertial_params_filename" value="xarm5_type5_HT_BR2"/>
+    <xacro:if value="${inertial_params_filename != ''}">
+      <xacro:property name="link_inertial_params_file" value="$(find xarm_description)/config/link_inertial/${inertial_params_filename}.yaml"/>
+    </xacro:if>
+    <xacro:unless value="${inertial_params_filename != ''}">
+      <xacro:property name="link_inertial_params_file" value="$(find xarm_description)/config/link_inertial/${default_inertial_params_filename}.yaml"/>
+    </xacro:unless>
+    <xacro:if value="${use_xacro_load_yaml}">
+      <xacro:property name="inertial_params" value="${xacro.load_yaml(link_inertial_params_file)}"/>
+    </xacro:if>
+    <xacro:unless value="${use_xacro_load_yaml}">
+      <xacro:property name="inertial_params" value="${load_yaml(link_inertial_params_file)}"/>
+    </xacro:unless>
+
+    <link name="${prefix}link_base">
+      <inertial>
+        <origin xyz="-0.00218 -0.00023 0.08604" rpy="0 0 0" />
+        <mass value="1.95" />
+        <inertia
+          ixx="0.004805" ixy="-8.33E-06" ixz="0.00026847"
+          iyy="0.0050349" iyz="7.23E-06" izz="0.0025418" />
+      </inertial>
+      <xacro:common_link_visual 
+        mesh_filename="xarm5/visual/base_link.STL"  
+        origin_xyz="0 0 0" 
+        origin_rpy="0 0 0"
+        material_name="${prefix}White" />
+      <xacro:common_link_collision 
+        mesh_filename="xarm5/visual/base_link.STL"  
+        origin_xyz="0 0 0" 
+        origin_rpy="0 0 0" />
+    </link>
+    <link name="${prefix}link1">
+      <xacro:common_link_inertial 
+        link_inertial_params="${inertial_params['link1']}" 
+        origin_rpy="0 0 0"/>
+      <xacro:common_link_visual 
+        mesh_filename="xarm5/visual/link1.STL"  
+        origin_xyz="0 0 0" 
+        origin_rpy="0 0 0"
+        material_name="${prefix}White" />
+      <xacro:common_link_collision 
+        mesh_filename="xarm5/visual/link1.STL"  
+        origin_xyz="0 0 0" 
+        origin_rpy="0 0 0" />
+    </link>
+    <joint name="${prefix}joint1" type="revolute">
+      <origin xyz="0 0 0.267" rpy="0 0 0" />
+      <parent link="${prefix}link_base" />
+      <child link="${prefix}link1" />
+      <axis xyz="0 0 1" />
+     <limit
+        lower="${joint1_lower_limit}"
+        upper="${joint1_upper_limit}"
+        effort="50"
+        velocity="3.14" />
+      <dynamics damping="10" friction="1" />
+    </joint>
+    <link name="${prefix}link2">
+      <xacro:common_link_inertial 
+        link_inertial_params="${inertial_params['link2']}" 
+        origin_rpy="0 0 0"/>
+      <xacro:common_link_visual 
+        mesh_filename="xarm5/visual/link2.STL"  
+        origin_xyz="0 0 0" 
+        origin_rpy="0 0 0"
+        material_name="${prefix}White" />
+      <xacro:common_link_collision 
+        mesh_filename="xarm5/visual/link2.STL"  
+        origin_xyz="0 0 0" 
+        origin_rpy="0 0 0" />
+    </link>
+    <joint name="${prefix}joint2" type="revolute">
+      <origin xyz="0 0 0" rpy="-1.5708 0 0" />
+      <parent link="${prefix}link1" />
+      <child link="${prefix}link2" />
+      <axis xyz="0 0 1" />
+      <limit
+        lower="${joint2_lower_limit}"
+        upper="${joint2_upper_limit}"
+        effort="50"
+        velocity="3.14" />
+      <dynamics damping="10" friction="1" />
+    </joint>
+    <link name="${prefix}link3">
+      <xacro:common_link_inertial 
+        link_inertial_params="${inertial_params['link3']}" 
+        origin_rpy="0 0 0"/>
+      <xacro:common_link_visual 
+        mesh_filename="xarm5/visual/link3.STL"  
+        origin_xyz="0 0 0" 
+        origin_rpy="0 0 0"
+        material_name="${prefix}White" />
+      <xacro:common_link_collision 
+        mesh_filename="xarm5/visual/link3.STL"  
+        origin_xyz="0 0 0" 
+        origin_rpy="0 0 0" />
+    </link>
+    <joint name="${prefix}joint3" type="revolute">
+      <origin xyz="0.0535 -0.2845 0" rpy="0 0 0" />
+      <parent link="${prefix}link2" />
+      <child link="${prefix}link3" />
+      <axis xyz="0 0 1" />
+      <limit
+        lower="${joint3_lower_limit}"
+        upper="${joint3_upper_limit}"
+        effort="30"
+        velocity="3.14" />
+      <dynamics damping="5" friction="1" />
+    </joint>
+    <link name="${prefix}link4">
+      <xacro:common_link_inertial 
+        link_inertial_params="${inertial_params['link4']}" 
+        origin_rpy="0 0 0"/>
+      <xacro:common_link_visual 
+        mesh_filename="xarm5/visual/link4.STL"  
+        origin_xyz="0 0 0" 
+        origin_rpy="0 0 0"
+        material_name="${prefix}White" />
+      <xacro:common_link_collision 
+        mesh_filename="xarm5/visual/link4.STL"  
+        origin_xyz="0 0 0" 
+        origin_rpy="0 0 0" />
+    </link>
+    <joint name="${prefix}joint4" type="revolute">
+      <origin xyz="0.0775 0.3425 0" rpy="0 0 0" />
+      <parent link="${prefix}link3" />
+      <child link="${prefix}link4" />
+      <axis xyz="0 0 1" />
+      <limit
+        lower="${joint4_lower_limit}"
+        upper="${joint4_upper_limit}"
+        effort="20"
+        velocity="3.14" />
+      <dynamics damping="3" friction="1" />
+    </joint>
+    <link name="${prefix}link5">
+      <xacro:common_link_inertial 
+        link_inertial_params="${inertial_params['link5']}" 
+        origin_rpy="0 0 0"/>
+      <xacro:common_link_visual 
+        mesh_filename="${end_tool_visual_filename}"  
+        origin_xyz="0 0 0" 
+        origin_rpy="0 0 0"
+        material_name="${prefix}Silver" />
+      <xacro:common_link_collision 
+        mesh_filename="${end_tool_collision_filename}"  
+        origin_xyz="0 0 0" 
+        origin_rpy="0 0 0" />
+    </link>
+    <joint name="${prefix}joint5" type="revolute">
+      <origin xyz="0.076 0.097 0" rpy="-1.5708 0 0" />
+      <parent link="${prefix}link4" />
+      <child link="${prefix}link5" />
+      <axis xyz="0 0 1" />
+      <limit
+        lower="${joint5_lower_limit}"
+        upper="${joint5_upper_limit}"
+        effort="20"
+        velocity="3.14" />
+      <dynamics damping="3" friction="1" />
+    </joint>
+
+    <!-- <link name="${prefix}link_eef" />
+    <joint name="${prefix}joint_eef" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="${prefix}link5" />
+      <child link="${prefix}link_eef" />
+    </joint> -->
+  
+  </xacro:macro>
+</robot>

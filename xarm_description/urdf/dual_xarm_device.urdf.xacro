@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="dual_xarm">
+  <xacro:arg name="prefix_1" default="L_"/>
+  <xacro:arg name="prefix_2" default="R_"/>
+  <xacro:arg name="hw_ns" default="xarm"/>
+  <xacro:arg name="limited" default="false"/>
+  <xacro:arg name="effort_control" default="false"/>
+  <xacro:arg name="velocity_control" default="false"/>
+  <xacro:arg name="add_gripper_1" default="false"/>
+  <xacro:arg name="add_gripper_2" default="false"/>
+  <xacro:arg name="add_vacuum_gripper_1" default="false"/>
+  <xacro:arg name="add_vacuum_gripper_2" default="false"/>
+  <xacro:arg name="model1300_1" default="false"/>
+  <xacro:arg name="model1300_2" default="false"/>
+
+  <xacro:arg name="dof_1" default="7"/>
+  <xacro:arg name="dof_2" default="7"/>
+  <xacro:arg name="robot_ip_1" default=""/>
+  <xacro:arg name="robot_ip_2" default=""/>
+  <xacro:arg name="robot_type_1" default="xarm"/>
+  <xacro:arg name="robot_type_2" default="xarm"/>
+  <xacro:arg name="robot_sn_1" default=""/>
+  <xacro:arg name="robot_sn_2" default=""/>
+  <xacro:arg name="report_type_1" default="normal"/>
+  <xacro:arg name="report_type_2" default="normal"/>
+
+  <xacro:arg name="ros2_control_plugin" default="uf_robot_hardware/UFRobotSystemHardware"/>
+  <xacro:arg name="ros2_control_params" default="$(find xarm_controller)/config/xarm$(arg dof_1)_controllers.yaml"/>
+
+  <xacro:arg name="add_realsense_d435i_1" default="false"/>
+  <xacro:arg name="add_realsense_d435i_2" default="false"/>
+  <xacro:arg name="add_d435i_camera_link_1" default="true"/>
+  <xacro:arg name="add_d435i_camera_link_2" default="true"/>
+
+  <xacro:arg name="add_other_geometry_1" default="false"/>
+  <xacro:arg name="geometry_type_1" default="box"/>
+  <xacro:arg name="geometry_mass_1" default="0.1"/>
+  <xacro:arg name="geometry_height_1" default="0.1"/>
+  <xacro:arg name="geometry_radius_1" default="0.1"/>
+  <xacro:arg name="geometry_length_1" default="0.1"/>
+  <xacro:arg name="geometry_width_1" default="0.1"/>
+  <xacro:arg name="geometry_mesh_filename_1" default=""/>
+  <xacro:arg name="geometry_mesh_origin_xyz_1" default="0 0 0"/>
+  <xacro:arg name="geometry_mesh_origin_rpy_1" default="0 0 0"/>
+  <xacro:arg name="geometry_mesh_tcp_xyz_1" default="0 0 0"/>
+  <xacro:arg name="geometry_mesh_tcp_rpy_1" default="0 0 0"/>
+
+  <xacro:arg name="add_other_geometry_2" default="false"/>
+  <xacro:arg name="geometry_type_2" default="box"/>
+  <xacro:arg name="geometry_mass_2" default="0.1"/>
+  <xacro:arg name="geometry_height_2" default="0.1"/>
+  <xacro:arg name="geometry_radius_2" default="0.1"/>
+  <xacro:arg name="geometry_length_2" default="0.1"/>
+  <xacro:arg name="geometry_width_2" default="0.1"/>
+  <xacro:arg name="geometry_mesh_filename_2" default=""/>
+  <xacro:arg name="geometry_mesh_origin_xyz_2" default="0 0 0"/>
+  <xacro:arg name="geometry_mesh_origin_rpy_2" default="0 0 0"/>
+  <xacro:arg name="geometry_mesh_tcp_xyz_2" default="0 0 0"/>
+  <xacro:arg name="geometry_mesh_tcp_rpy_2" default="0 0 0"/>
+
+  <xacro:arg name="baud_checkset_1" default="true"/>
+  <xacro:arg name="baud_checkset_2" default="true"/>
+  <xacro:arg name="default_gripper_baud_1" default="2000000"/>
+  <xacro:arg name="default_gripper_baud_2" default="2000000"/>
+
+  <!-- load xarm device -->
+  <xacro:include filename="$(find xarm_description)/urdf/xarm_device_macro.xacro" />
+  
+  <link name="ground" />
+
+  <!-- gazebo_plugin -->
+  <xacro:include filename="$(find xarm_description)/urdf/common/common.gazebo.xacro" />
+  <!-- <xacro:gazebo_ros1_control_plugin namespace="$(arg hw_ns)"/> -->
+  <xacro:gazebo_ros2_control_plugin ros2_control_params="$(arg ros2_control_params)"/>
+  
+  <xacro:xarm_device prefix="$(arg prefix_1)" hw_ns="$(arg hw_ns)" limited="$(arg limited)" 
+    effort_control="$(arg effort_control)" velocity_control="$(arg velocity_control)"
+    add_gripper="$(arg add_gripper_1)" add_vacuum_gripper="$(arg add_vacuum_gripper_1)" dof="$(arg dof_1)"
+    ros2_control_plugin="$(arg ros2_control_plugin)" robot_type="$(arg robot_type_1)"
+    load_gazebo_plugin="false" ros2_control_params="$(arg ros2_control_params)"
+    attach_to="ground" attach_xyz="0 0 0" attach_rpy="0 0 0"
+    add_realsense_d435i="$(arg add_realsense_d435i_1)" 
+    add_d435i_camera_link="$(arg add_d435i_camera_link_1)" 
+    add_other_geometry="$(arg add_other_geometry_1)" 
+    geometry_type="$(arg geometry_type_1)" geometry_mass="$(arg geometry_mass_1)"
+    geometry_height="$(arg geometry_height_1)" geometry_radius="$(arg geometry_radius_1)"
+    geometry_length="$(arg geometry_length_1)" geometry_width="$(arg geometry_width_1)"
+    geometry_mesh_filename="$(arg geometry_mesh_filename_1)"
+    geometry_mesh_origin_xyz="$(arg geometry_mesh_origin_xyz_1)" geometry_mesh_origin_rpy="$(arg geometry_mesh_origin_rpy_1)"
+    geometry_mesh_tcp_xyz="$(arg geometry_mesh_tcp_xyz_1)" geometry_mesh_tcp_rpy="$(arg geometry_mesh_tcp_rpy_1)"
+    robot_ip="$(arg robot_ip_1)" report_type="$(arg report_type_1)"
+    baud_checkset="$(arg baud_checkset_1)" default_gripper_baud="$(arg default_gripper_baud_1)"
+    model1300="$(arg model1300_1)" robot_sn="$(arg robot_sn_1)"/>
+  <xacro:xarm_device prefix="$(arg prefix_2)" hw_ns="$(arg hw_ns)" limited="$(arg limited)" 
+    effort_control="$(arg effort_control)" velocity_control="$(arg velocity_control)"
+    add_gripper="$(arg add_gripper_2)" add_vacuum_gripper="$(arg add_vacuum_gripper_2)" dof="$(arg dof_2)"
+    ros2_control_plugin="$(arg ros2_control_plugin)" robot_type="$(arg robot_type_2)"
+    load_gazebo_plugin="false" ros2_control_params="$(arg ros2_control_params)"
+    attach_to="ground" attach_xyz="0 1 0" attach_rpy="0 0 0"
+    add_realsense_d435i="$(arg add_realsense_d435i_2)" 
+    add_d435i_camera_link="$(arg add_d435i_camera_link_2)" 
+    add_other_geometry="$(arg add_other_geometry_2)" 
+    geometry_type="$(arg geometry_type_2)" geometry_mass="$(arg geometry_mass_2)"
+    geometry_height="$(arg geometry_height_2)" geometry_radius="$(arg geometry_radius_2)"
+    geometry_length="$(arg geometry_length_2)" geometry_width="$(arg geometry_width_2)"
+    geometry_mesh_filename="$(arg geometry_mesh_filename_2)"
+    geometry_mesh_origin_xyz="$(arg geometry_mesh_origin_xyz_2)" geometry_mesh_origin_rpy="$(arg geometry_mesh_origin_rpy_2)"
+    geometry_mesh_tcp_xyz="$(arg geometry_mesh_tcp_xyz_2)" geometry_mesh_tcp_rpy="$(arg geometry_mesh_tcp_rpy_2)"
+    robot_ip="$(arg robot_ip_2)" report_type="$(arg report_type_2)"
+    baud_checkset="$(arg baud_checkset_2)" default_gripper_baud="$(arg default_gripper_baud_2)"
+    model1300="$(arg model1300_2)" robot_sn="$(arg robot_sn_2)"/>
+
+</robot>

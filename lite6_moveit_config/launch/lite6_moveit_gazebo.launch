@@ -16,6 +16,8 @@
   <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
   <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
 
+  <arg name="robot_sn" default="" />
+
   <!-- Remap the name space so it can send command to gazebo loaded controller -->
   <!-- this remap must appear BEFORE move_group launch -->
   <arg name="uf_traj_controller" value="$(eval 'lite6_traj_controller_velocity' if arg('velocity_control') else 'lite6_traj_controller')" />
@@ -39,6 +41,7 @@
     <arg name="geometry_mesh_origin_rpy" default="$(arg geometry_mesh_origin_rpy)"/>
     <arg name="geometry_mesh_tcp_xyz" default="$(arg geometry_mesh_tcp_xyz)"/>
     <arg name="geometry_mesh_tcp_rpy" default="$(arg geometry_mesh_tcp_rpy)"/>
+    <arg name="robot_sn" value="$(arg robot_sn)"/>
   </include>
 
   

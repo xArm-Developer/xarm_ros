@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="lite6_ros2_control" params="prefix
+    velocity_control:='false'
+    ros2_control_plugin:='uf_robot_hardware/UFRobotSystemHardware'
+    hw_ns:='xarm' add_gripper:='false'
+    robot_ip:='' report_type:='normal' baud_checkset:='true' default_gripper_baud:=2000000
+    joint1_lower_limit:=${-2.0*pi}  joint1_upper_limit:=${2.0*pi}
+    joint2_lower_limit:=${-2.61799}  joint2_upper_limit:=${2.61799}
+    joint3_lower_limit:=${-0.061087}  joint3_upper_limit:=${5.235988}
+    joint4_lower_limit:=${-2.0*pi}  joint4_upper_limit:=${2.0*pi}
+    joint5_lower_limit:=${-2.1642}  joint5_upper_limit:=${2.1642}
+    joint6_lower_limit:=${-2.0*pi}  joint6_upper_limit:=${2.0*pi}">
+    <ros2_control name="${prefix}${ros2_control_plugin}" type="system">
+      <hardware>
+        <plugin>${ros2_control_plugin}</plugin>
+        <xacro:if value="${ros2_control_plugin == 'uf_robot_hardware/UFRobotSystemHardware'}">
+          <param name="hw_ns">${prefix}${hw_ns}</param>
+          <param name="velocity_control">${velocity_control}</param>
+          <param name="prefix">P${prefix}</param>
+          <param name="robot_ip">R${robot_ip}</param>
+          <param name="report_type">${report_type}</param>
+          <param name="dof">6</param>
+          <param name="baud_checkset">${baud_checkset}</param>
+          <param name="default_gripper_baud">${default_gripper_baud}</param>
+          <param name="robot_type">lite</param>
+          <param name="add_gripper">${add_gripper}</param>
+        </xacro:if>
+      </hardware>
+      <joint name="${prefix}joint1">
+        <command_interface name="position">
+          <param name="min">${joint1_lower_limit}</param>
+          <param name="max">${joint1_upper_limit}</param>
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-3.14</param>
+          <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <!-- <state_interface name="effort"/> -->
+      </joint>
+      <joint name="${prefix}joint2">
+        <command_interface name="position">
+          <param name="min">${joint2_lower_limit}</param>
+          <param name="max">${joint2_upper_limit}</param>
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-3.14</param>
+          <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <!-- <state_interface name="effort"/> -->
+      </joint>
+      <joint name="${prefix}joint3">
+        <command_interface name="position">
+          <param name="min">${joint3_lower_limit}</param>
+          <param name="max">${joint3_upper_limit}</param>
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-3.14</param>
+          <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <!-- <state_interface name="effort"/> -->
+      </joint>
+      <joint name="${prefix}joint4">
+        <command_interface name="position">
+          <param name="min">${joint4_lower_limit}</param>
+          <param name="max">${joint4_upper_limit}</param>
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-3.14</param>
+          <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <!-- <state_interface name="effort"/> -->
+      </joint>
+      <joint name="${prefix}joint5">
+        <command_interface name="position">
+          <param name="min">${joint5_lower_limit}</param>
+          <param name="max">${joint5_upper_limit}</param>
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-3.14</param>
+          <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <!-- <state_interface name="effort"/> -->
+      </joint>
+      <joint name="${prefix}joint6">
+        <command_interface name="position">
+          <param name="min">${joint6_lower_limit}</param>
+          <param name="max">${joint6_upper_limit}</param>
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-3.14</param>
+          <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <!-- <state_interface name="effort"/> -->
+      </joint>
+    </ros2_control>
+  </xacro:macro>
+</robot>
