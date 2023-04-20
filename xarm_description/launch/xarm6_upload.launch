@@ -6,7 +6,7 @@
   <arg name="robot_type" default="xarm" />
   <arg name="model1300" default="false" doc="load the new tool end model" />
   <arg name="add_realsense_d435i" default="false" />
-  <arg name="add_d435i_camera_link" default="false" />
+  <arg name="add_d435i_links" default="false" />
   <arg name="robot_sn" default="" />
   
   <param name="robot_description" command="$(find xacro)/xacro
@@ -14,7 +14,7 @@
     robot_type:=xarm dof:=6 add_gripper:=$(arg add_gripper) limited:=$(arg limited) 
     model1300:=$(arg model1300)
     add_realsense_d435i:=$(arg add_realsense_d435i)
-    add_d435i_camera_link:=$(arg add_d435i_camera_link)
+    add_d435i_links:=$(arg add_d435i_links)
     robot_sn:=$(arg robot_sn)
     " />
 

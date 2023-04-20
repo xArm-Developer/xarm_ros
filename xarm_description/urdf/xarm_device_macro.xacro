@@ -17,7 +17,7 @@
     ros2_control_params:=''
     load_gazebo_plugin:=false 
     add_realsense_d435i:=false
-    add_d435i_camera_link:=true
+    add_d435i_links:=true
     use_gazebo_camera:=false
     add_other_geometry:=false 
     geometry_type:='box'
@@ -58,8 +58,9 @@
 
     <!-- include common.link.xacro -->
     <xacro:include filename="$(find xarm_description)/urdf/common/common.link.xacro" />
-    <xacro:parse_link_inertial_filename dof="${dof}" robot_type="${robot_type}" robot_sn="${robot_sn}"/>
+    <xacro:parse_link_inertial_filename dof="${dof}" robot_type="${robot_type}" robot_sn="${robot_sn}" model1300="${model1300}" />
     <xacro:property name="inertial_params_filename" value="${scope_parent_inertial_params_filename}"/>
+    <xacro:property name="new_model1300" value="${scope_parent_model1300}"/>
 
     <!-- add one world link if no 'attach_to' specified  -->
     <xacro:if value="${attach_to == 'world'}">
@@ -83,7 +84,7 @@
         report_type="${report_type}"
         baud_checkset="${baud_checkset}"
         default_gripper_baud="${default_gripper_baud}" 
-        model1300="${model1300}"
+        model1300="${new_model1300}"
         inertial_params_filename="${inertial_params_filename}" />
     </xacro:if>
     <xacro:if value="${dof == 6}">
@@ -111,7 +112,7 @@
           report_type="${report_type}"
           baud_checkset="${baud_checkset}"
           default_gripper_baud="${default_gripper_baud}"
-          model1300="${model1300}"
+          model1300="${new_model1300}"
           inertial_params_filename="${inertial_params_filename}" />
       </xacro:unless>
     </xacro:if>
@@ -126,20 +127,20 @@
         report_type="${report_type}"
         baud_checkset="${baud_checkset}"
         default_gripper_baud="${default_gripper_baud}" 
-        model1300="${model1300}"
+        model1300="${new_model1300}"
         inertial_params_filename="${inertial_params_filename}" />
     </xacro:unless>
 
-    <xacro:if value="${robot_type != 'lite' and add_realsense_d435i}">
+    <xacro:if value="${add_realsense_d435i}">
       <!-- (xarm) Load RealSense D435i URDF -->
       <xacro:include filename="$(find xarm_description)/urdf/camera/realsense_d435i.urdf.xacro" />
-      <xacro:d435i_urdf prefix="${prefix}" add_d435i_camera_link="${add_d435i_camera_link}" />
-      <xacro:if value="${add_d435i_camera_link}">
+      <xacro:d435i_urdf prefix="${prefix}" add_d435i_links="${add_d435i_links}" />
+      <xacro:if value="${add_d435i_links}">
         <xacro:include filename="$(find xarm_description)/urdf/camera/realsense.gazebo.xacro" />    
         <xacro:realsense_gazebo prefix="${prefix}" />
       </xacro:if>
     </xacro:if>
-    <xacro:unless value="${robot_type != 'lite' and add_realsense_d435i}">
+    <xacro:unless value="${add_realsense_d435i}">
       <link name="${prefix}link_eef"/>
     </xacro:unless>
     <joint name="${prefix}joint_eef" type="fixed">

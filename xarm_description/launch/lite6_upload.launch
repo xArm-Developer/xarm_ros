@@ -4,6 +4,8 @@
   <arg name="limited" default="false" doc="If true, limits joint range [-PI, PI] on all joints." />
   <arg name="add_gripper" default="false" doc="If true, will attach xarm_gripper from UFACTORY to the end" />
   <arg name="add_vacuum_gripper" default="false" doc="If true, will attach vacuum gripper from UFACTORY to the end" />
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
   <arg name="robot_sn" default="" />
   
   <param name="robot_description" command="$(find xacro)/xacro
@@ -11,6 +13,8 @@
     robot_type:=lite dof:=6 limited:=$(arg limited) 
     add_gripper:=$(arg add_gripper) 
     add_vacuum_gripper:=$(arg add_vacuum_gripper)
+    add_realsense_d435i:=$(arg add_realsense_d435i)
+    add_d435i_links:=$(arg add_d435i_links)
     robot_sn:=$(arg robot_sn)
     " />
 </launch>

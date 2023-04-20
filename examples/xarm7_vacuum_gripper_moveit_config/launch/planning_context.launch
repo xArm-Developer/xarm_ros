@@ -8,7 +8,7 @@
 
   <arg name="model1300" default="false" />
   <arg name="add_realsense_d435i" default="false" />
-  <arg name="add_d435i_camera_link" default="false" />
+  <arg name="add_d435i_links" default="false" />
   <arg name="attach_to" default="world" />
   <arg name="attach_xyz" default="'0 0 0'" />
   <arg name="attach_rpy" default="'0 0 0'" />
@@ -19,7 +19,7 @@
     command="$(find xacro)/xacro --inorder '$(find xarm_description)/urdf/xarm_device.urdf.xacro' robot_type:=xarm dof:=7 add_vacuum_gripper:=true limited:=true
       model1300:=$(arg model1300)
       add_realsense_d435i:=$(arg add_realsense_d435i)
-      add_d435i_camera_link:=$(arg add_d435i_camera_link)
+      add_d435i_links:=$(arg add_d435i_links)
       attach_to:=$(arg attach_to)
       attach_xyz:=$(arg attach_xyz)
       attach_rpy:=$(arg attach_rpy)

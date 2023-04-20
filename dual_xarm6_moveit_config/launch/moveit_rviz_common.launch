@@ -28,8 +28,8 @@
   <arg name="model1300_2" default="false" />
   <arg name="add_realsense_d435i_1" default="false" />
   <arg name="add_realsense_d435i_2" default="false" />
-  <arg name="add_d435i_camera_link_1" default="false" />
-  <arg name="add_d435i_camera_link_2" default="false" />
+  <arg name="add_d435i_links_1" default="false" />
+  <arg name="add_d435i_links_2" default="false" />
   <arg name="robot_sn_1" default="" />
   <arg name="robot_sn_2" default="" />
 
@@ -40,8 +40,8 @@
     <arg name="model1300_2" value="$(arg model1300_2)" />
     <arg name="add_realsense_d435i_1" value="$(arg add_realsense_d435i_1)"/>
     <arg name="add_realsense_d435i_2" value="$(arg add_realsense_d435i_2)"/>
-    <arg name="add_d435i_camera_link_1" value="$(arg add_d435i_camera_link_1)"/>
-    <arg name="add_d435i_camera_link_2" value="$(arg add_d435i_camera_link_2)"/>
+    <arg name="add_d435i_links_1" value="$(arg add_d435i_links_1)"/>
+    <arg name="add_d435i_links_2" value="$(arg add_d435i_links_2)"/>
     <arg name="robot_sn_1" value="$(arg robot_sn_1)"/>
     <arg name="robot_sn_2" value="$(arg robot_sn_2)"/>
   </include>

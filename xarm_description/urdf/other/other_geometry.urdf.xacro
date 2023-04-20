@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://ros.org/wiki/xacro" name="xarm_vacuum_gripper">
-<!--
-  Author: Jason Peng <jason@ufactory.cc>
--->
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="other_geometry">
+
   <xacro:macro name="other_geometry" params="
     prefix:='' 
     attach_to:='' 

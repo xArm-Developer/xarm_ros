@@ -45,7 +45,7 @@
     </collision>
   </xacro:macro>
 
-  <xacro:macro name="parse_link_inertial_filename" params="dof robot_type robot_sn">
+  <xacro:macro name="parse_link_inertial_filename" params="dof robot_type robot_sn model1300">
     <!-- default inertial params filename -->
     <xacro:property name="inertial_params_filename" value="xarm${dof}_type${dof}_HT_BR2"/>
     <xacro:if value="${dof == 6 and robot_type == 'lite'}">
@@ -62,6 +62,7 @@
     <!-- default model_type and mass_type -->
     <xacro:property name="mass_type" value="-1" />
     <xacro:property name="model_type" value="-1" />
+    <xacro:property name="_model1300" value="${model1300}" />
 
     <!-- parse model_type and mass_type from robot_sn -->
     <xacro:if value="${robot_sn_len >= 14 and (robot_sn[0] == 'X' or robot_sn[0] == 'L')}">
@@ -75,6 +76,9 @@
       <xacro:if value="${model_num == 1380}">
         <xacro:property name="model_type" value="11" />
         <xacro:property name="mass_type" value="1" />
+      </xacro:if>
+      <xacro:if value="${model_num >= 1300}">
+        <xacro:property name="_model1300" value="true" />
       </xacro:if>
 
       <xacro:if value="${robot_sn[8] == '0'}">
@@ -157,6 +161,7 @@
       </xacro:if>
     </xacro:unless>
     <xacro:property name="scope_parent_inertial_params_filename" value="${inertial_params_filename}" scope="parent"/>
+    <xacro:property name="scope_parent_model1300" value="${_model1300}" scope="parent"/>
   </xacro:macro>
 
 </robot>

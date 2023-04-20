@@ -7,6 +7,8 @@
   <arg name="add_gripper" default="false" />
   <arg name="add_vacuum_gripper" default="false" />
   <arg name="namespace" default="ufactory"/>
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
   <arg name="robot_sn" default="" />
   
   <rosparam file="$(find lite6_moveit_config)/config/lite6_params.yaml" command="load" ns="$(arg namespace)"/>
@@ -23,6 +25,8 @@
     --inorder '$(find xarm_description)/urdf/xarm_device.urdf.xacro' robot_type:=lite dof:=6 hw_ns:=$(arg namespace) 
     add_gripper:=$(arg add_gripper) add_vacuum_gripper:=$(arg add_vacuum_gripper) 
     effort_control:=$(arg effort_control) velocity_control:=$(arg velocity_control)
+    add_realsense_d435i:=$(arg add_realsense_d435i)
+    add_d435i_links:=$(arg add_d435i_links)
     robot_sn:=$(arg robot_sn)
     " />
 
