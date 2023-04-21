@@ -746,6 +746,7 @@ $ roslaunch d435i_xarm_setup grasp_node_xarm_api.launch
  $ cd ~/catkin_ws/src/
  # 下载(针对不同ros版本请切换到对应分支)
  $ git clone https://github.com/JenniferBuehler/gazebo-pkgs.git
+ $ git clone https://github.com/JenniferBuehler/general-message-pkgs.git
  # 编译
  $ cd ..
  $ catkin_make
@@ -761,7 +762,7 @@ $ roslaunch d435i_xarm_setup grasp_node_xarm_api.launch
 ### 7.5.3 真机+realsense_d435i
 ```bash
  # 启动move_group
- $ roslaunch camera_demo xarm_move_group.launch robot_ip:=192.168.1.15 robot_dof:=6
+ $ roslaunch camera_demo xarm_move_group.launch robot_ip:=192.168.1.15 robot_dof:=6 add_realsense_d435i:=true
 
  # 运行颜色块识别抓取脚本(根据输出交互使用)
  $ rosrun camera_demo color_recognition.py

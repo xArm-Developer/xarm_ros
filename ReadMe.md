@@ -146,7 +146,7 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
    ```bash
    $ rosdep install --from-paths . --ignore-src --rosdistro kinetic -y
    ```
-   And chane 'kinetic' to the ROS distribution you use.  
+   And change 'kinetic' to the ROS distribution you use.  
 
 ## 4.4 Build the code
    ```bash
@@ -766,6 +766,7 @@ For installation with camera stand provided by UFACTORY, the cam model can be at
  $ cd ~/catkin_ws/src/
  # Download through git (mind to checkout the proper branch):
  $ git clone https://github.com/JenniferBuehler/gazebo-pkgs.git
+ $ git clone https://github.com/JenniferBuehler/general-message-pkgs.git
  # Compile:
  $ cd ..
  $ catkin_make
@@ -781,7 +782,7 @@ For installation with camera stand provided by UFACTORY, the cam model can be at
 ### 7.5.3 Real xArm and Intel realsense_d435i hardware
 ```bash
  # launch move_group:
- $ roslaunch camera_demo xarm_move_group.launch robot_ip:=192.168.1.15 robot_dof:=6
+ $ roslaunch camera_demo xarm_move_group.launch robot_ip:=192.168.1.15 robot_dof:=6 add_realsense_d435i:=true
 
  # In another terminal, run the color recognition and grasping script (use with interaction prompt):
  $ rosrun camera_demo color_recognition.py
