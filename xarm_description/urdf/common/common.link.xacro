@@ -81,11 +81,12 @@
         <xacro:property name="_model1300" value="true" />
       </xacro:if>
 
-      <xacro:if value="${robot_sn[8] == '0'}">
-        <xacro:property name="date_str" value="2${robot_sn[9]}${robot_sn[6:8]}" />
-      </xacro:if>
-      <xacro:unless value="${robot_sn[8] == '0'}">
+      <xacro:property name="is_num" value="${robot_sn[8] == '0' or robot_sn[8] == '1' or robot_sn[8] == '2' or robot_sn[8] == '3' or robot_sn[8] == '4' or robot_sn[8] == '5' or robot_sn[8] == '6' or robot_sn[8] == '7' or robot_sn[8] == '8' or robot_sn[8] == '9'}" />
+      <xacro:if value="${is_num}">
         <xacro:property name="date_str" value="${robot_sn[8:10]}${robot_sn[6:8]}" />
+      </xacro:if>
+      <xacro:unless value="${is_num}">
+        <xacro:property name="date_str" value="2${robot_sn[9]}${robot_sn[6:8]}" />
       </xacro:unless>
       <xacro:property name="date_int" value="${int(date_str)}" />
 
