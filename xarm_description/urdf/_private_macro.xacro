@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="private_macro">
   
   <xacro:property name="is_ros2" value="false" scope="parent"/>
-  <xacro:property name="use_xacro_load_yaml" value="true" scope="parent"/>
+  <xacro:property name="use_xacro_load_yaml" value="false" scope="parent"/>
   <xacro:property name="use_len" value="true" scope="parent"/>
 
   <xacro:macro name="device_macro_begin" params=""> 
