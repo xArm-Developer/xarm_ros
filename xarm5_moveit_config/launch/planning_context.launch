@@ -12,6 +12,8 @@
   <!-- The name of the parameter under which the URDF is loaded -->
   <arg name="robot_description" default="robot_description"/>
 
+  <arg name="add_gripper" default="false"/>
+  <arg name="add_vacuum_gripper" default="false"/>
   <arg name="add_other_geometry" default="false"/>
   <arg name="geometry_type" default="box"/>
   <arg name="geometry_mass" default="0.1"/>
@@ -35,6 +37,8 @@
       attach_xyz:=$(arg attach_xyz)
       attach_rpy:=$(arg attach_rpy)
       robot_sn:=$(arg robot_sn)
+      add_gripper:=$(arg add_gripper)
+      add_vacuum_gripper:=$(arg add_vacuum_gripper)
       add_other_geometry:=$(arg add_other_geometry)
       geometry_type:=$(arg geometry_type)
       geometry_mass:=$(arg geometry_mass)
@@ -51,6 +55,8 @@
 
   <param if="$(arg load_robot_description)" name="$(arg robot_description)_semantic" 
     command="xacro --inorder  '$(find xarm_description)/srdf/xarm.srdf.xacro' robot_type:=xarm dof:=5
+      add_gripper:=$(arg add_gripper)
+      add_vacuum_gripper:=$(arg add_vacuum_gripper)
       add_other_geometry:=$(arg add_other_geometry)
   "/>
 
@@ -59,7 +65,8 @@
 
   <!-- Load updated joint limits (override information from URDF) -->
   <group ns="$(arg robot_description)_planning">
-    <rosparam command="load" file="$(find xarm5_moveit_config)/config/joint_limits.yaml"/>
+    <rosparam if="$(arg add_gripper)" command="load" file="$(find xarm5_moveit_config)/config/joint_limits_with_gripper.yaml"/>
+    <rosparam unless="$(arg add_gripper)" command="load" file="$(find xarm5_moveit_config)/config/joint_limits.yaml"/>
   </group>
 
   <!-- Load default settings for kinematics; these settings are overridden by settings in a node's namespace -->

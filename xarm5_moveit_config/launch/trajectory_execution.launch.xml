@@ -1,4 +1,5 @@
 <launch>
+  <arg name="add_gripper" default="false"/>
 
   <!-- This file makes it easy to include the settings for trajectory execution  -->
 
@@ -15,6 +16,8 @@
 
   <!-- Load the robot specific controller manager; this sets the moveit_controller_manager ROS parameter -->
   <arg name="moveit_controller_manager" default="xarm5" />
-  <include file="$(find xarm5_moveit_config)/launch/$(arg moveit_controller_manager)_moveit_controller_manager.launch.xml" />
+  <include file="$(find xarm5_moveit_config)/launch/$(arg moveit_controller_manager)_moveit_controller_manager.launch.xml">
+    <arg name="add_gripper" value="$(arg add_gripper)"/>
+  </include>
 
 </launch>
