@@ -14,6 +14,8 @@
 	<arg name="default_gripper_baud" default="2000000" />
   <arg name="jnt_stat_pub_rate" default="10" />
 
+  <arg name="add_gripper" default="false" />
+  <arg name="add_vacuum_gripper" default="false" />
   <arg name="add_other_geometry" default="false"/>
   <arg name="geometry_type" default="box"/>
   <arg name="geometry_mass" default="0.1"/>
@@ -45,6 +47,7 @@
     <arg name="enforce_limits" value="$(arg enforce_limits)" />
     <arg name="baud_checkset" value="$(arg baud_checkset)" />
     <arg name="default_gripper_baud" value="$(arg default_gripper_baud)" />
+    <arg name="add_gripper" value="$(arg add_gripper)"/>
   </include>
 
   <!-- load the joint trajectory controller specified in yaml -->
@@ -62,6 +65,7 @@
   <!-- from="/follow_joint_trajectory" should not remove "/" -->
   <!-- <remap from="/follow_joint_trajectory" to="xarm/xarm5_traj_controller/follow_joint_trajectory"/> -->
   <remap from="/follow_joint_trajectory" to="$(arg xarm_hw_ns)/$(arg xarm_traj_controller)/follow_joint_trajectory"/>
+  <remap if="$(arg add_gripper)" from="xarm_gripper/gripper_action" to="$(arg xarm_hw_ns)/xarm_gripper/gripper_action"/>
 
   <!-- common part -->
   <remap from="/tf" to="$(arg ext_ns)/tf" />
@@ -81,18 +85,20 @@
     <arg name="attach_rpy" value="$(arg attach_rpy)"/>
     <arg name="robot_sn" value="$(arg robot_sn)"/>
 
-    <arg name="add_other_geometry" default="$(arg add_other_geometry)"/>
-    <arg name="geometry_type" default="$(arg geometry_type)"/>
-    <arg name="geometry_mass" default="$(arg geometry_mass)"/>
-    <arg name="geometry_height" default="$(arg geometry_height)"/>
-    <arg name="geometry_radius" default="$(arg geometry_radius)"/>
-    <arg name="geometry_length" default="$(arg geometry_length)"/>
-    <arg name="geometry_width" default="$(arg geometry_width)"/>
-    <arg name="geometry_mesh_filename" default="$(arg geometry_mesh_filename)"/>
-    <arg name="geometry_mesh_origin_xyz" default="$(arg geometry_mesh_origin_xyz)"/>
-    <arg name="geometry_mesh_origin_rpy" default="$(arg geometry_mesh_origin_rpy)"/>
-    <arg name="geometry_mesh_tcp_xyz" default="$(arg geometry_mesh_tcp_xyz)"/>
-    <arg name="geometry_mesh_tcp_rpy" default="$(arg geometry_mesh_tcp_rpy)"/>
+    <arg name="add_gripper" value="$(arg add_gripper)"/>
+    <arg name="add_vacuum_gripper" value="$(arg add_vacuum_gripper)"/>
+    <arg name="add_other_geometry" value="$(arg add_other_geometry)"/>
+    <arg name="geometry_type" value="$(arg geometry_type)"/>
+    <arg name="geometry_mass" value="$(arg geometry_mass)"/>
+    <arg name="geometry_height" value="$(arg geometry_height)"/>
+    <arg name="geometry_radius" value="$(arg geometry_radius)"/>
+    <arg name="geometry_length" value="$(arg geometry_length)"/>
+    <arg name="geometry_width" value="$(arg geometry_width)"/>
+    <arg name="geometry_mesh_filename" value="$(arg geometry_mesh_filename)"/>
+    <arg name="geometry_mesh_origin_xyz" value="$(arg geometry_mesh_origin_xyz)"/>
+    <arg name="geometry_mesh_origin_rpy" value="$(arg geometry_mesh_origin_rpy)"/>
+    <arg name="geometry_mesh_tcp_xyz" value="$(arg geometry_mesh_tcp_xyz)"/>
+    <arg name="geometry_mesh_tcp_rpy" value="$(arg geometry_mesh_tcp_rpy)"/>
   </include>
 
 </launch>

@@ -9,6 +9,8 @@
   <arg name="attach_rpy" default="'0 0 0'" />
   <arg name="robot_sn" default="" />
 
+  <arg name="add_gripper" default="false" />
+  <arg name="add_vacuum_gripper" default="false" />
   <arg name="add_other_geometry" default="false"/>
   <arg name="geometry_type" default="box"/>
   <arg name="geometry_mass" default="0.1"/>
@@ -38,18 +40,20 @@
     <arg name="attach_rpy" value="$(arg attach_rpy)"/>
     <arg name="robot_sn" value="$(arg robot_sn)"/>
 
-    <arg name="add_other_geometry" default="$(arg add_other_geometry)"/>
-    <arg name="geometry_type" default="$(arg geometry_type)"/>
-    <arg name="geometry_mass" default="$(arg geometry_mass)"/>
-    <arg name="geometry_height" default="$(arg geometry_height)"/>
-    <arg name="geometry_radius" default="$(arg geometry_radius)"/>
-    <arg name="geometry_length" default="$(arg geometry_length)"/>
-    <arg name="geometry_width" default="$(arg geometry_width)"/>
-    <arg name="geometry_mesh_filename" default="$(arg geometry_mesh_filename)"/>
-    <arg name="geometry_mesh_origin_xyz" default="$(arg geometry_mesh_origin_xyz)"/>
-    <arg name="geometry_mesh_origin_rpy" default="$(arg geometry_mesh_origin_rpy)"/>
-    <arg name="geometry_mesh_tcp_xyz" default="$(arg geometry_mesh_tcp_xyz)"/>
-    <arg name="geometry_mesh_tcp_rpy" default="$(arg geometry_mesh_tcp_rpy)"/>
+    <arg name="add_gripper" value="$(arg add_gripper)"/>
+    <arg name="add_vacuum_gripper" value="$(arg add_vacuum_gripper)"/>
+    <arg name="add_other_geometry" value="$(arg add_other_geometry)"/>
+    <arg name="geometry_type" value="$(arg geometry_type)"/>
+    <arg name="geometry_mass" value="$(arg geometry_mass)"/>
+    <arg name="geometry_height" value="$(arg geometry_height)"/>
+    <arg name="geometry_radius" value="$(arg geometry_radius)"/>
+    <arg name="geometry_length" value="$(arg geometry_length)"/>
+    <arg name="geometry_width" value="$(arg geometry_width)"/>
+    <arg name="geometry_mesh_filename" value="$(arg geometry_mesh_filename)"/>
+    <arg name="geometry_mesh_origin_xyz" value="$(arg geometry_mesh_origin_xyz)"/>
+    <arg name="geometry_mesh_origin_rpy" value="$(arg geometry_mesh_origin_rpy)"/>
+    <arg name="geometry_mesh_tcp_xyz" value="$(arg geometry_mesh_tcp_xyz)"/>
+    <arg name="geometry_mesh_tcp_rpy" value="$(arg geometry_mesh_tcp_rpy)"/>
     
   </include>
 

@@ -6,6 +6,6 @@
   <!-- Disable the exec duration monitoring  -->
   <param name="trajectory_execution/execution_duration_monitoring" value="false"/>
   <!-- The rest of the params are specific to this plugin -->
-	<rosparam if="$(arg add_gripper)" file="$(find xarm6_moveit_config)/config/controllers_with_gripper.yaml"/>
+	<rosparam if="$(arg add_gripper)" file="$(find xarm6_moveit_config)/config/gazebo_controllers_with_gripper.yaml"/>
 	<rosparam unless="$(arg add_gripper)" file="$(find xarm6_moveit_config)/config/controllers.yaml"/>
 </launch>
