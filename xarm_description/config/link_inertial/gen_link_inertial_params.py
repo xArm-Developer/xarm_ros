@@ -20,10 +20,10 @@ class __XArmDynamics(object):
                 },
                 'inertia': {
                     'ixx': cls.INERTIA[i][0],
-                    'ixy': cls.INERTIA[i][1],
-                    'ixz': cls.INERTIA[i][2],
+                    'ixy': -cls.INERTIA[i][1],
+                    'ixz': -cls.INERTIA[i][2],
                     'iyy': cls.INERTIA[i][3],
-                    'iyz': cls.INERTIA[i][4],
+                    'iyz': -cls.INERTIA[i][4],
                     'izz': cls.INERTIA[i][5],
                 },
             }
