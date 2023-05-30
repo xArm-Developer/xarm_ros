@@ -16,6 +16,8 @@
   <arg name="sim_gazebo" default="false"/>
   <arg name="add_gripper" default="false"/>
 
+  <arg name="sensor_type" default="" />
+
   <!-- move_group settings -->
   <arg name="allow_trajectory_execution" default="true"/>
   <arg name="fake_execution" default="false"/>
@@ -58,6 +60,7 @@
   <!-- Sensors Functionality -->
   <include ns="move_group" file="$(find xarm5_moveit_config)/launch/sensor_manager.launch.xml" if="$(arg allow_trajectory_execution)">
     <arg name="moveit_sensor_manager" value="xarm5" />
+    <arg name="sensor_type" value="$(arg sensor_type)" />
   </include>
 
   <!-- Start the actual move_group node/action server -->

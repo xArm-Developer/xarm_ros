@@ -24,6 +24,8 @@
   <arg name="NO_GUI_CTRL" default="false"/>
   <!-- option to show rviz or not -->
   <arg name="show_rviz" default="true" />
+
+  <arg name="sensor_type" default="" />
   
   <arg name="model1300" default="false" />
   <arg name="add_realsense_d435i" default="false" />
@@ -96,6 +98,7 @@
     <arg name="debug" value="$(arg debug)"/>
     <arg name="sim_gazebo" value="$(arg sim_gazebo)"/>
     <arg name="add_gripper" value="$(arg add_gripper)"/>
+    <arg name="sensor_type" value="$(arg sensor_type)" />
   </include>
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->
