@@ -67,7 +67,8 @@ namespace xarm_api
             joint_state_msg_.velocity[i] = (double)report_data_ptr->rt_joint_spds[i];
             joint_state_msg_.effort[i] = (double)report_data_ptr->tau[i];
         }
-        pub_joint_state(joint_state_msg_);
+        if (!is_moveit_)
+            pub_joint_state(joint_state_msg_);
 
         xarm_state_msg_.state = report_data_ptr->state;
         xarm_state_msg_.mode = report_data_ptr->mode;
@@ -258,9 +259,10 @@ namespace xarm_api
         nh_.getParam("xarm_report_type", report_type_);
     }
 
-    void XArmDriver::init(ros::NodeHandle& root_nh, std::string &server_ip)
+    void XArmDriver::init(ros::NodeHandle& root_nh, std::string &server_ip, bool is_moveit)
     {   
         nh_ = root_nh;
+        is_moveit_ = is_moveit;
         
         bool baud_checkset = true;
         if (nh_.hasParam("baud_checkset")) {
