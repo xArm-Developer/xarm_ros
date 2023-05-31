@@ -56,7 +56,7 @@
     respawn="false"
     output="screen"
     ns="$(arg uf_hw_ns)"
-    args="$(arg uf_traj_controller)"/>
+    args="$(arg uf_traj_controller) joint_state_controller"/>
 
   <!-- <remap from="/follow_joint_trajectory" to="xarm/lite6_traj_controller/follow_joint_trajectory"/> -->
   <remap from="/follow_joint_trajectory" to="$(arg uf_hw_ns)/$(arg uf_traj_controller)/follow_joint_trajectory"/>
