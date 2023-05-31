@@ -222,7 +222,7 @@ namespace xarm_control
 			root_nh.setParam(locked_ip_key_, true);
 		}
 
-		xarm_driver_.init(robot_hw_nh, robot_ip);
+		xarm_driver_.init(robot_hw_nh, robot_ip, true);
 
 		dof_ = xarm_dof;
 		jnt_names_ = jnt_names;

@@ -48,7 +48,7 @@
     respawn="false"
     output="screen"
     ns="$(arg xarm_hw_ns)"
-    args="$(arg xarm_traj_controller)"/>
+    args="$(arg xarm_traj_controller) joint_state_controller"/>
 
   <!-- <remap from="arm_controller/follow_joint_trajectory" to="xarm/xarm5_traj_controller/follow_joint_trajectory"/> -->
   <remap from="arm_controller/follow_joint_trajectory" to="$(arg xarm_hw_ns)/$(arg xarm_traj_controller)/follow_joint_trajectory"/>

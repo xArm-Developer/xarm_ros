@@ -54,7 +54,7 @@
     type="spawner"
     respawn="false"
     output="screen"
-    args="$(arg hw_ns_1)_traj_controller $(arg hw_ns_2)_traj_controller"/>
+    args="$(arg hw_ns_1)_traj_controller $(arg hw_ns_2)_traj_controller joint_state_controller"/>
 
   <remap from="$(arg hw_ns_1)_controller/follow_joint_trajectory" to="$(arg hw_ns_1)_traj_controller/follow_joint_trajectory"/>
   <remap from="$(arg hw_ns_2)_controller/follow_joint_trajectory" to="$(arg hw_ns_2)_traj_controller/follow_joint_trajectory"/>
