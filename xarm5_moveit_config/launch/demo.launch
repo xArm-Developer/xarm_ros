@@ -24,8 +24,6 @@
   <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
   <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
 
-  <arg name="sensor_type" default="" />
-
   <remap from="$(arg ns)/source_list" to="/source_list" />
   <include file="$(find xarm5_moveit_config)/launch/moveit_rviz_common.launch">
     <arg name="jnt_stat_source" value="[move_group/fake_controller_joint_states]" />
@@ -57,7 +55,6 @@
     <arg name="geometry_mesh_tcp_xyz" value="$(arg geometry_mesh_tcp_xyz)"/>
     <arg name="geometry_mesh_tcp_rpy" value="$(arg geometry_mesh_tcp_rpy)"/>
 
-    <arg name="sensor_type" value="$(arg sensor_type)" />
   </include>
 
 </launch>

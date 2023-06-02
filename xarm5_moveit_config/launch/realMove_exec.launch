@@ -37,8 +37,6 @@
   <arg name="attach_rpy" default="'0 0 0'" />
   <arg name="robot_sn" default="" />
 
-  <arg name="sensor_type" default="" />
-
   <!-- common: bring up node to enable real xArm control -->
   <include file="$(find xarm_bringup)/launch/xarm5_server.launch">
     <arg name="robot_ip" value="$(arg robot_ip)" />
@@ -102,7 +100,6 @@
     <arg name="geometry_mesh_tcp_xyz" value="$(arg geometry_mesh_tcp_xyz)"/>
     <arg name="geometry_mesh_tcp_rpy" value="$(arg geometry_mesh_tcp_rpy)"/>
 
-    <arg name="sensor_type" value="$(arg sensor_type)" />
   </include>
 
 </launch>
