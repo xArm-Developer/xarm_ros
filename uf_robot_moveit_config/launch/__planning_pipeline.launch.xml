@@ -1,0 +1,13 @@
+<launch>
+
+  <!-- This file makes it easy to include different planning pipelines;
+       It is assumed that all planning pipelines are named XXX_planning_pipeline.launch  -->
+
+  <arg name="pipeline" default="ompl" />
+  <arg name="robot_name" default="xarm7" />
+
+  <include file="$(find uf_robot_moveit_config)/launch/__planning_pipeline_$(arg pipeline).launch.xml">
+    <arg name="robot_name" value="$(arg robot_name)"/>
+  </include>
+
+</launch>

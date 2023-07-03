@@ -1,0 +1,12 @@
+<launch>
+  <arg name="add_gripper" default="false"/>
+  <arg name="robot_name" default="xarm7"/>
+
+  <!-- Set the param that trajectory_execution_manager needs to find the controller plugin -->
+  <param name="moveit_controller_manager" value="moveit_fake_controller_manager/MoveItFakeControllerManager"/>
+
+  <!-- The rest of the params are specific to this plugin -->
+  <rosparam if="$(arg add_gripper)" file="$(find uf_robot_moveit_config)/config/$(arg robot_name)/fake_controllers_with_gripper.yaml"/>
+  <rosparam unless="$(arg add_gripper)" file="$(find uf_robot_moveit_config)/config/$(arg robot_name)/fake_controllers.yaml"/>
+
+</launch>
