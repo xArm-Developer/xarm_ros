@@ -21,6 +21,7 @@
     <arg name="robot_ip" value="$(arg robot_ip)" />
     <arg name="report_type" value="$(arg report_type)" />
     <arg name="dof" value="6" />
+    <arg name="robot_type" value="lite" />
     <arg name="use_moveit" value="$(arg use_moveit)" />
     <arg name="namespace" value="$(arg ns)" />
     <arg name="velocity_control" value="$(arg velocity_control)" />

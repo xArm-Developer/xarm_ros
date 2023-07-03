@@ -2,6 +2,7 @@
   <arg name="robot_ip" />
   <arg name="report_type" default="normal" />
   <arg name="dof" default="7"/>
+  <arg name="robot_type" default="xarm"/>
   <arg name="use_moveit" default="false" />
   <arg name="namespace" default="xarm" />
   <arg name="velocity_control" default="false"/>
@@ -11,6 +12,10 @@
   <arg name="publish_tf" default="false" />
   <arg name="show_rviz" default="false" />
   <arg name="add_gripper" default="false" />
+  <arg name="prefix" default="" />
+
+  <arg name="robot_dof" value="$(eval arg('dof') if arg('robot_type') == 'xarm' else 6)" />
+  <arg name="robot_name" value="$(eval 'uf850' if arg('robot_type') == 'uf850' else arg('robot_type') + str(arg('robot_dof')))" />
 
   <param name="$(arg namespace)/xarm_robot_ip" type="str" value = "$(arg robot_ip)"/>
 	<param name="$(arg namespace)/xarm_report_type" type="str" value = "$(arg report_type)"/>
@@ -19,12 +24,16 @@
   <param name="$(arg namespace)/velocity_control" type="bool" value = "$(arg velocity_control)"/>
   <param name="$(arg namespace)/enforce_limits" type="bool" value = "$(arg enforce_limits)"/>
   <param name="$(arg namespace)/add_gripper" type="bool" value = "$(arg add_gripper)"/>
+  <param name="$(arg namespace)/uf_model" value="$(eval 'XARM' if arg('robot_type') != 'lite' else 'LITE')" />
+  <param name="$(arg namespace)/prefix" value="$(arg prefix)" />
 
   <node if="$(arg publish_tf)" name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
   <node if="$(arg use_moveit)" name="uf_ros_controller" pkg="xarm_controller" type="uf_ros_controller" args="ip=$(arg robot_ip)" ns="$(arg namespace)" respawn="false" output="screen" />
   <node unless="$(arg use_moveit)" name="uf_driver" pkg="xarm_api" ns="$(arg namespace)" type="xarm_driver_node" output="screen" />
 
-  <include if="$(arg show_rviz)" file="$(find xarm_description)/launch/xarm$(arg dof)_rviz_display.launch">
+  <include if="$(arg show_rviz)" file="$(find xarm_description)/launch/_robot_rviz_display.launch">
+    <arg name="dof" value="$(arg robot_dof)" />
+    <arg name="robot_type" value="$(arg robot_type)" />
     <arg name="joint_state_source" value="[/$(arg namespace)/joint_states]" />
     <arg name="add_gripper" value="$(arg add_gripper)" />
   </include>
