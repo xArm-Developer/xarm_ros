@@ -10,7 +10,9 @@ project(xarm_moveit_servo)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
-  std_msgs
+  geometry_msgs
+  control_msgs
+  moveit_servo
 )
 
 ## System dependencies are found with CMake's conventions
