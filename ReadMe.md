@@ -92,6 +92,18 @@ For **UFACTORY Lite 6** users, make sure you have followed the instructions befo
    * (2023-04-20) Added the launch parameter `robot_sn`, supports loading the inertia parameters of the corresponding joint link, and automatically overrides the `model1300` parameters
    * (2023-04-20) Added launch parameters `attach_to`/`attach_xyz`/`attach_rpy` to support attaching the robot arm model to other models
    * (2023-04-21) Added [services usage documentation](xarm_api/ReadMe.md) in xarm_api
+   * (2023-06-07) Added support for __UFACTORY850__ robotic arm
+   * (2023-06-07) Added [uf_robot_moveit_config](uf_robot_moveit_config/Readme.md), support xArm/Lite6/UFACTORY850 series of robotic arm controls with moveit, which may replace these packages in the future. See instructions for [uf_robot_moveit_config](uf_robot_moveit_config/Readme.md)
+      - xarm5_moveit_config
+      - xarm5_gripper_moveit_config
+      - xarm5_vacuum_moveit_config
+      - xarm6_moveit_config
+      - xarm6_gripper_moveit_config
+      - xarm6_vacuum_moveit_config
+      - xarm7_moveit_config
+      - xarm7_gripper_moveit_config
+      - xarm7_vacuum_moveit_config
+      - lite6_moveit_config
 
 # 3. Preparations before using this package
 
@@ -271,7 +283,7 @@ Please note: xarm_moveit_config related packages will limit all joints within `[
 
 
 ## 5.6 xarm_planner:
-&ensp;&ensp;This implemented simple planner interface is based on move_group from Moveit! and provide ros service for users to do planning & execution based on the requested target, user can find detailed instructions on how to use it inside [***xarm_planner package***](./xarm_planner/).  
+&ensp;&ensp;This implemented simple planner interface is based on move_group from Moveit! and provide ros service for users to do planning & execution based on the requested target, user can find detailed instructions on how to use it inside [*xarm_planner package*](./xarm_planner/ReadMe_old.md).  
 #### To launch the xarm simple motion planner together with the real xArm:  
 ```bash
    $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5> add_(vacuum_)gripper:=<true|false>
