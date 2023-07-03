@@ -15,9 +15,7 @@
     <arg name="model1300" value="$(arg model1300)" />
   </include>
   
-  <!-- <remap from="/DOF" to="/xarm/DOF" /> -->
-  <param name="robot_type" type="str" value = "$(arg robot_type)"/>
-  <param name="robot_dof" type="int" value = "$(arg robot_dof)"/>
+  <param name="robot_name" type="str" value = "$(eval arg('robot_type') if arg('robot_type') == 'uf850' else arg('robot_type') + str(arg('robot_dof')))"/>
   <!-- bring up the simple planner (based on move_group) that provide plan service and execution server -->
   <node name="xarm_move_group_planner" pkg="xarm_planner" type="xarm_simple_planner" />
 

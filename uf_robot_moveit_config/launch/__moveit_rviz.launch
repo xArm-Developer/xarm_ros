@@ -1,0 +1,19 @@
+<launch>
+
+  <arg name="robot_name" default="xarm7" />
+  <arg name="debug" default="false" />
+  <arg unless="$(arg debug)" name="launch_prefix" value="" />
+  <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+
+  <arg name="no_gui_ctrl" default="false" />
+  <arg if="$(arg no_gui_ctrl)" name="command_args" value="-d $(find xarm_planner)/launch/planner.rviz" />
+  <!-- <arg unless="$(arg no_gui_ctrl)" name="command_args" value="-d $(find uf_robot_moveit_config)/launch/moveit.rviz" /> -->
+  <arg unless="$(arg no_gui_ctrl)" name="command_args" value="-d $(find uf_robot_moveit_config)/config/$(arg robot_name)/moveit.rviz" />
+
+  <node name="$(anon rviz)" launch-prefix="$(arg launch_prefix)" pkg="rviz" type="rviz" respawn="false"
+	args="$(arg command_args)" output="screen">
+    <!-- <rosparam command="load" file="$(find uf_robot_moveit_config)/config/kinematics.yaml"/> -->
+    <rosparam command="load" file="$(find uf_robot_moveit_config)/config/$(arg robot_name)/kinematics.yaml"/>
+  </node>
+
+</launch>

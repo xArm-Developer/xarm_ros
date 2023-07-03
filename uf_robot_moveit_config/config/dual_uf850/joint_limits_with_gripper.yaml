@@ -1,0 +1,125 @@
+# joint_limits.yaml allows the dynamics properties specified in the URDF to be overwritten or augmented as needed
+# Specific joint properties can be changed with the keys [max_position, min_position, max_velocity, max_acceleration]
+# Joint limits can be turned off with [has_velocity_limits, has_acceleration_limits]
+joint_limits:
+  L_drive_joint:
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 10
+  L_joint1:
+    has_velocity_limits: true
+    max_velocity: 2.14
+    has_acceleration_limits: false
+    max_acceleration: 0
+  L_joint2:
+    has_velocity_limits: true
+    max_velocity: 2.14
+    has_acceleration_limits: false
+    max_acceleration: 0
+  L_joint3:
+    has_velocity_limits: true
+    max_velocity: 2.14
+    has_acceleration_limits: false
+    max_acceleration: 0
+  L_joint4:
+    has_velocity_limits: true
+    max_velocity: 2.14
+    has_acceleration_limits: false
+    max_acceleration: 0
+  L_joint5:
+    has_velocity_limits: true
+    max_velocity: 2.14
+    has_acceleration_limits: false
+    max_acceleration: 0
+  L_joint6:
+    has_velocity_limits: true
+    max_velocity: 2.14
+    has_acceleration_limits: false
+    max_acceleration: 0
+  L_left_finger_joint:
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 10
+  L_left_inner_knuckle_joint:
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 10
+  L_right_finger_joint:
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 10
+  L_right_inner_knuckle_joint:
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 10
+  L_right_outer_knuckle_joint:
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 10
+  
+  R_drive_joint:
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 10
+  R_joint1:
+    has_velocity_limits: true
+    max_velocity: 2.14
+    has_acceleration_limits: false
+    max_acceleration: 0
+  R_joint2:
+    has_velocity_limits: true
+    max_velocity: 2.14
+    has_acceleration_limits: false
+    max_acceleration: 0
+  R_joint3:
+    has_velocity_limits: true
+    max_velocity: 2.14
+    has_acceleration_limits: false
+    max_acceleration: 0
+  R_joint4:
+    has_velocity_limits: true
+    max_velocity: 2.14
+    has_acceleration_limits: false
+    max_acceleration: 0
+  R_joint5:
+    has_velocity_limits: true
+    max_velocity: 2.14
+    has_acceleration_limits: false
+    max_acceleration: 0
+  R_joint6:
+    has_velocity_limits: true
+    max_velocity: 2.14
+    has_acceleration_limits: false
+    max_acceleration: 0
+  R_left_finger_joint:
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 10
+  R_left_inner_knuckle_joint:
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 10
+  R_right_finger_joint:
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 10
+  R_right_inner_knuckle_joint:
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 10
+  R_right_outer_knuckle_joint:
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 10

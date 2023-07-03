@@ -1,0 +1,16 @@
+# No Pid gains specified error fix
+gazebo_ros_control:
+  pid_gains:
+    L_drive_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    L_left_finger_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    L_left_inner_knuckle_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    L_right_outer_knuckle_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    L_right_finger_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    L_right_inner_knuckle_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    R_drive_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    R_left_finger_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    R_left_inner_knuckle_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    R_right_outer_knuckle_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    R_right_finger_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    R_right_inner_knuckle_joint: {p: 10.0, i: 0.1, d: 0.0, i_clamp: 0.2, antiwindup: false, publish_state: true}
+    

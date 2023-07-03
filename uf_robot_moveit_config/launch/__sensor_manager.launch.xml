@@ -1,0 +1,13 @@
+<launch>
+  <arg name="sensors_3d" default="false" />
+
+  <!-- Params for the octomap monitor -->
+  <rosparam command="load" file="$(find uf_robot_moveit_config)/config/octomap_monitor.yaml" />
+  <!-- Params for 3D sensors config -->
+  <rosparam command="load" if="$(arg sensors_3d)" file="$(find uf_robot_moveit_config)/config/sensors_3d.yaml" />
+
+  <!-- Load the robot specific sensor manager; this sets the moveit_sensor_manager ROS parameter -->
+  <arg name="moveit_sensor_manager" default="fake" />
+  <include file="$(find uf_robot_moveit_config)/launch/__moveit_sensor_manager_$(arg moveit_sensor_manager).launch.xml" />
+
+</launch>

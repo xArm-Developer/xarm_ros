@@ -1,0 +1,17 @@
+controller_list:
+  - name: ""
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+      - joint7
+  - name: xarm_gripper
+    action_ns: gripper_action
+    type: GripperCommand
+    joints:
+     - drive_joint

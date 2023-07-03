@@ -1,0 +1,12 @@
+controller_list:
+  - name: fake_uf850_controller
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+  - name: fake_uf850_gripper_controller
+    joints:
+      - drive_joint
