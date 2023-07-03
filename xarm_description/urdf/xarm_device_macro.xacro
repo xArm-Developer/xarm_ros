@@ -14,6 +14,7 @@
     attach_to:='world'
     attach_xyz:='0 0 0'
     attach_rpy:='0 0 0'
+    create_attach_link:=true
     ros2_control_params:=''
     load_gazebo_plugin:=false 
     add_realsense_d435i:=false
@@ -48,11 +49,11 @@
     <xacro:common_material prefix="${prefix}"/>
 
     <!-- Specify Mesh file path -->
-    <xacro:if value="${ros2_control_plugin == 'gazebo_ros2_control/GazeboSystem'}">
+    <xacro:if value="${ros2_control_plugin == 'gazebo_ros2_control/GazeboSystem' or ros2_control_plugin == 'ign_ros2_control/IgnitionSystem'}">
       <!-- gazebo use -->
       <xacro:property name="mesh_path" value="file://$(find xarm_description)/meshes" scope="parent"/>
     </xacro:if>
-    <xacro:unless value="${ros2_control_plugin == 'gazebo_ros2_control/GazeboSystem'}">
+    <xacro:unless value="${ros2_control_plugin == 'gazebo_ros2_control/GazeboSystem' or ros2_control_plugin == 'ign_ros2_control/IgnitionSystem'}">
       <xacro:property name="mesh_path" value="package://xarm_description/meshes" scope="parent"/>
     </xacro:unless> 
 
@@ -63,7 +64,7 @@
     <xacro:property name="new_model1300" value="${scope_parent_model1300}"/>
 
     <!-- add one world link if no 'attach_to' specified  -->
-    <xacro:if value="${attach_to == 'world'}">
+    <xacro:if value="${attach_to == 'world' and create_attach_link}">
       <link name="world" />
     </xacro:if>
 
@@ -88,6 +89,20 @@
         inertial_params_filename="${inertial_params_filename}" />
     </xacro:if>
     <xacro:if value="${dof == 6}">
+      <xacro:if value="${robot_type == 'uf850'}">
+        <!-- Load UFACTORY 850 Robot Model URDF -->
+        <xacro:include filename="$(find xarm_description)/urdf/uf850/uf850_robot_macro.xacro" />
+        <xacro:uf850_robot prefix="${prefix}" hw_ns="${hw_ns}" limited="${limited}" 
+          effort_control="${effort_control}" velocity_control="${velocity_control}" 
+          ros2_control_plugin="${ros2_control_plugin}" 
+          add_gripper="${add_gripper}"
+          robot_ip="${robot_ip}"
+          report_type="${report_type}"
+          baud_checkset="${baud_checkset}"
+          default_gripper_baud="${default_gripper_baud}"
+          model1300="${new_model1300}"
+          inertial_params_filename="${inertial_params_filename}" />
+      </xacro:if>
       <xacro:if value="${robot_type == 'lite'}">
         <!-- Load Lite6 Robot Model URDF -->
         <xacro:include filename="$(find xarm_description)/urdf/lite6/lite6_robot_macro.xacro" />
@@ -101,7 +116,7 @@
           default_gripper_baud="${default_gripper_baud}"
           inertial_params_filename="${inertial_params_filename}" />
       </xacro:if>
-      <xacro:unless value="${robot_type == 'lite'}">
+      <xacro:unless value="${robot_type == 'lite' or robot_type == 'uf850'}">
         <!-- Load XArm6 Robot Model URDF -->
         <xacro:include filename="$(find xarm_description)/urdf/xarm6/xarm6_robot_macro.xacro" />
         <xacro:xarm6_robot prefix="${prefix}" hw_ns="${hw_ns}" limited="${limited}" 
@@ -193,7 +208,21 @@
     <xacro:if value="${load_gazebo_plugin}">
       <xacro:include filename="$(find xarm_description)/urdf/common/common.gazebo.xacro" />
       <xacro:if value="${is_ros2}">
-        <xacro:gazebo_ros2_control_plugin ros2_control_params="${ros2_control_params}"/>
+        <xacro:if value="${robot_type == 'uf850'}">
+          <xacro:property name="new_ros2_control_params" value="$(find xarm_controller)/config/${robot_type}_controllers.yaml"/>
+        </xacro:if>
+        <xacro:unless value="${robot_type == 'uf850'}">
+          <xacro:property name="new_ros2_control_params" value="$(find xarm_controller)/config/${robot_type}${dof}_controllers.yaml"/>
+        </xacro:unless>
+        <xacro:if value="${ros2_control_params != ''}">
+          <xacro:property name="new_ros2_control_params" value="${ros2_control_params}"/>
+        </xacro:if>
+        <xacro:if value="${ros2_control_plugin == 'ign_ros2_control/IgnitionSystem'}">
+          <xacro:ignition_ros2_control_plugin prefix="${prefix}" ros2_control_params="${new_ros2_control_params}"/>
+        </xacro:if>
+        <xacro:unless value="${ros2_control_plugin == 'ign_ros2_control/IgnitionSystem'}">
+          <xacro:gazebo_ros2_control_plugin ros2_control_params="${new_ros2_control_params}"/>
+        </xacro:unless>
       </xacro:if>
       <xacro:unless value="${is_ros2}">
         <xacro:gazebo_ros1_control_plugin namespace="${hw_ns}"/>

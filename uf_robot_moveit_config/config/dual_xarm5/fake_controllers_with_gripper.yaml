@@ -1,0 +1,22 @@
+controller_list:
+  - name: L_fake_xarm5_controller
+    joints:
+      - L_joint1
+      - L_joint2
+      - L_joint3
+      - L_joint4
+      - L_joint5
+  - name: L_fake_xarm_gripper_controller
+    joints:
+      - L_drive_joint
+  
+  - name: R_fake_xarm5_controller
+    joints:
+      - R_joint1
+      - R_joint2
+      - R_joint3
+      - R_joint4
+      - R_joint5
+  - name: R_fake_xarm_gripper_controller
+    joints:
+      - R_drive_joint

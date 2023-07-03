@@ -7,14 +7,16 @@
   <arg name="add_realsense_d435i" default="false" />
   <arg name="add_d435i_links" default="false" />
   <arg name="robot_sn" default="" />
-  
-  <param name="robot_description" command="$(find xacro)/xacro
-    --inorder '$(find xarm_description)/urdf/xarm_device.urdf.xacro'
-    robot_type:=lite dof:=6 limited:=$(arg limited) 
-    add_gripper:=$(arg add_gripper) 
-    add_vacuum_gripper:=$(arg add_vacuum_gripper)
-    add_realsense_d435i:=$(arg add_realsense_d435i)
-    add_d435i_links:=$(arg add_d435i_links)
-    robot_sn:=$(arg robot_sn)
-    " />
+
+  <include file="$(find xarm_description)/launch/_robot_upload.launch" >
+    <arg name="dof" value="6"/>
+    <arg name="robot_type" value="lite"/>
+    <arg name="limited" value="$(arg limited)"/>
+    <arg name="add_gripper" value="$(arg add_gripper)" />
+    <arg name="add_vacuum_gripper" value="$(arg add_vacuum_gripper)" />
+    <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)" />
+    <arg name="add_d435i_links" value="$(arg add_d435i_links)" />
+    <arg name="robot_sn" value="$(arg robot_sn)" />
+  </include>
+
 </launch>

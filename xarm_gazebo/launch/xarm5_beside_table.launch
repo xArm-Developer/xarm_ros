@@ -1,52 +1,66 @@
 <?xml version="1.0"?>
 <launch>
+
   <arg name="run_demo" default="false" doc="If true, perform the demo after launch"/>
   <arg name="paused" default="false" doc="Starts gazebo in paused mode" />
   <arg name="gui" default="true" doc="Starts gazebo gui" />
+
   <arg name="effort_control" default="false"/>
   <arg name="velocity_control" default="false"/>
+  <arg name="namespace" default="xarm"/>
+
   <arg name="add_gripper" default="false" />
   <arg name="add_vacuum_gripper" default="false" />
-  <arg name="namespace" default="xarm"/>
+  <arg name="add_other_geometry" default="false"/>
+  <arg name="geometry_type" default="box"/>
+  <arg name="geometry_mass" default="0.1"/>
+  <arg name="geometry_height" default="0.1"/>
+  <arg name="geometry_radius" default="0.1"/>
+  <arg name="geometry_length" default="0.1"/>
+  <arg name="geometry_width" default="0.1"/>
+  <arg name="geometry_mesh_filename" default=""/>
+  <arg name="geometry_mesh_origin_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_origin_rpy" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
+
   <arg name="model1300" default="false" />
   <arg name="add_realsense_d435i" default="false" />
   <arg name="add_d435i_links" default="false" />
   <arg name="robot_sn" default="" />
 
-  <arg name="xarm_velocity_control" value="$(eval arg('velocity_control') and not arg('run_demo'))" />
+  <include file="$(find xarm_gazebo)/launch/_robot_beside_table.launch">
+    <arg name="dof" value="5" />
+    <arg name="robot_type" value="xarm" />
 
-  <rosparam file="$(find xarm5_moveit_config)/config/xarm5_params.yaml" command="load" ns="$(arg namespace)"/>
-  <rosparam if="$(arg add_gripper)" file="$(find xarm_controller)/config/gripper_gazebo_ros_control.yaml" command="load"/>
-  <!-- startup simulated world -->
-  <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find xarm_gazebo)/worlds/xarm_example1_table.world"/>
+    <arg name="run_demo" value="$(arg run_demo)"/>
     <arg name="paused" value="$(arg paused)"/>
     <arg name="gui" value="$(arg gui)"/>
-  </include>
 
-  <!-- send robot urdf to param server, joint limit may be overwritten if use moveit planner -->
-  <param name="robot_description" command="$(find xacro)/xacro
-    --inorder '$(find xarm_description)/urdf/xarm_device.urdf.xacro' robot_type:=xarm dof:=5
-    add_gripper:=$(arg add_gripper) add_vacuum_gripper:=$(arg add_vacuum_gripper)
-    effort_control:=$(arg effort_control) velocity_control:=$(arg xarm_velocity_control) 
-    model1300:=$(arg model1300)
-    add_realsense_d435i:=$(arg add_realsense_d435i)
-    add_d435i_links:=$(arg add_d435i_links)
-    robot_sn:=$(arg robot_sn)
-    " />
-
-  <!-- spawn robot model in gazebo, located on the table -->
-  <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model"
-    respawn="false" output="screen"
-    args="-urdf -model xarm5 -x -0.2 -y -0.6 -z 1.021 -Y 1.571 -param robot_description"/>
-
-  <!-- load the corresponding controllers -->
-  <include file="$(find xarm_controller)/launch/xarm5_control.launch">
-    <arg name="run_demo_traj" value="$(arg run_demo)"/>
     <arg name="effort_control" value="$(arg effort_control)"/>
-    <arg name="velocity_control" value="$(arg xarm_velocity_control)"/>
-    <arg name="add_gripper" value="$(arg add_gripper)" />
-    <arg name="namespace" value="$(arg namespace)" />
+    <arg name="velocity_control" value="$(arg velocity_control)"/>
+    <arg name="hw_ns" value="$(arg namespace)"/>
+
+    <arg name="add_gripper" value="$(arg add_gripper)"/>
+    <arg name="add_vacuum_gripper" value="$(arg add_vacuum_gripper)"/>
+    <arg name="add_other_geometry" value="$(arg add_other_geometry)"/>
+    <arg name="geometry_type" value="$(arg geometry_type)"/>
+    <arg name="geometry_mass" value="$(arg geometry_mass)"/>
+    <arg name="geometry_height" value="$(arg geometry_height)"/>
+    <arg name="geometry_radius" value="$(arg geometry_radius)"/>
+    <arg name="geometry_length" value="$(arg geometry_length)"/>
+    <arg name="geometry_width" value="$(arg geometry_width)"/>
+    <arg name="geometry_mesh_filename" value="$(arg geometry_mesh_filename)"/>
+    <arg name="geometry_mesh_origin_xyz" value="$(arg geometry_mesh_origin_xyz)"/>
+    <arg name="geometry_mesh_origin_rpy" value="$(arg geometry_mesh_origin_rpy)"/>
+    <arg name="geometry_mesh_tcp_xyz" value="$(arg geometry_mesh_tcp_xyz)"/>
+    <arg name="geometry_mesh_tcp_rpy" value="$(arg geometry_mesh_tcp_rpy)"/>
+
+    <arg name="model1300" value="$(arg model1300)"/>
+    <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)"/>
+    <arg name="add_d435i_links" value="$(arg add_d435i_links)"/>
+    <arg name="robot_sn" value="$(arg robot_sn)"/>
+
   </include>
 
 </launch>

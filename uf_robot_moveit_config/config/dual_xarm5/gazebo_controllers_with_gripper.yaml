@@ -1,0 +1,30 @@
+controller_list:
+  - name: "L_xarm5_controller"
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    joints:
+      - L_joint1
+      - L_joint2
+      - L_joint3
+      - L_joint4
+      - L_joint5
+  - name: L_gripper_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    joints:
+     - L_drive_joint
+  
+  - name: "R_xarm5_controller"
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    joints:
+      - R_joint1
+      - R_joint2
+      - R_joint3
+      - R_joint4
+      - R_joint5
+  - name: R_gripper_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    joints:
+     - R_drive_joint

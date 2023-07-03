@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot xmlns:xacro="http://wiki.ros.org/xacro" name="dual_xarm">
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="DUAL_UF_ROBOT">
   <!-- parameters -->
   <xacro:arg name="prefix_1" default="L_" />
   <xacro:arg name="prefix_2" default="R_" />

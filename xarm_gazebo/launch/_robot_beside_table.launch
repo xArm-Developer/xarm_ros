@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="paused" default="false" doc="Starts gazebo in paused mode" />
+  <arg name="gui" default="true" doc="Starts gazebo gui" />
+
+  <arg name="dof" default="7" />
+  <arg name="robot_type" default="xarm" />
+  <arg name="robot_sn" default="" />
+  <arg name="model1300" default="false" />
+  <arg name="limited" default="true" />
+  <arg name="hw_ns" default="xarm"/>
+  <arg name="velocity_control" default="false"/>
+  <arg name="effort_control" default="false"/>
+
+  <arg name="attach_to" default="world" />
+  <arg name="attach_xyz" default="'0 0 0'" />
+  <arg name="attach_rpy" default="'0 0 0'" />
+
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
+  <arg name="add_gripper" default="false" />
+  <arg name="add_vacuum_gripper" default="false" />
+  <arg name="add_other_geometry" default="false"/>
+  <arg name="geometry_type" default="box"/>
+  <arg name="geometry_mass" default="0.1"/>
+  <arg name="geometry_height" default="0.1"/>
+  <arg name="geometry_radius" default="0.1"/>
+  <arg name="geometry_length" default="0.1"/>
+  <arg name="geometry_width" default="0.1"/>
+  <arg name="geometry_mesh_filename" default=""/>
+  <arg name="geometry_mesh_origin_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_origin_rpy" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
+  
+  <arg name="robot_dof" value="$(eval arg('dof') if arg('robot_type') == 'xarm' else 6)" />
+  <arg name="robot_name" value="$(eval arg('robot_type') if arg('robot_type') == 'uf850' else arg('robot_type') + str(arg('robot_dof')))" />
+
+  <!-- <rosparam file="$(find uf_robot_moveit_config)/config/$(arg robot_name)/$(arg robot_name)_params.yaml" command="load" ns="$(arg hw_ns)"/> -->
+  <rosparam if="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" file="$(find xarm_controller)/config/gripper_gazebo_ros_control.yaml" command="load"/>
+  <!-- startup simulated world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find xarm_gazebo)/worlds/xarm_example1_table.world"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="gui" value="$(arg gui)"/>
+  </include>
+
+  <!-- send robot urdf to param server, joint limit may be overwritten if use moveit planner -->
+  <param name="robot_description" command="$(find xacro)/xacro
+    --inorder '$(find xarm_description)/urdf/xarm_device.urdf.xacro' 
+    dof:=$(arg robot_dof)
+    robot_type:=$(arg robot_type) 
+    robot_sn:=$(arg robot_sn)
+    hw_ns:=$(arg hw_ns)
+    limited:=$(arg limited)
+    model1300:=$(arg model1300)
+    effort_control:=$(arg effort_control) 
+    velocity_control:=$(arg velocity_control)
+    add_realsense_d435i:=$(arg add_realsense_d435i)
+    add_d435i_links:=$(arg add_d435i_links)
+    attach_to:=$(arg attach_to)
+    attach_xyz:=$(arg attach_xyz)
+    attach_rpy:=$(arg attach_rpy)
+    add_gripper:=$(arg add_gripper)
+    add_vacuum_gripper:=$(arg add_vacuum_gripper)
+    add_other_geometry:=$(arg add_other_geometry)
+    geometry_type:=$(arg geometry_type)
+    geometry_mass:=$(arg geometry_mass)
+    geometry_height:=$(arg geometry_height)
+    geometry_radius:=$(arg geometry_radius)
+    geometry_length:=$(arg geometry_length)
+    geometry_width:=$(arg geometry_width)
+    geometry_mesh_filename:=$(arg geometry_mesh_filename)
+    geometry_mesh_origin_xyz:=$(arg geometry_mesh_origin_xyz)
+    geometry_mesh_origin_rpy:=$(arg geometry_mesh_origin_rpy)
+    geometry_mesh_tcp_xyz:=$(arg geometry_mesh_tcp_xyz)
+    geometry_mesh_tcp_rpy:=$(arg geometry_mesh_tcp_rpy)
+    "/>
+
+  <!-- spawn robot model in gazebo, located on the table -->
+  <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model"
+    respawn="false" output="screen"
+    args="-urdf -model UF_ROBOT -x -0.2 -y -0.5 -z 1.021 -Y 1.571 -param robot_description"/>
+
+  <!-- load the corresponding controllers -->
+  <include file="$(find xarm_controller)/launch/_robot_control.launch">
+    <arg name="dof" value="$(arg robot_dof)"/>
+    <arg name="robot_type" value="$(arg robot_type)"/>
+    <arg name="effort_control" value="$(arg effort_control)"/>
+    <arg name="velocity_control" value="$(arg velocity_control)"/>
+    <arg name="add_gripper" value="$(arg add_gripper)" />
+    <arg name="hw_ns" value="$(arg hw_ns)" />
+    <arg name="dual" value="false" />
+  </include>
+
+</launch>
