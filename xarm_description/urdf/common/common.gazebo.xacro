@@ -1,6 +1,19 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <xacro:macro name="ignition_ros2_control_plugin" params="prefix:='' ros2_control_params:=''">
+
+    <gazebo>
+      <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+        <xacro:if value="${ros2_control_params != ''}">
+          <parameters>${ros2_control_params}</parameters>
+        </xacro:if>
+        <!-- <controller_manager_node_name>${prefix}controller_manager</controller_manager_node_name> -->
+      </plugin>
+    </gazebo>
+
+  </xacro:macro>
+
   <xacro:macro name="gazebo_ros2_control_plugin" params="ros2_control_params:=''">
 
     <gazebo>

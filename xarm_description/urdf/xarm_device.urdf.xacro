@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<robot xmlns:xacro="http://ros.org/wiki/xacro" name="$(arg robot_type)$(arg dof)">
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="UF_ROBOT">
   <xacro:arg name="prefix" default=""/>
   <xacro:arg name="hw_ns" default="xarm"/>
   <xacro:arg name="limited" default="false"/>
@@ -16,7 +16,7 @@
   <xacro:arg name="report_type" default="normal"/>
 
   <xacro:arg name="ros2_control_plugin" default="uf_robot_hardware/UFRobotSystemHardware"/>
-  <xacro:arg name="ros2_control_params" default="$(find xarm_controller)/config/xarm$(arg dof)_controllers.yaml"/>
+  <xacro:arg name="ros2_control_params" default=""/>
 
   <xacro:arg name="add_realsense_d435i" default="false"/>
   <xacro:arg name="add_d435i_links" default="true"/>
