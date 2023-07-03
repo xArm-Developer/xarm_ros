@@ -10,12 +10,17 @@
     </xacro:if>
     
     <xacro:if value="${dof == 6}">
+      <xacro:if value="${robot_type == 'uf850'}">
+        <xacro:include filename="$(find xarm_description)/srdf/_uf850_macro.srdf.xacro" />
+        <xacro:uf850_macro_srdf prefix="${prefix}" 
+          add_gripper="${add_gripper}" add_vacuum_gripper="${add_vacuum_gripper}" add_other_geometry="${add_other_geometry}"  />
+      </xacro:if>
       <xacro:if value="${robot_type == 'lite'}">
         <xacro:include filename="$(find xarm_description)/srdf/_lite6_macro.srdf.xacro" />
         <xacro:lite6_macro_srdf prefix="${prefix}" 
           add_gripper="${add_gripper}" add_vacuum_gripper="${add_vacuum_gripper}" add_other_geometry="${add_other_geometry}"  />
       </xacro:if>
-      <xacro:unless value="${robot_type == 'lite'}">
+      <xacro:unless value="${robot_type == 'lite' or robot_type == 'uf850'}">
         <xacro:include filename="$(find xarm_description)/srdf/_xarm6_macro.srdf.xacro" />
         <xacro:xarm6_macro_srdf prefix="${prefix}" 
           add_gripper="${add_gripper}" add_vacuum_gripper="${add_vacuum_gripper}" add_other_geometry="${add_other_geometry}"  />

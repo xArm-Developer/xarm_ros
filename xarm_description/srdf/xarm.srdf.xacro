@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot xmlns:xacro="http://wiki.ros.org/xacro" name="$(arg robot_type)$(arg dof)">
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="UF_ROBOT">
   <!-- parameters -->
   <xacro:arg name="prefix" default="" />
   <xacro:arg name="dof" default="7" />

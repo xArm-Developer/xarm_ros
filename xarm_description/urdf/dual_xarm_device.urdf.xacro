@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<robot xmlns:xacro="http://ros.org/wiki/xacro" name="dual_xarm">
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="DUAL_UF_ROBOT">
   <xacro:arg name="prefix_1" default="L_"/>
   <xacro:arg name="prefix_2" default="R_"/>
   <xacro:arg name="hw_ns" default="xarm"/>
@@ -25,7 +25,7 @@
   <xacro:arg name="report_type_2" default="normal"/>
 
   <xacro:arg name="ros2_control_plugin" default="uf_robot_hardware/UFRobotSystemHardware"/>
-  <xacro:arg name="ros2_control_params" default="$(find xarm_controller)/config/xarm$(arg dof_1)_controllers.yaml"/>
+  <xacro:arg name="ros2_control_params" default=""/>
 
   <xacro:arg name="add_realsense_d435i_1" default="false"/>
   <xacro:arg name="add_realsense_d435i_2" default="false"/>
@@ -65,20 +65,13 @@
 
   <!-- load xarm device -->
   <xacro:include filename="$(find xarm_description)/urdf/xarm_device_macro.xacro" />
-  
-  <link name="ground" />
-
-  <!-- gazebo_plugin -->
-  <xacro:include filename="$(find xarm_description)/urdf/common/common.gazebo.xacro" />
-  <!-- <xacro:gazebo_ros1_control_plugin namespace="$(arg hw_ns)"/> -->
-  <xacro:gazebo_ros2_control_plugin ros2_control_params="$(arg ros2_control_params)"/>
-  
+    
   <xacro:xarm_device prefix="$(arg prefix_1)" hw_ns="$(arg hw_ns)" limited="$(arg limited)" 
     effort_control="$(arg effort_control)" velocity_control="$(arg velocity_control)"
     add_gripper="$(arg add_gripper_1)" add_vacuum_gripper="$(arg add_vacuum_gripper_1)" dof="$(arg dof_1)"
     ros2_control_plugin="$(arg ros2_control_plugin)" robot_type="$(arg robot_type_1)"
     load_gazebo_plugin="false" ros2_control_params="$(arg ros2_control_params)"
-    attach_to="ground" attach_xyz="0 0 0" attach_rpy="0 0 0"
+    attach_to="world" attach_xyz="0 0 0" attach_rpy="0 0 0"
     add_realsense_d435i="$(arg add_realsense_d435i_1)" 
     add_d435i_links="$(arg add_d435i_links_1)" 
     add_other_geometry="$(arg add_other_geometry_1)" 
@@ -95,8 +88,8 @@
     effort_control="$(arg effort_control)" velocity_control="$(arg velocity_control)"
     add_gripper="$(arg add_gripper_2)" add_vacuum_gripper="$(arg add_vacuum_gripper_2)" dof="$(arg dof_2)"
     ros2_control_plugin="$(arg ros2_control_plugin)" robot_type="$(arg robot_type_2)"
-    load_gazebo_plugin="false" ros2_control_params="$(arg ros2_control_params)"
-    attach_to="ground" attach_xyz="0 1 0" attach_rpy="0 0 0"
+    load_gazebo_plugin="true" ros2_control_params="$(arg ros2_control_params)"
+    attach_to="world" attach_xyz="0 1 0" attach_rpy="0 0 0" create_attach_link="false"
     add_realsense_d435i="$(arg add_realsense_d435i_2)" 
     add_d435i_links="$(arg add_d435i_links_2)" 
     add_other_geometry="$(arg add_other_geometry_2)" 
