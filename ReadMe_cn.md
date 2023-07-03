@@ -88,6 +88,18 @@
    * (2023-04-20) 新增launch启动参数`robot_sn`支持加载对应的关节连杆的惯性参数，并自动覆盖model1300参数
    * (2023-04-20) 新增launch启动参数 `attach_to`/`attach_xyz`/`attach_rpy`，支持把机械臂模型依附在其它模型之上
    * (2023-04-21) 新增xarm_api里的[services使用说明文档](xarm_api/ReadMe.md)
+   * (2023-06-07) 新增对UFACTORY850机械臂的支持
+   * (2023-06-07) 新增 [uf_robot_moveit_config](uf_robot_moveit_config/Readme_cn.md), 支持xArm/Lite6/UFACTORY850系列机械臂使用moveit控制，后续可能会替代以下这些包，使用说明参见 [uf_robot_moveit_config](uf_robot_moveit_config/Readme_cn.md)
+      - xarm5_moveit_config
+      - xarm5_gripper_moveit_config
+      - xarm5_vacuum_moveit_config
+      - xarm6_moveit_config
+      - xarm6_gripper_moveit_config
+      - xarm6_vacuum_moveit_config
+      - xarm7_moveit_config
+      - xarm7_gripper_moveit_config
+      - xarm7_vacuum_moveit_config
+      - lite6_moveit_config
 
 # 3. 准备工作
 
@@ -266,7 +278,7 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 - __geometry_mesh_tcp_rpy__: 几何模型相对于末端的偏移, 默认"0 0 0"，仅在geometry_type为mesh时有效  
 
 ## 5.6 xarm_planner:
-这个简单包装实现的规划器接口是基于 Moveit!中的 move_group interface, 可以使用户通过service指定目标位置进行规划和执行。 这部分的详细使用方法请阅读[xarm_planner包](./xarm_planner)的文档。  
+这个简单包装实现的规划器接口是基于 Moveit!中的 move_group interface, 可以使用户通过service指定目标位置进行规划和执行。 这部分的详细使用方法请阅读[xarm_planner包](./xarm_planner/ReadMe_cn_old.md)的文档。  
 #### 启动 xarm simple motion planner 控制 xArm 真实机械臂:  
 ```bash
    $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<控制盒的局域网IP地址> robot_dof:=<7|6|5>
