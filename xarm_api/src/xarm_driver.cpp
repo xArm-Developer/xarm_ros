@@ -255,8 +255,14 @@ namespace xarm_api
         arm = NULL;
 
         nh_.getParam("DOF", dof_);
+        std::string prefix = "";
+        nh_.getParam("prefix", prefix);
         nh_.getParam("joint_names", joint_names_);
         nh_.getParam("xarm_report_type", report_type_);
+
+        for (int i = 0; i < dof_; i++) {
+            joint_names_[i] = prefix + joint_names_[i];
+        }
     }
 
     void XArmDriver::init(ros::NodeHandle& root_nh, std::string &server_ip, bool is_moveit)
