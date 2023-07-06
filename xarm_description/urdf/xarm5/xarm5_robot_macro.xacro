@@ -59,7 +59,7 @@
         inertial_params_filename="${inertial_params_filename}"/>
     </xacro:unless>
 
-    <xacro:xarm5_transmission prefix="${prefix}" hard_interface="${'EffortJointInterface' if effort_control else 'VelocityJointInterface' if velocity_control else 'PositionJointInterface'}" />
+    <xacro:xarm5_transmission prefix="${prefix}" hard_interface="$(eval 'EffortJointInterface' if ${effort_control} else 'VelocityJointInterface' if ${velocity_control} else 'PositionJointInterface')" />
 
     <xacro:xarm5_gazebo prefix="${prefix}" />
 

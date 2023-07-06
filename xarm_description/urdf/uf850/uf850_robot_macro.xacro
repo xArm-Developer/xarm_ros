@@ -61,7 +61,7 @@
         inertial_params_filename="${inertial_params_filename}"/>
     </xacro:unless>
 
-    <xacro:uf850_transmission prefix="${prefix}" hard_interface="${'EffortJointInterface' if effort_control else 'VelocityJointInterface' if velocity_control else 'PositionJointInterface'}" />
+    <xacro:uf850_transmission prefix="${prefix}" hard_interface="$(eval 'EffortJointInterface' if ${effort_control} else 'VelocityJointInterface' if ${velocity_control} else 'PositionJointInterface')" />
     
     <xacro:uf850_gazebo prefix="${prefix}" />
 

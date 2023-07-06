@@ -58,7 +58,7 @@
       <xacro:lite6_urdf prefix="${prefix}" inertial_params_filename="${inertial_params_filename}"/>
     </xacro:unless>
 
-    <xacro:lite6_transmission prefix="${prefix}" hard_interface="${'EffortJointInterface' if effort_control else 'VelocityJointInterface' if velocity_control else 'PositionJointInterface'}" />
+    <xacro:lite6_transmission prefix="${prefix}" hard_interface="$(eval 'EffortJointInterface' if ${effort_control} else 'VelocityJointInterface' if ${velocity_control} else 'PositionJointInterface')" />
     
     <xacro:lite6_gazebo prefix="${prefix}" />
 

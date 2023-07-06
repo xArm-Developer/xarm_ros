@@ -16,7 +16,7 @@
 
     <xacro:xarm_gripper_urdf prefix="${prefix}" attach_to="${attach_to}" attach_xyz="${attach_xyz}" attach_rpy="${attach_rpy}" />
 
-    <xacro:xarm_gripper_transmission prefix="${prefix}" hard_interface="${'EffortJointInterface' if effort_control else 'VelocityJointInterface' if velocity_control else 'PositionJointInterface'}" />
+    <xacro:xarm_gripper_transmission prefix="${prefix}" hard_interface="$(eval 'EffortJointInterface' if ${effort_control} else 'VelocityJointInterface' if ${velocity_control} else 'PositionJointInterface')" />
 
     <xacro:xarm_gripper_gazebo prefix="${prefix}" />
 
