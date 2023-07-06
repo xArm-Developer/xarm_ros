@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <launch>
 
-  <arg name="run_demo" default="false" doc="If true, perform the demo after launch"/>
   <arg name="paused" default="false" doc="Starts gazebo in paused mode" />
   <arg name="gui" default="true" doc="Starts gazebo gui" />
 
@@ -33,7 +32,6 @@
     <arg name="dof" value="6" />
     <arg name="robot_type" value="xarm" />
 
-    <arg name="run_demo" value="$(arg run_demo)"/>
     <arg name="paused" value="$(arg paused)"/>
     <arg name="gui" value="$(arg gui)"/>
 
