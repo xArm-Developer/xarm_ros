@@ -286,7 +286,7 @@ Please note: xarm_moveit_config related packages will limit all joints within `[
 
 
 ## 5.6 xarm_planner:
-&ensp;&ensp;This implemented simple planner interface is based on move_group from Moveit! and provide ros service for users to do planning & execution based on the requested target, user can find detailed instructions on how to use it inside [*xarm_planner package*](./xarm_planner/ReadMe_old.md).  
+&ensp;&ensp;This implemented simple planner interface is based on move_group from Moveit! and provide ros service for users to do planning & execution based on the requested target, user can find detailed instructions on how to use it inside [*xarm_planner package*](./xarm_planner/ReadMe.md).  
 #### To launch the xarm simple motion planner together with the real xArm:  
 ```bash
    $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5> add_(vacuum_)gripper:=<true|false>

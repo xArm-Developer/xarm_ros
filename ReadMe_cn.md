@@ -278,7 +278,7 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 - __geometry_mesh_tcp_rpy__: 几何模型相对于末端的偏移, 默认"0 0 0"，仅在geometry_type为mesh时有效  
 
 ## 5.6 xarm_planner:
-这个简单包装实现的规划器接口是基于 Moveit!中的 move_group interface, 可以使用户通过service指定目标位置进行规划和执行。 这部分的详细使用方法请阅读[xarm_planner包](./xarm_planner/ReadMe_cn_old.md)的文档。  
+这个简单包装实现的规划器接口是基于 Moveit!中的 move_group interface, 可以使用户通过service指定目标位置进行规划和执行。 这部分的详细使用方法请阅读[xarm_planner包](./xarm_planner/ReadMe_cn.md)的文档。  
 #### 启动 xarm simple motion planner 控制 xArm 真实机械臂:  
 ```bash
    $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<控制盒的局域网IP地址> robot_dof:=<7|6|5>
