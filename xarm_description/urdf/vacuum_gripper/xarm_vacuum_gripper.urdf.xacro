@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="xarm_vacuum_gripper">
 
-  <xacro:macro name="xarm_vacuum_gripper_urdf" params="prefix:='' attach_to:='' attach_xyz:='0 0 0' attach_rpy:='0 0 0' 
-    effort_control:='false' velocity_control:='false' ">
+  <xacro:macro name="xarm_vacuum_gripper_urdf" params="prefix:='' attach_to:='' attach_xyz:='0 0 0' attach_rpy:='0 0 0' ">
 
     <xacro:unless value="${attach_to == ''}">
       <joint name="${prefix}vacuum_gripper_fix" type="fixed">
