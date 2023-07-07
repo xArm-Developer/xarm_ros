@@ -4,7 +4,6 @@
     prefix:=''
     hw_ns:='xarm'
     limited:=false
-    effort_control:=false 
     velocity_control:=false
     add_gripper:=false 
     ros2_control_plugin:='uf_robot_hardware/UFRobotSystemHardware' 
@@ -12,7 +11,8 @@
     report_type:='normal'
     baud_checkset:=true
     default_gripper_baud:=2000000
-    inertial_params_filename:='' "
+    inertial_params_filename:=''
+    hard_interface:='PositionJointInterface' "
     >
 
     <!-- include lite6 relative macros: -->
@@ -58,7 +58,7 @@
       <xacro:lite6_urdf prefix="${prefix}" inertial_params_filename="${inertial_params_filename}"/>
     </xacro:unless>
 
-    <xacro:lite6_transmission prefix="${prefix}" hard_interface="${'EffortJointInterface' if effort_control else 'VelocityJointInterface' if velocity_control else 'PositionJointInterface'}" />
+    <xacro:lite6_transmission prefix="${prefix}" hard_interface="${hard_interface}" />
     
     <xacro:lite6_gazebo prefix="${prefix}" />
 

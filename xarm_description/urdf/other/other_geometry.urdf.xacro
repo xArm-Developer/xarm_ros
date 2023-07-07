@@ -33,9 +33,17 @@
       <xacro:property name="_tcp_rpy" value="${geometry_mesh_tcp_rpy}"/>
     </xacro:if>
     <xacro:unless value="${geometry_type == 'mesh'}">
-      <xacro:property name="_origin_xyz" value="0 0 ${geometry_height / 2 if geometry_type != 'sphere' else geometry_radius}"/>
+      <xacro:if value="${geometry_type != 'sphere'}">
+        <xacro:property name="_origin_y" value="${geometry_height / 2}"/>
+        <xacro:property name="_tcp_z" value="${geometry_height}"/>
+      </xacro:if>
+      <xacro:unless value="${geometry_type != 'sphere'}">
+        <xacro:property name="_origin_y" value="${geometry_radius}"/>
+        <xacro:property name="_tcp_z" value="${geometry_radius * 2}"/>
+      </xacro:unless>
+      <xacro:property name="_origin_xyz" value="0 0 ${_origin_y}"/>
       <xacro:property name="_origin_rpy" value="0 0 0"/>
-      <xacro:property name="_tcp_xyz" value="0 0 ${geometry_height if geometry_type != 'sphere' else geometry_radius * 2}"/>
+      <xacro:property name="_tcp_xyz" value="0 0 ${_tcp_z}"/>
       <xacro:property name="_tcp_rpy" value="0 0 0"/>
     </xacro:unless>
 
