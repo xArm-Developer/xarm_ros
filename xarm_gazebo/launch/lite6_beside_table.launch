@@ -6,7 +6,7 @@
 
   <arg name="effort_control" default="false"/>
   <arg name="velocity_control" default="false"/>
-  <arg name="namespace" default="xarm"/>
+  <arg name="namespace" default="ufactory"/>
 
   <arg name="add_gripper" default="false" />
   <arg name="add_vacuum_gripper" default="false" />
