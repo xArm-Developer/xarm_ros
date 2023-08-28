@@ -268,7 +268,7 @@ Please note: xarm_moveit_config related packages will limit all joints within `[
    $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=sphere
 
    # attaching customized mesh model:（Here take xarm vacuum_gripper as an example，if the mesh model could be placed in: 'xarm_description/meshes/other'directory，'geometry_mesh_filename' argument can be simplified to be just the filename）
-   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/visual/vacuum_gripper.STL geometry_mesh_tcp_xyz:='"0 0 0.126"'
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/xarm/visual/vacuum_gripper.stl geometry_mesh_tcp_xyz:='"0 0 0.126"'
    ```
 
 ### Argument explanations:

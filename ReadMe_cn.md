@@ -261,7 +261,7 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
    $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=sphere
 
    # 加载其它mesh模型（这里加载vacuum_gripper为例，如果加载的模型是放在xarm_description/meshes/other里面，geometry_mesh_filename参数只需要传文件名）
-   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/visual/vacuum_gripper.STL geometry_mesh_tcp_xyz:='"0 0 0.126"'
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/xarm/visual/vacuum_gripper.stl geometry_mesh_tcp_xyz:='"0 0 0.126"'
    ```
 
 ### 参数说明

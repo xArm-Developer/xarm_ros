@@ -7,12 +7,12 @@
     
     <link name="${prefix}link_eef">
       <xacro:common_link_visual 
-        mesh_filename="camera/realsense/visual/d435_with_cam_stand.STL"  
+        mesh_filename="camera/realsense/visual/d435_with_cam_stand"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0"
         material_name="${prefix}Silver" />
       <xacro:common_link_collision 
-        mesh_filename="camera/realsense/collision/d435_with_cam_stand.STL"  
+        mesh_filename="camera/realsense/collision/d435_with_cam_stand"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>

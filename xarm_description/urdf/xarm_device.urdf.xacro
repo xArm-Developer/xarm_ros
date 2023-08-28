@@ -41,6 +41,7 @@
   <xacro:arg name="attach_to" default="world"/>
   <xacro:arg name="attach_xyz" default="0 0 0"/>
   <xacro:arg name="attach_rpy" default="0 0 0"/>
+  <xacro:arg name="mesh_suffix" default="stl"/>
 
   <!-- load xarm device -->
   <xacro:include filename="$(find xarm_description)/urdf/xarm_device_macro.xacro" />
@@ -61,6 +62,6 @@
     robot_ip="$(arg robot_ip)" report_type="$(arg report_type)"
     baud_checkset="$(arg baud_checkset)" default_gripper_baud="$(arg default_gripper_baud)"
     model1300="$(arg model1300)" attach_to="$(arg attach_to)" attach_xyz="$(arg attach_xyz)" attach_rpy="$(arg attach_rpy)"
-    robot_sn="$(arg robot_sn)" use_gazebo_camera="$(arg use_gazebo_camera)" />
+    robot_sn="$(arg robot_sn)" use_gazebo_camera="$(arg use_gazebo_camera)" mesh_suffix="$(arg mesh_suffix)" />
 
 </robot>

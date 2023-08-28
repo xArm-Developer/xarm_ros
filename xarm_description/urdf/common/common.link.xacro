@@ -26,20 +26,30 @@
     </xacro:unless>
   </xacro:macro>
   
-  <xacro:macro name="common_link_visual" params="mesh_filename material_name:='White' origin_xyz:='0 0 0' origin_rpy:='0 0 0'">
+  <xacro:macro name="common_link_visual" params="mesh_filename add_mesh_suffix:=true material_name:='White' origin_xyz:='0 0 0' origin_rpy:='0 0 0'">
     <visual>
       <geometry>
-        <mesh filename="${mesh_path}/${mesh_filename}"/>
+        <xacro:if value="${add_mesh_suffix}">
+          <mesh filename="${mesh_path}/${mesh_filename}.${mesh_suffix}"/>
+        </xacro:if>
+        <xacro:unless value="${add_mesh_suffix}">
+          <mesh filename="${mesh_path}/${mesh_filename}"/>
+        </xacro:unless>
       </geometry>
       <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
       <material name="${material_name}" />
     </visual>
   </xacro:macro>
   
-  <xacro:macro name="common_link_collision" params="mesh_filename origin_xyz:='0 0 0' origin_rpy:='0 0 0'">
+  <xacro:macro name="common_link_collision" params="mesh_filename add_mesh_suffix:=true origin_xyz:='0 0 0' origin_rpy:='0 0 0'">
     <collision>
       <geometry>
-        <mesh filename="${mesh_path}/${mesh_filename}"/>
+        <xacro:if value="${add_mesh_suffix}">
+          <mesh filename="${mesh_path}/${mesh_filename}.${mesh_suffix}"/>
+        </xacro:if>
+        <xacro:unless value="${add_mesh_suffix}">
+          <mesh filename="${mesh_path}/${mesh_filename}"/>
+        </xacro:unless>
       </geometry>
       <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
     </collision>
