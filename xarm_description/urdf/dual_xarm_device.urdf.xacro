@@ -63,6 +63,8 @@
   <xacro:arg name="default_gripper_baud_1" default="2000000"/>
   <xacro:arg name="default_gripper_baud_2" default="2000000"/>
 
+  <xacro:arg name="mesh_suffix" default="stl"/>
+
   <!-- load xarm device -->
   <xacro:include filename="$(find xarm_description)/urdf/xarm_device_macro.xacro" />
     
@@ -83,7 +85,7 @@
     geometry_mesh_tcp_xyz="$(arg geometry_mesh_tcp_xyz_1)" geometry_mesh_tcp_rpy="$(arg geometry_mesh_tcp_rpy_1)"
     robot_ip="$(arg robot_ip_1)" report_type="$(arg report_type_1)"
     baud_checkset="$(arg baud_checkset_1)" default_gripper_baud="$(arg default_gripper_baud_1)"
-    model1300="$(arg model1300_1)" robot_sn="$(arg robot_sn_1)"/>
+    model1300="$(arg model1300_1)" robot_sn="$(arg robot_sn_1)" mesh_suffix="$(arg mesh_suffix)" />
   <xacro:xarm_device prefix="$(arg prefix_2)" hw_ns="$(arg hw_ns)" limited="$(arg limited)" 
     effort_control="$(arg effort_control)" velocity_control="$(arg velocity_control)"
     add_gripper="$(arg add_gripper_2)" add_vacuum_gripper="$(arg add_vacuum_gripper_2)" dof="$(arg dof_2)"
@@ -101,6 +103,6 @@
     geometry_mesh_tcp_xyz="$(arg geometry_mesh_tcp_xyz_2)" geometry_mesh_tcp_rpy="$(arg geometry_mesh_tcp_rpy_2)"
     robot_ip="$(arg robot_ip_2)" report_type="$(arg report_type_2)"
     baud_checkset="$(arg baud_checkset_2)" default_gripper_baud="$(arg default_gripper_baud_2)"
-    model1300="$(arg model1300_2)" robot_sn="$(arg robot_sn_2)"/>
+    model1300="$(arg model1300_2)" robot_sn="$(arg robot_sn_2)" mesh_suffix="$(arg mesh_suffix)" />
 
 </robot>

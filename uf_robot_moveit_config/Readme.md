@@ -294,7 +294,7 @@
     roslaunch uf_robot_moveit_config xarm7_moveit_fake.launch add_other_geometry:=true geometry_type:=sphere
 
     # Load other mesh models (load vacuum_gripper here as an example, if the loaded model is placed in xarm_description/meshes/other, the geometry_mesh_filename parameter only needs to pass the file name) (take virtual xArm7 as an example here)
-    roslaunch uf_robot_moveit_config xarm7_moveit_fake.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/xarm/visual/vacuum_gripper.STL geometry_mesh_tcp_xyz:='"0 0 0.126"'
+    roslaunch uf_robot_moveit_config xarm7_moveit_fake.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/xarm/visual/vacuum_gripper.stl geometry_mesh_tcp_xyz:='"0 0 0.126"'
     ```
   - __jnt_stat_pub_rate__: Publish frequency of joint_state_publisher, default is 10
 

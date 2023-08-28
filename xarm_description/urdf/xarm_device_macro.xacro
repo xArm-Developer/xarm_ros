@@ -37,7 +37,8 @@
     baud_checkset:=true
     default_gripper_baud:=2000000 
     model1300:=false
-    robot_sn:='' "
+    robot_sn:='' 
+    mesh_suffix:='stl' "
     > 
 
     <!-- Load Common Material -->
@@ -49,6 +50,7 @@
     <xacro:common_material prefix="${prefix}"/>
 
     <!-- Specify Mesh file path -->
+    <xacro:property name="mesh_suffix" value="${mesh_suffix}" scope="parent"/>
     <xacro:if value="${ros2_control_plugin == 'gazebo_ros2_control/GazeboSystem' or ros2_control_plugin == 'ign_ros2_control/IgnitionSystem'}">
       <!-- gazebo use -->
       <xacro:property name="mesh_path" value="file://$(find xarm_description)/meshes" scope="parent"/>

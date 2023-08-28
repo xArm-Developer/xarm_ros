@@ -34,12 +34,12 @@
           iyy="0" iyz="0" izz="0" />
       </inertial>
       <xacro:common_link_visual 
-        mesh_filename="lite6/visual/base.stl"  
+        mesh_filename="lite6/visual/link_base"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="lite6/visual/base.stl"  
+        mesh_filename="lite6/collision/link_base"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
@@ -48,12 +48,12 @@
         link_inertial_params="${inertial_params['link1']}" 
         origin_rpy="0 0 0"/>
       <xacro:common_link_visual 
-        mesh_filename="lite6/visual/link1.stl"  
+        mesh_filename="lite6/visual/link1"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="lite6/visual/link1.stl"  
+        mesh_filename="lite6/collision/link1"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
@@ -74,12 +74,12 @@
         link_inertial_params="${inertial_params['link2']}" 
         origin_rpy="0 0 0"/>
       <xacro:common_link_visual 
-        mesh_filename="lite6/visual/link2.stl"  
+        mesh_filename="lite6/visual/link2"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="lite6/visual/link2.stl"  
+        mesh_filename="lite6/collision/link2"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
@@ -100,12 +100,12 @@
         link_inertial_params="${inertial_params['link3']}" 
         origin_rpy="0 0 0"/>
       <xacro:common_link_visual 
-        mesh_filename="lite6/visual/link3.stl"  
+        mesh_filename="lite6/visual/link3"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="lite6/visual/link3.stl"  
+        mesh_filename="lite6/collision/link3"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
@@ -126,12 +126,12 @@
         link_inertial_params="${inertial_params['link4']}" 
         origin_rpy="0 0 0"/>
       <xacro:common_link_visual 
-        mesh_filename="lite6/visual/link4.stl"  
+        mesh_filename="lite6/visual/link4"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="lite6/visual/link4.stl"  
+        mesh_filename="lite6/collision/link4"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
@@ -152,12 +152,12 @@
         link_inertial_params="${inertial_params['link5']}" 
         origin_rpy="0 0 0"/>
       <xacro:common_link_visual 
-        mesh_filename="lite6/visual/link5.stl"  
+        mesh_filename="lite6/visual/link5"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="lite6/visual/link5.stl"  
+        mesh_filename="lite6/collision/link5"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
@@ -178,12 +178,12 @@
         link_inertial_params="${inertial_params['link6']}" 
         origin_rpy="0 0 0"/>
       <xacro:common_link_visual 
-        mesh_filename="lite6/visual/link6.stl"  
+        mesh_filename="lite6/visual/link6"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0"
         material_name="${prefix}Silver" />
       <xacro:common_link_collision 
-        mesh_filename="lite6/visual/link6.stl"  
+        mesh_filename="lite6/collision/link6"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>

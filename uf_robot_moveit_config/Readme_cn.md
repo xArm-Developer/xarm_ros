@@ -291,7 +291,7 @@
     roslaunch uf_robot_moveit_config xarm7_moveit_fake.launch add_other_geometry:=true geometry_type:=sphere
 
     # 加载其它mesh模型（这里加载vacuum_gripper为例，如果加载的模型是放在xarm_description/meshes/other里面，geometry_mesh_filename参数只需要传文件名）（此处以虚拟xArm7为例）
-    roslaunch uf_robot_moveit_config xarm7_moveit_fake.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/xarm/visual/vacuum_gripper.STL geometry_mesh_tcp_xyz:='"0 0 0.126"'
+    roslaunch uf_robot_moveit_config xarm7_moveit_fake.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/xarm/visual/vacuum_gripper.stl geometry_mesh_tcp_xyz:='"0 0 0.126"'
     ```
   - __jnt_stat_pub_rate__: joint_state_publisher的发布频率，默认为10
 

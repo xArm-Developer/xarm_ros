@@ -20,12 +20,12 @@
           iyy="0.00033072" iyz="-1.0975E-05" izz="0.00025642" />
       </inertial>
       <xacro:common_link_visual 
-        mesh_filename="vacuum_gripper/xarm/visual/vacuum_gripper.STL"  
+        mesh_filename="vacuum_gripper/xarm/visual/vacuum_gripper"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="vacuum_gripper/xarm/collision/vacuum_gripper.STL"  
+        mesh_filename="vacuum_gripper/xarm/collision/vacuum_gripper"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
