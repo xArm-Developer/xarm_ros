@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="UF_VACUUM_GRIPPER">
+  <xacro:macro name="vacuum_gripper_device" params="prefix:='' robot_type:='xarm' mesh_suffix:='stl' ">
+
+    <!-- Load Common Material -->
+    <xacro:include filename="$(find xarm_description)/urdf/_private_macro.xacro" />
+    <xacro:device_macro_begin />
+
+    <!-- Load Common Material -->
+    <xacro:include filename="$(find xarm_description)/urdf/common/common.material.xacro" />
+    <xacro:common_material prefix="${prefix}"/>
+
+    <xacro:property name="mesh_path" value="package://xarm_description/meshes" scope="parent"/>
+
+    <!-- include common.link.xacro -->
+    <xacro:include filename="$(find xarm_description)/urdf/common/common.link.xacro" />
+
+    <xacro:if value="${robot_type == 'lite'}">
+      <!-- Load Lite Gripper Model URDF -->
+      <xacro:include filename="$(find xarm_description)/urdf/vacuum_gripper/lite_vacuum_gripper.urdf.xacro" />
+      <xacro:uflite_vacuum_gripper_urdf prefix="${prefix}" />
+    </xacro:if>
+    <xacro:unless value="${robot_type == 'lite'}">
+      <!-- Load XArm Gripper Model URDF -->
+      <xacro:include filename="$(find xarm_description)/urdf/vacuum_gripper/xarm_vacuum_gripper.urdf.xacro" />
+      <xacro:xarm_vacuum_gripper_urdf prefix="${prefix}" />
+    </xacro:unless>
+  </xacro:macro>
+</robot>

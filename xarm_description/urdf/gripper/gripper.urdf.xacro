@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="UF_GRIPPER">
+  <xacro:arg name="robot_type" default="xarm"/>
+  <xacro:arg name="prefix" default=""/>
+  <xacro:arg name="mesh_suffix" default="stl"/>
+
+  <xacro:include filename="$(find xarm_description)/urdf/gripper/gripper_macro.xacro" />
+
+  <xacro:gripper_device robot_type="$(arg robot_type)" prefix="$(arg prefix)" mesh_suffix="$(arg mesh_suffix)" />
+
+</robot>
