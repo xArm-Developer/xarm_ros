@@ -1,5 +1,5 @@
-# xarm:
-L_gripper_trajectory_controller:
+# default controller 
+L_gripper_traj_controller:
   type: position_controllers/JointTrajectoryController
   joints: 
     - L_drive_joint
@@ -8,7 +8,7 @@ L_gripper_trajectory_controller:
     stopped_velocity_tolerance: 0.05
     L_drive_joint: {trajectory: 1, goal: 0.01}
 
-L_gripper_trajectory_controller_velocity:
+L_gripper_velo_traj_controller:
   type: velocity_controllers/JointTrajectoryController
   joints: 
     - L_drive_joint
@@ -19,7 +19,17 @@ L_gripper_trajectory_controller_velocity:
     stopped_velocity_tolerance: 0.05
     L_drive_joint: {trajectory: 1, goal: 0.01}
 
-R_gripper_trajectory_controller:
+L_gripper_action_controller:
+  type: position_controllers/GripperActionController
+  joint: L_drive_joint
+  action_monitor_rate: 20
+  goal_tolerance: 0.005
+  max_effort: 100
+  stall_velocity_threshold: 0.01
+  stall_timeout: 0.5
+
+# default controller 
+R_gripper_traj_controller:
   type: position_controllers/JointTrajectoryController
   joints: 
     - R_drive_joint
@@ -28,7 +38,7 @@ R_gripper_trajectory_controller:
     stopped_velocity_tolerance: 0.05
     R_drive_joint: {trajectory: 1, goal: 0.01}
 
-R_gripper_trajectory_controller_velocity:
+R_gripper_velo_traj_controller:
   type: velocity_controllers/JointTrajectoryController
   joints: 
     - R_drive_joint
@@ -38,6 +48,15 @@ R_gripper_trajectory_controller_velocity:
     goal_time: 0.5
     stopped_velocity_tolerance: 0.05
     R_drive_joint: {trajectory: 1, goal: 0.01}
+
+R_gripper_action_controller:
+  type: position_controllers/GripperActionController
+  joint: R_drive_joint
+  action_monitor_rate: 20
+  goal_tolerance: 0.005
+  max_effort: 100
+  stall_velocity_threshold: 0.01
+  stall_timeout: 0.5
 
 # No Pid gains specified error fix
 gazebo_ros_control:

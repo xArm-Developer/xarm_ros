@@ -1,0 +1,154 @@
+# Publish all joint states
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50
+
+# default controller   
+L_xarm5_traj_controller:
+  type: position_controllers/JointTrajectoryController
+  joints:
+      - L_joint1
+      - L_joint2
+      - L_joint3
+      - L_joint4
+      - L_joint5
+  constraints:
+      goal_time: 0.5
+      stopped_velocity_tolerance: 0.05
+      L_joint1: {trajectory: 1, goal: 0.01}
+      L_joint2: {trajectory: 1, goal: 0.01}
+      L_joint3: {trajectory: 1, goal: 0.01}
+      L_joint4: {trajectory: 1, goal: 0.01}
+      L_joint5: {trajectory: 1, goal: 0.01}
+  stop_trajectory_duration: 0.2
+  state_publish_rate:  25
+  action_monitor_rate: 10
+
+L_xarm5_velo_traj_controller:
+  type: velocity_controllers/JointTrajectoryController
+  joints:
+      - L_joint1
+      - L_joint2
+      - L_joint3
+      - L_joint4
+      - L_joint5
+  gains:
+    L_joint1: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+    L_joint2: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+    L_joint3: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+    L_joint4: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+    L_joint5: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+  velocity_ff:
+    L_joint1: 0.25
+    L_joint2: 0.25
+    L_joint3: 0.25
+    L_joint4: 0.25
+    L_joint5: 0.25
+  constraints:
+    goal_time: 0.5
+    stopped_velocity_tolerance: 0.01
+    L_joint1: {trajectory: 1, goal: 0.01}
+    L_joint2: {trajectory: 1, goal: 0.01}
+    L_joint3: {trajectory: 1, goal: 0.01}
+    L_joint4: {trajectory: 1, goal: 0.01}
+    L_joint5: {trajectory: 1, goal: 0.01}
+  stop_trajectory_duration: 0.2
+  state_publish_rate:  25
+  action_monitor_rate: 10
+
+# Position Controllers ---------------------------------------
+L_joint1_position_controller:
+  type: position_controllers/JointPositionController
+  joint: L_joint1
+  pid: {p: 1200.0, i: 5.0, d: 10.0}
+L_joint2_position_controller:
+  type: position_controllers/JointPositionController
+  joint: L_joint2
+  pid: {p: 1400.0, i: 5.0, d: 10.0}
+L_joint3_position_controller:
+  type: position_controllers/JointPositionController
+  joint: L_joint3
+  pid: {p: 1200.0, i: 5.0, d: 5.0}
+L_joint4_position_controller:
+  type: position_controllers/JointPositionController
+  joint: L_joint4
+  pid: {p: 500.0, i: 3.0, d: 1.0}
+L_joint5_position_controller:
+  type: position_controllers/JointPositionController
+  joint: L_joint5
+  pid: {p: 500.0, i: 1.0, d: 1.0}
+
+# default controller 
+R_xarm5_traj_controller:
+  type: position_controllers/JointTrajectoryController
+  joints:
+      - R_joint1
+      - R_joint2
+      - R_joint3
+      - R_joint4
+      - R_joint5
+  constraints:
+      goal_time: 0.5
+      stopped_velocity_tolerance: 0.05
+      R_joint1: {trajectory: 1, goal: 0.01}
+      R_joint2: {trajectory: 1, goal: 0.01}
+      R_joint3: {trajectory: 1, goal: 0.01}
+      R_joint4: {trajectory: 1, goal: 0.01}
+      R_joint5: {trajectory: 1, goal: 0.01}
+  stop_trajectory_duration: 0.2
+  state_publish_rate:  25
+  action_monitor_rate: 10
+
+R_xarm5_velo_traj_controller:
+  type: velocity_controllers/JointTrajectoryController
+  joints:
+      - R_joint1
+      - R_joint2
+      - R_joint3
+      - R_joint4
+      - R_joint5
+  gains:
+    R_joint1: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+    R_joint2: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+    R_joint3: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+    R_joint4: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+    R_joint5: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+  velocity_ff:
+    R_joint1: 0.25
+    R_joint2: 0.25
+    R_joint3: 0.25
+    R_joint4: 0.25
+    R_joint5: 0.25
+  constraints:
+    goal_time: 0.5
+    stopped_velocity_tolerance: 0.01
+    R_joint1: {trajectory: 1, goal: 0.01}
+    R_joint2: {trajectory: 1, goal: 0.01}
+    R_joint3: {trajectory: 1, goal: 0.01}
+    R_joint4: {trajectory: 1, goal: 0.01}
+    R_joint5: {trajectory: 1, goal: 0.01}
+  stop_trajectory_duration: 0.2
+  state_publish_rate:  25
+  action_monitor_rate: 10
+
+# Position Controllers ---------------------------------------
+R_joint1_position_controller:
+  type: position_controllers/JointPositionController
+  joint: R_joint1
+  pid: {p: 1200.0, i: 5.0, d: 10.0}
+R_joint2_position_controller:
+  type: position_controllers/JointPositionController
+  joint: R_joint2
+  pid: {p: 1400.0, i: 5.0, d: 10.0}
+R_joint3_position_controller:
+  type: position_controllers/JointPositionController
+  joint: R_joint3
+  pid: {p: 1200.0, i: 5.0, d: 5.0}
+R_joint4_position_controller:
+  type: position_controllers/JointPositionController
+  joint: R_joint4
+  pid: {p: 500.0, i: 3.0, d: 1.0}
+R_joint5_position_controller:
+  type: position_controllers/JointPositionController
+  joint: R_joint5
+  pid: {p: 500.0, i: 1.0, d: 1.0}

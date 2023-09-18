@@ -7,9 +7,9 @@
   <arg name="add_gripper" default="false" />
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find xarm_controller)/config/uf850/uf850_controllers.yaml" command="load" ns="$(arg namespace)"/>
   <!-- Load trajectory controller for xArm by default -->
-  <rosparam unless="$(arg run_demo_traj)" file="$(find xarm_controller)/config/uf850_traj_controller.yaml" command="load" ns="$(arg namespace)"/>
-  <arg name="uf_traj_controller" value="$(eval 'uf850_traj_controller_velocity' if arg('velocity_control') else 'uf850_traj_controller')" />
+  <arg name="robot_controller_name" value="$(eval 'uf850_velo_traj_controller' if arg('velocity_control') else 'uf850_traj_controller')" />
   <node unless="$(arg run_demo_traj)"
     name="traj_controller_spawner"
     pkg="controller_manager"
@@ -17,11 +17,9 @@
     respawn="false"
     output="screen"
     ns="/$(arg namespace)"
-    args="spawn $(arg uf_traj_controller) joint_state_controller"/>
+    args="spawn $(arg robot_controller_name) joint_state_controller"/>
 
   <!-- run_demo: load the position controllers -->
-  <rosparam if="$(arg run_demo_traj)"
-    file="$(find xarm_controller)/config/uf850_position_controllers.yaml" command="load" ns="$(arg namespace)"/>
   <node if="$(arg run_demo_traj)" name="position_controller_spawner"
     pkg="controller_manager"
     type="spawner"
@@ -33,16 +31,15 @@
           joint5_position_controller joint6_position_controller
           joint_state_controller"/>
 
-  <rosparam if="$(arg add_gripper)"
-    file="$(find xarm_controller)/config/gripper_traj_controller.yaml" command="load" ns="$(arg namespace)"/>
-  <arg name="gripper_trajectory_controller" value="$(eval 'gripper_trajectory_controller_velocity' if arg('velocity_control') else 'gripper_trajectory_controller')" />
+  <rosparam if="$(arg add_gripper)" file="$(find xarm_controller)/config/gripper/gripper_controllers.yaml" command="load" ns="$(arg namespace)"/>
+  <arg name="gripper_controller_name" value="$(eval 'gripper_velo_traj_controller' if arg('velocity_control') else 'gripper_traj_controller')" />
   <node if="$(arg add_gripper)" name="gripper_controller_spawner"
     pkg="controller_manager"
     type="spawner"
     respawn="false"
     output="screen"
     ns="/$(arg namespace)"
-    args="$(arg gripper_trajectory_controller) "/>
+    args="$(arg gripper_controller_name) "/>
 
   <!-- convert joint states to TF transforms for rviz, etc -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"

@@ -29,7 +29,7 @@
   <arg name="ext_ns" default="" />
   <arg name="sensors_3d" default="false" />
   <arg name="jnt_stat_pub_rate" default="10" />
-  <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
+  <!-- no_gui_plan means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
   <arg name="no_gui_plan" default="true" />
 
   <arg name="robot_dof" value="$(eval arg('dof') if arg('robot_type') == 'xarm' else 6)" />

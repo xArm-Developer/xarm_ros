@@ -1,9 +1,10 @@
-# xarm:
+# Publish all joint states
 joint_state_controller:
   type: joint_state_controller/JointStateController
   publish_rate: 50
-  
-lite6_traj_controller:
+
+# default controller   
+xarm7_traj_controller:
   type: position_controllers/JointTrajectoryController
   joints:
       - joint1
@@ -12,6 +13,7 @@ lite6_traj_controller:
       - joint4
       - joint5
       - joint6
+      - joint7
   constraints:
       goal_time: 0.5
       stopped_velocity_tolerance: 0.05
@@ -21,11 +23,12 @@ lite6_traj_controller:
       joint4: {trajectory: 1, goal: 0.01}
       joint5: {trajectory: 1, goal: 0.01}
       joint6: {trajectory: 1, goal: 0.01}
+      joint7: {trajectory: 1, goal: 0.01}
   stop_trajectory_duration: 0.2
   state_publish_rate:  25
   action_monitor_rate: 10
 
-lite6_traj_controller_velocity:
+xarm7_velo_traj_controller:
   type: velocity_controllers/JointTrajectoryController
   joints:
       - joint1
@@ -34,6 +37,7 @@ lite6_traj_controller_velocity:
       - joint4
       - joint5
       - joint6
+      - joint7
   gains:
     joint1: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
     joint2: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
@@ -41,6 +45,7 @@ lite6_traj_controller_velocity:
     joint4: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
     joint5: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
     joint6: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
+    joint7: {p: 10, i: 0.0, d: 0.0, i_clamp: 1}
   velocity_ff:
     joint1: 0.25
     joint2: 0.25
@@ -48,6 +53,7 @@ lite6_traj_controller_velocity:
     joint4: 0.25
     joint5: 0.25
     joint6: 0.25
+    joint7: 0.25
   constraints:
     goal_time: 0.5
     stopped_velocity_tolerance: 0.01
@@ -57,16 +63,37 @@ lite6_traj_controller_velocity:
     joint4: {trajectory: 1, goal: 0.01}
     joint5: {trajectory: 1, goal: 0.01}
     joint6: {trajectory: 1, goal: 0.01}
+    joint7: {trajectory: 1, goal: 0.01}
   stop_trajectory_duration: 0.2
   state_publish_rate:  25
   action_monitor_rate: 10
 
-# No Pid gains specified error fix
-# gazebo_ros_control:
-#   pid_gains:
-#     joint1: {p: 1200.0, i: 5.0, d: 10.0}
-#     joint2: {p: 1400.0, i: 5.0, d: 10.0}
-#     joint3: {p: 1200.0, i: 5.0, d: 5.0}
-#     joint4: {p: 850.0, i: 3.0, d: 5.0}
-#     joint5: {p: 500.0, i: 3.0, d: 1.0}
-#     joint6: {p: 500.0, i: 1.0, d: 1.0}
+# Position Controllers ---------------------------------------
+joint1_position_controller:
+  type: position_controllers/JointPositionController
+  joint: joint1
+  pid: {p: 1200.0, i: 5.0, d: 10.0}
+joint2_position_controller:
+  type: position_controllers/JointPositionController
+  joint: joint2
+  pid: {p: 1400.0, i: 5.0, d: 10.0}
+joint3_position_controller:
+  type: position_controllers/JointPositionController
+  joint: joint3
+  pid: {p: 1200.0, i: 5.0, d: 5.0}
+joint4_position_controller:
+  type: position_controllers/JointPositionController
+  joint: joint4
+  pid: {p: 850.0, i: 3.0, d: 5.0}
+joint5_position_controller:
+  type: position_controllers/JointPositionController
+  joint: joint5
+  pid: {p: 500.0, i: 3.0, d: 1.0}
+joint6_position_controller:
+  type: position_controllers/JointPositionController
+  joint: joint6
+  pid: {p: 500.0, i: 1.0, d: 1.0}
+joint7_position_controller:
+  type: position_controllers/JointPositionController
+  joint: joint7
+  pid: {p: 300.0, i: 0.05, d: 1.0}

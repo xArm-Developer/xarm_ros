@@ -12,7 +12,7 @@
   <arg name="robot_sn" default="" />
   
   <rosparam file="$(eval find('xarm' + str(arg('robot_dof')) + '_moveit_config') + '/config/xarm' + str(arg('robot_dof')) + '_params.yaml')" command="load" ns="$(arg namespace)"/>
-  <rosparam file="$(find xarm_controller)/config/gripper_gazebo_ros_control.yaml" command="load"/>
+  <rosparam file="$(find xarm_controller)/config/gripper/gripper_gazebo_ros_control.yaml" command="load"/>
   <!-- startup simulated world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find xarm_gazebo)/worlds/xarm_camera_scene.world"/>
@@ -53,10 +53,10 @@
     <arg name="add_gripper" value="true" />
   </include>
 
-  <arg name="xarm_traj_controller" value="$(eval 'xarm' + str(arg('robot_dof')) + ('_traj_controller_velocity' if arg('velocity_control') else '_traj_controller'))" />
-  <arg name="gripper_trajectory_controller" value="$(eval 'gripper_trajectory_controller_velocity' if arg('velocity_control') else 'gripper_trajectory_controller')" />
-  <remap from="arm_controller/follow_joint_trajectory" to="/$(arg namespace)/$(arg xarm_traj_controller)/follow_joint_trajectory"/>
-  <remap from="gripper_controller/follow_joint_trajectory" to="/$(arg namespace)/$(arg gripper_trajectory_controller)/follow_joint_trajectory"/>
+  <arg name="robot_controller_name" value="$(eval 'xarm' + str(arg('robot_dof')) + ('_velo_traj_controller' if arg('velocity_control') else '_traj_controller'))" />
+  <arg name="gripper_controller_name" value="$(eval 'gripper_velo_traj_controller' if arg('velocity_control') else 'gripper_traj_controller')" />
+  <remap from="arm_controller/follow_joint_trajectory" to="/$(arg namespace)/$(arg robot_controller_name)/follow_joint_trajectory"/>
+  <remap from="gripper_controller/follow_joint_trajectory" to="/$(arg namespace)/$(arg gripper_controller_name)/follow_joint_trajectory"/>
 
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="/use_gui" value="false"/>

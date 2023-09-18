@@ -5,6 +5,7 @@
   <arg name="velocity_control" default="false"/>
   <arg name="hw_ns" default="xarm"/>
   <arg name="add_gripper" default="false" />
+  <arg name="gripper_action" default="false" />
   <arg name="dual" default="false" />
 
   <arg name="robot_dof" value="$(eval arg('dof') if arg('robot_type') == 'xarm' else 6)" />
@@ -12,10 +13,10 @@
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
   <!-- Load trajectory controller for xArm by default -->
-  <rosparam unless="$(arg dual)" file="$(find xarm_controller)/config/$(arg robot_name)_traj_controller.yaml" command="load" ns="$(arg hw_ns)"/>
+  <rosparam unless="$(arg dual)" file="$(find xarm_controller)/config/$(arg robot_name)/$(arg robot_name)_controllers.yaml" command="load" ns="$(arg hw_ns)"/>
   <!-- dual -->
-  <rosparam if="$(arg dual)" file="$(find xarm_controller)/config/dual_$(arg robot_name)_traj_controller.yaml" command="load" ns="$(arg hw_ns)"/>
-  <arg name="xarm_traj_controller" value="$(eval arg('robot_name') + ('_traj_controller_velocity' if arg('velocity_control') else '_traj_controller'))" />
+  <rosparam if="$(arg dual)" file="$(find xarm_controller)/config/$(arg robot_name)/dual_$(arg robot_name)_controllers.yaml" command="load" ns="$(arg hw_ns)"/>
+  <arg name="robot_controller_name" value="$(eval arg('robot_name') + ('_velo_traj_controller' if arg('velocity_control') else '_traj_controller'))" />
   
   <node unless="$(arg dual)"
     name="traj_controller_spawner"
@@ -24,7 +25,7 @@
     respawn="false"
     output="screen"
     ns="/$(arg hw_ns)"
-    args="spawn $(arg xarm_traj_controller) joint_state_controller"/>
+    args="spawn $(arg robot_controller_name) joint_state_controller"/>
   <!-- dual -->
   <node if="$(arg dual)"
     name="traj_controller_spawner"
@@ -33,22 +34,22 @@
     respawn="false"
     output="screen"
     ns="/$(arg hw_ns)"
-    args="spawn L_$(arg xarm_traj_controller) R_$(arg xarm_traj_controller) joint_state_controller"/>
+    args="spawn L_$(arg robot_controller_name) R_$(arg robot_controller_name) joint_state_controller"/>
 
   <rosparam if="$(eval arg('add_gripper') and arg('robot_type') != 'lite' and not arg('dual'))"
-    file="$(find xarm_controller)/config/gripper_traj_controller.yaml" command="load" ns="$(arg hw_ns)"/>
+    file="$(find xarm_controller)/config/gripper/gripper_controllers.yaml" command="load" ns="$(arg hw_ns)"/>
   <!-- dual -->
   <rosparam if="$(eval arg('add_gripper') and arg('robot_type') != 'lite' and arg('dual'))"
-    file="$(find xarm_controller)/config/dual_gripper_traj_controller.yaml" command="load" ns="$(arg hw_ns)"/>
+    file="$(find xarm_controller)/config/gripper/dual_gripper_controllers.yaml" command="load" ns="$(arg hw_ns)"/>
 
-  <arg name="gripper_trajectory_controller" value="$(eval 'gripper_trajectory_controller_velocity' if arg('velocity_control') else 'gripper_trajectory_controller')" />
+  <arg name="gripper_controller_name" value="$(eval 'gripper_action_controller' if arg('gripper_action') else 'gripper_velo_traj_controller' if arg('velocity_control') else 'gripper_traj_controller')" />
   <node if="$(eval arg('add_gripper') and arg('robot_type') != 'lite' and not arg('dual'))" name="gripper_controller_spawner"
     pkg="controller_manager"
     type="spawner"
     respawn="false"
     output="screen"
     ns="/$(arg hw_ns)"
-    args="$(arg gripper_trajectory_controller) "/>
+    args="$(arg gripper_controller_name) "/>
   <!-- dual -->
   <node if="$(eval arg('add_gripper') and arg('robot_type') != 'lite' and arg('dual'))" name="gripper_controller_spawner"
     pkg="controller_manager"
@@ -56,7 +57,7 @@
     respawn="false"
     output="screen"
     ns="/$(arg hw_ns)"
-    args="L_$(arg gripper_trajectory_controller) R_$(arg gripper_trajectory_controller) "/>
+    args="L_$(arg gripper_controller_name) R_$(arg gripper_controller_name) "/>
 
   <!-- convert joint states to TF transforms for rviz, etc -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
