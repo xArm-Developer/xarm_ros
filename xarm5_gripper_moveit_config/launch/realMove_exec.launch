@@ -39,8 +39,8 @@
   </include>
 
   <!-- load the joint trajectory controller specified in yaml -->
-  <rosparam file="$(find xarm_controller)/config/xarm5_traj_controller.yaml" command="load" ns="$(arg xarm_hw_ns)"/>
-  <arg name="xarm_traj_controller" value="$(eval 'xarm5_traj_controller_velocity' if arg('velocity_control') else 'xarm5_traj_controller')" />
+  <rosparam file="$(find xarm_controller)/config/xarm5/xarm5_controllers.yaml" command="load" ns="$(arg xarm_hw_ns)"/>
+  <arg name="robot_controller_name" value="$(eval 'xarm5_velo_traj_controller' if arg('velocity_control') else 'xarm5_traj_controller')" />
   <node
     name="traj_controller_spawner"
     pkg="controller_manager"
@@ -48,10 +48,9 @@
     respawn="false"
     output="screen"
     ns="$(arg xarm_hw_ns)"
-    args="$(arg xarm_traj_controller) joint_state_controller"/>
+    args="$(arg robot_controller_name) joint_state_controller"/>
 
-  <!-- <remap from="arm_controller/follow_joint_trajectory" to="xarm/xarm5_traj_controller/follow_joint_trajectory"/> -->
-  <remap from="arm_controller/follow_joint_trajectory" to="$(arg xarm_hw_ns)/$(arg xarm_traj_controller)/follow_joint_trajectory"/>
+  <remap from="arm_controller/follow_joint_trajectory" to="$(arg xarm_hw_ns)/$(arg robot_controller_name)/follow_joint_trajectory"/>
   <remap from="xarm_gripper/gripper_action" to="$(arg xarm_hw_ns)/xarm_gripper/gripper_action"/>
 
   <!-- common part -->

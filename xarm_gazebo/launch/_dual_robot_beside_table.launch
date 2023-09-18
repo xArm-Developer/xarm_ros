@@ -38,7 +38,7 @@
   <arg name="robot_name" value="$(eval 'uf850' if arg('robot_type') == 'uf850' else arg('robot_type') + str(arg('robot_dof')))" />
 
   <!-- <rosparam file="$(find uf_robot_moveit_config)/config/$(arg robot_name)/$(arg robot_name)_params.yaml" command="load" ns="$(arg hw_ns)"/> -->
-  <rosparam if="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" file="$(find xarm_controller)/config/gripper_gazebo_ros_control.yaml" command="load"/>
+  <rosparam if="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" file="$(find xarm_controller)/config/gripper/dual_gripper_gazebo_ros_control.yaml" command="load"/>
   <!-- startup simulated world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find xarm_gazebo)/worlds/xarm_example1_table.world"/>

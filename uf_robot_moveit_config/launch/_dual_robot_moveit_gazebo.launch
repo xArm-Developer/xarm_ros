@@ -36,13 +36,13 @@
 
   <!-- Remap the name space so it can send command to gazebo loaded controller -->
   <!-- this remap must appear BEFORE move_group launch -->
-  <arg if="$(eval arg('robot_type') == 'uf850')" name="robot_traj_controller" value="$(eval arg('robot_type') + ('_traj_controller_velocity' if arg('velocity_control') else '_traj_controller'))" />
-  <arg unless="$(eval arg('robot_type') == 'uf850')" name="robot_traj_controller" value="$(eval str(arg('robot_type')) + str(arg('dof')) + ('_traj_controller_velocity' if arg('velocity_control') else '_traj_controller'))" />
-  <remap from="/L_$(arg robot_name)_controller/follow_joint_trajectory" to="/$(arg hw_ns)/L_$(arg robot_traj_controller)/follow_joint_trajectory"/>
-  <remap from="/R_$(arg robot_name)_controller/follow_joint_trajectory" to="/$(arg hw_ns)/R_$(arg robot_traj_controller)/follow_joint_trajectory"/>
-  <arg name="gripper_traj_controller" value="$(eval 'gripper_trajectory_controller_velocity' if arg('velocity_control') else 'gripper_trajectory_controller')" />
-  <remap if="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" from="L_gripper_controller/follow_joint_trajectory" to="/$(arg hw_ns)/L_$(arg gripper_traj_controller)/follow_joint_trajectory"/>
-  <remap if="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" from="R_gripper_controller/follow_joint_trajectory" to="/$(arg hw_ns)/R_$(arg gripper_traj_controller)/follow_joint_trajectory"/>
+  <arg if="$(eval arg('robot_type') == 'uf850')" name="robot_controller_name" value="$(eval arg('robot_type') + ('_velo_traj_controller' if arg('velocity_control') else '_traj_controller'))" />
+  <arg unless="$(eval arg('robot_type') == 'uf850')" name="robot_controller_name" value="$(eval str(arg('robot_type')) + str(arg('dof')) + ('_velo_traj_controller' if arg('velocity_control') else '_traj_controller'))" />
+  <remap from="/L_$(arg robot_name)_controller/follow_joint_trajectory" to="/$(arg hw_ns)/L_$(arg robot_controller_name)/follow_joint_trajectory"/>
+  <remap from="/R_$(arg robot_name)_controller/follow_joint_trajectory" to="/$(arg hw_ns)/R_$(arg robot_controller_name)/follow_joint_trajectory"/>
+  <arg name="gripper_controller_name" value="$(eval 'gripper_velo_traj_controller' if arg('velocity_control') else 'gripper_traj_controller')" />
+  <remap if="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" from="L_gripper_controller/follow_joint_trajectory" to="/$(arg hw_ns)/L_$(arg gripper_controller_name)/follow_joint_trajectory"/>
+  <remap if="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" from="R_gripper_controller/follow_joint_trajectory" to="/$(arg hw_ns)/R_$(arg gripper_controller_name)/follow_joint_trajectory"/>
 
   <include file="$(find uf_robot_moveit_config)/launch/__moveit_rviz_common.launch">
     <arg name="jnt_stat_source" value="[/$(arg hw_ns)/joint_states]" />

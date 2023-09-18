@@ -39,7 +39,7 @@
   <arg name="jnt_stat_pub_rate" default="10" />
   <!-- load the default move_group planner (not xarm_simple_planner) -->
   <arg name="show_rviz" default="true" />
-  <!-- NO_GUI_CTRL means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
+  <!-- no_gui_plan means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
   <arg name="no_gui_plan" default="false" />
 
   <arg name="robot_dof" value="$(eval arg('dof') if arg('robot_type') == 'xarm' else 6)" />
@@ -84,9 +84,9 @@
   </include>
 
   <!-- load the joint trajectory controller specified in yaml -->
-  <rosparam file="$(find xarm_controller)/config/dual_$(arg robot_name)_traj_controller.yaml" command="load" ns="L_$(arg hw_ns)"/>
-  <rosparam file="$(find xarm_controller)/config/dual_$(arg robot_name)_traj_controller.yaml" command="load" ns="R_$(arg hw_ns)"/>
-  <arg name="robot_traj_controller" value="$(eval arg('robot_name') + ('_traj_controller_velocity' if arg('velocity_control') else '_traj_controller'))" />
+  <rosparam file="$(find xarm_controller)/config/$(arg robot_name)/dual_$(arg robot_name)_controllers.yaml" command="load" ns="L_$(arg hw_ns)"/>
+  <rosparam file="$(find xarm_controller)/config/$(arg robot_name)/dual_$(arg robot_name)_controllers.yaml" command="load" ns="R_$(arg hw_ns)"/>
+  <arg name="robot_controller_name" value="$(eval arg('robot_name') + ('_velo_traj_controller' if arg('velocity_control') else '_traj_controller'))" />
   <node
     name="traj_controller_spawner"
     pkg="controller_manager"
@@ -94,7 +94,7 @@
     respawn="false"
     output="screen"
     ns="L_$(arg hw_ns)"
-    args="L_$(arg robot_traj_controller) joint_state_controller"/>
+    args="L_$(arg robot_controller_name) joint_state_controller"/>
   <node
     name="traj_controller_spawner"
     pkg="controller_manager"
@@ -102,10 +102,10 @@
     respawn="false"
     output="screen"
     ns="R_$(arg hw_ns)"
-    args="R_$(arg robot_traj_controller) joint_state_controller"/>
+    args="R_$(arg robot_controller_name) joint_state_controller"/>
   
-  <remap from="/L_$(arg robot_name)_controller/follow_joint_trajectory" to="/L_$(arg hw_ns)/L_$(arg robot_traj_controller)/follow_joint_trajectory"/>
-  <remap from="/R_$(arg robot_name)_controller/follow_joint_trajectory" to="/R_$(arg hw_ns)/R_$(arg robot_traj_controller)/follow_joint_trajectory"/>
+  <remap from="/L_$(arg robot_name)_controller/follow_joint_trajectory" to="/L_$(arg hw_ns)/L_$(arg robot_controller_name)/follow_joint_trajectory"/>
+  <remap from="/R_$(arg robot_name)_controller/follow_joint_trajectory" to="/R_$(arg hw_ns)/R_$(arg robot_controller_name)/follow_joint_trajectory"/>
   <remap if="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" from="L_xarm_gripper/gripper_action" to="/L_$(arg hw_ns)/xarm_gripper/gripper_action"/>
   <remap if="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" from="R_xarm_gripper/gripper_action" to="/R_$(arg hw_ns)/xarm_gripper/gripper_action"/>
 
@@ -119,7 +119,7 @@
     <arg name="jnt_stat_source" value="[L_$(arg hw_ns)/joint_states, R_$(arg hw_ns)/joint_states]" />
     <arg name="jnt_stat_pub_rate" value="$(arg jnt_stat_pub_rate)"/>
     <arg name="show_rviz" value="$(arg show_rviz)" />
-    <arg name="NO_GUI_CTRL" value="$(arg no_gui_plan)"/>
+    <arg name="no_gui_plan" value="$(arg no_gui_plan)"/>
     <arg name="sensors_3d" value="$(arg sensors_3d)" />
   
     <arg name="dof" value="$(arg robot_dof)" />

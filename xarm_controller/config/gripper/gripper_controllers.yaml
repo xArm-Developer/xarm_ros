@@ -1,5 +1,5 @@
-# xarm:
-gripper_trajectory_controller:
+# real_move default controller
+gripper_traj_controller:
   type: position_controllers/JointTrajectoryController
   joints: 
     - drive_joint
@@ -8,7 +8,7 @@ gripper_trajectory_controller:
     stopped_velocity_tolerance: 0.05
     drive_joint: {trajectory: 1, goal: 0.01}
 
-gripper_trajectory_controller_velocity:
+gripper_velo_traj_controller:
   type: velocity_controllers/JointTrajectoryController
   joints: 
     - drive_joint
@@ -18,6 +18,15 @@ gripper_trajectory_controller_velocity:
     goal_time: 0.5
     stopped_velocity_tolerance: 0.05
     drive_joint: {trajectory: 1, goal: 0.01}
+
+gripper_action_controller:
+  type: position_controllers/GripperActionController
+  joint: drive_joint
+  action_monitor_rate: 20
+  goal_tolerance: 0.005
+  max_effort: 100
+  stall_velocity_threshold: 0.01
+  stall_timeout: 0.5
 
 # No Pid gains specified error fix
 gazebo_ros_control:

@@ -40,7 +40,7 @@
     <arg name="dual" value="true" />
     <!-- whether to use fake_execution controller to drive the motion -->
     <arg name="fake_execution" value="true" />
-    <arg name="NO_GUI_CTRL" value="$(arg no_gui_plan)"/>
+    <arg name="no_gui_plan" value="$(arg no_gui_plan)"/>
     
     <arg name="dof" value="$(arg dof)" />
     <arg name="robot_type" value="$(arg robot_type)" />

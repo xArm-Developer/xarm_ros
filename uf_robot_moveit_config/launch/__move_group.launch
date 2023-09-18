@@ -13,6 +13,7 @@
 
   <arg name="sim_gazebo" default="false"/>
   <arg name="add_gripper" default="false"/>
+  <arg name="gripper_action" default="false"/>
 
   <arg name="sensors_3d" default="false" />
   <arg name="dof" default="7" />
@@ -26,21 +27,39 @@
   <arg name="jiggle_fraction" default="0.05" />
   <arg name="publish_monitored_planning_scene" default="true"/>
 
+  <arg name="pipeline" default="ompl" />
+
   <!-- Planning Functionality -->
   <include ns="move_group" file="$(find uf_robot_moveit_config)/launch/__planning_pipeline.launch.xml">
-    <arg name="pipeline" value="ompl" />
+    <arg name="pipeline" value="$(arg pipeline)" />
     <arg name="robot_name" value="$(arg robot_name)"/>
   </include>
 
+  <arg name="gripper_controller" if="$(eval arg('robot_type') == 'lite')" value="false"/>
+  <arg name="gripper_controller" unless="$(eval arg('robot_type') == 'lite')" value="$(arg add_gripper)"/>
+  
   <!-- Trajectory Execution Functionality -->
   <include ns="move_group" file="$(find uf_robot_moveit_config)/launch/__trajectory_execution.launch.xml" if="$(arg allow_trajectory_execution)">
     <arg name="moveit_manage_controllers" value="true" />
     <arg name="moveit_controller_manager" value="fake" if="$(arg fake_execution)"/>
     <arg name="moveit_controller_manager" value="gazebo" if="$(eval not arg('fake_execution') and arg('sim_gazebo'))"/>
     <arg name="moveit_controller_manager" value="robot" if="$(eval not arg('fake_execution') and not arg('sim_gazebo'))"/>
-    <arg name="add_gripper" value="$(arg add_gripper)"/>
+    <!-- <arg name="add_gripper" value="$(arg add_gripper)"/>
+    <arg name="gripper_action" value="$(arg gripper_action)"/>
     <arg name="robot_type" value="$(arg robot_type)"/>
-    <arg name="robot_name" value="$(arg robot_name)"/>
+    <arg name="robot_name" value="$(arg robot_name)"/> -->
+    
+    <!-- fake -->
+    <arg if="$(eval arg('fake_execution') and arg('gripper_controller'))" name="controllers_file" value="$(find uf_robot_moveit_config)/config/$(arg robot_name)/fake_controllers_with_gripper.yaml"/>
+    <arg if="$(eval arg('fake_execution') and not arg('gripper_controller'))" name="controllers_file" value="$(find uf_robot_moveit_config)/config/$(arg robot_name)/fake_controllers.yaml"/>
+    <!-- gazebo -->
+    <arg if="$(eval not arg('fake_execution') and arg('sim_gazebo') and arg('gripper_action') and arg('gripper_controller'))" name="controllers_file" value="$(find uf_robot_moveit_config)/config/$(arg robot_name)/gazebo_controllers_with_gripper_action.yaml"/>
+    <arg if="$(eval not arg('fake_execution') and arg('sim_gazebo') and not arg('gripper_action') and arg('gripper_controller'))" name="controllers_file" value="$(find uf_robot_moveit_config)/config/$(arg robot_name)/gazebo_controllers_with_gripper.yaml"/>
+    <arg if="$(eval not arg('fake_execution') and arg('sim_gazebo') and not arg('gripper_controller'))" name="controllers_file" value="$(find uf_robot_moveit_config)/config/$(arg robot_name)/controllers.yaml"/>
+    <!-- real -->
+    <arg if="$(eval not arg('fake_execution') and not arg('sim_gazebo') and arg('gripper_controller'))" name="controllers_file" value="$(find uf_robot_moveit_config)/config/$(arg robot_name)/controllers_with_gripper.yaml"/>
+    <arg if="$(eval not arg('fake_execution') and not arg('sim_gazebo') and not arg('gripper_controller'))" name="controllers_file" value="$(find uf_robot_moveit_config)/config/$(arg robot_name)/controllers.yaml"/>
+
   </include>
 
   <!-- Sensors Functionality -->

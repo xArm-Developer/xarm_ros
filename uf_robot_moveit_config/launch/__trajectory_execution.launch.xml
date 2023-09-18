@@ -1,7 +1,9 @@
 <launch>
-  <arg name="add_gripper" default="false"/>
+  <!-- <arg name="add_gripper" default="false"/>
+  <arg name="gripper_action" default="false"/>
   <arg name="robot_type" default="xarm"/>
-  <arg name="robot_name" default="xarm7"/>
+  <arg name="robot_name" default="xarm7"/> -->
+  <arg name="controllers_file" default=""/>
 
   <!-- This file makes it easy to include the settings for trajectory execution  -->
 
@@ -19,9 +21,11 @@
   <!-- Load the robot specific controller manager; this sets the moveit_controller_manager ROS parameter -->
   <arg name="moveit_controller_manager" default="fake" />
   <include file="$(find uf_robot_moveit_config)/launch/__moveit_controller_manager_$(arg moveit_controller_manager).launch.xml">
-    <arg name="add_gripper" if="$(eval arg('robot_type') == 'lite')" value="false"/>
+    <!-- <arg name="add_gripper" if="$(eval arg('robot_type') == 'lite')" value="false"/>
     <arg name="add_gripper" unless="$(eval arg('robot_type') == 'lite')" value="$(arg add_gripper)"/>
-    <arg name="robot_name" value="$(arg robot_name)"/>
+    <arg name="gripper_action" value="$(arg gripper_action)"/>
+    <arg name="robot_name" value="$(arg robot_name)"/> -->
+    <arg name="controllers_file" value="$(arg controllers_file)"/>
   </include>
 
 </launch>
