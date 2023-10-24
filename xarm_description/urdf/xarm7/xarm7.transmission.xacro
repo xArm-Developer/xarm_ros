@@ -42,7 +42,7 @@
       <joint name="${prefix}joint4">
         <hardwareInterface>hardware_interface/${hard_interface}</hardwareInterface>
       </joint>
-      <actuator name="${prefix}motor3">
+      <actuator name="${prefix}motor4">
         <hardwareInterface>hardware_interface/${hard_interface}</hardwareInterface>
         <mechanicalReduction>${reduction}</mechanicalReduction>
       </actuator>
