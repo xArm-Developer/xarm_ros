@@ -20,9 +20,16 @@
   <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
   <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
 
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
+  <arg name="attach_to" default="world" />
+  <arg name="attach_xyz" default="'0 0 0'" />
+  <arg name="attach_rpy" default="'0 0 0'" />
+  <arg name="robot_sn" default="" />
+
   <!-- Load universal robot description format (URDF) -->
   <param if="$(arg load_robot_description)" name="$(arg robot_description)" 
-    command="xacro --inorder  '$(find xarm_description)/urdf/lite6_robot.urdf.xacro' limited:=true
+    command="xacro --inorder  '$(find xarm_description)/urdf/xarm_device.urdf.xacro' robot_type:=lite dof:=6 limited:=true
       add_gripper:=$(arg add_gripper)
       add_vacuum_gripper:=$(arg add_vacuum_gripper)
       add_other_geometry:=$(arg add_other_geometry)
@@ -37,10 +44,16 @@
       geometry_mesh_origin_rpy:=$(arg geometry_mesh_origin_rpy)
       geometry_mesh_tcp_xyz:=$(arg geometry_mesh_tcp_xyz)
       geometry_mesh_tcp_rpy:=$(arg geometry_mesh_tcp_rpy)
+      add_realsense_d435i:=$(arg add_realsense_d435i)
+      add_d435i_links:=$(arg add_d435i_links)
+      attach_to:=$(arg attach_to)
+      attach_xyz:=$(arg attach_xyz)
+      attach_rpy:=$(arg attach_rpy)
+      robot_sn:=$(arg robot_sn)
     "/>
 
   <param if="$(arg load_robot_description)" name="$(arg robot_description)_semantic" 
-    command="xacro --inorder  '$(find xarm_description)/srdf/xarm.srdf.xacro' dof:=6 robot_type:=lite
+    command="xacro --inorder  '$(find xarm_description)/srdf/xarm.srdf.xacro' robot_type:=lite dof:=6
       add_gripper:=$(arg add_gripper) add_vacuum_gripper:=$(arg add_vacuum_gripper) add_other_geometry:=$(arg add_other_geometry)
   "/>
 

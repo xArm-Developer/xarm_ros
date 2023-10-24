@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="ignition_ros2_control_plugin" params="prefix:='' ros2_control_params:=''">
+
+    <gazebo>
+      <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+        <xacro:if value="${ros2_control_params != ''}">
+          <parameters>${ros2_control_params}</parameters>
+        </xacro:if>
+        <!-- <controller_manager_node_name>${prefix}controller_manager</controller_manager_node_name> -->
+      </plugin>
+    </gazebo>
+
+  </xacro:macro>
+
+  <xacro:macro name="gazebo_ros2_control_plugin" params="ros2_control_params:=''">
+
+    <gazebo>
+      <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+        <robot_sim_type>gazebo_ros2_control/GazeboSystem</robot_sim_type>
+        <xacro:if value="${ros2_control_params != ''}">
+          <parameters>${ros2_control_params}</parameters>
+        </xacro:if>
+      </plugin>
+    </gazebo>
+
+  </xacro:macro>
+
+  <xacro:macro name="gazebo_ros1_control_plugin" params="namespace:=''">
+
+    <gazebo>
+      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+        <robotNamespace>/${namespace}</robotNamespace>
+        <!-- <controlPeriod>0.0001</controlPeriod> -->
+        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+		    <legacyModeNS>true</legacyModeNS>
+        <!-- <preserveWorldVelocity>true</preserveWorldVelocity> -->
+      </plugin>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

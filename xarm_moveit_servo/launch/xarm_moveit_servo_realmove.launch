@@ -9,6 +9,7 @@
   <arg name="ext_ns" default="" />
   <!-- joystick_type, 1: XBOX360_WIRED, 2: XBOX360_WIRELESS, 3: SPACEMOUSE_WIRELESS, 99: KEYBOARD -->
   <arg name="joystick_type" default="1" />
+  <arg name="model1300" default="false" />
 
   <!-- lite6 -->
   <include if="$(eval robot_type == 'lite')" file="$(eval find(str(arg('robot_type')) + str(arg('dof')) + '_moveit_config') + '/launch/realMove_exec.launch')">
@@ -30,6 +31,7 @@
     <arg name="report_type" value="$(arg report_type)" />
     <arg name="ext_ns" value="$(arg ext_ns)" />
     <arg name="jnt_stat_pub_rate" value="100"/>
+    <arg name="model1300" value="$(arg model1300)"/>
   </include>
 
   <!-- joystick -->

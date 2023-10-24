@@ -17,6 +17,14 @@
   <arg name="no_gui_plan" default="false" />
   <arg name="ext_ns" default="" />
   <arg name="jnt_stat_pub_rate" default="10" />
+  <arg name="model1300_1" default="false" />
+  <arg name="model1300_2" default="false" />
+  <arg name="add_realsense_d435i_1" default="false" />
+  <arg name="add_realsense_d435i_2" default="false" />
+  <arg name="add_d435i_links_1" default="false" />
+  <arg name="add_d435i_links_2" default="false" />
+  <arg name="robot_sn_1" default="" />
+  <arg name="robot_sn_2" default="" />
 
   <!-- common: bring up node to enable real xArm control -->
   <include file="$(find xarm_bringup)/launch/dual_xarm6_server.launch">
@@ -46,7 +54,7 @@
     type="spawner"
     respawn="false"
     output="screen"
-    args="$(arg hw_ns_1)_traj_controller $(arg hw_ns_2)_traj_controller"/>
+    args="$(arg hw_ns_1)_traj_controller $(arg hw_ns_2)_traj_controller joint_state_controller"/>
 
   <remap from="$(arg hw_ns_1)_controller/follow_joint_trajectory" to="$(arg hw_ns_1)_traj_controller/follow_joint_trajectory"/>
   <remap from="$(arg hw_ns_2)_controller/follow_joint_trajectory" to="$(arg hw_ns_2)_traj_controller/follow_joint_trajectory"/>
@@ -61,6 +69,14 @@
     <arg name="show_rviz" value="$(arg show_rviz)" />
     <arg name="NO_GUI_CTRL" value="$(arg no_gui_plan)"/>
     <arg name="jnt_stat_pub_rate" value="$(arg jnt_stat_pub_rate)"/>
+    <arg name="model1300_1" value="$(arg model1300_1)" />
+    <arg name="model1300_2" value="$(arg model1300_2)" />
+    <arg name="add_realsense_d435i_1" value="$(arg add_realsense_d435i_1)"/>
+    <arg name="add_realsense_d435i_2" value="$(arg add_realsense_d435i_2)"/>
+    <arg name="add_d435i_links_1" value="$(arg add_d435i_links_1)"/>
+    <arg name="add_d435i_links_2" value="$(arg add_d435i_links_2)"/>
+    <arg name="robot_sn_1" value="$(arg robot_sn_1)"/>
+    <arg name="robot_sn_2" value="$(arg robot_sn_2)"/>
   </include>
 
 </launch>

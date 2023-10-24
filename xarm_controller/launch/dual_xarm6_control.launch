@@ -1,0 +1,64 @@
+<launch>
+
+  <arg name="run_demo_traj" default="false"/>
+  <arg name="effort_control" default="false"/>
+  <arg name="velocity_control" default="false"/>
+  <arg name="namespace" default="xarm"/>
+  <arg name="add_gripper" default="false" />
+  
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <!-- Load trajectory controller for xArm by default -->
+  <rosparam unless="$(arg run_demo_traj)" file="$(find xarm_controller)/config/dual_xarm6_traj_controller.yaml" command="load" ns="$(arg namespace)"/>
+  <arg name="xarm_traj_controller" value="$(eval 'xarm6_traj_controller_velocity' if arg('velocity_control') else 'xarm6_traj_controller')" />
+  <node unless="$(arg run_demo_traj)"
+    name="traj_controller_spawner"
+    pkg="controller_manager"
+    type="controller_manager"
+    respawn="false"
+    output="screen"
+    ns="/$(arg namespace)"
+    args="spawn L_$(arg xarm_traj_controller) R_$(arg xarm_traj_controller) joint_state_controller"/>
+
+  <!-- run_demo: load the position controllers -->
+  <rosparam if="$(arg run_demo_traj)"
+    file="$(find xarm_controller)/config/dual_xarm6_position_controllers.yaml" command="load" ns="$(arg namespace)"/>
+  <node if="$(arg run_demo_traj)" name="position_controller_spawner"
+    pkg="controller_manager"
+    type="spawner"
+    respawn="false"
+    output="screen"
+    ns="/$(arg namespace)"
+    args="L_joint1_position_controller L_joint2_position_controller
+          L_joint3_position_controller L_joint4_position_controller
+          L_joint5_position_controller L_joint6_position_controller
+          R_joint1_position_controller R_joint2_position_controller
+          R_joint3_position_controller R_joint4_position_controller
+          R_joint5_position_controller R_joint6_position_controller
+          joint_state_controller"/>
+
+  <rosparam if="$(arg add_gripper)"
+    file="$(find xarm_controller)/config/dual_gripper_traj_controller.yaml" command="load" ns="$(arg namespace)"/>
+  <arg name="gripper_trajectory_controller" value="$(eval 'gripper_trajectory_controller_velocity' if arg('velocity_control') else 'gripper_trajectory_controller')" />
+  <node if="$(arg add_gripper)" name="gripper_controller_spawner"
+    pkg="controller_manager"
+    type="spawner"
+    respawn="false"
+    output="screen"
+    ns="/$(arg namespace)"
+    args="L_$(arg gripper_trajectory_controller) R_$(arg gripper_trajectory_controller)"/>
+
+  <!-- convert joint states to TF transforms for rviz, etc -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+    respawn="false" output="screen">
+    <remap from="/joint_states" to="/$(arg namespace)/joint_states" />
+  </node>
+
+  <!-- run_demo: start demo controller node, (pure position control) -->
+  <node if="$(arg run_demo_traj)" name="continuous_cmds"
+    pkg="xarm_controller"
+    type="sample_motion"
+    respawn="false"
+    output="screen"
+    ns="/$(arg namespace)"/>
+
+</launch>

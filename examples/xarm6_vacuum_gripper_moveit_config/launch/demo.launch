@@ -1,6 +1,13 @@
 <launch>
   <arg name="ns" default="" />
   <arg name="jnt_stat_pub_rate" default="10" />
+  <arg name="model1300" default="false" />
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
+  <arg name="attach_to" default="world" />
+  <arg name="attach_xyz" default="'0 0 0'" />
+  <arg name="attach_rpy" default="'0 0 0'" />
+  <arg name="robot_sn" default="" />
 
   <remap from="$(arg ns)/source_list" to="/source_list" />
   <include file="$(find xarm6_vacuum_gripper_moveit_config)/launch/moveit_rviz_common.launch">
@@ -10,6 +17,13 @@
     <arg name="load_move_group" value="true" />
     <!-- whether to use fake_execution controller to drive the motion -->
     <arg name="fake_execution" value="true" />
+    <arg name="model1300" value="$(arg model1300)"/>
+    <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)"/>
+    <arg name="add_d435i_links" value="$(arg add_d435i_links)"/>
+    <arg name="attach_to" value="$(arg attach_to)"/>
+    <arg name="attach_xyz" value="$(arg attach_xyz)"/>
+    <arg name="attach_rpy" value="$(arg attach_rpy)"/>
+    <arg name="robot_sn" value="$(arg robot_sn)"/>
   </include>
 
 </launch>

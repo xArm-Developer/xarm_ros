@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!--test cmd: roslaunch xarm_description xarm7_rviz_test.launch limited:=true-->
+  <arg name="limited" default="True" doc="If true, limits joint range (-PI, PI) on all joints." />
+  <arg name="add_gripper" default="false" doc="If true, will load UFACTORY850 with gripper from UFACTORY attached." />
+  <arg name="add_vacuum_gripper" default="false" doc="If true, will load UFACTORY850 with gripper from UFACTORY attached." />
+  <arg name="joint_state_source" default="[/joint_states]" />
+  <arg name="joint_state_publisher_gui" default="true" />
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
+  <arg name="robot_sn" default="" />
+  <arg name="config" default="true" />
+
+  <include file="$(find xarm_description)/launch/_robot_rviz_display.launch" >
+    <arg name="dof" value="6"/>
+    <arg name="robot_type" value="uf850"/>
+    <arg name="limited" value="$(arg limited)"/>
+    <arg name="add_gripper" value="$(arg add_gripper)" />
+    <arg name="add_vacuum_gripper" value="$(arg add_vacuum_gripper)" />
+    <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)" />
+    <arg name="add_d435i_links" value="$(arg add_d435i_links)" />
+    <arg name="robot_sn" value="$(arg robot_sn)" />
+    <arg name="config" value="$(arg config)" />
+    <arg name="joint_state_source" value="$(arg joint_state_source)" />
+    <arg name="joint_state_publisher_gui" value="$(arg joint_state_publisher_gui)" />
+  </include>
+
+</launch>

@@ -8,6 +8,10 @@
   <arg name="add_gripper" default="false" />
   <arg name="add_vacuum_gripper" default="false" />
   <arg name="namespace" default="xarm"/>
+  <arg name="model1300" default="false" />
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
+  <arg name="robot_sn" default="" />
   
   <arg name="xarm_velocity_control" value="$(eval arg('velocity_control') and not arg('run_demo'))" />
 
@@ -21,20 +25,15 @@
   </include>
 
   <!-- send robot urdf to param server, joint limit may be overwritten if use moveit planner -->
-  <param unless="$(eval arg('add_gripper') or arg('add_vacuum_gripper'))" name="robot_description"
-    command="$(find xacro)/xacro
-    --inorder '$(find xarm_description)/urdf/xarm6_robot.urdf.xacro'
-    effort_control:=$(arg effort_control) velocity_control:=$(arg xarm_velocity_control)" />
-
-  <param if="$(arg add_gripper)" name="robot_description"
-    command="$(find xacro)/xacro
-    --inorder '$(find xarm_description)/urdf/xarm6_with_gripper.xacro'
-    effort_control:=$(arg effort_control) velocity_control:=$(arg xarm_velocity_control)" />
-
-  <param if="$(arg add_vacuum_gripper)" name="robot_description"
-    command="$(find xacro)/xacro
-    --inorder '$(find xarm_description)/urdf/xarm6_with_vacuum_gripper.xacro'
-    effort_control:=$(arg effort_control) velocity_control:=$(arg xarm_velocity_control)" />
+  <param name="robot_description" command="$(find xacro)/xacro
+    --inorder '$(find xarm_description)/urdf/xarm_device.urdf.xacro' robot_type:=xarm dof:=6
+    add_gripper:=$(arg add_gripper) add_vacuum_gripper:=$(arg add_vacuum_gripper)
+    effort_control:=$(arg effort_control) velocity_control:=$(arg xarm_velocity_control)
+    model1300:=$(arg model1300)
+    add_realsense_d435i:=$(arg add_realsense_d435i)
+    add_d435i_links:=$(arg add_d435i_links)
+    robot_sn:=$(arg robot_sn)
+    "/>
 
   <!-- spawn robot model in gazebo, located on the table -->
   <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model"

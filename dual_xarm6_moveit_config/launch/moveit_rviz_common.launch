@@ -24,10 +24,26 @@
   <arg name="NO_GUI_CTRL" default="false"/>
   <!-- option to show rviz or not -->
   <arg name="show_rviz" default="true" />
+  <arg name="model1300_1" default="false" />
+  <arg name="model1300_2" default="false" />
+  <arg name="add_realsense_d435i_1" default="false" />
+  <arg name="add_realsense_d435i_2" default="false" />
+  <arg name="add_d435i_links_1" default="false" />
+  <arg name="add_d435i_links_2" default="false" />
+  <arg name="robot_sn_1" default="" />
+  <arg name="robot_sn_2" default="" />
 
   <!-- Load the URDF, SRDF and other .yaml configuration files on the param server, limit joint range within [-pi, pi] -->
   <include file="$(find dual_xarm6_moveit_config)/launch/planning_context.launch">
     <arg name="load_robot_description" value="true"/>
+    <arg name="model1300_1" value="$(arg model1300_1)" />
+    <arg name="model1300_2" value="$(arg model1300_2)" />
+    <arg name="add_realsense_d435i_1" value="$(arg add_realsense_d435i_1)"/>
+    <arg name="add_realsense_d435i_2" value="$(arg add_realsense_d435i_2)"/>
+    <arg name="add_d435i_links_1" value="$(arg add_d435i_links_1)"/>
+    <arg name="add_d435i_links_2" value="$(arg add_d435i_links_2)"/>
+    <arg name="robot_sn_1" value="$(arg robot_sn_1)"/>
+    <arg name="robot_sn_2" value="$(arg robot_sn_2)"/>
   </include>
 
   <!-- If needed, broadcast static tf for robot root -->

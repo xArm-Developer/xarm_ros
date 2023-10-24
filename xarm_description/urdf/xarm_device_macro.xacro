@@ -1,0 +1,259 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="xarm_device">
+  <xacro:macro name="xarm_device" params="
+    prefix:=''
+    hw_ns:='xarm'
+    limited:=false
+    effort_control:=false 
+    velocity_control:=false
+    add_gripper:=false
+    add_vacuum_gripper:=false
+    dof:=7
+    robot_type:='xarm'
+    ros2_control_plugin:='uf_robot_hardware/UFRobotSystemHardware'
+    attach_to:='world'
+    attach_xyz:='0 0 0'
+    attach_rpy:='0 0 0'
+    create_attach_link:=true
+    ros2_control_params:=''
+    load_gazebo_plugin:=false 
+    add_realsense_d435i:=false
+    add_d435i_links:=true
+    use_gazebo_camera:=false
+    add_other_geometry:=false 
+    geometry_type:='box'
+    geometry_mass:='0.1'
+    geometry_radius:='0.1'
+    geometry_height:='0.1' 
+    geometry_length:='0.1'
+    geometry_width:='0.1'
+    geometry_mesh_filename:=''
+    geometry_mesh_origin_xyz:='0 0 0'
+    geometry_mesh_origin_rpy:='0 0 0'
+    geometry_mesh_tcp_xyz:='0 0 0'
+    geometry_mesh_tcp_rpy:='0 0 0' 
+    robot_ip:=''
+    report_type:='normal'
+    baud_checkset:=true
+    default_gripper_baud:=2000000 
+    model1300:=false
+    robot_sn:='' 
+    mesh_suffix:='stl' "
+    > 
+
+    <!-- Load Common Material -->
+    <xacro:include filename="$(find xarm_description)/urdf/_private_macro.xacro" />
+    <xacro:device_macro_begin />
+
+    <!-- Load Common Material -->
+    <xacro:include filename="$(find xarm_description)/urdf/common/common.material.xacro" />
+    <xacro:common_material prefix="${prefix}"/>
+
+    <!-- Specify Mesh file path -->
+    <xacro:property name="mesh_suffix" value="${mesh_suffix}" scope="parent"/>
+    <xacro:if value="${ros2_control_plugin == 'gazebo_ros2_control/GazeboSystem' or ros2_control_plugin == 'ign_ros2_control/IgnitionSystem'}">
+      <!-- gazebo use -->
+      <xacro:property name="mesh_path" value="file://$(find xarm_description)/meshes" scope="parent"/>
+    </xacro:if>
+    <xacro:unless value="${ros2_control_plugin == 'gazebo_ros2_control/GazeboSystem' or ros2_control_plugin == 'ign_ros2_control/IgnitionSystem'}">
+      <xacro:property name="mesh_path" value="package://xarm_description/meshes" scope="parent"/>
+    </xacro:unless> 
+
+    <!-- include common.link.xacro -->
+    <xacro:include filename="$(find xarm_description)/urdf/common/common.link.xacro" />
+    <xacro:parse_link_inertial_filename dof="${dof}" robot_type="${robot_type}" robot_sn="${robot_sn}" model1300="${model1300}" />
+    <xacro:property name="inertial_params_filename" value="${scope_parent_inertial_params_filename}"/>
+    <xacro:property name="new_model1300" value="${scope_parent_model1300}"/>
+
+    <!-- add one world link if no 'attach_to' specified  -->
+    <xacro:if value="${attach_to == 'world' and create_attach_link}">
+      <link name="world" />
+    </xacro:if>
+
+    <joint name="${prefix}world_joint" type="fixed">
+      <parent link="${attach_to}" />
+      <child link = "${prefix}link_base" />
+      <origin xyz="${attach_xyz}" rpy="${attach_rpy}" />
+    </joint>
+
+    <xacro:if value="${effort_control}"> 
+      <xacro:property name="hard_interface" value="EffortJointInterface" />
+    </xacro:if>
+    <xacro:unless value="${effort_control}"> 
+      <xacro:if value="${velocity_control}"> 
+        <xacro:property name="hard_interface" value="VelocityJointInterface" />
+      </xacro:if>
+      <xacro:unless value="${velocity_control}"> 
+        <xacro:property name="hard_interface" value="PositionJointInterface" />
+      </xacro:unless>
+    </xacro:unless>
+    
+    <xacro:if value="${dof == 5}">
+      <!-- Load XArm5 Robot Model URDF -->
+      <xacro:include filename="$(find xarm_description)/urdf/xarm5/xarm5_robot_macro.xacro" />
+      <xacro:xarm5_robot prefix="${prefix}" hw_ns="${hw_ns}" limited="${limited}" 
+        velocity_control="${velocity_control}" 
+        ros2_control_plugin="${ros2_control_plugin}" 
+        add_gripper="${add_gripper}"
+        robot_ip="${robot_ip}"
+        report_type="${report_type}"
+        baud_checkset="${baud_checkset}"
+        default_gripper_baud="${default_gripper_baud}" 
+        model1300="${new_model1300}"
+        inertial_params_filename="${inertial_params_filename}"
+        hard_interface="${hard_interface}" />
+    </xacro:if>
+    <xacro:if value="${dof == 6}">
+      <xacro:if value="${robot_type == 'uf850'}">
+        <!-- Load UFACTORY 850 Robot Model URDF -->
+        <xacro:include filename="$(find xarm_description)/urdf/uf850/uf850_robot_macro.xacro" />
+        <xacro:uf850_robot prefix="${prefix}" hw_ns="${hw_ns}" limited="${limited}" 
+          velocity_control="${velocity_control}" 
+          ros2_control_plugin="${ros2_control_plugin}" 
+          add_gripper="${add_gripper}"
+          robot_ip="${robot_ip}"
+          report_type="${report_type}"
+          baud_checkset="${baud_checkset}"
+          default_gripper_baud="${default_gripper_baud}"
+          model1300="${new_model1300}"
+          inertial_params_filename="${inertial_params_filename}"
+          hard_interface="${hard_interface}" />
+      </xacro:if>
+      <xacro:if value="${robot_type == 'lite'}">
+        <!-- Load Lite6 Robot Model URDF -->
+        <xacro:include filename="$(find xarm_description)/urdf/lite6/lite6_robot_macro.xacro" />
+        <xacro:lite6_robot prefix="${prefix}" hw_ns="${hw_ns}" limited="${limited}" 
+          velocity_control="${velocity_control}" 
+          ros2_control_plugin="${ros2_control_plugin}" 
+          add_gripper="${add_gripper}"
+          robot_ip="${robot_ip}"
+          report_type="${report_type}"
+          baud_checkset="${baud_checkset}"
+          default_gripper_baud="${default_gripper_baud}"
+          inertial_params_filename="${inertial_params_filename}"
+          hard_interface="${hard_interface}" />
+      </xacro:if>
+      <xacro:unless value="${robot_type == 'lite' or robot_type == 'uf850'}">
+        <!-- Load XArm6 Robot Model URDF -->
+        <xacro:include filename="$(find xarm_description)/urdf/xarm6/xarm6_robot_macro.xacro" />
+        <xacro:xarm6_robot prefix="${prefix}" hw_ns="${hw_ns}" limited="${limited}" 
+          velocity_control="${velocity_control}" 
+          ros2_control_plugin="${ros2_control_plugin}" 
+          add_gripper="${add_gripper}"
+          robot_ip="${robot_ip}"
+          report_type="${report_type}"
+          baud_checkset="${baud_checkset}"
+          default_gripper_baud="${default_gripper_baud}"
+          model1300="${new_model1300}"
+          inertial_params_filename="${inertial_params_filename}"
+          hard_interface="${hard_interface}" />
+      </xacro:unless>
+    </xacro:if>
+    <xacro:unless value="${dof == 5 or dof == 6}">
+      <!-- Load XArm7 Robot Model URDF -->
+      <xacro:include filename="$(find xarm_description)/urdf/xarm7/xarm7_robot_macro.xacro" />
+      <xacro:xarm7_robot prefix="${prefix}" hw_ns="${hw_ns}" limited="${limited}" 
+        velocity_control="${velocity_control}" 
+        ros2_control_plugin="${ros2_control_plugin}"
+        add_gripper="${add_gripper}"
+        robot_ip="${robot_ip}"
+        report_type="${report_type}"
+        baud_checkset="${baud_checkset}"
+        default_gripper_baud="${default_gripper_baud}" 
+        model1300="${new_model1300}"
+        inertial_params_filename="${inertial_params_filename}"
+        hard_interface="${hard_interface}" />
+    </xacro:unless>
+
+    <xacro:if value="${add_realsense_d435i}">
+      <!-- (xarm) Load RealSense D435i URDF -->
+      <xacro:include filename="$(find xarm_description)/urdf/camera/realsense_d435i.urdf.xacro" />
+      <xacro:d435i_urdf prefix="${prefix}" add_d435i_links="${add_d435i_links}" />
+      <xacro:if value="${add_d435i_links}">
+        <xacro:include filename="$(find xarm_description)/urdf/camera/realsense.gazebo.xacro" />    
+        <xacro:realsense_gazebo prefix="${prefix}" />
+      </xacro:if>
+    </xacro:if>
+    <xacro:unless value="${add_realsense_d435i}">
+      <link name="${prefix}link_eef"/>
+    </xacro:unless>
+    <joint name="${prefix}joint_eef" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="${prefix}link${dof}" />
+      <child link="${prefix}link_eef" />
+    </joint>
+    
+    <xacro:if value="${add_gripper}">
+      <xacro:if value="${robot_type == 'lite'}">
+        <!-- Load Lite Gripper Model URDF -->
+        <xacro:include filename="$(find xarm_description)/urdf/gripper/lite_gripper.urdf.xacro" />
+        <xacro:uflite_gripper_urdf prefix="${prefix}" attach_to="${prefix}link_eef" />
+      </xacro:if>
+      <xacro:unless value="${robot_type == 'lite'}">
+        <!-- Load XArm Gripper Model URDF -->
+        <xacro:include filename="$(find xarm_description)/urdf/gripper/xarm_gripper_macro.xacro" />
+        <xacro:xarm_gripper_macro prefix="${prefix}" attach_to="${prefix}link_eef" 
+          ros2_control_plugin="${ros2_control_plugin}" dof="${dof}" hard_interface="${hard_interface}" />
+      </xacro:unless>
+    </xacro:if>
+
+    <xacro:if value="${not add_gripper and add_vacuum_gripper}">
+      <xacro:if value="${robot_type == 'lite'}">
+        <!-- Load Lite Vacuum Gripper Model URDF -->
+        <xacro:include filename="$(find xarm_description)/urdf/vacuum_gripper/lite_vacuum_gripper.urdf.xacro" />
+        <xacro:uflite_vacuum_gripper_urdf prefix="${prefix}" attach_to="${prefix}link_eef" />
+      </xacro:if>
+      <xacro:unless value="${robot_type == 'lite'}">
+        <!-- Load XArm Vacuum Gripper Model URDF -->
+        <xacro:include filename="$(find xarm_description)/urdf/vacuum_gripper/xarm_vacuum_gripper.urdf.xacro" />
+        <xacro:xarm_vacuum_gripper_urdf prefix="${prefix}" attach_to="${prefix}link_eef" />
+      </xacro:unless>
+    </xacro:if>
+
+    <xacro:if value="${not add_gripper and not add_vacuum_gripper and add_other_geometry}">
+      <!-- Load Other Model URDF -->
+      <xacro:include filename="$(find xarm_description)/urdf/other/other_geometry.urdf.xacro" />
+      <xacro:other_geometry prefix="${prefix}" attach_to="${prefix}link_eef"
+        geometry_type="${geometry_type}" geometry_mass="${geometry_mass}" 
+        geometry_height="${geometry_height}" geometry_radius="${geometry_radius}"
+        geometry_length="${geometry_length}" geometry_width="${geometry_width}"
+        geometry_mesh_filename="${geometry_mesh_filename}" 
+        geometry_mesh_origin_xyz="${geometry_mesh_origin_xyz}" geometry_mesh_origin_rpy="${geometry_mesh_origin_rpy}"
+        geometry_mesh_tcp_xyz="${geometry_mesh_tcp_xyz}" geometry_mesh_tcp_rpy="${geometry_mesh_tcp_rpy}"
+      />
+    </xacro:if>
+
+    <!-- gazebo_plugin -->
+    <xacro:if value="${load_gazebo_plugin}">
+      <xacro:include filename="$(find xarm_description)/urdf/common/common.gazebo.xacro" />
+      <xacro:if value="${is_ros2}">
+        <xacro:if value="${robot_type == 'uf850'}">
+          <xacro:property name="new_ros2_control_params" value="$(find xarm_controller)/config/${robot_type}_controllers.yaml"/>
+        </xacro:if>
+        <xacro:unless value="${robot_type == 'uf850'}">
+          <xacro:property name="new_ros2_control_params" value="$(find xarm_controller)/config/${robot_type}${dof}_controllers.yaml"/>
+        </xacro:unless>
+        <xacro:if value="${ros2_control_params != ''}">
+          <xacro:property name="new_ros2_control_params" value="${ros2_control_params}"/>
+        </xacro:if>
+        <xacro:if value="${ros2_control_plugin == 'ign_ros2_control/IgnitionSystem'}">
+          <xacro:ignition_ros2_control_plugin prefix="${prefix}" ros2_control_params="${new_ros2_control_params}"/>
+        </xacro:if>
+        <xacro:unless value="${ros2_control_plugin == 'ign_ros2_control/IgnitionSystem'}">
+          <xacro:gazebo_ros2_control_plugin ros2_control_params="${new_ros2_control_params}"/>
+        </xacro:unless>
+      </xacro:if>
+      <xacro:unless value="${is_ros2}">
+        <xacro:gazebo_ros1_control_plugin namespace="${hw_ns}"/>
+      </xacro:unless>    
+    </xacro:if>
+
+    <xacro:if value="${use_gazebo_camera}">
+      <xacro:include filename="$(find xarm_description)/urdf/camera/camera.gazebo.xacro" />
+      <xacro:camera_gazebo prefix="${prefix}" />
+    </xacro:if>
+
+    <xacro:device_macro_end />
+
+  </xacro:macro>
+</robot>

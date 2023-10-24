@@ -198,8 +198,13 @@ namespace xarm_control
 
 		/* getParam forbids to change member */
 		robot_hw_nh.getParam("DOF", xarm_dof);
+		std::string prefix = "";
+		robot_hw_nh.getParam("prefix", prefix);
 		robot_hw_nh.getParam("xarm_robot_ip", robot_ip);
 		robot_hw_nh.getParam("joint_names", jnt_names);
+		for (int i = 0; i < xarm_dof; i++) {
+			jnt_names[i] = prefix + jnt_names[i];
+		}
 		// robot_hw_nh.param<std::string>("force_torque_sensor_name", force_torque_sensor_name_, "ft_sensor");
 		// force_torque_sensor_frame_id_ = "ft_sensor_data";
 
@@ -222,7 +227,7 @@ namespace xarm_control
 			root_nh.setParam(locked_ip_key_, true);
 		}
 
-		xarm_driver_.init(robot_hw_nh, robot_ip);
+		xarm_driver_.init(robot_hw_nh, robot_ip, true);
 
 		dof_ = xarm_dof;
 		jnt_names_ = jnt_names;

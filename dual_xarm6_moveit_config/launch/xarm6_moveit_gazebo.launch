@@ -1,13 +1,28 @@
 <launch>
-
+  <arg name="model1300_1" default="false" />
+  <arg name="model1300_2" default="false" />
+  <arg name="add_realsense_d435i_1" default="false" />
+  <arg name="add_realsense_d435i_2" default="false" />
+  <arg name="add_d435i_links_1" default="false" />
+  <arg name="add_d435i_links_2" default="false" />
+  <arg name="robot_sn_1" default="" />
+  <arg name="robot_sn_2" default="" />
   <!-- Remap the name space so it can send command to gazebo loaded controller -->
   <!-- this remap must appear BEFORE move_group launch -->
   <remap from="/follow_joint_trajectory" to="/xarm/xarm6_traj_controller/follow_joint_trajectory"/>
 
-  <include file="$(find xarm6_moveit_config)/launch/moveit_rviz_common.launch">
+  <include file="$(find dual_xarm6_moveit_config)/launch/moveit_rviz_common.launch">
     <arg name="jnt_stat_source" value="[/xarm/joint_states]" />
     <arg name="load_move_group" value="true" />
     <arg name="pub_tf" value="false" />
+    <arg name="model1300_1" value="$(arg model1300_1)" />
+    <arg name="model1300_2" value="$(arg model1300_2)" />
+    <arg name="add_realsense_d435i_1" value="$(arg add_realsense_d435i_1)"/>
+    <arg name="add_realsense_d435i_2" value="$(arg add_realsense_d435i_2)"/>
+    <arg name="add_d435i_links_1" value="$(arg add_d435i_links_1)"/>
+    <arg name="add_d435i_links_2" value="$(arg add_d435i_links_2)"/>
+    <arg name="robot_sn_1" value="$(arg robot_sn_1)"/>
+    <arg name="robot_sn_2" value="$(arg robot_sn_2)"/>
   </include>
 
   

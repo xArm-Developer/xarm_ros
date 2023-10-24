@@ -6,6 +6,10 @@
   <arg name="effort_control" default="false"/>
   <arg name="velocity_control" default="false"/>
   <arg name="namespace" default="xarm"/>
+  <arg name="model1300" default="false" />
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
+  <arg name="robot_sn" default="" />
   
   <rosparam file="$(eval find('xarm' + str(arg('robot_dof')) + '_moveit_config') + '/config/xarm' + str(arg('robot_dof')) + '_params.yaml')" command="load" ns="$(arg namespace)"/>
   <rosparam file="$(find xarm_controller)/config/gripper_gazebo_ros_control.yaml" command="load"/>
@@ -16,10 +20,13 @@
     <arg name="gui" value="$(arg gui)"/>
   </include>
 
-  <param name="robot_description"
-    command="$(find xacro)/xacro
-    --inorder '$(find xarm_description)/urdf/xarm$(arg robot_dof)_with_gripper.xacro' limited:=true
-    effort_control:=$(arg effort_control) velocity_control:=$(arg velocity_control) use_gazebo_camera:=true" />
+  <param name="robot_description" command="$(find xacro)/xacro
+    --inorder '$(find xarm_description)/urdf/xarm_device.urdf.xacro' robot_type:=xarm limited:=true add_gripper:=true use_gazebo_camera:=true dof:=$(arg robot_dof)
+    effort_control:=$(arg effort_control) velocity_control:=$(arg velocity_control) model1300:=$(arg model1300)
+    add_realsense_d435i:=$(arg add_realsense_d435i)
+    add_d435i_links:=$(arg add_d435i_links)
+    robot_sn:=$(arg robot_sn)
+    " />
   
   <param name="robot_description_semantic" 
     command="$(find xacro)/xacro --inorder '$(find xarm_description)/srdf/xarm.srdf.xacro' dof:=$(arg robot_dof) add_gripper:=true robot_type:=xarm" />

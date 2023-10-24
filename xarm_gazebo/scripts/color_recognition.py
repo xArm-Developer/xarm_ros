@@ -6,6 +6,7 @@ import rospy
 import math
 import random
 import threading
+from distutils.version import LooseVersion
 import numpy as np
 import moveit_commander
 from cv_bridge import CvBridge
@@ -17,7 +18,8 @@ if sys.version_info < (3, 0):
 else:
     PY3 = True
     import queue
-    
+
+boxPoints = cv2.boxPoints if LooseVersion(cv2.__version__) >= LooseVersion('3.0') else cv2.cv.BoxPoints
 
 COLOR_DICT = {
     'red': {'lower': np.array([0, 43, 46]), 'upper': np.array([10, 255, 255])},
@@ -222,10 +224,7 @@ def get_recognition_rect(frame, lower=COLOR_DICT['red']['lower'], upper=COLOR_DI
         if rect[1][0] < 20 or rect[1][1] < 20:
             continue
         # print(rect)
-        if PY3:
-            box = cv2.boxPoints(rect)
-        else:
-            box = cv2.cv.BoxPoints(rect)
+        box = boxPoints(rect)
         cv2.drawContours(frame, [np.int0(box)], -1, (0, 255, 255), 1)
         rects.append(rect)
     

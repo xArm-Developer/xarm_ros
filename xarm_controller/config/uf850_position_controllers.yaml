@@ -1,0 +1,43 @@
+# xarm:
+# Publish all joint states -----------------------------------
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50
+
+# Position Controllers ---------------------------------------
+joint1_position_controller:
+  type: position_controllers/JointPositionController
+  joint: joint1
+  pid: {p: 1200.0, i: 5.0, d: 10.0}
+joint2_position_controller:
+  type: position_controllers/JointPositionController
+  joint: joint2
+  pid: {p: 1400.0, i: 5.0, d: 10.0}
+joint3_position_controller:
+  type: position_controllers/JointPositionController
+  joint: joint3
+  pid: {p: 1200.0, i: 5.0, d: 5.0}
+joint4_position_controller:
+  type: position_controllers/JointPositionController
+  joint: joint4
+  pid: {p: 850.0, i: 3.0, d: 5.0}
+joint5_position_controller:
+  type: position_controllers/JointPositionController
+  joint: joint5
+  pid: {p: 500.0, i: 3.0, d: 1.0}
+joint6_position_controller:
+  type: position_controllers/JointPositionController
+  joint: joint6
+  pid: {p: 500.0, i: 1.0, d: 1.0}
+
+
+# # No Pid gains specified error fix
+# gazebo_ros_control:
+#   pid_gains:
+#     joint1: {p: 600, i: 5.0, d: 30, i_clamp: 1}
+#     joint2: {p: 600, i: 5.0, d: 30, i_clamp: 1}
+#     joint3: {p: 600, i: 5.0, d: 30, i_clamp: 1}
+#     joint4: {p: 450.0, i: 5.0, d: 10, i_clamp: 1}
+#     joint5: {p: 300.0, i: 5.0, d: 10, i_clamp: 1}
+#     joint6: {p: 150.0, i: 5.0, d: 10, i_clamp: 1}
+

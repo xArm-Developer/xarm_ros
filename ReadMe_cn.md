@@ -81,6 +81,25 @@
    * (2023-02-10) 新增xarm_moveit_servo支持xbox手柄/SpaceMouse/键盘控制
    * (2023-02-18) 给service(/xarm/ft_sensor_cali_load)增加保存操作, 增加力矩相关service(/xarm/ft_sensor_iden_load)
    * (2023-02-27) 增加控制Lite6 Gripper的service(/ufactory/open_lite6_gripper, /ufactory/close_lite6_gripper, /ufactory/stop_lite6_gripper)(注： 一旦stop之后，close将无效，必须先open才能启用控制)
+   * (2023-03-29) 新增launch启动参数model1300(默认为false), 更换xarm机械臂末端模型为1300系列的
+   * (2023-04-20) 更新URDF文件，适配ROS1和ROS2，并根据SN从配置文件加载连杆的惯性参数
+   * (2023-04-20) 新增launch启动参数`add_realsense_d435i`(默认为false), 支持加载Realsense D435i模型
+   * (2023-04-20) 新增launch启动参数`add_d435i_links`(默认为false), 支持在加载RealSense D435i模型的情况下增加D435i的各摄像头之间的连杆关系，在`add_realsense_d435i`为true时才有用
+   * (2023-04-20) 新增launch启动参数`robot_sn`支持加载对应的关节连杆的惯性参数，并自动覆盖model1300参数
+   * (2023-04-20) 新增launch启动参数 `attach_to`/`attach_xyz`/`attach_rpy`，支持把机械臂模型依附在其它模型之上
+   * (2023-04-21) 新增xarm_api里的[services使用说明文档](xarm_api/ReadMe.md)
+   * (2023-06-07) 新增对UFACTORY850机械臂的支持
+   * (2023-06-07) 新增 [uf_robot_moveit_config](uf_robot_moveit_config/Readme_cn.md), 支持xArm/Lite6/UFACTORY850系列机械臂使用moveit控制，后续可能会替代以下这些包，使用说明参见 [uf_robot_moveit_config](uf_robot_moveit_config/Readme_cn.md)
+      - xarm5_moveit_config
+      - xarm5_gripper_moveit_config
+      - xarm5_vacuum_moveit_config
+      - xarm6_moveit_config
+      - xarm6_gripper_moveit_config
+      - xarm6_vacuum_moveit_config
+      - xarm7_moveit_config
+      - xarm7_gripper_moveit_config
+      - xarm7_vacuum_moveit_config
+      - lite6_moveit_config
 
 # 3. 准备工作
 
@@ -242,7 +261,7 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
    $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=sphere
 
    # 加载其它mesh模型（这里加载vacuum_gripper为例，如果加载的模型是放在xarm_description/meshes/other里面，geometry_mesh_filename参数只需要传文件名）
-   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/visual/vacuum_gripper.STL geometry_mesh_tcp_xyz:='"0 0 0.126"'
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/xarm/visual/vacuum_gripper.stl geometry_mesh_tcp_xyz:='"0 0 0.126"'
    ```
 
 ### 参数说明
@@ -259,7 +278,7 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 - __geometry_mesh_tcp_rpy__: 几何模型相对于末端的偏移, 默认"0 0 0"，仅在geometry_type为mesh时有效  
 
 ## 5.6 xarm_planner:
-这个简单包装实现的规划器接口是基于 Moveit!中的 move_group interface, 可以使用户通过service指定目标位置进行规划和执行。 这部分的详细使用方法请阅读[xarm_planner包](./xarm_planner)的文档。  
+这个简单包装实现的规划器接口是基于 Moveit!中的 move_group interface, 可以使用户通过service指定目标位置进行规划和执行。 这部分的详细使用方法请阅读[xarm_planner包](./xarm_planner/ReadMe_cn.md)的文档。  
 #### 启动 xarm simple motion planner 控制 xArm 真实机械臂:  
 ```bash
    $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<控制盒的局域网IP地址> robot_dof:=<7|6|5>
@@ -728,9 +747,9 @@ $ roslaunch d435i_xarm_setup grasp_node_xarm_api.launch
 
 ## 7.4 在仿真的xArm模型末端添加RealSense D435i模型：
 如果使用UFACTORY提供的camera stand固定，可以通过以下设置添加到虚拟模型（以xarm7为例）：  
-1.同时带机械爪的模型： 设置[xarm7_with_gripper.xacro](./xarm_description/urdf/xarm7_with_gripper.xacro)的`add_realsense_d435i`参数为`true`。  
-2.同时带真空吸头的模型： 设置[xarm7_with_vacuum_gripper.xacro](./xarm_description/urdf/xarm7_with_vacuum_gripper.xacro)的`add_realsense_d435i`参数为`true`。  
-3.单纯附加相机在末端： 设置[xarm7_robot.urdf.xacro](./xarm_description/urdf/xarm7_robot.urdf.xacro)中`add_realsense_d435i`的默认值为`true`。  
+```bash
+ $ roslaunch xarm7_moveit_config demo.launch add_realsense_d435i:=true
+```  
 
 ## 7.5 颜色块抓取例子
 
@@ -740,6 +759,7 @@ $ roslaunch d435i_xarm_setup grasp_node_xarm_api.launch
  $ cd ~/catkin_ws/src/
  # 下载(针对不同ros版本请切换到对应分支)
  $ git clone https://github.com/JenniferBuehler/gazebo-pkgs.git
+ $ git clone https://github.com/JenniferBuehler/general-message-pkgs.git
  # 编译
  $ cd ..
  $ catkin_make
@@ -755,7 +775,7 @@ $ roslaunch d435i_xarm_setup grasp_node_xarm_api.launch
 ### 7.5.3 真机+realsense_d435i
 ```bash
  # 启动move_group
- $ roslaunch camera_demo xarm_move_group.launch robot_ip:=192.168.1.15 robot_dof:=6
+ $ roslaunch camera_demo xarm_move_group.launch robot_ip:=192.168.1.15 robot_dof:=6 add_realsense_d435i:=true
 
  # 运行颜色块识别抓取脚本(根据输出交互使用)
  $ rosrun camera_demo color_recognition.py

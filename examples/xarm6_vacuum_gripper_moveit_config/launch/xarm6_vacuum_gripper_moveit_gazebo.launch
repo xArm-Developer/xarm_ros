@@ -1,5 +1,9 @@
 <launch>
   <arg name="namespace" default="xarm"/>
+  <arg name="model1300" default="false" />
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
+  <arg name="robot_sn" default="" />
 
   <!-- Remap the name space so it can send command to gazebo loaded controller -->
   <!-- this remap must appear BEFORE move_group launch -->
@@ -9,6 +13,10 @@
     <arg name="jnt_stat_source" value="[/$(arg namespace)/joint_states]" />
     <arg name="load_move_group" value="true" />
     <arg name="pub_tf" value="false" />
+    <arg name="model1300" value="$(arg model1300)"/>
+    <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)"/>
+    <arg name="add_d435i_links" value="$(arg add_d435i_links)"/>
+    <arg name="robot_sn" value="$(arg robot_sn)"/>
   </include>
 
   

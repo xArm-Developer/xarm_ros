@@ -1,0 +1,67 @@
+<launch>
+  <arg name="robot_sn" default="" />
+  <arg name="model1300" default="false" />
+  <arg name="limited" default="true" />
+  <arg name="hw_ns" default="xarm"/>
+  <arg name="velocity_control" default="false"/>
+
+  <arg name="attach_to" default="world" />
+  <arg name="attach_xyz" default="'0 0 0'" />
+  <arg name="attach_rpy" default="'0 0 0'" />
+  
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
+  <arg name="add_gripper" default="false" />
+  <arg name="add_vacuum_gripper" default="false" />
+  <arg name="add_other_geometry" default="false"/>
+  <arg name="geometry_type" default="box"/>
+  <arg name="geometry_mass" default="0.1"/>
+  <arg name="geometry_height" default="0.1"/>
+  <arg name="geometry_radius" default="0.1"/>
+  <arg name="geometry_length" default="0.1"/>
+  <arg name="geometry_width" default="0.1"/>
+  <arg name="geometry_mesh_filename" default=""/>
+  <arg name="geometry_mesh_origin_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_origin_rpy" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
+
+  <arg name="sensors_3d" default="false" />
+  <arg name="jnt_stat_pub_rate" default="10" />
+
+  <include file="$(find uf_robot_moveit_config)/launch/_dual_robot_moveit_gazebo.launch">
+    <arg name="dof" value="6" />
+    <arg name="robot_type" value="uf850" />
+    <arg name="robot_sn" value="$(arg robot_sn)"/> 
+    <arg name="model1300" value="$(arg model1300)"/>
+    <arg name="limited" value="$(arg limited)"/>
+    <arg name="hw_ns" value="$(arg hw_ns)"/>
+    <arg name="velocity_control" value="$(arg velocity_control)" />
+
+    <arg name="attach_to" value="$(arg attach_to)"/>
+    <arg name="attach_xyz" value="$(arg attach_xyz)"/>
+    <arg name="attach_rpy" value="$(arg attach_rpy)"/>
+    
+    <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)"/>
+    <arg name="add_d435i_links" value="$(arg add_d435i_links)"/>
+    <arg name="add_gripper" value="$(arg add_gripper)"/>
+    <arg name="add_vacuum_gripper" value="$(arg add_vacuum_gripper)"/>
+    <arg name="add_other_geometry" value="$(arg add_other_geometry)"/>
+    <arg name="geometry_type" value="$(arg geometry_type)"/>
+    <arg name="geometry_mass" value="$(arg geometry_mass)"/>
+    <arg name="geometry_height" value="$(arg geometry_height)"/>
+    <arg name="geometry_radius" value="$(arg geometry_radius)"/>
+    <arg name="geometry_length" value="$(arg geometry_length)"/>
+    <arg name="geometry_width" value="$(arg geometry_width)"/>
+    <arg name="geometry_mesh_filename" value="$(arg geometry_mesh_filename)"/>
+    <arg name="geometry_mesh_origin_xyz" value="$(arg geometry_mesh_origin_xyz)"/>
+    <arg name="geometry_mesh_origin_rpy" value="$(arg geometry_mesh_origin_rpy)"/>
+    <arg name="geometry_mesh_tcp_xyz" value="$(arg geometry_mesh_tcp_xyz)"/>
+    <arg name="geometry_mesh_tcp_rpy" value="$(arg geometry_mesh_tcp_rpy)"/>
+
+    <arg name="sensors_3d" value="$(arg sensors_3d)" />
+    <arg name="jnt_stat_pub_rate" value="$(arg jnt_stat_pub_rate)" />
+
+  </include>
+
+</launch>

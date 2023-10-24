@@ -1,15 +1,31 @@
 <launch>
   <!-- By default we do not overwrite the URDF. Change the following to true to change the default behavior -->
   <arg name="load_robot_description" default="false"/>
+  <arg name="model1300" default="false" />
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
+  <arg name="attach_to" default="world" />
+  <arg name="attach_xyz" default="'0 0 0'" />
+  <arg name="attach_rpy" default="'0 0 0'" />
+  <arg name="robot_sn" default="" />
 
   <!-- The name of the parameter under which the URDF is loaded -->
   <arg name="robot_description" default="robot_description"/>
 
   <!-- Load universal robot description format (URDF) -->
-  <param if="$(arg load_robot_description)" name="$(arg robot_description)" command="xacro --inorder  '$(find xarm_description)/urdf/xarm7_with_gripper.xacro' limited:=true"/>
+  <param if="$(arg load_robot_description)" name="$(arg robot_description)" 
+    command="xacro --inorder  '$(find xarm_description)/urdf/xarm_device.urdf.xacro' robot_type:=xarm dof:=7 add_gripper:=true limited:=true 
+      model1300:=$(arg model1300)
+      add_realsense_d435i:=$(arg add_realsense_d435i)
+      add_d435i_links:=$(arg add_d435i_links)
+      attach_to:=$(arg attach_to)
+      attach_xyz:=$(arg attach_xyz)
+      attach_rpy:=$(arg attach_rpy)
+      robot_sn:=$(arg robot_sn)
+    "/>
 
   <!-- The semantic description that corresponds to the URDF -->
-  <param if="$(arg load_robot_description)" name="$(arg robot_description)_semantic" command="xacro --inorder  '$(find xarm_description)/srdf/xarm.srdf.xacro' dof:=7 add_gripper:=true robot_type:=xarm" />
+  <param if="$(arg load_robot_description)" name="$(arg robot_description)_semantic" command="xacro --inorder  '$(find xarm_description)/srdf/xarm.srdf.xacro' robot_type:=xarm dof:=7 add_gripper:=true" />
 
   <!-- Load updated joint limits (override information from URDF) -->
   <group ns="$(arg robot_description)_planning">

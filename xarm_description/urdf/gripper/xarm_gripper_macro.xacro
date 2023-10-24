@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="xarm_gripper" >  
+
+  <!-- xarm_gripper -->
+  <xacro:include filename="$(find xarm_description)/urdf/gripper/xarm_gripper.ros2_control.xacro" />
+  <xacro:include filename="$(find xarm_description)/urdf/gripper/xarm_gripper.urdf.xacro" />
+  <xacro:include filename="$(find xarm_description)/urdf/gripper/xarm_gripper.transmission.xacro" />
+  <xacro:include filename="$(find xarm_description)/urdf/gripper/xarm_gripper.gazebo.xacro" />
+
+  <xacro:macro name="xarm_gripper_macro" params="prefix:='' attach_to:='' ns:='xarm' attach_xyz:='0 0 0' attach_rpy:='0 0 0' 
+    ros2_control_plugin:='uf_robot_hardware/UFRobotFakeSystemHardware' dof:=7 hard_interface:='PositionJointInterface' ">
+
+    <xacro:if value="${is_ros2 and ros2_control_plugin != 'uf_robot_hardware/UFRobotSystemHardware'}">
+      <xacro:xarm_gripper_ros2_control prefix="${prefix}" ros2_control_plugin="${ros2_control_plugin}" />
+    </xacro:if>
+
+    <xacro:xarm_gripper_urdf prefix="${prefix}" attach_to="${attach_to}" attach_xyz="${attach_xyz}" attach_rpy="${attach_rpy}" />
+
+    <xacro:xarm_gripper_transmission prefix="${prefix}" hard_interface="${hard_interface}" />
+
+    <xacro:xarm_gripper_gazebo prefix="${prefix}" />
+
+    <xacro:if value="${not is_ros2}">
+      <xacro:xarm_gazebo_grasp_fix prefix="${prefix}" palm_link="${prefix}link${dof}" />
+    </xacro:if>
+    
+    <!-- mimic_joint_plugin has to be installed: -->
+    <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}left_finger_joint"
+      following_joint="${prefix}drive_joint" mimic_joint="${prefix}left_finger_joint"
+      has_pid="${is_ros2}" multiplier="1.0" max_effort="10.0" />
+
+    <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}left_inner_knuckle_joint"
+      following_joint="${prefix}drive_joint" mimic_joint="${prefix}left_inner_knuckle_joint"
+      has_pid="${is_ros2}" multiplier="1.0" max_effort="10.0" />
+
+    <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}right_outer_knuckle_joint"
+      following_joint="${prefix}drive_joint" mimic_joint="${prefix}right_outer_knuckle_joint"
+      has_pid="${is_ros2}" multiplier="1.0" max_effort="10.0" />
+
+    <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}right_finger_joint"
+      following_joint="${prefix}drive_joint" mimic_joint="${prefix}right_finger_joint"
+      has_pid="${is_ros2}" multiplier="1.0" max_effort="10.0" />
+
+    <xacro:mimic_joint_plugin_gazebo name_prefix="${prefix}right_inner_knuckle_joint"
+      following_joint="${prefix}drive_joint" mimic_joint="${prefix}right_inner_knuckle_joint"
+      has_pid="${is_ros2}" multiplier="1.0" max_effort="10.0" />
+
+  </xacro:macro>
+</robot>

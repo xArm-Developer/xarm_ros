@@ -16,6 +16,9 @@
   <arg unless="$(arg info)" name="command_args" value="" />
   <arg     if="$(arg info)" name="command_args" value="--debug" />
 
+  <arg name="sim_gazebo" default="false"/>
+  <arg name="add_gripper" default="false"/>
+
   <!-- move_group settings -->
   <arg name="allow_trajectory_execution" default="true"/>
   <arg name="fake_execution" default="false"/>
@@ -31,8 +34,10 @@
   <!-- Trajectory Execution Functionality -->
   <include ns="move_group" file="$(find xarm7_moveit_config)/launch/trajectory_execution.launch.xml" if="$(arg allow_trajectory_execution)">
     <arg name="moveit_manage_controllers" value="true" />
-    <arg name="moveit_controller_manager" value="xarm7" unless="$(arg fake_execution)"/>
     <arg name="moveit_controller_manager" value="fake" if="$(arg fake_execution)"/>
+    <arg name="moveit_controller_manager" value="gazebo" if="$(eval not arg('fake_execution') and arg('sim_gazebo'))"/>
+    <arg name="moveit_controller_manager" value="xarm7" if="$(eval not arg('fake_execution') and not arg('sim_gazebo'))"/>
+    <arg name="add_gripper" value="$(arg add_gripper)"/>
   </include>
 
   <!-- Sensors Functionality -->

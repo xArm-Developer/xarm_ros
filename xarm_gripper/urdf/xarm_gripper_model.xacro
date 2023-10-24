@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro"
        name="xarm_gripper" >
   <!-- common stuff -->
-  <xacro:include filename="$(find xarm_description)/urdf/common.gazebo.xacro" />
+  <xacro:include filename="$(find xarm_description)/urdf/common/common.gazebo.xacro" />
 
   <!-- xarm_gripper -->
   <xacro:include filename="$(find xarm_gripper)/urdf/xarm_gripper.urdf.xacro" />

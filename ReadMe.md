@@ -86,8 +86,27 @@ For **kinetic** users, please use the [kinetic branch](https://github.com/xArm-D
    * (2022-09-07) Update submodule xarm-sdk to version 1.11.0
    * (2022-11-16) Add torque related services: /xarm/ft_sensor_enable, /xarm/ft_sensor_app_set, /xarm/ft_sensor_set_zero, /xarm/ft_sensor_cali_load, /xarm/get_ft_sensor_error
    * (2023-02-10) Added xarm_moveit_servo to support xbox controller/SpaceMouse/keyboard control
-   * (2022-02-18) Automatically saving in servie(/xarm/ft_sensor_cali_load) and add torque related service(/xarm/ft_sensor_iden_load)
+   * (2022-02-18) Automatically saving in service(/xarm/ft_sensor_cali_load) and add torque related service(/xarm/ft_sensor_iden_load)
    * (2023-02-27) Added service to control Lite6 Gripper(/ufactory/open_lite6_gripper, /ufactory/close_lite6_gripper, /ufactory/stop_lite6_gripper)(Note: Once stop, close will be invalid, you must open first to enable control)
+   * (2023-03-29) Added the launch parameter model1300 (default is false), and replaced the model of the end of the xarm robot arm with the 1300 series
+   * (2023-04-20) Update the URDF file, adapt to ROS1 and ROS2, and load the inertia parameters of the link from the configuration file according to the SN
+   * (2023-04-20) Added launch parameter `add_realsense_d435i` (default is false), supports loading Realsense D435i model
+   * (2023-04-20) Added the launch parameter `add_d435i_links` (default is false), which supports adding the link relationship between D435i cameras when loading the RealSense D435i model. It is only useful when `add_realsense_d435i` is true
+   * (2023-04-20) Added the launch parameter `robot_sn`, supports loading the inertia parameters of the corresponding joint link, and automatically overrides the `model1300` parameters
+   * (2023-04-20) Added launch parameters `attach_to`/`attach_xyz`/`attach_rpy` to support attaching the robot arm model to other models
+   * (2023-04-21) Added [services usage documentation](xarm_api/ReadMe.md) in xarm_api
+   * (2023-06-07) Added support for __UFACTORY850__ robotic arm
+   * (2023-06-07) Added [uf_robot_moveit_config](uf_robot_moveit_config/Readme.md), support xArm/Lite6/UFACTORY850 series of robotic arm controls with moveit, which may replace these packages in the future. See instructions for [uf_robot_moveit_config](uf_robot_moveit_config/Readme.md)
+      - xarm5_moveit_config
+      - xarm5_gripper_moveit_config
+      - xarm5_vacuum_moveit_config
+      - xarm6_moveit_config
+      - xarm6_gripper_moveit_config
+      - xarm6_vacuum_moveit_config
+      - xarm7_moveit_config
+      - xarm7_gripper_moveit_config
+      - xarm7_vacuum_moveit_config
+      - lite6_moveit_config
 
 # 3. Preparations before using this package
 
@@ -140,7 +159,7 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
    ```bash
    $ rosdep install --from-paths . --ignore-src --rosdistro kinetic -y
    ```
-   And chane 'kinetic' to the ROS distribution you use.  
+   And change 'kinetic' to the ROS distribution you use.  
 
 ## 4.4 Build the code
    ```bash
@@ -249,7 +268,7 @@ Please note: xarm_moveit_config related packages will limit all joints within `[
    $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=sphere
 
    # attaching customized mesh model:（Here take xarm vacuum_gripper as an example，if the mesh model could be placed in: 'xarm_description/meshes/other'directory，'geometry_mesh_filename' argument can be simplified to be just the filename）
-   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/visual/vacuum_gripper.STL geometry_mesh_tcp_xyz:='"0 0 0.126"'
+   $ roslaunch xarm7_moveit_config demo.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/xarm/visual/vacuum_gripper.stl geometry_mesh_tcp_xyz:='"0 0 0.126"'
    ```
 
 ### Argument explanations:
@@ -267,7 +286,7 @@ Please note: xarm_moveit_config related packages will limit all joints within `[
 
 
 ## 5.6 xarm_planner:
-&ensp;&ensp;This implemented simple planner interface is based on move_group from Moveit! and provide ros service for users to do planning & execution based on the requested target, user can find detailed instructions on how to use it inside [***xarm_planner package***](./xarm_planner/).  
+&ensp;&ensp;This implemented simple planner interface is based on move_group from Moveit! and provide ros service for users to do planning & execution based on the requested target, user can find detailed instructions on how to use it inside [*xarm_planner package*](./xarm_planner/ReadMe.md).  
 #### To launch the xarm simple motion planner together with the real xArm:  
 ```bash
    $ roslaunch xarm_planner xarm_planner_realHW.launch robot_ip:=<your controller box LAN IP address> robot_dof:=<7|6|5> add_(vacuum_)gripper:=<true|false>
@@ -748,9 +767,9 @@ Please note it will use previously mentioned sample handeye calibration result, 
 
 ## 7.4 Adding RealSense D435i model to simulated xArm：
 For installation with camera stand provided by UFACTORY, the cam model can be attached by following modifications (use xarm7 as example):    
-1.Together with xArm Gripper model: Set `add_realsense_d435i` default value to be `true` in [xarm7_with_gripper.xacro](./xarm_description/urdf/xarm7_with_gripper.xacro).  
-2.Together with xArm Vacuum Gripper model: Set `add_realsense_d435i` default value to be `true` in [xarm7_with_vacuum_gripper.xacro](./xarm_description/urdf/xarm7_with_vacuum_gripper.xacro).  
-3.Purely the d435i: Set `add_realsense_d435i` default value to be `true` in [xarm7_robot.urdf.xacro](./xarm_description/urdf/xarm7_robot.urdf.xacro).  
+```bash
+ $ roslaunch xarm7_moveit_config demo.launch add_realsense_d435i:=true
+```
 
 ## 7.5 Color Cube Grasping Demo
 
@@ -760,6 +779,7 @@ For installation with camera stand provided by UFACTORY, the cam model can be at
  $ cd ~/catkin_ws/src/
  # Download through git (mind to checkout the proper branch):
  $ git clone https://github.com/JenniferBuehler/gazebo-pkgs.git
+ $ git clone https://github.com/JenniferBuehler/general-message-pkgs.git
  # Compile:
  $ cd ..
  $ catkin_make
@@ -775,7 +795,7 @@ For installation with camera stand provided by UFACTORY, the cam model can be at
 ### 7.5.3 Real xArm and Intel realsense_d435i hardware
 ```bash
  # launch move_group:
- $ roslaunch camera_demo xarm_move_group.launch robot_ip:=192.168.1.15 robot_dof:=6
+ $ roslaunch camera_demo xarm_move_group.launch robot_ip:=192.168.1.15 robot_dof:=6 add_realsense_d435i:=true
 
  # In another terminal, run the color recognition and grasping script (use with interaction prompt):
  $ rosrun camera_demo color_recognition.py

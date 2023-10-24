@@ -1,5 +1,4 @@
 <launch>
-
   <!-- This file makes it easy to include the settings for sensor managers -->
 
   <!-- Params for 3D sensors config -->

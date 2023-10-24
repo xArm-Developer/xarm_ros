@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="private_macro">
+  
+  <xacro:property name="is_ros2" value="false" scope="parent"/>
+  <xacro:property name="use_xacro_load_yaml" value="false" scope="parent"/>
+  <xacro:property name="use_len" value="true" scope="parent"/>
+
+  <xacro:macro name="device_macro_begin" params=""> 
+    <!-- Insert at the beginning of xarm_device_macro.xacro -->
+  </xacro:macro>
+  <xacro:macro name="device_macro_end" params=""> 
+    <!-- Insert at the end of xarm_device_macro.xacro -->
+  </xacro:macro>
+
+</robot>

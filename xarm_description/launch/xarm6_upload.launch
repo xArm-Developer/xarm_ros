@@ -3,16 +3,23 @@
 
   <arg name="limited" default="false" doc="If true, limits joint range [-PI, PI] on all joints." />
   <arg name="add_gripper" default="false" doc="If true, will attach xarm_gripper from UFACTORY to the end" />
+  <arg name="add_vacuum_gripper" default="false" doc="If true, will attach xarm_vacuum_gripper from UFACTORY to the end" />
   <arg name="robot_type" default="xarm" />
+  <arg name="model1300" default="false" doc="load the new tool end model" />
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
+  <arg name="robot_sn" default="" />
   
-  <param name="robot_description" if="$(arg add_gripper)"
-    command="$(find xacro)/xacro
-    --inorder '$(find xarm_description)/urdf/xarm6_with_gripper.xacro'
-    limited:=$(arg limited)" />
-
-  <param name="robot_description" unless="$(arg add_gripper)"
-    command="$(find xacro)/xacro
-    --inorder '$(find xarm_description)/urdf/$(arg robot_type)6_robot.urdf.xacro'
-    limited:=$(arg limited)" />
+  <include file="$(find xarm_description)/launch/_robot_upload.launch" >
+    <arg name="dof" value="6"/>
+    <arg name="robot_type" value="$(arg robot_type)"/>
+    <arg name="limited" value="$(arg limited)"/>
+    <arg name="add_gripper" value="$(arg add_gripper)" />
+    <arg name="add_vacuum_gripper" value="$(arg add_vacuum_gripper)" />
+    <arg name="model1300" value="$(arg model1300)" />
+    <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)" />
+    <arg name="add_d435i_links" value="$(arg add_d435i_links)" />
+    <arg name="robot_sn" value="$(arg robot_sn)" />
+  </include>
 
 </launch>

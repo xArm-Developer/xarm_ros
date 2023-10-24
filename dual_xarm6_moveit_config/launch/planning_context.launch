@@ -1,15 +1,33 @@
 <launch>
   <!-- By default we do not overwrite the URDF. Change the following to true to change the default behavior -->
   <arg name="load_robot_description" default="false"/>
+  <arg name="model1300_1" default="false" />
+  <arg name="model1300_2" default="false" />
+  <arg name="add_realsense_d435i_1" default="false" />
+  <arg name="add_realsense_d435i_2" default="false" />
+  <arg name="add_d435i_links_1" default="false" />
+  <arg name="add_d435i_links_2" default="false" />
+  <arg name="robot_sn_1" default="" />
+  <arg name="robot_sn_2" default="" />
 
   <!-- The name of the parameter under which the URDF is loaded -->
   <arg name="robot_description" default="robot_description"/>
 
   <!-- Load universal robot description format (URDF) -->
-  <param if="$(arg load_robot_description)" name="$(arg robot_description)" command="xacro --inorder  '$(find xarm_description)/urdf/dual_xarm6_robot.urdf.xacro' limited:=true"/>
+  <param if="$(arg load_robot_description)" name="$(arg robot_description)" 
+    command="xacro --inorder  '$(find xarm_description)/urdf/dual_xarm_device.urdf.xacro' dof_1:=6 dof_2:=6 limited:=true 
+      model1300_1:=$(arg model1300_1)
+      model1300_2:=$(arg model1300_2)
+      add_realsense_d435i_1:=$(arg add_realsense_d435i_1)
+      add_realsense_d435i_2:=$(arg add_realsense_d435i_2)
+      add_d435i_links_1:=$(arg add_d435i_links_1)
+      add_d435i_links_2:=$(arg add_d435i_links_2)
+      robot_sn_1:=$(arg robot_sn_1)
+      robot_sn_2:=$(arg robot_sn_2)
+    "/>
 
   <!-- The semantic description that corresponds to the URDF -->
-  <param name="$(arg robot_description)_semantic" textfile="$(find dual_xarm6_moveit_config)/config/xarm6.srdf" />
+  <param if="$(arg load_robot_description)" name="$(arg robot_description)_semantic" command="xacro --inorder  '$(find xarm_description)/srdf/dual_xarm.srdf.xacro' dof_1:=6 dof_2:=6" />
 
   <!-- Load updated joint limits (override information from URDF) -->
   <group ns="$(arg robot_description)_planning">

@@ -1,0 +1,119 @@
+<launch>
+  <arg name="dof" default="7" />
+  <arg name="robot_type" default="xarm" />
+  <arg name="robot_sn" default="" />
+  <arg name="model1300" default="false" />
+  <arg name="limited" default="true" />
+  <arg name="hw_ns" default="xarm"/>
+  <arg name="velocity_control" default="false"/>
+
+  <arg name="attach_to" default="world" />
+  <arg name="attach_xyz" default="'0 0 0'" />
+  <arg name="attach_rpy" default="'0 0 0'" />
+  
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
+  <arg name="add_gripper" default="false" />
+  <arg name="add_vacuum_gripper" default="false" />
+  <arg name="add_other_geometry" default="false"/>
+  <arg name="geometry_type" default="box"/>
+  <arg name="geometry_mass" default="0.1"/>
+  <arg name="geometry_height" default="0.1"/>
+  <arg name="geometry_radius" default="0.1"/>
+  <arg name="geometry_length" default="0.1"/>
+  <arg name="geometry_width" default="0.1"/>
+  <arg name="geometry_mesh_filename" default=""/>
+  <arg name="geometry_mesh_origin_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_origin_rpy" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
+
+  <arg name="sensors_3d" default="false" />
+  <arg name="jnt_stat_pub_rate" default="10" />
+
+  <arg name="robot_dof" value="$(eval arg('dof') if arg('robot_type') == 'xarm' else 6)" />
+  <arg name="robot_name" value="$(eval 'uf850' if arg('robot_type') == 'uf850' else arg('robot_type') + str(arg('robot_dof')))" />
+
+  <!-- Remap the name space so it can send command to gazebo loaded controller -->
+  <!-- this remap must appear BEFORE move_group launch -->
+  <arg if="$(eval arg('robot_type') == 'uf850')" name="robot_traj_controller" value="$(eval arg('robot_type') + ('_traj_controller_velocity' if arg('velocity_control') else '_traj_controller'))" />
+  <arg unless="$(eval arg('robot_type') == 'uf850')" name="robot_traj_controller" value="$(eval str(arg('robot_type')) + str(arg('dof')) + ('_traj_controller_velocity' if arg('velocity_control') else '_traj_controller'))" />
+  <remap from="/L_$(arg robot_name)_controller/follow_joint_trajectory" to="/$(arg hw_ns)/L_$(arg robot_traj_controller)/follow_joint_trajectory"/>
+  <remap from="/R_$(arg robot_name)_controller/follow_joint_trajectory" to="/$(arg hw_ns)/R_$(arg robot_traj_controller)/follow_joint_trajectory"/>
+  <arg name="gripper_traj_controller" value="$(eval 'gripper_trajectory_controller_velocity' if arg('velocity_control') else 'gripper_trajectory_controller')" />
+  <remap if="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" from="L_gripper_controller/follow_joint_trajectory" to="/$(arg hw_ns)/L_$(arg gripper_traj_controller)/follow_joint_trajectory"/>
+  <remap if="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" from="R_gripper_controller/follow_joint_trajectory" to="/$(arg hw_ns)/R_$(arg gripper_traj_controller)/follow_joint_trajectory"/>
+
+  <include file="$(find uf_robot_moveit_config)/launch/__moveit_rviz_common.launch">
+    <arg name="jnt_stat_source" value="[/$(arg hw_ns)/joint_states]" />
+    <arg name="load_move_group" value="true" />
+    <arg name="pub_tf" value="false" />
+    <arg name="sim_gazebo" value="true"/>
+    <arg name="dual" value="true" />
+
+    <arg name="dof" value="$(arg dof)" />
+    <arg name="robot_type" value="$(arg robot_type)" />
+    <arg name="robot_sn" value="$(arg robot_sn)"/> 
+    <arg name="model1300" value="$(arg model1300)"/>
+    <arg name="limited" value="$(arg limited)"/>
+    <arg name="velocity_control" value="$(arg velocity_control)" />
+
+    <arg name="attach_to" value="$(arg attach_to)"/>
+    <arg name="attach_xyz" value="$(arg attach_xyz)"/>
+    <arg name="attach_rpy" value="$(arg attach_rpy)"/>
+    
+    <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)"/>
+    <arg name="add_d435i_links" value="$(arg add_d435i_links)"/>
+    <arg name="add_gripper" value="$(arg add_gripper)"/>
+    <arg name="add_vacuum_gripper" value="$(arg add_vacuum_gripper)"/>
+    <arg name="add_other_geometry" value="$(arg add_other_geometry)"/>
+    <arg name="geometry_type" value="$(arg geometry_type)"/>
+    <arg name="geometry_mass" value="$(arg geometry_mass)"/>
+    <arg name="geometry_height" value="$(arg geometry_height)"/>
+    <arg name="geometry_radius" value="$(arg geometry_radius)"/>
+    <arg name="geometry_length" value="$(arg geometry_length)"/>
+    <arg name="geometry_width" value="$(arg geometry_width)"/>
+    <arg name="geometry_mesh_filename" value="$(arg geometry_mesh_filename)"/>
+    <arg name="geometry_mesh_origin_xyz" value="$(arg geometry_mesh_origin_xyz)"/>
+    <arg name="geometry_mesh_origin_rpy" value="$(arg geometry_mesh_origin_rpy)"/>
+    <arg name="geometry_mesh_tcp_xyz" value="$(arg geometry_mesh_tcp_xyz)"/>
+    <arg name="geometry_mesh_tcp_rpy" value="$(arg geometry_mesh_tcp_rpy)"/>
+
+    <arg name="sensors_3d" value="$(arg sensors_3d)" />
+    <arg name="jnt_stat_pub_rate" value="$(arg jnt_stat_pub_rate)" />
+
+  </include>
+
+  <include file="$(find xarm_gazebo)/launch/_dual_robot_beside_table.launch">
+    <arg name="dof" value="$(arg dof)" />
+    <arg name="robot_type" value="$(arg robot_type)" />
+    <arg name="robot_sn" value="$(arg robot_sn)"/> 
+    <arg name="model1300" value="$(arg model1300)"/>
+    <arg name="limited" value="$(arg limited)"/>
+    <arg name="hw_ns" value="$(arg hw_ns)"/>
+    <arg name="velocity_control" value="$(arg velocity_control)" />
+
+    <arg name="attach_to" value="$(arg attach_to)"/>
+    <arg name="attach_xyz" value="$(arg attach_xyz)"/>
+    <arg name="attach_rpy" value="$(arg attach_rpy)"/>
+    
+    <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)"/>
+    <arg name="add_d435i_links" value="$(arg add_d435i_links)"/>
+    <arg name="add_gripper" value="$(arg add_gripper)"/>
+    <arg name="add_vacuum_gripper" value="$(arg add_vacuum_gripper)"/>
+    <arg name="add_other_geometry" value="$(arg add_other_geometry)"/>
+    <arg name="geometry_type" value="$(arg geometry_type)"/>
+    <arg name="geometry_mass" value="$(arg geometry_mass)"/>
+    <arg name="geometry_height" value="$(arg geometry_height)"/>
+    <arg name="geometry_radius" value="$(arg geometry_radius)"/>
+    <arg name="geometry_length" value="$(arg geometry_length)"/>
+    <arg name="geometry_width" value="$(arg geometry_width)"/>
+    <arg name="geometry_mesh_filename" value="$(arg geometry_mesh_filename)"/>
+    <arg name="geometry_mesh_origin_xyz" value="$(arg geometry_mesh_origin_xyz)"/>
+    <arg name="geometry_mesh_origin_rpy" value="$(arg geometry_mesh_origin_rpy)"/>
+    <arg name="geometry_mesh_tcp_xyz" value="$(arg geometry_mesh_tcp_xyz)"/>
+    <arg name="geometry_mesh_tcp_rpy" value="$(arg geometry_mesh_tcp_rpy)"/>
+
+  </include>
+
+</launch>

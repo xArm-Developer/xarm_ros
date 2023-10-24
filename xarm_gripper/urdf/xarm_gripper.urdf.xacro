@@ -33,7 +33,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/base_link.STL" />
+          filename="package://xarm_gripper/meshes/base_link.stl" />
       </geometry>
       <!-- <material
         name="">
@@ -50,7 +50,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/base_link_collision.STL" />
+          filename="package://xarm_gripper/meshes/base_link_collision.stl" />
       </geometry>
     </collision>
   </link>
@@ -76,7 +76,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/left_outer_knuckle.STL" />
+          filename="package://xarm_gripper/meshes/left_outer_knuckle.stl" />
       </geometry>
       <material name="Silver">
         <color rgba="0.753 0.753 0.753 1.0"/>
@@ -88,7 +88,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/left_outer_knuckle.STL" />
+          filename="package://xarm_gripper/meshes/left_outer_knuckle.stl" />
       </geometry>
     </collision>
   </link>
@@ -132,7 +132,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/left_finger.STL" />
+          filename="package://xarm_gripper/meshes/left_finger.stl" />
       </geometry>
       <material name="Silver">
         <color rgba="0.753 0.753 0.753 1.0"/>
@@ -144,7 +144,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/left_finger.STL" />
+          filename="package://xarm_gripper/meshes/left_finger.stl" />
       </geometry>
     </collision>
   </link>
@@ -189,7 +189,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/left_inner_knuckle.STL" />
+          filename="package://xarm_gripper/meshes/left_inner_knuckle.stl" />
       </geometry>
       <material name="Silver">
         <color rgba="0.753 0.753 0.753 1.0"/>
@@ -201,7 +201,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/left_inner_knuckle.STL" />
+          filename="package://xarm_gripper/meshes/left_inner_knuckle.stl" />
       </geometry>
     </collision>
   </link>
@@ -246,7 +246,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/right_outer_knuckle.STL" />
+          filename="package://xarm_gripper/meshes/right_outer_knuckle.stl" />
       </geometry>
       <material name="Silver">
         <color rgba="0.753 0.753 0.753 1.0"/>
@@ -258,7 +258,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/right_outer_knuckle.STL" />
+          filename="package://xarm_gripper/meshes/right_outer_knuckle.stl" />
       </geometry>
     </collision>
   </link>
@@ -303,7 +303,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/right_finger.STL" />
+          filename="package://xarm_gripper/meshes/right_finger.stl" />
       </geometry>
       <material name="Silver">
         <color rgba="0.753 0.753 0.753 1.0"/>
@@ -315,7 +315,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/right_finger.STL" />
+          filename="package://xarm_gripper/meshes/right_finger.stl" />
       </geometry>
     </collision>
   </link>
@@ -360,7 +360,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/right_inner_knuckle.STL" />
+          filename="package://xarm_gripper/meshes/right_inner_knuckle.stl" />
       </geometry>
       <material name="Silver">
         <color rgba="0.753 0.753 0.753 1.0"/>
@@ -372,7 +372,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://xarm_gripper/meshes/right_inner_knuckle.STL" />
+          filename="package://xarm_gripper/meshes/right_inner_knuckle.stl" />
       </geometry>
     </collision>
   </link>
