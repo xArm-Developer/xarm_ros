@@ -32,6 +32,9 @@
   <arg name="geometry_mesh_origin_rpy" default="'0 0 0'"/>
   <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
   <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
+
+  <arg name="kinematics_suffix_1" default=""/>
+  <arg name="kinematics_suffix_2" default=""/>
   
   <arg name="robot_dof" value="$(eval arg('dof') if arg('robot_type') == 'xarm' else 6)" />
   <!-- <arg name="robot_name" value="$(eval 'dual_uf850' if arg('robot_type') == 'uf850' else 'dual_' + arg('robot_type') + str(arg('robot_dof')))" /> -->
@@ -57,6 +60,8 @@
     robot_sn_2:=$(arg robot_sn)
     hw_ns:=$(arg hw_ns)
     limited:=$(arg limited)
+    kinematics_suffix_1:=$(arg kinematics_suffix_1)
+    kinematics_suffix_2:=$(arg kinematics_suffix_2)
     model1300_1:=$(arg model1300)
     model1300_2:=$(arg model1300)
     effort_control:=$(arg effort_control) 

@@ -13,6 +13,8 @@
   <arg name="robot_type" default="xarm" />
   <arg name="robot_name" default="xarm7" />
   <arg name="velocity_control" default="false"/>
+  <arg name="kinematics_suffix_1" default=""/>
+  <arg name="kinematics_suffix_2" default=""/>
 
   <!-- The name of the parameter under which the URDF is loaded -->
   <arg name="robot_description" default="robot_description"/>
@@ -60,6 +62,7 @@
       geometry_mesh_origin_rpy:=$(arg geometry_mesh_origin_rpy)
       geometry_mesh_tcp_xyz:=$(arg geometry_mesh_tcp_xyz)
       geometry_mesh_tcp_rpy:=$(arg geometry_mesh_tcp_rpy)
+      kinematics_suffix:=$(arg kinematics_suffix_1)
     "/>
 
   <param if="$(arg load_robot_description)" name="$(arg robot_description)_semantic" 

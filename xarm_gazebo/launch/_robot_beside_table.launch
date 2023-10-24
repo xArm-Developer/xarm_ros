@@ -11,6 +11,7 @@
   <arg name="hw_ns" default="xarm"/>
   <arg name="velocity_control" default="false"/>
   <arg name="effort_control" default="false"/>
+  <arg name="kinematics_suffix" default=""/>
 
   <arg name="attach_to" default="world" />
   <arg name="attach_xyz" default="'0 0 0'" />
@@ -76,6 +77,7 @@
     geometry_mesh_origin_rpy:=$(arg geometry_mesh_origin_rpy)
     geometry_mesh_tcp_xyz:=$(arg geometry_mesh_tcp_xyz)
     geometry_mesh_tcp_rpy:=$(arg geometry_mesh_tcp_rpy)
+    kinematics_suffix:=$(arg kinematics_suffix)
     "/>
 
   <!-- spawn robot model in gazebo, located on the table -->

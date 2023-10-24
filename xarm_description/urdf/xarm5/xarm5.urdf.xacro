@@ -8,7 +8,7 @@
     joint4_lower_limit:=${-1.69297}  joint4_upper_limit:=${pi}
     joint5_lower_limit:=${-2.0*pi}  joint5_upper_limit:=${2.0*pi}
     model1300:=false
-    inertial_params_filename:='' "
+    inertial_params_filename:='' kinematics_params_filename:='' "
     >
     
     <!-- define property -->
@@ -31,10 +31,13 @@
     </xacro:unless>
     <xacro:if value="${use_xacro_load_yaml}">
       <xacro:property name="inertial_params" value="${xacro.load_yaml(link_inertial_params_file)}"/>
+      <xacro:property name="kinematics_config" value="${xacro.load_yaml(kinematics_params_filename)}"/>
     </xacro:if>
     <xacro:unless value="${use_xacro_load_yaml}">
       <xacro:property name="inertial_params" value="${load_yaml(link_inertial_params_file)}"/>
+      <xacro:property name="kinematics_config" value="${load_yaml(kinematics_params_filename)}"/>
     </xacro:unless>
+    <xacro:property name="kinematics_params" value="${kinematics_config['kinematics']}"/>
 
     <link name="${prefix}link_base">
       <inertial>
@@ -69,7 +72,8 @@
         origin_rpy="0 0 0" />
     </link>
     <joint name="${prefix}joint1" type="revolute">
-      <origin xyz="0 0 0.267" rpy="0 0 0" />
+      <!-- <origin xyz="0 0 0.267" rpy="0 0 0" /> -->
+      <xacro:common_joint_origin joint_kinematic_params="${kinematics_params['joint1']}" />
       <parent link="${prefix}link_base" />
       <child link="${prefix}link1" />
       <axis xyz="0 0 1" />
@@ -95,7 +99,8 @@
         origin_rpy="0 0 0" />
     </link>
     <joint name="${prefix}joint2" type="revolute">
-      <origin xyz="0 0 0" rpy="-1.5708 0 0" />
+      <!-- <origin xyz="0 0 0" rpy="-1.5708 0 0" /> -->
+      <xacro:common_joint_origin joint_kinematic_params="${kinematics_params['joint2']}" />
       <parent link="${prefix}link1" />
       <child link="${prefix}link2" />
       <axis xyz="0 0 1" />
@@ -121,7 +126,8 @@
         origin_rpy="0 0 0" />
     </link>
     <joint name="${prefix}joint3" type="revolute">
-      <origin xyz="0.0535 -0.2845 0" rpy="0 0 0" />
+      <!-- <origin xyz="0.0535 -0.2845 0" rpy="0 0 0" /> -->
+      <xacro:common_joint_origin joint_kinematic_params="${kinematics_params['joint3']}" />
       <parent link="${prefix}link2" />
       <child link="${prefix}link3" />
       <axis xyz="0 0 1" />
@@ -147,7 +153,8 @@
         origin_rpy="0 0 0" />
     </link>
     <joint name="${prefix}joint4" type="revolute">
-      <origin xyz="0.0775 0.3425 0" rpy="0 0 0" />
+      <!-- <origin xyz="0.0775 0.3425 0" rpy="0 0 0" /> -->
+      <xacro:common_joint_origin joint_kinematic_params="${kinematics_params['joint4']}" />
       <parent link="${prefix}link3" />
       <child link="${prefix}link4" />
       <axis xyz="0 0 1" />
@@ -173,7 +180,8 @@
         origin_rpy="0 0 0" />
     </link>
     <joint name="${prefix}joint5" type="revolute">
-      <origin xyz="0.076 0.097 0" rpy="-1.5708 0 0" />
+      <!-- <origin xyz="0.076 0.097 0" rpy="-1.5708 0 0" /> -->
+      <xacro:common_joint_origin joint_kinematic_params="${kinematics_params['joint5']}" />
       <parent link="${prefix}link4" />
       <child link="${prefix}link5" />
       <axis xyz="0 0 1" />

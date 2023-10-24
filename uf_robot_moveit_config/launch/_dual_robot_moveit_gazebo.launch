@@ -31,6 +31,9 @@
   <arg name="sensors_3d" default="false" />
   <arg name="jnt_stat_pub_rate" default="10" />
 
+  <arg name="kinematics_suffix_1" default="" />
+  <arg name="kinematics_suffix_2" default="" />
+
   <arg name="robot_dof" value="$(eval arg('dof') if arg('robot_type') == 'xarm' else 6)" />
   <arg name="robot_name" value="$(eval 'uf850' if arg('robot_type') == 'uf850' else arg('robot_type') + str(arg('robot_dof')))" />
 
@@ -82,6 +85,9 @@
     <arg name="sensors_3d" value="$(arg sensors_3d)" />
     <arg name="jnt_stat_pub_rate" value="$(arg jnt_stat_pub_rate)" />
 
+    <arg name="kinematics_suffix_1" value="$(arg kinematics_suffix_1)"/>
+    <arg name="kinematics_suffix_2" value="$(arg kinematics_suffix_2)"/>
+
   </include>
 
   <include file="$(find xarm_gazebo)/launch/_dual_robot_beside_table.launch">
@@ -113,6 +119,9 @@
     <arg name="geometry_mesh_origin_rpy" value="$(arg geometry_mesh_origin_rpy)"/>
     <arg name="geometry_mesh_tcp_xyz" value="$(arg geometry_mesh_tcp_xyz)"/>
     <arg name="geometry_mesh_tcp_rpy" value="$(arg geometry_mesh_tcp_rpy)"/>
+
+    <arg name="kinematics_suffix_1" value="$(arg kinematics_suffix_1)"/>
+    <arg name="kinematics_suffix_2" value="$(arg kinematics_suffix_2)"/>
 
   </include>
 

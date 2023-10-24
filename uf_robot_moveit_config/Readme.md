@@ -297,6 +297,23 @@
     roslaunch uf_robot_moveit_config xarm7_moveit_fake.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/xarm/visual/vacuum_gripper.stl geometry_mesh_tcp_xyz:='"0 0 0.126"'
     ```
   - __jnt_stat_pub_rate__: Publish frequency of joint_state_publisher, default is 10
+  - __kinematics_suffix__: Specify joint Kinematics parameter file suffix
+    - Generation of Kinematics parameter file: 
+      ```bash
+      cd src/xarm_ros/xarm_description/config/kinematics
+      python gen_kinematics_params.py {robot_ip} {kinematics_suffix}
+
+      # Note
+      # 1. robot_ip represents the IP of the robot arm. You need to connect to the robot arm to obtain the actual parameters.
+      # 2. kinematics_suffix represents the suffix of the generated parameter file. If successful, the configuration file will be generated in the xarm_description/config/kinematics/user directory. If kinematics_suffix is AAA, then the corresponding file name is as follows
+      #   xarm5: xarm_description/config/kinematics/user/xarm5_kinematics_AAA.yaml
+      #   xarm6: xarm_description/config/kinematics/user/xarm6_kinematics_AAA.yaml
+      #   xarm7: xarm_description/config/kinematics/user/xarm7_kinematics_AAA.yaml
+      #   lite6: xarm_description/config/kinematics/user/lite6_kinematics_AAA.yaml
+      #   uf850: xarm_description/config/kinematics/user/uf850_kinematics_AAA.yaml
+      ```
+    - Use of Kinematics parameter file: Specify this parameter when starting the launch file
+      - Note that before specifying this parameter, make sure that the corresponding configuration file exists. If it does not exist, you need to connect the robot arm through a script to generate it.
 
 - ### Special parameters
   - __hw_ns__: Namespace, xarm series defaults to __xarm__, others default to __ufactory__, only valid in gazebo/realmove startup scripts, the corresponding service name is <`hw_ns`>/<service_name>

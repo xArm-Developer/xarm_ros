@@ -2,3 +2,4 @@
 .idea/
 .git_template
 **/old
+xarm_description/config/kinematics/user
