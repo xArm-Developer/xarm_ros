@@ -97,6 +97,7 @@
       - xarm7_gripper_moveit_config
       - xarm7_vacuum_moveit_config
       - lite6_moveit_config
+   * (2023-10-12) 新增关节kinematics参数文件的生成与使用 (仅支持 __uf_robot_moveit_config__，参见[uf_robot_moveit_config](uf_robot_moveit_config/Readme_cn.md)里的通用参数`kinematics_suffix`的说明)
 
 # 3. 准备工作
 

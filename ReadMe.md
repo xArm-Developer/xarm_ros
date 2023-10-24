@@ -104,6 +104,7 @@ For **UFACTORY Lite 6** users, make sure you have followed the instructions befo
       - xarm7_gripper_moveit_config
       - xarm7_vacuum_moveit_config
       - lite6_moveit_config
+   * (2023-10-12) Added the generation and use of joint kinematics parameter files (only supports __uf_robot_moveit_config__, see the description of the general parameter `kinematics_suffix` in [uf_robot_moveit_config](uf_robot_moveit_config/Readme.md))
 
 # 3. Preparations before using this package
 

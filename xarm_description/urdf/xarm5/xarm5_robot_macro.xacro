@@ -13,6 +13,7 @@
     default_gripper_baud:=2000000 
     model1300:=false
     inertial_params_filename:='' 
+    kinematics_params_filename:='' 
     hard_interface:='PositionJointInterface' "
     >
 
@@ -45,7 +46,9 @@
         joint4_lower_limit="${-1.69297}" joint4_upper_limit="${pi*0.99}"
         joint5_lower_limit="${-pi*0.99}" joint5_upper_limit="${pi*0.99}"
         model1300="${model1300}"
-        inertial_params_filename="${inertial_params_filename}"/>
+        inertial_params_filename="${inertial_params_filename}"
+        kinematics_params_filename="${kinematics_params_filename}"
+        />
     </xacro:if>
     <xacro:unless value="${limited}">
       <xacro:if value="${is_ros2}">
@@ -56,7 +59,9 @@
           baud_checkset="${baud_checkset}" default_gripper_baud="${default_gripper_baud}" />
       </xacro:if>
       <xacro:xarm5_urdf prefix="${prefix}" model1300="${model1300}"
-        inertial_params_filename="${inertial_params_filename}"/>
+        inertial_params_filename="${inertial_params_filename}"
+        kinematics_params_filename="${kinematics_params_filename}"
+        />
     </xacro:unless>
 
     <xacro:xarm5_transmission prefix="${prefix}" hard_interface="${hard_interface}" />

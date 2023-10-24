@@ -294,6 +294,23 @@
     roslaunch uf_robot_moveit_config xarm7_moveit_fake.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/xarm/visual/vacuum_gripper.stl geometry_mesh_tcp_xyz:='"0 0 0.126"'
     ```
   - __jnt_stat_pub_rate__: joint_state_publisher的发布频率，默认为10
+  - __kinematics_suffix__: 指定关节Kinematics参数文件后缀
+    - 参数文件的生成: 
+      ```bash
+      cd src/xarm_ros/xarm_description/config/kinematics
+      python gen_kinematics_params.py {robot_ip} {kinematics_suffix}
+
+      # 注意
+      # 1. robot_ip表示机械臂IP，需要连接机械臂获取实际的参数
+      # 2. kinematics_suffix表示生成的参数文件的后缀，如果成功，会在xarm_description/config/kinematics/user目录下生成配置文件, 假如 kinematics_suffix 为 AAA, 那么对应的文件名如下
+      #   xarm5: xarm_description/config/kinematics/user/xarm5_kinematics_AAA.yaml
+      #   xarm6: xarm_description/config/kinematics/user/xarm6_kinematics_AAA.yaml
+      #   xarm7: xarm_description/config/kinematics/user/xarm7_kinematics_AAA.yaml
+      #   lite6: xarm_description/config/kinematics/user/lite6_kinematics_AAA.yaml
+      #   uf850: xarm_description/config/kinematics/user/uf850_kinematics_AAA.yaml
+      ```
+    - 参数文件的使用: 在启动launch文件时指定该参数
+      - 注意指定该参数之前要保证对应的配置文件存在，如果不存在，需要先通过脚本连接机械臂生成
 
 - ### 专用参数
   - __hw_ns__: 命名空间，xarm系列默认为 __xarm__, 其它默认为 __ufactory__, 仅在gazebo/realmove启动脚本有效, 对应的服务名就是 <`hw_ns`>/<service_name>

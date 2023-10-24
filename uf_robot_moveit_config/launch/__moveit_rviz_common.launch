@@ -38,6 +38,8 @@
   <arg name="attach_xyz" default="'0 0 0'" />
   <arg name="attach_rpy" default="'0 0 0'" />
   <arg name="robot_sn" default="" />
+  <arg name="kinematics_suffix_1" default="" />
+  <arg name="kinematics_suffix_2" default="" />
 
   <arg name="sim_gazebo" default="false"/>
   <arg name="add_gripper" default="false"/>
@@ -78,6 +80,8 @@
     <arg name="attach_xyz" value="$(arg attach_xyz)"/>
     <arg name="attach_rpy" value="$(arg attach_rpy)"/>
     <arg name="robot_sn" value="$(arg robot_sn)"/>
+    <arg name="kinematics_suffix_1" value="$(arg kinematics_suffix_1)"/>
+    <arg name="kinematics_suffix_2" value="$(arg kinematics_suffix_2)"/>
 
     <arg name="add_gripper" value="$(arg add_gripper)"/>
     <arg name="add_vacuum_gripper" value="$(arg add_vacuum_gripper)"/>

@@ -40,6 +40,9 @@
   <!-- no_gui_plan means that Rviz configuration is just for display purpose, no (Moveit) control panel loaded -->
   <arg name="no_gui_plan" default="false" />
 
+  <arg name="kinematics_suffix_1" default="" />
+  <arg name="kinematics_suffix_2" default="" />
+
   <include file="$(find uf_robot_moveit_config)/launch/_dual_robot_moveit_realmove.launch">
     <arg name="dof" value="5" />
     <arg name="robot_type" value="xarm" />
@@ -81,6 +84,9 @@
     <arg name="jnt_stat_pub_rate" value="$(arg jnt_stat_pub_rate)" />
     <arg name="show_rviz" value="$(arg show_rviz)" />
     <arg name="no_gui_plan" value="$(arg no_gui_plan)"/>
+
+    <arg name="kinematics_suffix_1" value="$(arg kinematics_suffix_1)"/>
+    <arg name="kinematics_suffix_2" value="$(arg kinematics_suffix_2)"/>
 
   </include>
 

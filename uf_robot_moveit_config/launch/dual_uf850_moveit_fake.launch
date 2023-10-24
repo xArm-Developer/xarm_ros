@@ -28,6 +28,9 @@
   <arg name="sensors_3d" default="false" />
   <arg name="jnt_stat_pub_rate" default="10" />
 
+  <arg name="kinematics_suffix_1" default="" />
+  <arg name="kinematics_suffix_2" default="" />
+
   <include file="$(find uf_robot_moveit_config)/launch/_dual_robot_moveit_fake.launch">
     <arg name="dof" value="6"/>
     <arg name="robot_type" value="uf850"/>
@@ -59,6 +62,9 @@
     <arg name="ext_ns" value="$(arg ext_ns)" />
     <arg name="sensors_3d" value="$(arg sensors_3d)" />
     <arg name="jnt_stat_pub_rate" value="$(arg jnt_stat_pub_rate)"/>
+
+    <arg name="kinematics_suffix_1" value="$(arg kinematics_suffix_1)"/>
+    <arg name="kinematics_suffix_2" value="$(arg kinematics_suffix_2)"/>
     
   </include>
 

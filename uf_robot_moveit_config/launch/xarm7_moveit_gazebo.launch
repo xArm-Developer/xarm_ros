@@ -4,6 +4,7 @@
   <arg name="limited" default="true" />
   <arg name="hw_ns" default="xarm"/>
   <arg name="velocity_control" default="false"/>
+  <arg name="kinematics_suffix" default="" />
 
   <arg name="attach_to" default="world" />
   <arg name="attach_xyz" default="'0 0 0'" />
@@ -37,6 +38,7 @@
     <arg name="limited" value="$(arg limited)"/>
     <arg name="hw_ns" value="$(arg hw_ns)"/>
     <arg name="velocity_control" value="$(arg velocity_control)" />
+    <arg name="kinematics_suffix" value="$(arg kinematics_suffix)"/>
 
     <arg name="attach_to" value="$(arg attach_to)"/>
     <arg name="attach_xyz" value="$(arg attach_xyz)"/>

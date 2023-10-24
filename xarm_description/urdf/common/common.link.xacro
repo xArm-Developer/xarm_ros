@@ -55,6 +55,10 @@
     </collision>
   </xacro:macro>
 
+  <xacro:macro name="common_joint_origin" params="joint_kinematic_params">
+    <origin xyz="${joint_kinematic_params['x']} ${joint_kinematic_params['y']} ${joint_kinematic_params['z']}" rpy="${joint_kinematic_params['roll']} ${joint_kinematic_params['pitch']} ${joint_kinematic_params['yaw']}" />
+  </xacro:macro>
+
   <xacro:macro name="parse_link_inertial_filename" params="dof robot_type robot_sn model1300">
     <!-- default inertial params filename -->
     <xacro:property name="inertial_params_filename" value="xarm${dof}_type${dof}_HT_BR2"/>

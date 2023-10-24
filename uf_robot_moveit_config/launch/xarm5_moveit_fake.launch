@@ -2,6 +2,7 @@
   <arg name="robot_sn" default="" />
   <arg name="model1300" default="false" />
   <arg name="limited" default="true" />
+  <arg name="kinematics_suffix" default="" />
   
   <arg name="attach_to" default="world" />
   <arg name="attach_xyz" default="'0 0 0'" />
@@ -34,6 +35,7 @@
     <arg name="robot_sn" value="$(arg robot_sn)"/>
     <arg name="model1300" value="$(arg model1300)"/>
     <arg name="limited" value="$(arg limited)"/>
+    <arg name="kinematics_suffix" value="$(arg kinematics_suffix)"/>
     
     <arg name="attach_to" value="$(arg attach_to)"/>
     <arg name="attach_xyz" value="$(arg attach_xyz)"/>

@@ -7,7 +7,7 @@
     joint4_lower_limit:=${-2.0*pi}  joint4_upper_limit:=${2.0*pi}
     joint5_lower_limit:=${-2.1642}  joint5_upper_limit:=${2.1642}
     joint6_lower_limit:=${-2.0*pi}  joint6_upper_limit:=${2.0*pi}
-    inertial_params_filename:='' "
+    inertial_params_filename:='' kinematics_params_filename:='' "
     >
 
     <!-- load params and define property -->
@@ -20,10 +20,13 @@
     </xacro:unless>
     <xacro:if value="${use_xacro_load_yaml}">
       <xacro:property name="inertial_params" value="${xacro.load_yaml(link_inertial_params_file)}"/>
+      <xacro:property name="kinematics_config" value="${xacro.load_yaml(kinematics_params_filename)}"/>
     </xacro:if>
     <xacro:unless value="${use_xacro_load_yaml}">
       <xacro:property name="inertial_params" value="${load_yaml(link_inertial_params_file)}"/>
+      <xacro:property name="kinematics_config" value="${load_yaml(kinematics_params_filename)}"/>
     </xacro:unless>
+    <xacro:property name="kinematics_params" value="${kinematics_config['kinematics']}"/>
     
     <link name="${prefix}link_base">
       <inertial>
@@ -58,7 +61,8 @@
         origin_rpy="0 0 0" />
     </link>
     <joint name="${prefix}joint1" type="revolute">
-      <origin xyz="0 0 0.2435" rpy="0 0 0" />
+      <!-- <origin xyz="0 0 0.2435" rpy="0 0 0" /> -->
+      <xacro:common_joint_origin joint_kinematic_params="${kinematics_params['joint1']}" />
       <parent link="${prefix}link_base" />
       <child link="${prefix}link1" />
       <axis xyz="0 0 1" />
@@ -75,16 +79,17 @@
         origin_rpy="0 0 0"/>
       <xacro:common_link_visual 
         mesh_filename="lite6/visual/link2"  
-        origin_xyz="0 0 0" 
+        origin_xyz="0 0 ${-kinematics_params['joint2']['y']}" 
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
         mesh_filename="lite6/collision/link2"  
-        origin_xyz="0 0 0" 
+        origin_xyz="0 0 ${-kinematics_params['joint2']['y']}" 
         origin_rpy="0 0 0" />
     </link>
     <joint name="${prefix}joint2" type="revolute">
-      <origin xyz="0 0 0" rpy="1.5708 -1.5708 3.1416" />
+      <!-- <origin xyz="0 0 0" rpy="1.5708 -1.5708 3.1416" /> -->
+      <xacro:common_joint_origin joint_kinematic_params="${kinematics_params['joint2']}" />
       <parent link="${prefix}link1" />
       <child link="${prefix}link2" />
       <axis xyz="0 0 1" />
@@ -110,7 +115,8 @@
         origin_rpy="0 0 0" />
     </link>
     <joint name="${prefix}joint3" type="revolute">
-      <origin xyz="0.2002 0 0" rpy="-3.1416 0 1.5708" />
+      <!-- <origin xyz="0.2002 0 0" rpy="-3.1416 0 1.5708" /> -->
+      <xacro:common_joint_origin joint_kinematic_params="${kinematics_params['joint3']}" />
       <parent link="${prefix}link2" />
       <child link="${prefix}link3" />
       <axis xyz="0 0 1" />
@@ -136,7 +142,8 @@
         origin_rpy="0 0 0" />
     </link>
     <joint name="${prefix}joint4" type="revolute">
-      <origin xyz="0.087 -0.22761 0" rpy="1.5708 0 0" />
+      <!-- <origin xyz="0.087 -0.22761 0" rpy="1.5708 0 0" /> -->
+      <xacro:common_joint_origin joint_kinematic_params="${kinematics_params['joint4']}" />
       <parent link="${prefix}link3" />
       <child link="${prefix}link4" />
       <axis xyz="0 0 1" />
@@ -162,7 +169,8 @@
         origin_rpy="0 0 0" />
     </link>
     <joint name="${prefix}joint5" type="revolute">
-      <origin xyz="0 0 0" rpy="1.5708 0 0" />
+      <!-- <origin xyz="0 0 0" rpy="1.5708 0 0" /> -->
+      <xacro:common_joint_origin joint_kinematic_params="${kinematics_params['joint5']}" />
       <parent link="${prefix}link4" />
       <child link="${prefix}link5" />
       <axis xyz="0 0 1" />
@@ -188,7 +196,8 @@
         origin_rpy="0 0 0" />
     </link>
     <joint name="${prefix}joint6" type="revolute">
-      <origin xyz="0 0.0625 0" rpy="-1.5708 0 0" />
+      <!-- <origin xyz="0 0.0625 0" rpy="-1.5708 0 0" /> -->
+      <xacro:common_joint_origin joint_kinematic_params="${kinematics_params['joint6']}" />
       <parent link="${prefix}link5" />
       <child link="${prefix}link6" />
       <axis xyz="0 0 1" />

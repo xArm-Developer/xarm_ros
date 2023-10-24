@@ -13,6 +13,8 @@
   <arg name="robot_type" default="xarm" />
   <arg name="robot_name" default="xarm7" />
   <arg name="velocity_control" default="false"/>
+  <arg name="kinematics_suffix_1" default=""/>
+  <arg name="kinematics_suffix_2" default=""/>
 
   <!-- The name of the parameter under which the URDF is loaded -->
   <arg name="robot_description" default="robot_description"/>
@@ -42,6 +44,8 @@
       robot_sn_1:=$(arg robot_sn)
       robot_sn_2:=$(arg robot_sn)
       limited:=$(arg limited)      
+      kinematics_suffix_1:=$(arg kinematics_suffix_1)      
+      kinematics_suffix_2:=$(arg kinematics_suffix_2)      
       model1300_1:=$(arg model1300)
       model1300_2:=$(arg model1300)
       velocity_control:=$(arg velocity_control)
