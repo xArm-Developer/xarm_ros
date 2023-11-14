@@ -58,6 +58,9 @@ int main(int argc, char**argv)
 	ros::Duration total_duration = ros::Duration(0);
 	ros::Duration max_duration = ros::Duration(0);
 
+	bool last_need_reset = false;
+	bool curr_need_reset;
+
 	while (ros::ok())
 	{
 		cnts += 1;
@@ -69,7 +72,9 @@ int main(int argc, char**argv)
 		xarm_hw.read(ts1, elapsed);
 		elapsed = is_first ? elapsed : (ros::Time::now() - ts2);
 	   	ts2 = ros::Time::now();
-		cm.update(ts2, elapsed, xarm_hw.need_reset()); // reset_controllers=true: preempt and cancel current goal
+		curr_need_reset = xarm_hw.need_reset();
+		cm.update(ts2, elapsed, last_need_reset && !curr_need_reset); // reset_controllers=true: preempt and cancel current goal
+		last_need_reset = curr_need_reset;
 		elapsed = is_first ? elapsed : (ros::Time::now() - ts3);
 	   	ts3 = ros::Time::now();
 		xarm_hw.write(ts3, elapsed);
