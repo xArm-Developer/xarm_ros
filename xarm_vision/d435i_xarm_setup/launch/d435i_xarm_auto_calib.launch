@@ -2,6 +2,9 @@
     <arg name="namespace_prefix" default="xarm_realsense_handeyecalibration" />
     <arg name="robot_ip" doc="The IP address of the xarm robot" />
     <arg name="robot_dof" doc="The degree of freedom of the xarm" />
+    <arg name="robot_type" default="xarm" />
+    <arg name="kinematics_suffix" default="" />
+    <arg name="freehand_robot_movement" default="false" />
     <!-- PLEASE USE THE PROPER MARKER CONFIGURATION ! -->
     <arg name="marker_size" doc="Size of the ArUco marker used, in meters" default="0.1" />
     <arg name="marker_id" doc="The ID of the ArUco marker used" default="105"/>
@@ -28,7 +31,14 @@
     </node>
 
     <!-- start the robot -->
-    <include if="$(eval arg('robot_dof')==7)" file="$(find xarm7_moveit_config)/launch/realMove_exec.launch">
+    <include file="$(find uf_robot_moveit_config)/launch/_robot_moveit_realmove.launch">
+        <arg name="dof" value="$(arg robot_dof)"/>
+        <arg name="robot_ip" value="$(arg robot_ip)"/>
+        <arg name="robot_type" value="$(arg robot_type)"/>
+        <arg name="kinematics_suffix" value="$(arg kinematics_suffix)"/>
+        <arg name="show_rviz" value="false" />
+    </include>
+    <!-- <include if="$(eval arg('robot_dof')==7)" file="$(find xarm7_moveit_config)/launch/realMove_exec.launch">
         <arg name="robot_ip" value="$(arg robot_ip)" />
         <arg name="show_rviz" value="false" />
     </include>
@@ -39,7 +49,7 @@
     <include if="$(eval arg('robot_dof')==5)" file="$(find xarm5_moveit_config)/launch/realMove_exec.launch">
         <arg name="robot_ip" value="$(arg robot_ip)" />
         <arg name="show_rviz" value="false" />
-    </include>
+    </include> -->
 
     <!-- start easy_handeye -->
     <include file="$(find easy_handeye)/launch/calibrate.launch" >
@@ -51,7 +61,7 @@
         <arg name="robot_base_frame" value="link_base" />
         <arg name="robot_effector_frame" value="link_eef" />
 
-        <arg name="freehand_robot_movement" value="false" />
+        <arg name="freehand_robot_movement" value="$(arg freehand_robot_movement)" />
         <arg name="robot_velocity_scaling" value="0.1" />
         <arg name="robot_acceleration_scaling" value="0.1" />
         <arg name="move_group" value="xarm$(arg robot_dof)" />
