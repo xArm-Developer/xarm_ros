@@ -1,0 +1,45 @@
+<launch>
+
+  <arg name="robot_ip" />	
+  <arg name="report_type" default="normal" />	
+  <arg name="ns" default="ufactory" />
+  <!-- Important: currently real xArm can be either controlled by API service or Moveit planner, but not at the same time! -->
+  <!-- If you use moveit, use the launch file in xarm*_moveit_config package for startup! -->
+  <arg name="use_moveit" default="false" />
+  <arg name="use_gripper_action" default="false" />
+  <arg name="velocity_control" default="false"/>
+  <arg name="enforce_limits" default="true" />
+  <arg name="baud_checkset" default="true" />
+	<arg name="default_gripper_baud" default="2000000" />
+  <arg name="show_rviz" default="false" />
+  <arg name="add_gripper" default="false" />
+
+  <rosparam file="$(find uf_robot_moveit_config)/config/uf850/uf850_params.yaml" command="load" ns="$(arg ns)"/>
+  <rosparam if="$(arg use_moveit)" file="$(find uf_robot_moveit_config)/config/uf850/joint_limits.yaml" command="load" ns="$(arg ns)"/>
+  <param name="$(arg ns)/uf_model" value="XARM" />
+  <!-- common: bring up node to collect robot feedback -->
+  <include file="$(find xarm_bringup)/launch/xarm_driver_common.launch">
+    <arg name="robot_ip" value="$(arg robot_ip)" />
+    <arg name="report_type" value="$(arg report_type)" />
+    <arg name="dof" value="6" />
+    <arg name="robot_type" value="uf850" />
+    <arg name="use_moveit" value="$(arg use_moveit)" />
+    <arg name="namespace" value="$(arg ns)" />
+    <arg name="velocity_control" value="$(arg velocity_control)" />
+    <arg name="enforce_limits" value="$(arg enforce_limits)" />
+    <arg name="baud_checkset" value="$(arg baud_checkset)" />
+    <arg name="default_gripper_baud" value="$(arg default_gripper_baud)" />
+    <arg name="show_rviz" value="$(arg show_rviz)" />
+    <arg name="add_gripper" value="$(arg add_gripper)" />
+  </include>
+
+  <!-- the node for xarm gripper action server -->
+  <node if="$(arg use_gripper_action)"
+    name="gripper_action_server"
+    pkg="xarm_gripper"
+    type="gripper_action_server"
+    respawn="false"
+    output="screen"
+    ns="$(arg ns)"/>
+
+</launch>
