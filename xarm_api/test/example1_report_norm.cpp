@@ -14,8 +14,8 @@
 
 void exit_sig_handler(int signum)
 {
-    fprintf(stderr, "Ctrl-C caught, exit process...\n");
-    exit(-1);
+  fprintf(stderr, "Ctrl-C caught, exit process...\n");
+  exit(-1);
 }
 
 int main(int argc, char **argv) {
@@ -47,8 +47,7 @@ int main(int argc, char **argv) {
 
     if (ret == 0) {
       rxcnt++;
-      printf("\n【normal report】: len = %d, rxcnt = %d, err_num = %d\n",
-             bin8_to_32(rx_data), rxcnt, err_num);
+      printf("\n【normal report】: len = %d, rxcnt = %d, err_num = %d\n", bin8_to_32(rx_data), rxcnt, err_num);
       norm_data->print_data();
     } else {
       printf("Error: norm_data.flush_data failed, ret = %d\n", ret);

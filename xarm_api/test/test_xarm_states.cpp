@@ -14,8 +14,8 @@ void joint_states_callback(const sensor_msgs::JointState::ConstPtr& states)
 {
   std::string pos_str = "[ ";
   for (int i = 0; i < states->position.size(); i++) { 
-      pos_str += std::to_string(states->position[i]); 
-      pos_str += " ";
+    pos_str += std::to_string(states->position[i]); 
+    pos_str += " ";
   }
   pos_str += "]";
   printf("[JOINT_STATE]\n");

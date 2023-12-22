@@ -14,11 +14,11 @@ namespace xarm_control
 class XArmCombinedHW : public combined_robot_hw::CombinedRobotHW
 {
 public:
-	XArmCombinedHW(){};
-	~XArmCombinedHW(){};
-	
-	bool need_reset();
-	bool wait_fbk_start(ros::Duration timeout);
+  XArmCombinedHW(){};
+  ~XArmCombinedHW(){};
+  
+  bool need_reset();
+  bool wait_fbk_start(ros::Duration timeout);
 };
 
 }
