@@ -294,7 +294,7 @@
     roslaunch uf_robot_moveit_config xarm7_moveit_fake.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/xarm/visual/vacuum_gripper.stl geometry_mesh_tcp_xyz:='"0 0 0.126"'
     ```
   - __jnt_stat_pub_rate__: joint_state_publisher的发布频率，默认为10
-  - __kinematics_suffix__: 指定关节Kinematics参数文件后缀
+  - __kinematics_suffix__: 指定关节Kinematics参数文件后缀(适用于2023年8月之后出产的xArm/UF850系列)
     - 参数文件的生成: 
       ```bash
       cd src/xarm_ros/xarm_description/config/kinematics

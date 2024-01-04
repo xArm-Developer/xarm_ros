@@ -297,7 +297,7 @@
     roslaunch uf_robot_moveit_config xarm7_moveit_fake.launch add_other_geometry:=true geometry_type:=mesh geometry_mesh_filename:=package://xarm_description/meshes/vacuum_gripper/xarm/visual/vacuum_gripper.stl geometry_mesh_tcp_xyz:='"0 0 0.126"'
     ```
   - __jnt_stat_pub_rate__: Publish frequency of joint_state_publisher, default is 10
-  - __kinematics_suffix__: Specify joint Kinematics parameter file suffix
+  - __kinematics_suffix__: Specify joint Kinematics parameter file suffix (available for xArm/UF850 produced after August 2023)  
     - Generation of Kinematics parameter file: 
       ```bash
       cd src/xarm_ros/xarm_description/config/kinematics
@@ -313,7 +313,7 @@
       #   uf850: xarm_description/config/kinematics/user/uf850_kinematics_AAA.yaml
       ```
     - Use of Kinematics parameter file: Specify this parameter when starting the launch file
-      - Note that before specifying this parameter, make sure that the corresponding configuration file exists. If it does not exist, you need to connect the robot arm through a script to generate it.
+      - Note that before specifying this parameter, make sure that the corresponding configuration file exists. If it does not exist, you need to connect the robot arm and use above-mentioned script to generate it.
 
 - ### Special parameters
   - __hw_ns__: Namespace, xarm series defaults to __xarm__, others default to __ufactory__, only valid in gazebo/realmove startup scripts, the corresponding service name is <`hw_ns`>/<service_name>

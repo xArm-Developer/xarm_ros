@@ -1,4 +1,4 @@
-**UFACTORY Lite 6**用户, 确保您已经完成本篇说明中4.7节之前的部分，然后可以切换至[Lite6说明](./ReadMe_others.md).  
+**UFACTORY Lite 6/850**用户, 确保您已经完成本篇说明中4.7节之前的部分，然后可以切换至[Lite6/UF850说明](./ReadMe_others.md).  
 **kinetic**版本的用户，请使用[kinetic分支](https://github.com/xArm-Developer/xarm_ros/tree/kinetic).
 
 ## 重要提示:
@@ -196,6 +196,8 @@ $ roslaunch xarm_description xarm7_rviz_display.launch
 
 ## 5.5 xarm7_moveit_config
 请注意: xarm_moveit_config相关package会将所有关节限制在`[-pi, pi]`范围内, 因为如果不加限制，moveit可能会解出关节运动范围很大的轨迹。这个关节范围限制可以通过设置`...moveit_config/launch/planning_context.launch`文件中的"limited:=false"来取消。  
+
+对于任何需要将**运动学校准**参数加入URDF模型的型号, 请使用[uf_robot_moveit_config](uf_robot_moveit_config/Readme_cn.md), 这是一个**统一的**集合了全部UFACTORY机械臂型号的`moveit_config`包，并且支持一些新特性。   
 
 &ensp;&ensp;
    部分文档由moveit_setup_assistant自动生成, 用于Moveit Planner和Rviz可视化仿真。如果已安装MoveIt!,可以尝试跑demo： 
@@ -706,6 +708,8 @@ $ catkin_make
 ```bash
 $ roslaunch d435i_xarm_setup d435i_xarm_auto_calib.launch robot_dof:=your_xArm_DOF robot_ip:=your_xArm_IP
 ```
+注意: 对于**2023年8月之后**生产的xArm/UF850系列型号, 可以选择将运动学校准参数加入到URDF模型中, 在以上的launch命令中使用`kinematics_suffix`参数来提高标定的准确度, 详情参考[这里](https://github.com/xArm-Developer/xarm_ros/blob/master/uf_robot_moveit_config/Readme_cn.md#optional-parameters)。   
+
 标定使用的aruco二维码可以在[这里下载](https://chev.me/arucogen/)，请记住自己下载的`marker ID`和`marker size`，并在以上launch文件中修改。参考[官方](https://github.com/IFL-CAMP/easy_handeye#calibration)或其他网络教程通过图形界面进行标定，标定完成并确认保存后，默认会在 `~/.ros/easy_handeye`目录下生成`.yaml`后缀的结果文档，供后续与手臂一起进行坐标变换使用。如果固定件用的是UFACTORY提供的[camera_stand](https://www.ufactory.cc/products/xarm-camera-module-2020)，在xarm_vision/d435i_xarm_setup/config/[xarm_realsense_handeyecalibration_eye_on_hand_sample_result.yaml](./xarm_vision/d435i_xarm_setup/config/xarm_realsense_handeyecalibration_eye_on_hand_sample_result.yaml)中保存了参考的标定结果。 
 
 ### 7.2.1 关于 UFACTORY Lite6 手眼标定:
