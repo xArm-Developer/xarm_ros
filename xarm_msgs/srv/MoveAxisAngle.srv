@@ -1,7 +1,7 @@
 # request: command specification for axis-angle motion executions.
 # Units:
 #	Linear: mm, mm/s, and mm/s^2.
-#   Angular: radian, radian/s and radian/s^2.
+#   Angular: radian.
 #	time: sec
 
 # pose: target coordinate. 
@@ -9,11 +9,11 @@
 
 float32[] pose
 
-# mvvelo: specified maximum velocity during execution. linear or angular velocity 
+# mvvelo: (value range: 0 ~ 1000) specified maximum velocity during execution. linear (0 to 1000 mm/s)  or angular (range 0~1000 for 0 to 3.14 rad/s) velocity.
 
 float32 mvvelo
 
-# mvacc: specified maximum acceleration during execution. linear or angular acceleration.
+# mvacc: specified maximum linear acceleration (mm/s^2) during execution. (angular acceleration is fixed currently).
 
 float32 mvacc
 
