@@ -160,7 +160,11 @@ bool XArmSimplePlanner::do_single_cartesian_plan(xarm_planner::single_straight_p
 bool XArmSimplePlanner::do_joint_plan(xarm_planner::joint_plan::Request &req, xarm_planner::joint_plan::Response &res)
 {
   ROS_INFO("move_group_planner received new plan Request");
-  group.setJointValueTarget(req.target);
+  if(!group.setJointValueTarget(req.target))
+  {
+    ROS_ERROR("setJointValueTarget() Failed! Please check the dimension and range of given joint target.");
+    return false;
+  }
   
   bool success = (group.plan(my_xarm_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
   res.success = success;
