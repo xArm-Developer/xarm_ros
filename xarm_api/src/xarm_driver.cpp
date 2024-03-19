@@ -227,6 +227,12 @@ namespace xarm_api
         joint_state_msg_.position.resize(dof_);
         joint_state_msg_.velocity.resize(dof_, 0);
         joint_state_msg_.effort.resize(dof_, 0);
+		
+		if (dof_ != joint_names_.size()) {
+            ROS_FATAL("xarm_dof not equal with joint_name: [%d!=%lu]", dof_, joint_names_.size());
+            return;
+        }
+		
         for(int i = 0; i < dof_; i++)
         {
             joint_state_msg_.name[i] = joint_names_[i];
