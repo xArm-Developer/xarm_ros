@@ -86,7 +86,7 @@
       <joint name="${prefix}joint2" value="0" />
       <joint name="${prefix}joint3" value="0" />
       <joint name="${prefix}joint4" value="0" />
-      <joint name="${prefix}joint5" value="-1.5708" />
+      <joint name="${prefix}joint5" value="1.5708" />
       <joint name="${prefix}joint6" value="0" />
     </group_state>
 
