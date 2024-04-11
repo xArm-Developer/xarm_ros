@@ -74,6 +74,7 @@ namespace xarm_control
     int write_code_;
 
     unsigned int dof_;
+    std::string robot_ip_;
     std::vector<std::string> jnt_names_;
 
     // std::vector<float> prev_cmds_float_;

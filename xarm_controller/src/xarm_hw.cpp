@@ -65,8 +65,8 @@ namespace xarm_control
         break;
       }
     }
-    printf("%s, ctrl_method=%d, has_soft_limits=%d, has_velocity_limits=%d, max_velocity=%f, has_position_limits=%d, min_position=%f, max_position=%f\n", 
-      joint_name.c_str(), ctrl_method, has_soft_limits, joint_limits.has_velocity_limits, joint_limits.max_velocity, 
+    ROS_INFO("[%s] %s, ctrl_method=%d, has_soft_limits=%d, has_velocity_limits=%d, max_velocity=%f, has_position_limits=%d, min_position=%f, max_position=%f\n", 
+      robot_ip_.c_str(), joint_name.c_str(), ctrl_method, has_soft_limits, joint_limits.has_velocity_limits, joint_limits.max_velocity, 
       joint_limits.has_position_limits, joint_limits.min_position, joint_limits.max_position);
   }
 
@@ -174,7 +174,6 @@ namespace xarm_control
     // else
     //   ros::service::waitForService(hw_ns_+"move_servoj");
     // xarm.init(robot_hw_nh);
-    std::string robot_ip;
     std::vector<std::string> jnt_names;
     int xarm_dof = 0;
 
@@ -200,7 +199,7 @@ namespace xarm_control
     robot_hw_nh.getParam("DOF", xarm_dof);
     std::string prefix = "";
     robot_hw_nh.getParam("prefix", prefix);
-    robot_hw_nh.getParam("xarm_robot_ip", robot_ip);
+    robot_hw_nh.getParam("xarm_robot_ip", robot_ip_);
     robot_hw_nh.getParam("joint_names", jnt_names);
     for (int i = 0; i < xarm_dof; i++) {
       jnt_names[i] = prefix + jnt_names[i];
@@ -208,7 +207,7 @@ namespace xarm_control
     // robot_hw_nh.param<std::string>("force_torque_sensor_name", force_torque_sensor_name_, "ft_sensor");
     // force_torque_sensor_frame_id_ = "ft_sensor_data";
 
-    locked_ip_key_ = "/uf_robot/" + robot_ip;
+    locked_ip_key_ = "/uf_robot/" + robot_ip_;
     std::string::size_type pos = 0;
     while ((pos = locked_ip_key_.find(".")) != std::string::npos) {
       locked_ip_key_.replace(pos, 1, "_");
@@ -220,14 +219,14 @@ namespace xarm_control
       root_nh.getParam(locked_ip_key_, ip_locked);
     }
     if (ip_locked) {
-      ROS_ERROR("The same robotic arm can only be controlled by one controller, please check whether multiple controllers are started, the current controller has exited.");
+      ROS_ERROR("[%s] The same robotic arm can only be controlled by one controller, please check whether multiple controllers are started, the current controller has exited.", robot_ip_.c_str());
       return false;
     }
     else {
       root_nh.setParam(locked_ip_key_, true);
     }
 
-    xarm_driver_.init(robot_hw_nh, robot_ip, true);
+    xarm_driver_.init(robot_hw_nh, robot_ip_, true);
 
     dof_ = xarm_dof;
     jnt_names_ = jnt_names;
@@ -253,7 +252,7 @@ namespace xarm_control
     root_nh.getParam("/robot_description", robot_description);
     model_ptr_ = urdf::parseURDF(robot_description);
 
-    clientInit(robot_ip, robot_hw_nh);
+    clientInit(robot_ip_, robot_hw_nh);
     return true;
   }
 
@@ -399,7 +398,7 @@ namespace xarm_control
       read_max_time_ = time_sec;
     }
     // if (read_cnts_ % 6000 == 0) {
-    //   ROS_INFO("[READ] cnt: %lld, max: %f, mean: %f, failed: %lld", read_cnts_, read_max_time_, read_total_time_ / read_cnts_, read_failed_cnts_);
+    //   ROS_INFO("[%s] [READ] cnt: %lld, max: %f, mean: %f, failed: %lld", robot_ip_.c_str(), read_cnts_, read_max_time_, read_total_time_ / read_cnts_, read_failed_cnts_);
     // }
     read_duration_ += period;
     if (read_code_ == 0 && read_ready_) {
@@ -428,9 +427,9 @@ namespace xarm_control
       // initialized_ = read_ready_ && _xarm_is_ready_write();
       if (read_code_) {
         read_failed_cnts_ += 1;
-        ROS_ERROR("xArmHW::Read() returns: %d", read_code_);
+        ROS_ERROR("[%s] Read() returns: %d", robot_ip_.c_str(), read_code_);
         if (read_code_ == XARM_IS_DISCONNECTED) {
-          ROS_ERROR("xArm is disconnected, ros shutdown");
+          ROS_ERROR("[%s] Robot is disconnected, ros shutdown", robot_ip_.c_str());
           ros::shutdown();
           exit(1);
         }
@@ -500,7 +499,7 @@ namespace xarm_control
     int curr_err = xarm_driver_.curr_err;
     if (curr_err != 0) {
       if (last_err != curr_err) {
-        ROS_ERROR("[ns: %s] Controller Error detected! C%d: [ %s ]", hw_ns_.c_str(), curr_err, xarm_driver_.controller_error_interpreter().c_str());
+        ROS_ERROR("[%s] [ns: %s] UFACTORY Error detected! C%d: [ %s ]", robot_ip_.c_str(), hw_ns_.c_str(), curr_err, xarm_driver_.controller_error_interpreter().c_str());
       }
     }
     last_err = curr_err;
@@ -523,7 +522,7 @@ namespace xarm_control
     if (curr_state > 2) {
       if (last_state != curr_state) {
         last_state = curr_state;
-        ROS_ERROR("[ns: %s] xArm State detected! State: %d", hw_ns_.c_str(), curr_state);
+        ROS_WARN("[%s] [ns: %s] Robot State detected! State: %d", robot_ip_.c_str(), hw_ns_.c_str(), curr_state);
       }
       last_not_ready = true;
       return false;
@@ -533,7 +532,7 @@ namespace xarm_control
     if (!(ctrl_method_ == VELOCITY ? curr_mode == 4 : curr_mode == 1)) {
       if (last_mode != curr_mode) {
         last_mode = curr_mode;
-        ROS_ERROR("[ns: %s] xArm Mode detected! Mode: %d", hw_ns_.c_str(), curr_mode);
+        ROS_WARN("[%s] [ns: %s] Robot Mode detected! Mode: %d", robot_ip_.c_str(), hw_ns_.c_str(), curr_mode);
       }
       last_not_ready = true;
       return false;
@@ -541,7 +540,7 @@ namespace xarm_control
     last_mode = curr_mode;
 
     if (last_not_ready) {
-      ROS_INFO("[ns: %s] xArm is Ready", hw_ns_.c_str());
+      ROS_INFO("[%s] [ns: %s] Robot is Ready", robot_ip_.c_str(), hw_ns_.c_str());
     }
     last_not_ready = false;
     return true;
@@ -565,15 +564,16 @@ namespace xarm_control
     bool write_succeed = write_code_ == 0;
     if (!write_succeed) {
       // int ret = xarm.setState(XARM_STATE::STOP);
-      int ret = xarm_driver_.arm->set_state(XARM_STATE::STOP);
-      ROS_ERROR("XArmHW::Write() failed, failed_ret=%d !, Setting Robot State to STOP... (ret: %d)", write_code_, ret);
+      // int ret = xarm_driver_.arm->set_state(XARM_STATE::STOP);
+      // ROS_ERROR("[%s] Write() failed, failed_ret=%d !, Setting Robot State to STOP... (ret: %d)", robot_ip_.c_str(), write_code_, ret);
+      ROS_ERROR("[%s] Write() failed, failed_ret=%d !", robot_ip_.c_str(), write_code_);
       if (write_code_ == SERVICE_IS_PERSISTENT_BUT_INVALID || write_code_ == SERVICE_CALL_FAILED) {
-        ROS_ERROR("service is invaild, ros shutdown");
+        ROS_ERROR("[%s] Service is invaild, ros shutdown", robot_ip_.c_str());
         ros::shutdown();
         exit(1);
       }
       else if (write_code_ == XARM_IS_DISCONNECTED) {
-        ROS_ERROR("xArm is disconnected, ros shutdown");
+        ROS_ERROR("[%s] Robot is disconnected, ros shutdown", robot_ip_.c_str());
         ros::shutdown();
         exit(1);
       }
