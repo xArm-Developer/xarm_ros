@@ -11,21 +11,21 @@
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "xarm_ros_client");
-	ros::NodeHandle nh("xarm");
+  ros::init(argc, argv, "xarm_ros_client");
+  ros::NodeHandle nh("xarm");
 
-    ROS_INFO("test_xarm_ros_client start");
+  ROS_INFO("test_xarm_ros_client start");
 
-	xarm_api::XArmROSClient client;
-	client.init(nh);
+  xarm_api::XArmROSClient client;
+  client.init(nh);
 
-    int ret;
+  int ret;
 
-    client.motionEnable(1);
-    client.setMode(0);
-    client.setState(0);
+  client.motionEnable(1);
+  client.setMode(0);
+  client.setState(0);
 
-    ROS_INFO("test_xarm_ros_client over");
+  ROS_INFO("test_xarm_ros_client over");
 
-    return 0;
+  return 0;
 }
