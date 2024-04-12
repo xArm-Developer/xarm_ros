@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="paused" default="false" doc="Starts gazebo in paused mode" />
+  <arg name="gui" default="true" doc="Starts gazebo gui" />
+
+  <arg name="effort_control" default="false"/>
+  <arg name="velocity_control" default="false"/>
+  <arg name="namespace" default="ufactory"/>
+
+  <arg name="add_gripper" default="false" />
+  <arg name="add_vacuum_gripper" default="false" />
+  <arg name="add_other_geometry" default="false"/>
+  <arg name="geometry_type" default="box"/>
+  <arg name="geometry_mass" default="0.1"/>
+  <arg name="geometry_height" default="0.1"/>
+  <arg name="geometry_radius" default="0.1"/>
+  <arg name="geometry_length" default="0.1"/>
+  <arg name="geometry_width" default="0.1"/>
+  <arg name="geometry_mesh_filename" default=""/>
+  <arg name="geometry_mesh_origin_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_origin_rpy" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
+  <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
+
+  <arg name="add_realsense_d435i" default="false" />
+  <arg name="add_d435i_links" default="false" />
+  <arg name="robot_sn" default="" />
+
+  <include file="$(find xarm_gazebo)/launch/_robot_beside_table.launch">
+    <arg name="dof" value="6" />
+    <arg name="robot_type" value="uf850" />
+
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="gui" value="$(arg gui)"/>
+
+    <arg name="effort_control" value="$(arg effort_control)"/>
+    <arg name="velocity_control" value="$(arg velocity_control)"/>
+    <arg name="hw_ns" value="$(arg namespace)"/>
+
+    <arg name="add_gripper" value="$(arg add_gripper)"/>
+    <arg name="add_vacuum_gripper" value="$(arg add_vacuum_gripper)"/>
+    <arg name="add_other_geometry" value="$(arg add_other_geometry)"/>
+    <arg name="geometry_type" value="$(arg geometry_type)"/>
+    <arg name="geometry_mass" value="$(arg geometry_mass)"/>
+    <arg name="geometry_height" value="$(arg geometry_height)"/>
+    <arg name="geometry_radius" value="$(arg geometry_radius)"/>
+    <arg name="geometry_length" value="$(arg geometry_length)"/>
+    <arg name="geometry_width" value="$(arg geometry_width)"/>
+    <arg name="geometry_mesh_filename" value="$(arg geometry_mesh_filename)"/>
+    <arg name="geometry_mesh_origin_xyz" value="$(arg geometry_mesh_origin_xyz)"/>
+    <arg name="geometry_mesh_origin_rpy" value="$(arg geometry_mesh_origin_rpy)"/>
+    <arg name="geometry_mesh_tcp_xyz" value="$(arg geometry_mesh_tcp_xyz)"/>
+    <arg name="geometry_mesh_tcp_rpy" value="$(arg geometry_mesh_tcp_rpy)"/>
+
+    <arg name="model1300" value="false"/>
+    <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)"/>
+    <arg name="add_d435i_links" value="$(arg add_d435i_links)"/>
+    <arg name="robot_sn" value="$(arg robot_sn)"/>
+
+  </include>
+
+</launch>
