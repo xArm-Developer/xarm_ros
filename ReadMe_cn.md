@@ -636,23 +636,18 @@ $ git clone -b kinetic-devel https://github.com/pal-robotics/aruco_ros.git
 ```bash
 $ git clone https://github.com/IFL-CAMP/easy_handeye
 ``` 
-### 7.1.4 安装vision_visp 支持包：
-参考[官方Github](https://github.com/lagadic/vision_visp):
-```bash
-$ git clone -b kinetic-devel https://github.com/lagadic/vision_visp.git
-```
-### 7.1.5 安装find_object_2d包，用于物体识别：
+### 7.1.4 安装find_object_2d包，用于物体识别：
 参考[官方Github](https://github.com/introlab/find-object/tree/kinetic-devel):
 ```bash
 $ sudo apt-get install ros-kinetic-find-object-2d
 ```
-### 7.1.6 安装其他依赖包：
+### 7.1.5 安装其他依赖包：
 ```bash
 $ cd ~/catkin_ws
 ```
 然后请参考[4.3节内容](#43-安装其他依赖包).
 
-### 7.1.7 编译整个工作区：
+### 7.1.6 编译整个工作区：
 ```bash
 $ catkin_make
 ```
