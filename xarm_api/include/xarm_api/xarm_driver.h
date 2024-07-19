@@ -127,6 +127,7 @@ public:
 private:
   int dof_;
   std::string report_type_;
+  std::string prefix_;
   sensor_msgs::JointState joint_state_msg_;
   xarm_msgs::RobotMsg xarm_state_msg_;
   xarm_msgs::CIOState cgpio_state_msg_;

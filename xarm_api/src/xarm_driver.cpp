@@ -256,13 +256,12 @@ void XArmDriver::_init_params(void)
   arm = NULL;
 
   nh_.getParam("DOF", dof_);
-  std::string prefix = "";
-  nh_.getParam("prefix", prefix);
+  nh_.getParam("prefix", prefix_);
   nh_.getParam("joint_names", joint_names_);
   nh_.getParam("xarm_report_type", report_type_);
 
   for (int i = 0; i < dof_; i++) {
-    joint_names_[i] = prefix + joint_names_[i];
+    joint_names_[i] = prefix_ + joint_names_[i];
   }
 }
 
@@ -355,12 +354,12 @@ void XArmDriver::_init_gripper(void)
   gripper_joint_state_msg_.position.resize(6, std::numeric_limits<double>::quiet_NaN());
   gripper_joint_state_msg_.velocity.resize(6, std::numeric_limits<double>::quiet_NaN());
   gripper_joint_state_msg_.effort.resize(6, std::numeric_limits<double>::quiet_NaN());
-  gripper_joint_state_msg_.name[0] = "drive_joint";
-  gripper_joint_state_msg_.name[1] = "left_finger_joint";
-  gripper_joint_state_msg_.name[2] = "left_inner_knuckle_joint";
-  gripper_joint_state_msg_.name[3] = "right_outer_knuckle_joint";
-  gripper_joint_state_msg_.name[4] = "right_finger_joint";
-  gripper_joint_state_msg_.name[5] = "right_inner_knuckle_joint";
+  gripper_joint_state_msg_.name[0] = prefix_ + "drive_joint";
+  gripper_joint_state_msg_.name[1] = prefix_ + "left_finger_joint";
+  gripper_joint_state_msg_.name[2] = prefix_ + "left_inner_knuckle_joint";
+  gripper_joint_state_msg_.name[3] = prefix_ + "right_outer_knuckle_joint";
+  gripper_joint_state_msg_.name[4] = prefix_ + "right_finger_joint";
+  gripper_joint_state_msg_.name[5] = prefix_ + "right_inner_knuckle_joint";
   gripper_action_server_.reset(new actionlib::ActionServer<control_msgs::GripperCommandAction>(gripper_node, "gripper_action",
     std::bind(&XArmDriver::_handle_gripper_action_goal, this, std::placeholders::_1),
     std::bind(&XArmDriver::_handle_gripper_action_cancel, this, std::placeholders::_1),
