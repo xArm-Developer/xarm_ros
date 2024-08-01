@@ -26,6 +26,7 @@
   <param name="$(arg namespace)/add_gripper" type="bool" value = "$(arg add_gripper)"/>
   <param name="$(arg namespace)/uf_model" value="$(eval 'XARM' if arg('robot_type') != 'lite' else 'LITE')" />
   <param name="$(arg namespace)/prefix" value="$(arg prefix)" />
+  <param name="$(arg namespace)/hw_ns" value="$(arg namespace)" />
 
   <node if="$(arg publish_tf)" name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
   <node if="$(arg use_moveit)" name="uf_ros_controller" pkg="xarm_controller" type="uf_ros_controller" args="ip=$(arg robot_ip)" ns="$(arg namespace)" respawn="false" output="screen" />

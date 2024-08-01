@@ -63,7 +63,7 @@
   <remap from="/tf" to="$(arg ext_ns)/tf" />
   <remap from="/tf_static" to="$(arg ext_ns)/tf_static" />
   <remap from="/move_group/monitored_planning_scene" to="$(arg ext_ns)/move_group/monitored_planning_scene" />
-  <remap from="$(arg ext_ns)/source_list" to="/source_list" />
+  <remap from="source_list" to="/source_list" />
   <include file="$(find dual_xarm6_moveit_config)/launch/moveit_rviz_common.launch">
     <arg name="jnt_stat_source" value="[$(arg hw_ns_1)/joint_states, $(arg hw_ns_2)/joint_states]" />
     <arg name="show_rviz" value="$(arg show_rviz)" />

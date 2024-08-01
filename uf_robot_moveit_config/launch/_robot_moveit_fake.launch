@@ -36,9 +36,9 @@
   <arg name="pipeline" default="ompl" />
   <arg name="show_rviz" default="true" />
 
-  <remap from="$(arg ext_ns)/source_list" to="/source_list" />
+  <remap from="source_list" to="/source_list" />
   <include file="$(find uf_robot_moveit_config)/launch/__moveit_rviz_common.launch">
-    <arg name="jnt_stat_source" value="[$(arg ext_ns)/move_group/fake_controller_joint_states]" />
+    <arg name="jnt_stat_source" value="[move_group/fake_controller_joint_states]" />
     <!-- option to launch move_group node or not -->
     <arg name="load_move_group" value="true" />
     <!-- whether to use fake_execution controller to drive the motion -->
