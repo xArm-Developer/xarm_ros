@@ -696,23 +696,18 @@ Refer to [official Github](https://github.com/IFL-CAMP/easy_handeye):
 ```bash
 $ git clone https://github.com/IFL-CAMP/easy_handeye
 ``` 
-### 7.1.4 Install 'vision_visp' supporting package：
-Refer to [official Github](https://github.com/lagadic/vision_visp):
-```bash
-$ git clone -b kinetic-devel https://github.com/lagadic/vision_visp.git
-```
-### 7.1.5 Install 'find_object_2d', for object detection：
+### 7.1.4 Install 'find_object_2d', for object detection：
 Refer to [official Github](https://github.com/introlab/find-object/tree/kinetic-devel):
 ```bash
 $ sudo apt-get install ros-kinetic-find-object-2d
 ```
-### 7.1.6 Install other dependencies：
+### 7.1.5 Install other dependencies：
 ```bash
 $ cd ~/catkin_ws
 ```
 Then follow chapter [4.3](#43-install-other-dependent-packages).
 
-### 7.1.7 Build the whole workspace：
+### 7.1.6 Build the whole workspace：
 ```bash
 $ catkin_make
 ```
