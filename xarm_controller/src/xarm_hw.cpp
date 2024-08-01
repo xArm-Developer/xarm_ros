@@ -145,9 +145,6 @@ namespace xarm_control
     xarm_driver_.arm->motion_enable(true);
     xarm_driver_.arm->set_mode(ctrl_method_ == VELOCITY ? XARM_MODE::VELO_JOINT : XARM_MODE::SERVO);
     xarm_driver_.arm->set_state(XARM_STATE::START);
-    // int ret1 = xarm.motionEnable(1);
-    // int ret2 = xarm.setMode(ctrl_method_ == VELOCITY ? XARM_MODE::VELO_JOINT : XARM_MODE::SERVO);
-    // int ret3 = xarm.setState(XARM_STATE::START);		  
   }
 
   bool XArmHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
@@ -166,14 +163,6 @@ namespace xarm_control
     }
 
     hw_ns_ = robot_hw_nh.getNamespace() + "/";
-    // ros::service::waitForService(hw_ns_+"motion_ctrl");
-    // ros::service::waitForService(hw_ns_+"set_state");
-    // ros::service::waitForService(hw_ns_+"set_mode");
-    // if (ctrl_method_ == VELOCITY)
-    //   ros::service::waitForService(hw_ns_+"velo_move_joint");
-    // else
-    //   ros::service::waitForService(hw_ns_+"move_servoj");
-    // xarm.init(robot_hw_nh);
     std::vector<std::string> jnt_names;
     int xarm_dof = 0;
 
@@ -248,8 +237,17 @@ namespace xarm_control
       robot_hw_nh.getParam("enforce_limits", enforce_limits_);
     }
 
-    std::string robot_description;
-    root_nh.getParam("/robot_description", robot_description);
+    std::string hw_ns;
+    root_nh.getParam("hw_ns", hw_ns);
+    std::string robot_description = "";
+    std::string robot_description_path = hw_ns_.substr(0, hw_ns_.length() - hw_ns.length() - 1) + "robot_description";
+    root_nh.getParam(robot_description_path, robot_description);
+    if (robot_description == "")
+      root_nh.getParam("/robot_description", robot_description);
+    if (robot_description == "") {
+      ROS_ERROR("robot_description is empty!");
+      return false;
+    }
     model_ptr_ = urdf::parseURDF(robot_description);
 
     clientInit(robot_ip_, robot_hw_nh);
@@ -260,7 +258,6 @@ namespace xarm_control
   {
     xarm_driver_.arm->set_mode(XARM_MODE::POSE);
     root_nh_.setParam(locked_ip_key_, false);
-    // xarm.setMode(XARM_MODE::POSE);
   }
 
   void XArmHW::pos_fb_cb(const sensor_msgs::JointState::ConstPtr& data)
@@ -385,8 +382,6 @@ namespace xarm_control
     ros::Time start = ros::Time::now();
     read_ready_ = _xarm_is_ready_read();
     bool use_new = _firmware_version_is_ge(1, 8, 103);
-    // read_code_ = xarm.getServoAngle(curr_read_position_);
-
     if (use_new)
       read_code_ = xarm_driver_.arm->get_joint_states(curr_read_position_, curr_read_velocity_, curr_read_effort_);
     else
@@ -455,7 +450,6 @@ namespace xarm_control
       case VELOCITY:
       {
         for (int k = 0; k < dof_; k++) { cmds_float_[k] = (float)velocity_cmds_[k]; }
-        // cmd_ret = xarm.veloMoveJoint(cmds_float_, true, VELO_DURATION);
         float velo_duration = VELO_DURATION;
         hw_nh_.param<float>("velo_duration", velo_duration, VELO_DURATION);
         cmd_ret = xarm_driver_.arm->vc_set_joint_velocity(cmds_float_, true, velo_duration);
@@ -466,7 +460,6 @@ namespace xarm_control
       {
         for (int k = 0; k < dof_; k++) { cmds_float_[k] = (float)position_cmds_[k]; }
         if (write_duration_.toSec() > 1 || _check_cmds_is_change(prev_cmds_float_, cmds_float_)) {
-          // cmd_ret = xarm.setServoJ(cmds_float_);
           cmd_ret = xarm_driver_.arm->set_servo_angle_j(cmds_float_, 0, 0, 0);
           if (cmd_ret == 0) {
             write_duration_ -= write_duration_;
@@ -563,7 +556,6 @@ namespace xarm_control
     bool is_not_ready = !_xarm_is_ready_write();
     bool write_succeed = write_code_ == 0;
     if (!write_succeed) {
-      // int ret = xarm.setState(XARM_STATE::STOP);
       // int ret = xarm_driver_.arm->set_state(XARM_STATE::STOP);
       // ROS_ERROR("[%s] Write() failed, failed_ret=%d !, Setting Robot State to STOP... (ret: %d)", robot_ip_.c_str(), write_code_, ret);
       ROS_ERROR("[%s] Write() failed, failed_ret=%d !", robot_ip_.c_str(), write_code_);
