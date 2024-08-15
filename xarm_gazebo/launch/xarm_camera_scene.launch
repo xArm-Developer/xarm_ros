@@ -26,6 +26,7 @@
     add_realsense_d435i:=$(arg add_realsense_d435i)
     add_d435i_links:=$(arg add_d435i_links)
     robot_sn:=$(arg robot_sn)
+    hw_ns:=$(arg namespace)
     " />
   
   <param name="robot_description_semantic" 

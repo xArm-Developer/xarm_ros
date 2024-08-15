@@ -17,13 +17,13 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "angle_control");
   ros::NodeHandle n;
   
-  ros::Publisher angle1_pub = n.advertise<std_msgs::Float64>("/xarm/joint1_position_controller/command", 100);
-  ros::Publisher angle2_pub = n.advertise<std_msgs::Float64>("/xarm/joint2_position_controller/command", 100);
-  ros::Publisher angle3_pub = n.advertise<std_msgs::Float64>("/xarm/joint3_position_controller/command", 100);
-  ros::Publisher angle4_pub = n.advertise<std_msgs::Float64>("/xarm/joint4_position_controller/command", 100);
-  ros::Publisher angle5_pub = n.advertise<std_msgs::Float64>("/xarm/joint5_position_controller/command", 100);
-  ros::Publisher angle6_pub = n.advertise<std_msgs::Float64>("/xarm/joint6_position_controller/command", 100);
-  ros::Publisher angle7_pub = n.advertise<std_msgs::Float64>("/xarm/joint7_position_controller/command", 100);
+  ros::Publisher angle1_pub = n.advertise<std_msgs::Float64>("joint1_position_controller/command", 100);
+  ros::Publisher angle2_pub = n.advertise<std_msgs::Float64>("joint2_position_controller/command", 100);
+  ros::Publisher angle3_pub = n.advertise<std_msgs::Float64>("joint3_position_controller/command", 100);
+  ros::Publisher angle4_pub = n.advertise<std_msgs::Float64>("joint4_position_controller/command", 100);
+  ros::Publisher angle5_pub = n.advertise<std_msgs::Float64>("joint5_position_controller/command", 100);
+  ros::Publisher angle6_pub = n.advertise<std_msgs::Float64>("joint6_position_controller/command", 100);
+  ros::Publisher angle7_pub = n.advertise<std_msgs::Float64>("joint7_position_controller/command", 100);
 
   ros::Rate loop_rate(PUB_RATE);
 
