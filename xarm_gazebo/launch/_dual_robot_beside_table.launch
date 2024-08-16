@@ -100,11 +100,11 @@
     geometry_mesh_tcp_rpy_2:=$(arg geometry_mesh_tcp_rpy)
     "/>
 
-  <!-- spawn robot model in gazebo, located on the table -->
+  <!-- spawn robot model in gazebo, located on the table, -gazebo_namespace defaults to be /gazebo -->
   <arg name="y" value="$(eval -0.54 if arg('robot_type') == 'uf850' else -0.504)"/>
   <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model"
     respawn="false" output="screen"
-    args="-urdf -model DUAL_UF_ROBOT -x 0.5 -y $(arg y) -z 1.021 -Y 1.571 -param robot_description"/>
+    args="-gazebo_namespace gazebo -urdf -model DUAL_UF_ROBOT -x 0.5 -y $(arg y) -z 1.021 -Y 1.571 -param robot_description"/>
 
   <!-- load the corresponding controllers -->
   <include file="$(find xarm_controller)/launch/_robot_control.launch">

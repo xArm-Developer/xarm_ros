@@ -16,7 +16,7 @@
     type="controller_manager"
     respawn="false"
     output="screen"
-    ns="/$(arg namespace)"
+    ns="$(arg namespace)"
     args="spawn $(arg robot_controller_name) joint_state_controller"/>
 
   <!-- run_demo: load the position controllers -->
@@ -25,7 +25,7 @@
     type="spawner"
     respawn="false"
     output="screen"
-    ns="/$(arg namespace)"
+    ns="$(arg namespace)"
     args="joint1_position_controller joint2_position_controller
           joint3_position_controller joint4_position_controller
           joint5_position_controller joint6_position_controller
@@ -38,13 +38,13 @@
     type="spawner"
     respawn="false"
     output="screen"
-    ns="/$(arg namespace)"
+    ns="$(arg namespace)"
     args="$(arg gripper_controller_name) "/>
 
   <!-- convert joint states to TF transforms for rviz, etc -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
     respawn="false" output="screen">
-    <remap from="/joint_states" to="/$(arg namespace)/joint_states" />
+    <remap from="/joint_states" to="$(arg namespace)/joint_states" />
   </node>
 
   <!-- run_demo: start demo controller node, (pure position control) -->
@@ -53,6 +53,6 @@
     type="sample_motion"
     respawn="false"
     output="screen"
-    ns="/$(arg namespace)"/>
+    ns="$(arg namespace)"/>
 
 </launch>
