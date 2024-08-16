@@ -47,7 +47,7 @@
   <!-- convert joint states to TF transforms for rviz, etc -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
     respawn="false" output="screen">
-    <remap from="/joint_states" to="/$(arg namespace)/joint_states" />
+    <remap from="joint_states" to="$(arg namespace)/joint_states" />
   </node>
 
   <!-- run_demo: start demo controller node, (pure position control) -->
