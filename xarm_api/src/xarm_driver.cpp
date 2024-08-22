@@ -340,6 +340,7 @@ void XArmDriver::_init_gripper(void)
 {
   std::string uf_model;
   nh_.getParam("uf_model", uf_model);
+  gripper_added_ = false;
   // ROS_INFO("UF_MODEL: %s\n", uf_model.c_str());
   if(uf_model != "XARM")
   {
@@ -367,7 +368,6 @@ void XArmDriver::_init_gripper(void)
   gripper_action_server_->start(); 
 
   bool add_gripper = false;
-  gripper_added_ = false;
   bool rtt = nh_.getParam("add_gripper", add_gripper);
   // has "add_gripper" parameter and its value is true.
   if(rtt && add_gripper)

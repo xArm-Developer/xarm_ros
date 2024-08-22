@@ -42,6 +42,7 @@
     <arg name="report_type" value="$(arg report_type)" />
     <arg name="use_moveit" value="true" />
     <arg name="ns" value="$(arg uf_hw_ns)" />
+    <arg name="add_gripper" value="$(arg add_gripper)" />
     <arg name="velocity_control" value="$(arg velocity_control)" />
     <arg name="enforce_limits" value="$(arg enforce_limits)" />
   </include>
