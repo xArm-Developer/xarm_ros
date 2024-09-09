@@ -32,7 +32,7 @@ private:
     bool _convert_spacemouse_wireless_joy_to_cmd(const std::vector<float>& axes, const std::vector<int>& buttons,
         boost::shared_ptr<geometry_msgs::TwistStamped>& twist);
 
-    void _filter_twist_msg(boost::shared_ptr<geometry_msgs::TwistStamped>& twist, double val = 0.05);
+    void _filter_twist_msg(boost::shared_ptr<geometry_msgs::TwistStamped>& twist, double filter_coeff=0.4, double zero_threshold=0.05);
     void _joy_callback(const sensor_msgs::Joy::ConstPtr& msg);
 
     ros::Subscriber joy_sub_;

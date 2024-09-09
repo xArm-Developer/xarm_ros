@@ -11,6 +11,8 @@
 namespace xarm_moveit_servo
 {
 
+static double prev_twist_cmd[6] = {0};
+
 enum JOYSTICK_TYPE
 {
     JOYSTICK_XBOX360_WIRED = 1,
@@ -107,24 +109,39 @@ JoyToServoPub::JoyToServoPub(ros::NodeHandle& nh)
     joint_pub_ = nh_.advertise<control_msgs::JointJog>(joint_command_in_topic_, ros_queue_size_);
 }
 
-void JoyToServoPub::_filter_twist_msg(boost::shared_ptr<geometry_msgs::TwistStamped>& twist, double val)
-{
-    if (abs(twist->twist.linear.x) < val) {
+void JoyToServoPub::_filter_twist_msg(boost::shared_ptr<geometry_msgs::TwistStamped>& twist, double filter_coeff, double zero_threshold)
+{   
+    filter_coeff = std::min(std::max(0.0, filter_coeff), 1.0);
+    twist->twist.linear.x = twist->twist.linear.x + filter_coeff * (prev_twist_cmd[0]-twist->twist.linear.x);
+    twist->twist.linear.y = twist->twist.linear.y + filter_coeff * (prev_twist_cmd[1]-twist->twist.linear.y);
+    twist->twist.linear.z = twist->twist.linear.z + filter_coeff * (prev_twist_cmd[2]-twist->twist.linear.z);
+    twist->twist.angular.x = twist->twist.angular.x + filter_coeff * (prev_twist_cmd[3]-twist->twist.angular.x);
+    twist->twist.angular.y = twist->twist.angular.y + filter_coeff * (prev_twist_cmd[4]-twist->twist.angular.y);
+    twist->twist.angular.z = twist->twist.angular.z + filter_coeff * (prev_twist_cmd[5]-twist->twist.angular.z);
+
+    prev_twist_cmd[0] = twist->twist.linear.x;
+    prev_twist_cmd[1] = twist->twist.linear.y;
+    prev_twist_cmd[2] = twist->twist.linear.z;
+    prev_twist_cmd[3] = twist->twist.angular.x;
+    prev_twist_cmd[4] = twist->twist.angular.y;
+    prev_twist_cmd[5] = twist->twist.angular.z;
+
+    if (abs(twist->twist.linear.x) < zero_threshold) {
         twist->twist.linear.x = 0;
     }
-    if (abs(twist->twist.linear.y) < val) {
+    if (abs(twist->twist.linear.y) < zero_threshold) {
         twist->twist.linear.y = 0;
     }
-    if (abs(twist->twist.linear.z) < val) {
+    if (abs(twist->twist.linear.z) < zero_threshold) {
         twist->twist.linear.z = 0;
     }
-    if (abs(twist->twist.angular.x) < val) {
+    if (abs(twist->twist.angular.x) < zero_threshold) {
         twist->twist.angular.x = 0;
     }
-    if (abs(twist->twist.angular.y) < val) {
+    if (abs(twist->twist.angular.y) < zero_threshold) {
         twist->twist.angular.y = 0;
     }
-    if (abs(twist->twist.angular.z) < val) {
+    if (abs(twist->twist.angular.z) < zero_threshold) {
         twist->twist.angular.z = 0;
     }
 }
@@ -219,15 +236,6 @@ bool JoyToServoPub::_convert_spacemouse_wireless_joy_to_cmd(const std::vector<fl
 void JoyToServoPub::_joy_callback(const sensor_msgs::Joy::ConstPtr& msg)
 {
 
-    // std::string axes_str = "[ ";
-    // for (int i = 0; i < msg->axes.size(); i++) { 
-    //     axes_str += std::to_string(msg->axes[i]); 
-    //     axes_str += " ";
-    // }
-    // axes_str += "]";
-    // ROS_INFO("axes_str: %s", axes_str.c_str());
-    // return;
-
     // Create the messages we might publish
     auto twist_msg = moveit::util::make_shared_from_pool<geometry_msgs::TwistStamped>();
     auto joint_msg = moveit::util::make_shared_from_pool<control_msgs::JointJog>();
@@ -262,11 +270,10 @@ void JoyToServoPub::_joy_callback(const sensor_msgs::Joy::ConstPtr& msg)
             return;
     }
     if (pub_twist) {
-        // publish the TwistStamped
-        _filter_twist_msg(twist_msg, 0.2);
-        // ROS_INFO("linear=[%f, %f, %f], angular=[%f, %f, %f]", 
-        //     twist_msg->twist.linear.x, twist_msg->twist.linear.y, twist_msg->twist.linear.z,
-        //     twist_msg->twist.angular.x, twist_msg->twist.angular.y, twist_msg->twist.angular.z);
+        // filter and publish the TwistStamped
+        // Tune the filter parameters "filter_coeff" and "zero_threshold" if needed!
+        _filter_twist_msg(twist_msg, 0.5, 0.1);
+      
         twist_msg->header.frame_id = planning_frame_;
         twist_msg->header.stamp = ros::Time::now();
         twist_pub_.publish(std::move(twist_msg));
