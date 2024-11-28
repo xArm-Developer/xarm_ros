@@ -12,7 +12,9 @@
 #include "control_msgs/JointJog.h"
 #include <moveit_servo/make_shared_from_pool.h>
 #include "xarm_moveit_servo/xarm_keyboard_input.h"
-
+/****************************** Jason added 20240612 ***************************************/
+#include "controller_manager_msgs/ListControllers.h"
+/****************************** Jason added 20240612 ***************************************/
 
 // Define used keys
 #define KEYCODE_RIGHT 0x43
@@ -72,6 +74,31 @@ void KeyboardServoPub::keyLoop()
     char c;
     bool publish_twist = false;
     bool publish_joint = false;
+
+    /****************************** Jason added 20240612 ***************************************/
+    ros::service::waitForService("controller_manager/list_controllers");
+    controller_manager_msgs::ListControllers list_ctrlers_srv;
+    int ctrllers_num = 0;
+    bool ret=false, all_controllers_running=true;
+    std::string ns = ros::this_node::getNamespace();
+    do
+    {
+        ros::ServiceClient list_ctrlers_client = nh_.serviceClient<controller_manager_msgs::ListControllers>(ns+"/"+"controller_manager/list_controllers");
+        ret = list_ctrlers_client.call(list_ctrlers_srv);
+        // ROS_WARN("[%s] Calling List controllers in code: ret = %d", ns.c_str(), ret);
+        ctrllers_num = list_ctrlers_srv.response.controller.size();
+        for(int ii=0; ii<ctrllers_num; ii++)
+        {
+            if(list_ctrlers_srv.response.controller[ii].state != std::string("running"))
+            {
+                all_controllers_running = false;
+            }
+            ROS_INFO("controller number %d, name: %s, state: %s", ii+1, list_ctrlers_srv.response.controller[ii].name.c_str(), list_ctrlers_srv.response.controller[ii].state.c_str());
+        }
+        ros::Duration(0.5).sleep();
+    }
+    while(ctrllers_num==0 || !all_controllers_running);
+    /****************************** Jason added 20240612 ***************************************/
 
     puts("Reading from keyboard");
     puts("---------------------------");

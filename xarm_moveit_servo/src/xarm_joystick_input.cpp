@@ -6,7 +6,7 @@
  ============================================================================*/
 
 #include "xarm_moveit_servo/xarm_joystick_input.h"
-
+#include "controller_manager_msgs/ListControllers.h"
 
 namespace xarm_moveit_servo
 {
@@ -102,6 +102,29 @@ JoyToServoPub::JoyToServoPub(ros::NodeHandle& nh)
     if (joint_command_in_topic_.rfind("/servo_server/", 0) != 0) {
         joint_command_in_topic_ = "/servo_server/" + joint_command_in_topic_;
     }
+
+    ros::service::waitForService("controller_manager/list_controllers");
+    controller_manager_msgs::ListControllers list_ctrlers_srv;
+    int ctrllers_num = 0;
+    bool ret=false, all_controllers_running=true;
+    std::string ns = ros::this_node::getNamespace();
+    do
+    {
+        ros::ServiceClient list_ctrlers_client = nh_.serviceClient<controller_manager_msgs::ListControllers>(ns+"/"+"controller_manager/list_controllers");
+        ret = list_ctrlers_client.call(list_ctrlers_srv);
+        // ROS_WARN("[%s] Calling List controllers in code: ret = %d", ns.c_str(), ret);
+        ctrllers_num = list_ctrlers_srv.response.controller.size();
+        for(int ii=0; ii<ctrllers_num; ii++)
+        {
+            if(list_ctrlers_srv.response.controller[ii].state != std::string("running"))
+            {
+                all_controllers_running = false;
+            }
+            ROS_INFO("controller number %d, name: %s, state: %s", ii+1, list_ctrlers_srv.response.controller[ii].name.c_str(), list_ctrlers_srv.response.controller[ii].state.c_str());
+        }
+        ros::Duration(0.5).sleep();
+    }
+    while(ctrllers_num==0 || !all_controllers_running);
 
     // Setup pub/sub
     joy_sub_ = nh_.subscribe(joy_topic_, ros_queue_size_, &JoyToServoPub::_joy_callback, this);

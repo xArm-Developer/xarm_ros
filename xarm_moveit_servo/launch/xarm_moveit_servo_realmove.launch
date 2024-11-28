@@ -51,14 +51,14 @@
   </node>
 
   <!-- joystick -->
-  <node if="$(eval joystick_type != 99)" name="xarm_joy_to_servo" pkg="xarm_moveit_servo" type="xarm_joy_to_servo_node" output="screen">
+  <node if="$(eval joystick_type != 99)" name="xarm_joy_to_servo" pkg="xarm_moveit_servo" ns="$(arg hw_ns)" type="xarm_joy_to_servo_node" output="screen">
     <param name="dof" type="int" value="$(arg dof)" />
     <param name="ros_queue_size" type="int" value="1" />
     <param name="joystick_type" type="int" value="$(arg joystick_type)" />
   </node>
 
   <!-- keyboard -->
-  <node if="$(eval joystick_type == 99)" name="xarm_keyboard_to_servo" pkg="xarm_moveit_servo" type="xarm_keyboard_to_servo_node" output="screen">
+  <node if="$(eval joystick_type == 99)" name="xarm_keyboard_to_servo" pkg="xarm_moveit_servo" ns="$(arg hw_ns)" type="xarm_keyboard_to_servo_node" output="screen">
     <param name="dof" type="int" value="$(arg dof)" />
     <param name="ros_queue_size" type="int" value="1" />
     <param name="joystick_type" type="int" value="$(arg joystick_type)" />
