@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="bio_gripper_ros2_control" params="prefix:='' 
+    ros2_control_plugin:='uf_robot_hardware/UFRobotFakeSystemHardware' ">
+    <ros2_control name="${prefix}BioGripperSystem" type="system">
+      <hardware>
+        <plugin>${ros2_control_plugin}</plugin>
+      </hardware>
+      <joint name="${prefix}right_finger_joint">
+        <command_interface name="position">
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-3.14</param>
+          <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <!-- <state_interface name="effort"/> -->
+      </joint>
+    </ros2_control>
+  </xacro:macro>
+</robot>

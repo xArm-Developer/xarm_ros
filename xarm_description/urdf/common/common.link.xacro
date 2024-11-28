@@ -26,14 +26,19 @@
     </xacro:unless>
   </xacro:macro>
   
-  <xacro:macro name="common_link_visual" params="mesh_filename add_mesh_suffix:=true material_name:='White' origin_xyz:='0 0 0' origin_rpy:='0 0 0'">
+  <xacro:macro name="common_link_visual" params="mesh_filename add_mesh_suffix:=true material_name:='White' origin_xyz:='0 0 0' origin_rpy:='0 0 0' other_mesh_suffix:=''">
     <visual>
       <geometry>
         <xacro:if value="${add_mesh_suffix}">
           <mesh filename="${mesh_path}/${mesh_filename}.${mesh_suffix}"/>
         </xacro:if>
         <xacro:unless value="${add_mesh_suffix}">
-          <mesh filename="${mesh_path}/${mesh_filename}"/>
+          <xacro:if value="${other_mesh_suffix != ''}">
+            <mesh filename="${mesh_path}/${mesh_filename}.${other_mesh_suffix}"/>
+          </xacro:if>
+          <xacro:unless value="${other_mesh_suffix != ''}">
+            <mesh filename="${mesh_path}/${mesh_filename}"/>
+          </xacro:unless>
         </xacro:unless>
       </geometry>
       <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
@@ -41,14 +46,19 @@
     </visual>
   </xacro:macro>
   
-  <xacro:macro name="common_link_collision" params="mesh_filename add_mesh_suffix:=true origin_xyz:='0 0 0' origin_rpy:='0 0 0'">
+  <xacro:macro name="common_link_collision" params="mesh_filename add_mesh_suffix:=true origin_xyz:='0 0 0' origin_rpy:='0 0 0' other_mesh_suffix:=''">
     <collision>
       <geometry>
         <xacro:if value="${add_mesh_suffix}">
           <mesh filename="${mesh_path}/${mesh_filename}.${mesh_suffix}"/>
         </xacro:if>
         <xacro:unless value="${add_mesh_suffix}">
-          <mesh filename="${mesh_path}/${mesh_filename}"/>
+          <xacro:if value="${other_mesh_suffix != ''}">
+            <mesh filename="${mesh_path}/${mesh_filename}.${other_mesh_suffix}"/>
+          </xacro:if>
+          <xacro:unless value="${other_mesh_suffix != ''}">
+            <mesh filename="${mesh_path}/${mesh_filename}"/>
+          </xacro:unless>
         </xacro:unless>
       </geometry>
       <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
@@ -68,6 +78,9 @@
     <xacro:if value="${dof == 6 and robot_type == 'uf850'}">
       <xacro:property name="inertial_params_filename" value="xarm6_type12_HT_LDBR2"/>
     </xacro:if>
+    <xacro:if value="${dof == 7 and robot_type == 'xarm7_mirror'}">
+      <xacro:property name="inertial_params_filename" value="xarm7_type13_HT_BR2"/>
+    </xacro:if>
 
     <xacro:if value="${use_len}">
       <xacro:property name="robot_sn_len" value="${len(robot_sn)}" />
@@ -79,7 +92,12 @@
     <!-- default model_type and mass_type -->
     <xacro:property name="mass_type" value="-1" />
     <xacro:property name="model_type" value="-1" />
-    <xacro:property name="_model1300" value="${model1300}" />
+    <xacro:if value="${model1300}">
+      <xacro:property name="model_num" value="1300" />
+    </xacro:if>
+    <xacro:unless value="${model1300}">
+      <xacro:property name="model_num" value="-1" />
+    </xacro:unless>
 
     <!-- parse model_type and mass_type from robot_sn -->
     <xacro:if value="${robot_sn_len >= 14 and (robot_sn[0] == 'X' or robot_sn[0] == 'L' or robot_sn[0] == 'F')}">
@@ -107,7 +125,6 @@
           <xacro:property name="model_type" value="7" />
         </xacro:if>
       </xacro:if>
-      <!-- <xacro:property name="model_type" value="${9 if robot_sn[0] == 'L' else 5 if robot_sn[1] == 'F' else 6 if robot_sn[1] == 'I' else 7 if robot_sn[1] == 'S' else -1}" /> -->
 
       <xacro:property name="model_num" value="${int(robot_sn[2:6])}" />
       <xacro:if value="${model_num == 1250}">
@@ -117,9 +134,6 @@
       <xacro:if value="${model_num == 1380}">
         <xacro:property name="model_type" value="11" />
         <xacro:property name="mass_type" value="1" />
-      </xacro:if>
-      <xacro:if value="${model_num >= 1300}">
-        <xacro:property name="_model1300" value="true" />
       </xacro:if>
 
       <xacro:property name="is_num" value="${robot_sn[8] == '0' or robot_sn[8] == '1' or robot_sn[8] == '2' or robot_sn[8] == '3' or robot_sn[8] == '4' or robot_sn[8] == '5' or robot_sn[8] == '6' or robot_sn[8] == '7' or robot_sn[8] == '8' or robot_sn[8] == '9'}" />
@@ -131,10 +145,10 @@
       </xacro:unless>
       <xacro:property name="date_int" value="${int(date_str)}" />
 
-      <xacro:if value="${robot_sn[11] == 'B' or robot_sn[11] == 'L' or robot_sn[11] == 'X' or robot_sn[11] == 'D'}">
+      <xacro:if value="${robot_sn[11] == 'B' or robot_sn[11] == 'L' or robot_sn[11] == 'X' or robot_sn[11] == 'D' or robot_sn[11] == 'A'}">
         <xacro:property name="hd_type" value="${robot_sn[11]}" />
       </xacro:if>
-      <xacro:unless value="${robot_sn[11] == 'B' or robot_sn[11] == 'L' or robot_sn[11] == 'X' or robot_sn[11] == 'D'}">
+      <xacro:unless value="${robot_sn[11] == 'B' or robot_sn[11] == 'L' or robot_sn[11] == 'X' or robot_sn[11] == 'D' or robot_sn[11] == 'A'}">
         <xacro:if value="${robot_sn_len >= 16 and robot_sn[14] == '_'}">
           <xacro:property name="hd_type" value="${robot_sn[15]}" />
         </xacro:if>
@@ -142,7 +156,6 @@
           <xacro:property name="hd_type" value="" />
         </xacro:unless>
       </xacro:unless>
-      <!-- <xacro:property name="hd_type" value="${robot_sn[11] if robot_sn[11] == 'B' or robot_sn[11] == 'L' or robot_sn[11] == 'X' or robot_sn[11] == 'D' else robot_sn[15] if robot_sn_len >= 16 and robot_sn[14] == '_' else ''}" /> -->
       
       <xacro:if value="${hd_type == 'B'}">
         <xacro:if value="${date_int >= 2004}">
@@ -151,92 +164,100 @@
         <xacro:unless value="${date_int >= 2004}">
           <xacro:property name="mass_type" value="1" />
         </xacro:unless>
-        <!-- <xacro:property name="mass_type" value="${11 if date_int >= 2004 else 1}" /> -->
       </xacro:if>
       <xacro:unless value="${hd_type == 'B'}">
         <xacro:property name="mass_type" value="1" />
         <xacro:if value="${hd_type == 'L'}">
           <xacro:property name="mass_type" value="2" />
         </xacro:if>
-        <xacro:if value="${hd_type == 'X'}">
+        <xacro:if value="${hd_type == 'A'}">
           <xacro:property name="mass_type" value="3" />
         </xacro:if>
         <xacro:if value="${hd_type == 'D'}">
           <xacro:property name="mass_type" value="4" />
         </xacro:if>
-        <!-- <xacro:property name="mass_type" value="${2 if hd_type == 'L' else 3 if hd_type == 'X' else 4 if hd_type == 'D' else 1}" /> -->
       </xacro:unless>
-    </xacro:if>
 
-    <!-- update xarm5 inertia params filename -->
-    <xacro:if value="${dof == 5}">
-      <xacro:if value="${model_type == 5}">
-        <xacro:if value="${mass_type == 1}">
-          <xacro:property name="inertial_params_filename" value="xarm5_type5_HT_BR"/>
-        </xacro:if>
-        <xacro:if value="${mass_type == 2}">
-          <xacro:property name="inertial_params_filename" value="xarm5_type5_HT_LD"/>
-        </xacro:if>
-        <xacro:if value="${mass_type == 11}">
-          <xacro:property name="inertial_params_filename" value="xarm5_type5_HT_BR2"/>
-        </xacro:if>
-      </xacro:if>
-    </xacro:if>
-
-    <xacro:if value="${dof == 6}">
-      <!-- update uf850 inertia params filename -->
-      <xacro:if value="${robot_type == 'uf850'}">
-        <xacro:if value="${model_type == 12}">
-          <xacro:property name="inertial_params_filename" value="xarm6_type12_HT_LDBR2"/>
-        </xacro:if>
-      </xacro:if>
-      <!-- update lite6 inertia params filename -->
-      <xacro:if value="${robot_type == 'lite'}">
-        <xacro:if value="${model_type == 9}">
-          <xacro:property name="inertial_params_filename" value="xarm6_type9_HT_BR2"/>
-        </xacro:if>
-      </xacro:if>
-      <!-- update xarm6 inertia params filename -->
-      <xacro:unless value="${robot_type == 'lite' or robot_type == 'uf850'}">
-        <xacro:if value="${model_type == 6}">
+      <!-- update xarm5 inertia params filename -->
+      <xacro:if value="${dof == 5}">
+        <xacro:if value="${model_type == 5}">
           <xacro:if value="${mass_type == 1}">
-            <xacro:property name="inertial_params_filename" value="xarm6_type6_HT_BR"/>
+            <xacro:property name="inertial_params_filename" value="xarm5_type5_HT_BR"/>
           </xacro:if>
           <xacro:if value="${mass_type == 2}">
-            <xacro:property name="inertial_params_filename" value="xarm6_type6_HT_LD"/>
+            <xacro:property name="inertial_params_filename" value="xarm5_type5_HT_LD"/>
+          </xacro:if>
+          <xacro:if value="${mass_type == 3}">
+            <xacro:property name="inertial_params_filename" value="xarm5_type5_UJ_BR_2403"/>
           </xacro:if>
           <xacro:if value="${mass_type == 11}">
-            <xacro:property name="inertial_params_filename" value="xarm6_type6_HT_BR2"/>
+            <xacro:property name="inertial_params_filename" value="xarm5_type5_HT_BR2"/>
           </xacro:if>
         </xacro:if>
-        <xacro:if value="${model_type == 8}">
-          <xacro:property name="inertial_params_filename" value="xarm6_type8_HT2_BR2"/>
+      </xacro:if>
+
+      <xacro:if value="${dof == 6}">
+        <!-- update uf850 inertia params filename -->
+        <xacro:if value="${robot_type == 'uf850'}">
+          <xacro:if value="${model_type == 12}">
+            <xacro:property name="inertial_params_filename" value="xarm6_type12_HT_LDBR2"/>
+          </xacro:if>
         </xacro:if>
-        <xacro:if value="${model_type == 11}">
-          <xacro:property name="inertial_params_filename" value="xarm6_type11_HT_LD"/>
+        <!-- update lite6 inertia params filename -->
+        <xacro:if value="${robot_type == 'lite'}">
+          <xacro:if value="${model_type == 9}">
+            <xacro:property name="inertial_params_filename" value="xarm6_type9_HT_BR2"/>
+          </xacro:if>
+        </xacro:if>
+        <!-- update xarm6 inertia params filename -->
+        <xacro:unless value="${robot_type == 'lite' or robot_type == 'uf850'}">
+          <xacro:if value="${model_type == 6}">
+            <xacro:if value="${mass_type == 1}">
+              <xacro:property name="inertial_params_filename" value="xarm6_type6_HT_BR"/>
+            </xacro:if>
+            <xacro:if value="${mass_type == 2}">
+              <xacro:property name="inertial_params_filename" value="xarm6_type6_HT_LD"/>
+            </xacro:if>
+            <xacro:if value="${mass_type == 3}">
+              <xacro:property name="inertial_params_filename" value="xarm6_type6_UJ_BR_2403"/>
+            </xacro:if>
+            <xacro:if value="${mass_type == 11}">
+              <xacro:property name="inertial_params_filename" value="xarm6_type6_HT_BR2"/>
+            </xacro:if>
+          </xacro:if>
+          <xacro:if value="${model_type == 8}">
+            <xacro:property name="inertial_params_filename" value="xarm6_type8_HT2_BR2"/>
+          </xacro:if>
+          <xacro:if value="${model_type == 11}">
+            <xacro:property name="inertial_params_filename" value="xarm6_type11_HT_LD"/>
+          </xacro:if>
+        </xacro:unless>
+      </xacro:if>
+
+      <!-- update xarm7 inertia params filename -->
+      <xacro:unless value="${dof == 5 or dof == 6}">
+        <xacro:if value="${model_type == 3}">
+          <xacro:property name="inertial_params_filename" value="xarm7_type3_YT_SP"/>
+        </xacro:if>
+        <xacro:if value="${model_type == 7}">
+          <xacro:if value="${mass_type == 1}">
+            <xacro:property name="inertial_params_filename" value="xarm7_type7_HT_BR"/>
+          </xacro:if>
+          <xacro:if value="${mass_type == 2}">
+            <xacro:property name="inertial_params_filename" value="xarm7_type7_HT_LD"/>
+          </xacro:if>
+          <xacro:if value="${mass_type == 3}">
+            <xacro:property name="inertial_params_filename" value="xarm7_type7_UJ_BR_2403"/>
+          </xacro:if>
+          <xacro:if value="${mass_type == 11}">
+            <xacro:property name="inertial_params_filename" value="xarm7_type7_HT_BR2"/>
+          </xacro:if>
         </xacro:if>
       </xacro:unless>
     </xacro:if>
 
-    <!-- update xarm7 inertia params filename -->
-    <xacro:unless value="${dof == 5 or dof == 6}">
-      <xacro:if value="${model_type == 3}">
-        <xacro:property name="inertial_params_filename" value="xarm7_type3_YT_SP"/>
-      </xacro:if>
-      <xacro:if value="${model_type == 7}">
-        <xacro:if value="${mass_type == 1}">
-          <xacro:property name="inertial_params_filename" value="xarm7_type7_HT_BR"/>
-        </xacro:if>
-        <xacro:if value="${mass_type == 2}">
-          <xacro:property name="inertial_params_filename" value="xarm7_type7_HT_LD"/>
-        </xacro:if>
-        <xacro:if value="${mass_type == 11}">
-          <xacro:property name="inertial_params_filename" value="xarm7_type7_HT_BR2"/>
-        </xacro:if>
-      </xacro:if>
-    </xacro:unless>
     <xacro:property name="scope_parent_inertial_params_filename" value="${inertial_params_filename}" scope="parent"/>
-    <xacro:property name="scope_parent_model1300" value="${_model1300}" scope="parent"/>
+    <xacro:property name="scope_parent_model_num" value="${model_num}" scope="parent"/>
   </xacro:macro>
 
 </robot>

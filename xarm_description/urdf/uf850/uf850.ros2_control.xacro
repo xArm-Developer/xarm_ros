@@ -3,7 +3,7 @@
   <xacro:macro name="uf850_ros2_control" params="prefix
     velocity_control:='false'
     ros2_control_plugin:='uf_robot_hardware/UFRobotSystemHardware'
-    hw_ns:='xarm' add_gripper:='false'
+    hw_ns:='xarm' add_gripper:='false' add_bio_gripper:='false'
     robot_ip:='' report_type:='normal' baud_checkset:='true' default_gripper_baud:=2000000
     joint1_lower_limit:=${-2.0*pi}  joint1_upper_limit:=${2.0*pi}
     joint2_lower_limit:=${-2.3038346}  joint2_upper_limit:=${2.3038346}
@@ -25,6 +25,7 @@
           <param name="default_gripper_baud">${default_gripper_baud}</param>
           <param name="robot_type">uf850</param>
           <param name="add_gripper">${add_gripper}</param>
+          <param name="add_bio_gripper">${add_bio_gripper}</param>
         </xacro:if>
         <!-- fake -->
         <!-- <plugin>fake_components/GenericSystem</plugin> -->

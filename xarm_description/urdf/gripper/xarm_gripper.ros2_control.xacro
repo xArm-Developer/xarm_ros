@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="xarm_gripper_ros2_control" params="prefix:='' 
     ros2_control_plugin:='uf_robot_hardware/UFRobotFakeSystemHardware' ">
-    <ros2_control name="XArmGripperSystem" type="system">
+    <ros2_control name="${prefix}XArmGripperSystem" type="system">
       <hardware>
         <plugin>${ros2_control_plugin}</plugin>
       </hardware>

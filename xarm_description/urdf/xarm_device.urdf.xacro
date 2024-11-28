@@ -7,6 +7,7 @@
   <xacro:arg name="velocity_control" default="false"/>
   <xacro:arg name="add_gripper" default="false"/>
   <xacro:arg name="add_vacuum_gripper" default="false"/>
+  <xacro:arg name="add_bio_gripper" default="false"/>
   <xacro:arg name="model1300" default="false"/>
   
   <xacro:arg name="dof" default="7"/>
@@ -49,7 +50,8 @@
   <xacro:include filename="$(find xarm_description)/urdf/xarm_device_macro.xacro" />
   <xacro:xarm_device prefix="$(arg prefix)" hw_ns="$(arg hw_ns)" limited="$(arg limited)" 
     effort_control="$(arg effort_control)" velocity_control="$(arg velocity_control)"
-    add_gripper="$(arg add_gripper)" add_vacuum_gripper="$(arg add_vacuum_gripper)" dof="$(arg dof)" 
+    add_gripper="$(arg add_gripper)" add_vacuum_gripper="$(arg add_vacuum_gripper)" 
+    add_bio_gripper="$(arg add_bio_gripper)" dof="$(arg dof)" 
     ros2_control_plugin="$(arg ros2_control_plugin)" robot_type="$(arg robot_type)" 
     load_gazebo_plugin="true" ros2_control_params="$(arg ros2_control_params)"
     add_realsense_d435i="$(arg add_realsense_d435i)" 

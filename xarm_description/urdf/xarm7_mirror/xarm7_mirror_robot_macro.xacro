@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="xarm7" >
+  <xacro:macro name="xarm7_mirror_robot" params="
+    prefix:=''
+    hw_ns:='xarm'
+    limited:=false
+    velocity_control:=false
+    add_gripper:=false 
+    add_bio_gripper:=false 
+    ros2_control_plugin:='uf_robot_hardware/UFRobotSystemHardware'
+    robot_ip:=''
+    report_type:='normal'
+    baud_checkset:='true'
+    default_gripper_baud:=2000000 
+    model_num:=0
+    inertial_params_filename:=''
+    kinematics_params_filename:=''
+    hard_interface:='PositionJointInterface' "
+    >  
+
+    <!-- xarm7 -->
+    <xacro:if value="${is_ros2}">
+      <xacro:include filename="$(find xarm_description)/urdf/xarm7_mirror/xarm7_mirror.ros2_control.xacro" />
+    </xacro:if>
+    <xacro:include filename="$(find xarm_description)/urdf/xarm7_mirror/xarm7_mirror.urdf.xacro" />
+    <xacro:include filename="$(find xarm_description)/urdf/xarm7_mirror/xarm7_mirror.transmission.xacro" />
+    <xacro:include filename="$(find xarm_description)/urdf/xarm7_mirror/xarm7_mirror.gazebo.xacro" />
+
+    <xacro:if value="${limited}">
+      <xacro:if value="${is_ros2}">
+        <xacro:xarm7_mirror_ros2_control prefix="${prefix}"
+          velocity_control="${velocity_control}"
+          ros2_control_plugin="${ros2_control_plugin}"
+          hw_ns="${hw_ns}" add_gripper="${add_gripper}" add_bio_gripper="${add_bio_gripper}"
+          robot_ip="${robot_ip}" report_type="${report_type}"
+          baud_checkset="${baud_checkset}" default_gripper_baud="${default_gripper_baud}"
+          joint1_lower_limit="${-pi*0.99}" joint1_upper_limit="${pi*0.99}"
+          joint2_lower_limit="${-2.18}" joint2_upper_limit="${2.18}"
+          joint3_lower_limit="${-pi*0.99}" joint3_upper_limit="${pi*0.99}"
+          joint4_lower_limit="${pi*0.99}" joint4_upper_limit="${0.11}"
+          joint5_lower_limit="${-pi*0.99}" joint5_upper_limit="${pi*0.99}"
+          joint6_lower_limit="${-pi*0.99}" joint6_upper_limit="${1.75}"
+          joint7_lower_limit="${-pi*0.99}" joint7_upper_limit="${pi*0.99}"/>
+      </xacro:if>
+      <xacro:xarm7_mirror_urdf prefix="${prefix}"
+        joint1_lower_limit="${-pi*0.99}" joint1_upper_limit="${pi*0.99}"
+        joint2_lower_limit="${-2.18}" joint2_upper_limit="${2.18}"
+        joint3_lower_limit="${-pi*0.99}" joint3_upper_limit="${pi*0.99}"
+        joint4_lower_limit="${-pi*0.99}" joint4_upper_limit="${0.11}"
+        joint5_lower_limit="${-pi*0.99}" joint5_upper_limit="${pi*0.99}"
+        joint6_lower_limit="${-pi*0.99}" joint6_upper_limit="${1.75}"
+        joint7_lower_limit="${-pi*0.99}" joint7_upper_limit="${pi*0.99}"
+        model_num="${model_num}"
+        inertial_params_filename="${inertial_params_filename}"
+        kinematics_params_filename="${kinematics_params_filename}"
+        />
+    </xacro:if>
+    <xacro:unless value="${limited}">
+      <xacro:if value="${is_ros2}">
+        <xacro:xarm7_mirror_ros2_control prefix="${prefix}" velocity_control="${velocity_control}" 
+          ros2_control_plugin="${ros2_control_plugin}"
+          hw_ns="${hw_ns}" add_gripper="${add_gripper}" add_bio_gripper="${add_bio_gripper}"
+          robot_ip="${robot_ip}" report_type="${report_type}"
+          baud_checkset="${baud_checkset}" default_gripper_baud="${default_gripper_baud}" />
+      </xacro:if>
+      <xacro:xarm7_mirror_urdf prefix="${prefix}" model_num="${model_num}"
+        inertial_params_filename="${inertial_params_filename}"
+        kinematics_params_filename="${kinematics_params_filename}"
+        />
+    </xacro:unless>
+
+    <xacro:xarm7_mirror_transmission prefix="${prefix}" hard_interface="${hard_interface}" />
+
+    <xacro:xarm7_mirror_gazebo prefix="${prefix}" />
+
+  </xacro:macro>
+
+</robot>
