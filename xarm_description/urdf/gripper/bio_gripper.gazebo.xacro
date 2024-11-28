@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- from mimic_joint_gazebo_tutorial by @mintar, refer: https://github.com/mintar/mimic_joint_gazebo_tutorial -->
+  <xacro:macro name="mimic_joint_plugin_gazebo" params="name_prefix following_joint mimic_joint has_pid:=false multiplier:=1.0 offset:=0 sensitiveness:=0.0 max_effort:=1.0 robot_namespace:=''">
+    <!-- ros2 -->
+    <xacro:if value="${is_ros2}"> 
+      <xacro:property name="filename" value="libgazebo_mimic_joint_plugin.so" />
+    </xacro:if>
+    <!-- ros1 -->
+    <xacro:unless value="${is_ros2}">
+      <xacro:property name="filename" value="libroboticsgroup_gazebo_mimic_joint_plugin.so" />
+      <!-- <xacro:property name="filename" value="libroboticsgroup_upatras_gazebo_mimic_joint_plugin.so" /> -->
+    </xacro:unless>
+    <gazebo>
+      <plugin name="${name_prefix}mimic_joint_plugin" filename="${filename}">
+        <joint>${following_joint}</joint>
+        <mimicJoint>${mimic_joint}</mimicJoint>
+        <xacro:if value="${has_pid}">                     <!-- if set to true, PID parameters from "/gazebo_ros_control/pid_gains/${mimic_joint}" are loaded -->
+          <hasPID />
+        </xacro:if>
+        <multiplier>${multiplier}</multiplier>
+        <offset>${offset}</offset>
+        <sensitiveness>${sensitiveness}</sensitiveness>   <!-- if absolute difference between setpoint and process value is below this threshold, do nothing; 0.0 = disable [rad] -->
+        <maxEffort>${max_effort}</maxEffort>              <!-- only taken into account if has_pid:=true [Nm] -->
+        <xacro:if value="${not is_ros2 and robot_namespace != ''}">
+          <robotNamespace>($robot_namespace)</robotNamespace>
+        </xacro:if>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="bio_gazebo_grasp_fix" params="prefix:='' arm_name:='bio_gripper' palm_link:='link_base'">
+    <gazebo>
+      <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
+        <arm>
+          <arm_name>${arm_name}</arm_name>
+          <palm_link>${palm_link}</palm_link>
+          <gripper_link>${prefix}bio_gripper_left_finger</gripper_link>
+          <gripper_link>${prefix}bio_gripper_right_finger</gripper_link>
+        </arm>
+        <forces_angle_tolerance>100</forces_angle_tolerance>
+        <update_rate>10</update_rate>
+        <grip_count_threshold>2</grip_count_threshold>
+        <max_grip_count>3</max_grip_count>
+        <release_tolerance>0.0198</release_tolerance>
+        <disable_collisions_on_attach>false</disable_collisions_on_attach>
+        <contact_topic>__default_topic__</contact_topic>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="bio_gripper_gazebo" params="prefix">
+
+    <gazebo reference="${prefix}bio_gripper_base_link">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <gazebo reference="${prefix}bio_gripper_left_finger">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <gazebo reference="${prefix}bio_gripper_right_finger">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

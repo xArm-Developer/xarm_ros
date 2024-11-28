@@ -11,6 +11,7 @@
     report_type:='normal'
     baud_checkset:=true
     default_gripper_baud:=2000000
+    model_num:=0
     inertial_params_filename:=''
     kinematics_params_filename:=''
     hard_interface:='PositionJointInterface' "
@@ -46,6 +47,7 @@
         joint4_lower_limit="${-pi*0.99}" joint4_upper_limit="${pi*0.99}"
         joint5_lower_limit="${-2.1642}" joint5_upper_limit="${2.1642}"
         joint6_lower_limit="${-pi*0.99}" joint6_upper_limit="${pi*0.99}"
+        model_num="${model_num}"
         inertial_params_filename="${inertial_params_filename}"
         kinematics_params_filename="${kinematics_params_filename}"
         />
@@ -58,7 +60,7 @@
           robot_ip="${robot_ip}" report_type="${report_type}"
           baud_checkset="${baud_checkset}" default_gripper_baud="${default_gripper_baud}" />
       </xacro:if>
-      <xacro:lite6_urdf prefix="${prefix}" 
+      <xacro:lite6_urdf prefix="${prefix}" model_num="${model_num}"
         inertial_params_filename="${inertial_params_filename}" 
         kinematics_params_filename="${kinematics_params_filename}"
         />

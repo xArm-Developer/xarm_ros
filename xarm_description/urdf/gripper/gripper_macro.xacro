@@ -20,7 +20,12 @@
       <xacro:include filename="$(find xarm_description)/urdf/gripper/lite_gripper.urdf.xacro" />
       <xacro:uflite_gripper_urdf prefix="${prefix}" />
     </xacro:if>
-    <xacro:unless value="${robot_type == 'lite'}">
+    <xacro:if value="${robot_type == 'bio'}">
+      <!-- Load BIO Gripper Model URDF -->
+      <xacro:include filename="$(find xarm_description)/urdf/gripper/bio_gripper_macro.xacro" />
+      <xacro:bio_gripper_macro prefix="${prefix}" />
+    </xacro:if>
+    <xacro:unless value="${robot_type == 'lite' or robot_type == 'bio'}">
       <!-- Load XArm Gripper Model URDF -->
       <xacro:include filename="$(find xarm_description)/urdf/gripper/xarm_gripper_macro.xacro" />
       <xacro:xarm_gripper_macro prefix="${prefix}" />

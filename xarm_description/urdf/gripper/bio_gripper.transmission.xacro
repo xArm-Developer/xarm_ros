@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="bio_gripper_transmission"
+    params="prefix hard_interface:=PositionJointInterface reduction:=1">
+    <transmission name="${prefix}right_finger_joint_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${prefix}right_finger_joint">
+        <hardwareInterface>hardware_interface/${hard_interface}</hardwareInterface>
+      </joint>
+      <actuator name="${prefix}right_finger_joint_motor">
+        <hardwareInterface>hardware_interface/${hard_interface}</hardwareInterface>
+        <mechanicalReduction>${reduction}</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+  </xacro:macro>
+</robot>
