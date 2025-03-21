@@ -245,6 +245,59 @@ void XArmDriver::_init_publisher(void)
 void XArmDriver::_init_subscriber(void)
 {
   sleep_sub_ = nh_.subscribe("sleep_sec", 1, &XArmDriver::SleepTopicCB, this);
+  velo_move_joint_sub_ = nh_.subscribe("velo_move_joint_timed", 1, &XArmDriver::VeloMoveJointTopicCB, this);
+  velo_move_line_sub_ = nh_.subscribe("velo_move_line_timed", 1, &XArmDriver::VeloMoveLineTopicCB, this);
+}
+
+void XArmDriver::SleepTopicCB(const std_msgs::Float32ConstPtr& msg)
+{
+  if(msg->data>0)
+    arm->set_pause_time(msg->data);
+}
+
+void XArmDriver::VeloMoveJointTopicCB(const xarm_msgs::VeloMoveMsgConstPtr& msg)
+{
+  float jnt_v[7]={0};
+  int index = 0;
+  if(msg->speeds.size() < dof_)
+  {
+    ROS_ERROR("The speeds parameter length is incorrect. size=%ld (Expected=%d)", msg->speeds.size(), dof_);
+    return;
+  }
+  else
+  {
+    for(index = 0; index < 7; index++) // should always send 7 joint commands, whatever current DOF is.
+    {
+      if(index < msg->speeds.size())
+        jnt_v[index] = msg->speeds[index];
+      else
+        jnt_v[index] = 0;
+    }
+  }
+
+  arm->vc_set_joint_velocity(jnt_v, msg->is_sync, msg->duration);
+}
+
+void XArmDriver::VeloMoveLineTopicCB(const xarm_msgs::VeloMoveMsgConstPtr& msg)
+{
+  // ROS_INFO("msg: is_sync=%d, is_tool_coord=%d, duration=%f", msg->is_sync, msg->is_tool_coord, msg->duration);
+
+  float line_v[6];
+  int index = 0;
+  if(msg->speeds.size() < 6)
+  {
+    ROS_ERROR("The speeds parameter length is incorrect. size=%ld (Expected=6)", msg->speeds.size());
+    return;
+  }
+  else
+  {
+    for(index = 0; index < 6; index++)
+    {
+      line_v[index] = msg->speeds[index];
+    }
+  }
+
+  arm->vc_set_cartesian_velocity(line_v, msg->is_tool_coord, msg->duration);
 }
 
 void XArmDriver::_init_params(void)
@@ -501,12 +554,6 @@ void XArmDriver::_handle_gripper_action_goal(actionlib::ActionServer<control_msg
 void XArmDriver::_handle_gripper_action_cancel(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh)
 {
   ROS_INFO("gripper cancel, not support");
-}
-
-void XArmDriver::SleepTopicCB(const std_msgs::Float32ConstPtr& msg)
-{
-  if(msg->data>0)
-    arm->set_pause_time(msg->data);
 }
 
 bool XArmDriver::ClearErrCB(xarm_msgs::ClearErr::Request& req, xarm_msgs::ClearErr::Response& res)

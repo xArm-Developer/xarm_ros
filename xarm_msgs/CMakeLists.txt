@@ -52,6 +52,7 @@ find_package(catkin REQUIRED COMPONENTS
    RobotMsg.msg
    IOState.msg
    CIOState.msg
+   VeloMoveMsg.msg
  )
 
 ## Generate services in the 'srv' folder
