@@ -52,7 +52,6 @@ public:
   bool GetControllerDInCB(xarm_msgs::GetControllerDigitalIO::Request &req, xarm_msgs::GetControllerDigitalIO::Response &res);
   bool SetControllerAOutCB(xarm_msgs::SetControllerAnalogIO::Request &req, xarm_msgs::SetControllerAnalogIO::Response &res);
   bool GetControllerAInCB(xarm_msgs::GetAnalogIO::Request &req, xarm_msgs::GetAnalogIO::Response &res);
-  void SleepTopicCB(const std_msgs::Float32ConstPtr& msg);
   bool VeloMoveJointCB(xarm_msgs::MoveVelo::Request &req, xarm_msgs::MoveVelo::Response &res);
   bool VeloMoveLineVCB(xarm_msgs::MoveVelo::Request &req, xarm_msgs::MoveVelo::Response &res);
   bool VCSetJointVelocityCB(xarm_msgs::MoveVelocity::Request &req, xarm_msgs::MoveVelocity::Response &res);
@@ -91,6 +90,10 @@ public:
   bool OpenLite6Gripper(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res);
   bool CloseLite6Gripper(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res);
   bool StopLite6Gripper(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res);
+
+  void SleepTopicCB(const std_msgs::Float32ConstPtr& msg);
+  void VeloMoveJointTopicCB(const xarm_msgs::VeloMoveMsgConstPtr& msg);
+  void VeloMoveLineTopicCB(const xarm_msgs::VeloMoveMsgConstPtr& msg);
   
   void pub_robot_msg(xarm_msgs::RobotMsg &rm_msg);
   void pub_joint_state(sensor_msgs::JointState &js_msg);
@@ -227,6 +230,8 @@ private:
   ros::Publisher ftsensor_raw_state_;
 
   ros::Subscriber sleep_sub_;
+  ros::Subscriber velo_move_joint_sub_;
+  ros::Subscriber velo_move_line_sub_;
 
   std::shared_ptr<actionlib::ActionServer<control_msgs::GripperCommandAction>> gripper_action_server_;
   sensor_msgs::JointState gripper_joint_state_msg_;

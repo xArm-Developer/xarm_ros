@@ -3,16 +3,16 @@
 #	joint space/angles: radian/s
 #	Cartesian space: mm/s, radian/s.
 
-# velocities: the velocity list of the joints/tcp
+# speeds: the velocity list of the joints/tcp
 #   For velo_move_joint_timed service: [joint1_velocity, ..., joint7_velocity]
 #   For velo_move_line_timed service: [x_velocity, y_velocity, z_velocity, rx_velocity, ry_velocity, rz_velocity (axis-angle)]
 float32[] speeds
 
-# is_sync: this is special for velo_move_joint service, meaning whether all joints accelerate and decelerate synchronously, true for yes, false for no.
+# is_sync: this is special for velo_move_joint_timed service, meaning whether all joints accelerate and decelerate synchronously, true for yes, false for no.
 # avaiable for service velo_move_joint_timed
 bool is_sync
 
-# is_tool_coord: this is special for velo_move_line service, meaning whether motion is in tool coordinate(true) or not(false)
+# is_tool_coord: this is special for velo_move_line_timed service, meaning whether motion is in tool coordinate(true) or not(false)
 # avaiable for service velo_move_line_timed
 bool is_tool_coord
 

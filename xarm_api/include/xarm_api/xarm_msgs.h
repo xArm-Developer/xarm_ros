@@ -10,6 +10,7 @@
 #include <xarm_msgs/RobotMsg.h>
 #include <xarm_msgs/IOState.h>
 #include <xarm_msgs/CIOState.h>
+#include <xarm_msgs/VeloMoveMsg.h>
 #include <xarm_msgs/SetDigitalIO.h>
 #include <xarm_msgs/GetDigitalIO.h>
 #include <xarm_msgs/GetControllerDigitalIO.h>
