@@ -1,0 +1,14 @@
+bool on
+bool wait
+float32 timeout
+float32 delay_sec
+# sync: whether to execute in the motion queue
+bool sync
+# hardware_version==1: Plug-in Connection, default
+# hardware_version==2: Contact Connection
+int16 hardware_version
+
+---
+
+int16 ret
+string message

@@ -36,5 +36,6 @@
 #include <xarm_msgs/Call.h>
 #include <xarm_msgs/FtCaliLoad.h>
 #include <xarm_msgs/FtIdenLoad.h>
+#include <xarm_msgs/VacuumGripperCtrl.h>
 
 #endif // __XARM_MSGS_H

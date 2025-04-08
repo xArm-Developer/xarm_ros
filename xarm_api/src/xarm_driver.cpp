@@ -169,7 +169,8 @@ void XArmDriver::_init_service(void)
   gripper_move_server_ = nh_.advertiseService("gripper_move", &XArmDriver::GripperMoveCB, this);
   gripper_state_server_ = nh_.advertiseService("gripper_state", &XArmDriver::GripperStateCB, this);
 
-  set_vacuum_gripper_server_ = nh_.advertiseService("vacuum_gripper_set", &XArmDriver::VacuumGripperCB, this);
+  set_vacuum_gripper_server_old_ = nh_.advertiseService("vacuum_gripper_set", &XArmDriver::VacuumGripperCB_OLD, this);
+  set_vacuum_gripper_server_ = nh_.advertiseService("set_vacuum_gripper", &XArmDriver::VacuumGripperCB, this);
 
   // controller_io (digital):
   set_controller_dout_server_ = nh_.advertiseService("set_controller_dout", &XArmDriver::SetControllerDOutCB, this);
@@ -1243,10 +1244,17 @@ bool XArmDriver::GripperStateCB(xarm_msgs::GripperState::Request &req, xarm_msgs
   return true;
 }
 
-bool XArmDriver::VacuumGripperCB(xarm_msgs::SetInt16::Request &req, xarm_msgs::SetInt16::Response &res)
+bool XArmDriver::VacuumGripperCB_OLD(xarm_msgs::SetInt16::Request &req, xarm_msgs::SetInt16::Response &res)
 {
   res.ret = arm->set_vacuum_gripper(req.data);
   res.message = "set vacuum gripper: " + std::to_string(req.data) + " ret = " + std::to_string(res.ret);
+  return true;
+}
+
+bool XArmDriver::VacuumGripperCB(xarm_msgs::VacuumGripperCtrl::Request &req, xarm_msgs::VacuumGripperCtrl::Response &res)
+{
+  res.ret = arm->set_vacuum_gripper(req.on, req.wait, req.timeout, req.delay_sec, req.sync, req.hardware_version);
+  res.message = "set vacuum gripper: " + std::to_string(req.on) + ", hardware_version=" + std::to_string(req.hardware_version) + ", ret = " + std::to_string(res.ret);
   return true;
 }
 
