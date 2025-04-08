@@ -89,6 +89,7 @@ find_package(catkin REQUIRED COMPONENTS
    Call.srv
    FtCaliLoad.srv
    FtIdenLoad.srv
+   VacuumGripperCtrl.srv
  )
 
 ## Generate actions in the 'action' folder
