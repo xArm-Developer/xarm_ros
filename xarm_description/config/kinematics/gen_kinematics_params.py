@@ -18,6 +18,8 @@ except:
             f.write('\n'.join(buf))
         return buf
 
+IS_PY3 = sys.version_info.major >= 3
+
 if __name__ == '__main__':
     if len(sys.argv) < 3:
         print('Usage: {} {{robot_ip}} {{kinematics_suffix}}'.format(sys.argv[0]))
@@ -28,11 +30,18 @@ if __name__ == '__main__':
     sock.connect((robot_ip, 502))
 
     send_data = [0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x08]
-    sock.send(bytes(send_data))
+    if IS_PY3:
+        sock.send(bytes(send_data))
+    else:
+        sock.send(''.join(map(chr, send_data)))
     recv_data = sock.recv(179)
     if len(recv_data) == 179 and recv_data[8]:
-        robot_dof = recv_data[9]
-        robot_type = recv_data[10]
+        if IS_PY3:
+            robot_dof = recv_data[9]
+            robot_type = recv_data[10]
+        else:
+            robot_dof = ord(recv_data[9])
+            robot_type = ord(recv_data[10])
         robot_name = 'uf850' if robot_dof == 6 and robot_type == 12 else 'lite6' if robot_dof == 6 and robot_type == 9 else 'xarm{}'.format(robot_dof)
         ouput_dir = os.path.join(os.path.dirname(__file__), 'user')
         if not os.path.exists(ouput_dir):
@@ -50,8 +59,18 @@ if __name__ == '__main__':
             joint_param['roll'] = params[i * 6 + 3]
             joint_param['pitch'] = params[i * 6 + 4]
             joint_param['yaw'] = params[i * 6 + 5]
-        with open(output_file, 'w', encoding='utf-8') as f:
-            dump(data, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
+        if IS_PY3:
+            with open(output_file, 'w', encoding='utf-8') as f:
+                try:
+                    dump(data, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
+                except:
+                    dump(data, f, default_flow_style=False, allow_unicode=True)
+        else:
+            with open(output_file, 'w') as f:
+                try:
+                    dump(data, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
+                except:
+                    dump(data, f, default_flow_style=False, allow_unicode=True)
         print('[Success] save to {}'.format(output_file))
     else:
         print('[Failed] recv_len={}, valid={}'.format(len(recv_data), 0 if len(recv_data) < 9 else recv_data[8]))
