@@ -126,6 +126,7 @@ namespace xarm_control
     
     // xarm_api::XArmROSClient xarm;
     xarm_api::XArmDriver xarm_driver_;
+    sensor_msgs::JointState *joint_state_msg_;
 
     urdf::ModelInterfaceSharedPtr model_ptr_;
     ControlMethod ctrl_method_;

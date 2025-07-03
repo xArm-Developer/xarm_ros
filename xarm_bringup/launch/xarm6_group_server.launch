@@ -8,6 +8,7 @@
 	<arg name="default_gripper_baud" default="2000000" />
   <arg name="show_rviz" default="false" />
   <arg name="add_gripper" default="false" />
+  <arg name="joint_state_flags" default="-1" />
  
   <group ns="$(arg group_name)">
     <remap from="/tf" to="$(arg group_name)/tf" />
@@ -20,6 +21,7 @@
       <arg name="default_gripper_baud" value="$(arg default_gripper_baud)" />
       <arg name="show_rviz" value="$(arg show_rviz)" />
       <arg name="add_gripper" value="$(arg add_gripper)" />
+      <arg name="joint_state_flags" value="$(arg joint_state_flags)" />
     </include>
   </group>
 
