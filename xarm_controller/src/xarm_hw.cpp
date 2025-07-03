@@ -142,6 +142,8 @@ namespace xarm_control
     }
     // registerInterface(&fts_interface_);
       
+    xarm_driver_.arm->clean_error();
+    xarm_driver_.arm->clean_warn();
     xarm_driver_.arm->motion_enable(true);
     xarm_driver_.arm->set_mode(ctrl_method_ == VELOCITY ? XARM_MODE::VELO_JOINT : XARM_MODE::SERVO);
     xarm_driver_.arm->set_state(XARM_STATE::START);
@@ -216,6 +218,8 @@ namespace xarm_control
     }
 
     xarm_driver_.init(robot_hw_nh, robot_ip_, true);
+    // 20250613, get joint_states msg reference from xarm_driver
+    joint_state_msg_ = xarm_driver_.get_joint_states();
 
     dof_ = xarm_dof;
     jnt_names_ = jnt_names;
@@ -381,42 +385,27 @@ namespace xarm_control
     read_cnts_ += 1;
     ros::Time start = ros::Time::now();
     read_ready_ = _xarm_is_ready_read();
-    bool use_new = _firmware_version_is_ge(1, 8, 103);
-    if (use_new)
-      read_code_ = xarm_driver_.arm->get_joint_states(curr_read_position_, curr_read_velocity_, curr_read_effort_);
-    else
-      read_code_ = xarm_driver_.arm->get_servo_angle(curr_read_position_);
-    read_ready_ = read_ready_ && _xarm_is_ready_read();
-    double time_sec = (ros::Time::now() - start).toSec();
-    read_total_time_ += time_sec;
-    if (time_sec > read_max_time_) {
-      read_max_time_ = time_sec;
-    }
+    read_code_ = xarm_driver_.update_joint_states(initialized_);
+    // double time_sec = (joint_state_msg_->header.stamp - start).toSec();
+    // read_total_time_ += time_sec;
+    // if (time_sec > read_max_time_) {
+    //   read_max_time_ = time_sec;
+    // }
     // if (read_cnts_ % 6000 == 0) {
     //   ROS_INFO("[%s] [READ] cnt: %lld, max: %f, mean: %f, failed: %lld", robot_ip_.c_str(), read_cnts_, read_max_time_, read_total_time_ / read_cnts_, read_failed_cnts_);
     // }
-    read_duration_ += period;
     if (read_code_ == 0 && read_ready_) {
       for (int j = 0; j < dof_; j++) {
-        position_states_[j] = curr_read_position_[j];
-        if (use_new) {
-          velocity_states_[j] = curr_read_velocity_[j];
-          effort_states_[j] = curr_read_effort_[j];
-        }
-        else {
-          velocity_states_[j] = !initialized_ ? 0.0 : (curr_read_position_[j] - prev_read_position_[j]) / read_duration_.toSec();
-          effort_states_[j] = 0.0;
-        }
+        position_states_[j] = joint_state_msg_->position[j];
+        velocity_states_[j] = joint_state_msg_->velocity[j];
+        // effort_states_[j] = joint_state_msg_->effort[j];
       }
       if (!initialized_) {
-        // initialized_ = _xarm_is_ready_write();
-        for (uint i = 0; i < dof_; i++) {
+        for (uint i = 0; i < position_states_.size(); i++) {
           position_cmds_[i] = position_states_[i];
           velocity_cmds_[i] = 0.0;
         }
       }
-      memcpy(prev_read_position_, curr_read_position_, sizeof(float) * 7);
-      read_duration_ -= read_duration_;
     }
     else {
       // initialized_ = read_ready_ && _xarm_is_ready_write();

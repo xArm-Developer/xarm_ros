@@ -11,24 +11,24 @@
 #define PARAM_ERROR 997
 
 
-void* cmd_heart_beat(void* args)
-{
-  xarm_api::XArmDriver *my_driver = (xarm_api::XArmDriver *) args;
-  int cmdnum;
-  int cnt = 0;
-  int max_cnt = CMD_HEARTBEAT_SEC * 2;
-  while(my_driver->arm->is_connected())
-  {
-    ros::Duration(0.5).sleep(); // non-realtime
-    cnt += 1;
-    if (cnt >= max_cnt) {
-      cnt = 0;
-      my_driver->arm->get_cmdnum(&cmdnum);
-    }
-  }
-  ROS_ERROR("xArm Control Connection Failed! Please Shut Down (Ctrl-C) and Retry ...");
-  return (void*)0;
-}
+// void* cmd_heart_beat(void* args)
+// {
+//   xarm_api::XArmDriver *my_driver = (xarm_api::XArmDriver *) args;
+//   int cmdnum;
+//   int cnt = 0;
+//   int max_cnt = CMD_HEARTBEAT_SEC * 2;
+//   while(my_driver->arm->is_connected())
+//   {
+//     ros::Duration(0.5).sleep(); // non-realtime
+//     cnt += 1;
+//     if (cnt >= max_cnt) {
+//       cnt = 0;
+//       my_driver->arm->get_cmdnum(&cmdnum);
+//     }
+//   }
+//   ROS_ERROR("xArm Control Connection Failed! Please Shut Down (Ctrl-C) and Retry ...");
+//   return (void*)0;
+// }
 
 namespace xarm_api
 {
@@ -61,15 +61,17 @@ void XArmDriver::_report_data_callback(XArmReportData *report_data_ptr)
   curr_cmdnum = report_data_ptr->cmdnum;
 
   ros::Time now = ros::Time::now();
-  joint_state_msg_.header.stamp = now;
-  for(int i = 0; i < dof_; i++)
+  bool use_new = _firmware_version_is_ge(1, 8, 103);
+  if (!use_new)
   {
-    joint_state_msg_.position[i] = (double)report_data_ptr->angle[i];
-    joint_state_msg_.velocity[i] = (double)report_data_ptr->rt_joint_spds[i];
-    joint_state_msg_.effort[i] = (double)report_data_ptr->tau[i];
+    for(int i = 0; i < dof_; i++)
+    {
+      // joint_state_msg_.position[i] = (double)report_data_ptr->angle[i];
+      if (!in_ros_control_)
+        joint_state_msg_.velocity[i] = (double)report_data_ptr->rt_joint_spds[i];
+      joint_state_msg_.effort[i] = (double)report_data_ptr->tau[i];
+    }
   }
-  if (!is_moveit_)
-    pub_joint_state(joint_state_msg_);
 
   xarm_state_msg_.state = report_data_ptr->state;
   xarm_state_msg_.mode = report_data_ptr->mode;
@@ -301,13 +303,16 @@ void XArmDriver::VeloMoveLineTopicCB(const xarm_msgs::VeloMoveMsgConstPtr& msg)
   arm->vc_set_cartesian_velocity(line_v, msg->is_tool_coord, msg->duration);
 }
 
-void XArmDriver::_init_params(void)
+void XArmDriver::init(ros::NodeHandle& root_nh, std::string &server_ip, bool in_ros_control)
 {
   curr_err = 0;
   curr_state = 4;
   curr_mode = 0;
   curr_cmdnum = 0;
   arm = NULL;
+  in_ros_control_ = in_ros_control;
+
+  nh_ = root_nh;
 
   nh_.getParam("DOF", dof_);
   nh_.getParam("prefix", prefix_);
@@ -317,12 +322,6 @@ void XArmDriver::_init_params(void)
   for (int i = 0; i < dof_; i++) {
     joint_names_[i] = prefix_ + joint_names_[i];
   }
-}
-
-void XArmDriver::init(ros::NodeHandle& root_nh, std::string &server_ip, bool is_moveit)
-{   
-  nh_ = root_nh;
-  is_moveit_ = is_moveit;
   
   bool baud_checkset = true;
   if (nh_.hasParam("baud_checkset")) {
@@ -333,7 +332,16 @@ void XArmDriver::init(ros::NodeHandle& root_nh, std::string &server_ip, bool is_
     nh_.getParam("default_gripper_baud", default_gripper_baud);
   }
 
-  _init_params();
+  joint_states_rate_ = -1;
+  if (nh_.hasParam("joint_states_rate")) {
+    nh_.getParam("joint_states_rate", joint_states_rate_);
+  }
+
+  joint_state_flags_ = -1;
+  if (nh_.hasParam("joint_state_flags")) {
+    nh_.getParam("joint_state_flags", joint_state_flags_);
+  }
+
   _init_publisher();
 
   arm = new XArmAPI(
@@ -366,8 +374,8 @@ void XArmDriver::init(ros::NodeHandle& root_nh, std::string &server_ip, bool is_
     ROS_WARN("xArmErrorCode: C%d: [ %s ]", err_warn[0], controller_error_interpreter(err_warn[0]).c_str());
   }
   
-  std::thread th(cmd_heart_beat, this);
-  th.detach();
+  // std::thread th(cmd_heart_beat, this);
+  // th.detach();
   int dbg_msg[16] = {0};
   arm->core->servo_get_dbmsg(dbg_msg);
 
@@ -385,16 +393,125 @@ void XArmDriver::init(ros::NodeHandle& root_nh, std::string &server_ip, bool is_
     }
   }
 
+  if (!in_ros_control_)
+  {
+    std::thread([this]() {
+      float cur_pos;
+      float position[7] = {0};
+      float velocity[7] = {0};
+      float effort[7] = {0};
+      if (joint_states_rate_ < 0) {
+        joint_states_rate_ = report_type_ == "dev" ? 100 : 5;
+      }
+      bool use_new = _firmware_version_is_ge(1, 8, 103);
+      int microseconds = 1000000 / joint_states_rate_;
+      int num = 3;
+      if (_firmware_version_is_ge(2, 6, 107)) {
+        if (joint_state_flags_ >= 0){
+          num = ((joint_state_flags_ & 0x0F) << 4) + num;
+        }
+      }
+      while (arm->is_connected())
+      {
+        if (use_new)
+          arm->get_joint_states(position, velocity, effort, num);
+        else
+          arm->get_servo_angle(position);
+
+        joint_state_msg_.header.stamp = ros::Time::now();
+        for(int i = 0; i < dof_; i++)
+        {
+          joint_state_msg_.position[i] = (double)position[i];
+          if (use_new)
+          {
+            joint_state_msg_.velocity[i] = (double)velocity[i];
+            joint_state_msg_.effort[i] = (double)effort[i];
+          }
+        }
+        pub_joint_state(joint_state_msg_);
+        std::this_thread::sleep_for(std::chrono::microseconds(microseconds));
+      }
+      ROS_ERROR("xArm Control Connection Failed! Please Shut Down (Ctrl-C) and Retry ...");
+    }).detach();
+  }
+
   _init_service();
   _init_subscriber();
-  _init_gripper();
+  _init_xarm_gripper();
+  _init_bio_gripper();
 }
 
-void XArmDriver::_init_gripper(void)
+sensor_msgs::JointState* XArmDriver::get_joint_states()
+{
+  return &joint_state_msg_;
+}
+
+int XArmDriver::update_joint_states(bool initialized, int flag)
+{
+  static ros::Time prev_time;
+  static ros::Time curr_time;
+  static float prev_position[7] = {0};
+  static float curr_position[7] = {0};
+  static float curr_velocity[7] = {0};
+  static float curr_effort[7] = {0};
+
+  int num = 3;
+  if (_firmware_version_is_ge(2, 6, 107)) {
+    if (flag >= 0) {
+      num = ((flag & 0x0F) << 4) + num;
+    }
+    else if (joint_state_flags_ >= 0){
+      num = ((joint_state_flags_ & 0x0F) << 4) + num;
+    }
+  }
+
+  bool use_new = _firmware_version_is_ge(1, 8, 103);
+  int ret;
+  if (use_new)
+    ret = arm->get_joint_states(curr_position, curr_velocity, curr_effort, num);
+  else
+    ret = arm->get_servo_angle(curr_position);
+  curr_time = ros::Time::now();
+
+  joint_state_msg_.header.stamp = curr_time;
+  for(int i = 0; i < joint_state_msg_.position.size(); i++)
+  {
+    joint_state_msg_.position[i] = (double)curr_position[i];
+    if (use_new) {
+      joint_state_msg_.velocity[i] = (double)curr_velocity[i];
+      joint_state_msg_.effort[i] = (double)curr_effort[i];
+    }
+    else {
+      curr_velocity[i] = !initialized ? 0.0 : (curr_position[i] - prev_position[i]) / (curr_time.toSec() - prev_time.toSec());
+      joint_state_msg_.velocity[i] = (double)curr_velocity[i];
+    }
+  }
+  pub_joint_state(joint_state_msg_);
+  memcpy(prev_position, curr_position, sizeof(float) * 7);
+  prev_time = curr_time;
+  return ret;
+}
+
+bool XArmDriver::_firmware_version_is_ge(int major, int minor, int revision)
+{
+  return arm->version_number[0] > major || (arm->version_number[0] == major && arm->version_number[1] > minor) || (arm->version_number[0] == major && arm->version_number[1] == minor && arm->version_number[2] >= revision);
+}
+
+inline float XArmDriver::_xarm_gripper_pos_convert(float pos, bool reversed)
+{
+  if (reversed) {
+    return fabs(xarm_gripper_max_pos - pos * 1000);
+  }
+  else {
+    return fabs(xarm_gripper_max_pos - pos) / 1000;
+  }
+}
+
+void XArmDriver::_init_xarm_gripper(void)
 {
   std::string uf_model;
   nh_.getParam("uf_model", uf_model);
-  gripper_added_ = false;
+  xarm_gripper_added_ = false;
   // ROS_INFO("UF_MODEL: %s\n", uf_model.c_str());
   if(uf_model != "XARM")
   {
@@ -403,58 +520,61 @@ void XArmDriver::_init_gripper(void)
 
   ros::NodeHandle gripper_node("xarm_gripper");
 
-  gripper_joint_state_msg_.header.stamp = ros::Time::now();
-  gripper_joint_state_msg_.header.frame_id = "gripper-joint-state data";
-  gripper_joint_state_msg_.name.resize(6);
-  gripper_joint_state_msg_.position.resize(6, std::numeric_limits<double>::quiet_NaN());
-  gripper_joint_state_msg_.velocity.resize(6, std::numeric_limits<double>::quiet_NaN());
-  gripper_joint_state_msg_.effort.resize(6, std::numeric_limits<double>::quiet_NaN());
-  gripper_joint_state_msg_.name[0] = prefix_ + "drive_joint";
-  gripper_joint_state_msg_.name[1] = prefix_ + "left_finger_joint";
-  gripper_joint_state_msg_.name[2] = prefix_ + "left_inner_knuckle_joint";
-  gripper_joint_state_msg_.name[3] = prefix_ + "right_outer_knuckle_joint";
-  gripper_joint_state_msg_.name[4] = prefix_ + "right_finger_joint";
-  gripper_joint_state_msg_.name[5] = prefix_ + "right_inner_knuckle_joint";
-  gripper_action_server_.reset(new actionlib::ActionServer<control_msgs::GripperCommandAction>(gripper_node, "gripper_action",
-    std::bind(&XArmDriver::_handle_gripper_action_goal, this, std::placeholders::_1),
-    std::bind(&XArmDriver::_handle_gripper_action_cancel, this, std::placeholders::_1),
+  xarm_gripper_joint_state_msg_.header.stamp = ros::Time::now();
+  xarm_gripper_joint_state_msg_.header.frame_id = "xarm-gripper-joint-state data";
+  xarm_gripper_joint_state_msg_.name.resize(6);
+  xarm_gripper_joint_state_msg_.position.resize(6, std::numeric_limits<double>::quiet_NaN());
+  xarm_gripper_joint_state_msg_.velocity.resize(6, std::numeric_limits<double>::quiet_NaN());
+  xarm_gripper_joint_state_msg_.effort.resize(6, std::numeric_limits<double>::quiet_NaN());
+  xarm_gripper_joint_state_msg_.name[0] = prefix_ + "drive_joint";
+  xarm_gripper_joint_state_msg_.name[1] = prefix_ + "left_finger_joint";
+  xarm_gripper_joint_state_msg_.name[2] = prefix_ + "left_inner_knuckle_joint";
+  xarm_gripper_joint_state_msg_.name[3] = prefix_ + "right_outer_knuckle_joint";
+  xarm_gripper_joint_state_msg_.name[4] = prefix_ + "right_finger_joint";
+  xarm_gripper_joint_state_msg_.name[5] = prefix_ + "right_inner_knuckle_joint";
+  xarm_gripper_action_server_.reset(new actionlib::ActionServer<control_msgs::GripperCommandAction>(gripper_node, "gripper_action",
+    std::bind(&XArmDriver::_handle_xarm_gripper_action_goal, this, std::placeholders::_1),
+    std::bind(&XArmDriver::_handle_xarm_gripper_action_cancel, this, std::placeholders::_1),
     false));
-  gripper_action_server_->start(); 
+  xarm_gripper_action_server_->start(); 
 
   bool add_gripper = false;
   bool rtt = nh_.getParam("add_gripper", add_gripper);
   // has "add_gripper" parameter and its value is true.
   if(rtt && add_gripper)
   {   
-    gripper_added_ = true;
-    int ret_grip = arm->get_gripper_position(&init_gripper_pos_);
-    if(ret_grip || init_gripper_pos_<0 || init_gripper_pos_>max_gripper_pos)
-      ROS_ERROR("Abnormal when update xArm gripper initial position, ret = %d, pos = %f, please check the gripper connection!", ret_grip, init_gripper_pos_);
+    xarm_gripper_added_ = true;
     
-    gripper_init_loop_ = false;
+    // int ret_grip = arm->get_gripper_position(&xarm_gripper_pos);
+    // if(ret_grip || xarm_gripper_pos<0 || xarm_gripper_pos>xarm_gripper_max_pos)
+    //   ROS_ERROR("Abnormal when update xArm Gripper initial position, ret = %d, pos = %f, please check the gripper connection!", ret_grip, xarm_gripper_pos);
+    
+    xarm_gripper_init_loop_ = false;
     std::thread([this]() {
-      while (ros::ok() && !gripper_init_loop_)
+      float xarm_gripper_pos;
+      int ret_grip = arm->get_gripper_position(&xarm_gripper_pos);
+      while (ros::ok() && !xarm_gripper_init_loop_)
       {
         ros::Duration(0.1).sleep();
-        _pub_gripper_joint_states(fabs(max_gripper_pos - init_gripper_pos_));
+        _pub_xarm_gripper_joint_states(xarm_gripper_pos);
       }
     }).detach();
   }
 }
 
-void XArmDriver::_pub_gripper_joint_states(float pos)
+void XArmDriver::_pub_xarm_gripper_joint_states(float pos)
 {
-  gripper_joint_state_msg_.header.stamp = ros::Time::now();
-  float p = pos / 1000;
+  xarm_gripper_joint_state_msg_.header.stamp = ros::Time::now();
+  float p = _xarm_gripper_pos_convert(pos);
   for (int i = 0; i < 6; i++) {
-    gripper_joint_state_msg_.position[i] = p;
+    xarm_gripper_joint_state_msg_.position[i] = p;
   }
-  pub_joint_state(gripper_joint_state_msg_);
+  pub_joint_state(xarm_gripper_joint_state_msg_);
 }
 
-void XArmDriver::_handle_gripper_action_goal(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh)
+void XArmDriver::_handle_xarm_gripper_action_goal(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh)
 {
-  gripper_init_loop_ = true;
+  xarm_gripper_init_loop_ = true;
   ros::Rate loop_rate(10);
   const auto goal = gh.getGoal();
   ROS_INFO("gripper_action_goal handle, position: %f", goal->command.position);
@@ -476,11 +596,11 @@ void XArmDriver::_handle_gripper_action_goal(actionlib::ActionServer<control_msg
     return;
   }
   ret = arm->get_gripper_position(&cur_pos);
-  _pub_gripper_joint_states(fabs(max_gripper_pos - cur_pos));
+  _pub_xarm_gripper_joint_states(cur_pos);
 
   ret = arm->set_gripper_mode(0);
   if (ret != 0) {
-    result.position = fabs(max_gripper_pos - cur_pos) / 1000;
+    result.position = _xarm_gripper_pos_convert(cur_pos);
     try {
       gh.setCanceled(result);
     } catch (std::exception &e) {
@@ -492,7 +612,7 @@ void XArmDriver::_handle_gripper_action_goal(actionlib::ActionServer<control_msg
   }
   ret = arm->set_gripper_enable(true);
   if (ret != 0) {
-    result.position = fabs(max_gripper_pos - cur_pos) / 1000;
+    result.position = _xarm_gripper_pos_convert(cur_pos);
     try {
       gh.setCanceled(result);
     } catch (std::exception &e) {
@@ -504,7 +624,7 @@ void XArmDriver::_handle_gripper_action_goal(actionlib::ActionServer<control_msg
   }
   ret = arm->set_gripper_speed(3000);
   if (ret != 0) {
-    result.position = fabs(max_gripper_pos - cur_pos) / 1000;
+    result.position = _xarm_gripper_pos_convert(cur_pos);
     try {
       gh.setCanceled(result);
     } catch (std::exception &e) {
@@ -515,7 +635,7 @@ void XArmDriver::_handle_gripper_action_goal(actionlib::ActionServer<control_msg
     return;
   }
 
-  float target_pos = fabs(max_gripper_pos - goal->command.position * 1000);
+  float target_pos = _xarm_gripper_pos_convert(goal->command.position, true);
   bool is_move = true;
   std::thread([this, &target_pos, &is_move, &cur_pos]() {
     is_move = true;
@@ -530,19 +650,19 @@ void XArmDriver::_handle_gripper_action_goal(actionlib::ActionServer<control_msg
     loop_rate.sleep();
     ret = arm->get_gripper_position(&cur_pos);
     if (ret == 0) {
-      feedback.position = fabs(max_gripper_pos - cur_pos) / 1000;
+      feedback.position = _xarm_gripper_pos_convert(cur_pos);
       try {
         gh.publishFeedback(feedback);
       } catch (std::exception &e) {
         ROS_ERROR("goal_handle publishFeedback exception, ex=%s", e.what());
       }
-      _pub_gripper_joint_states(fabs(max_gripper_pos - cur_pos));
+      _pub_xarm_gripper_joint_states(cur_pos);
     }
   }
   arm->get_gripper_position(&cur_pos);
   ROS_INFO("move finish, cur_pos=%f", cur_pos);
   if (ros::ok()) {
-    result.position = fabs(max_gripper_pos - cur_pos) / 1000;
+    result.position = _xarm_gripper_pos_convert(cur_pos);
     try {
       gh.setSucceeded(result);
     } catch (std::exception &e) {
@@ -552,15 +672,186 @@ void XArmDriver::_handle_gripper_action_goal(actionlib::ActionServer<control_msg
   }
 }
 
-void XArmDriver::_handle_gripper_action_cancel(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh)
+void XArmDriver::_handle_xarm_gripper_action_cancel(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh)
 {
-  ROS_INFO("gripper cancel, not support");
+  ROS_INFO("xarm gripper cancel, not support");
+}
+
+inline float XArmDriver::_bio_gripper_pos_convert(float pos, bool reversed)
+{
+  if (reversed) {
+    return fabs(pos * 1000 * 2 + 71);
+  }
+  else {
+    return -fabs(pos - 71) / 1000 / 2;
+  }
+}
+
+void XArmDriver::_init_bio_gripper(void)
+{
+  std::string uf_model;
+  nh_.getParam("uf_model", uf_model);
+  bio_gripper_added_ = false;
+  // ROS_INFO("UF_MODEL: %s\n", uf_model.c_str());
+  if(uf_model != "XARM")
+  {
+    return; // only for xArm Gripper
+  }
+
+  ros::NodeHandle gripper_node("bio_gripper");
+
+  bio_gripper_joint_state_msg_.header.stamp = ros::Time::now();
+  bio_gripper_joint_state_msg_.header.frame_id = "bio-gripper-joint-state data";
+  bio_gripper_joint_state_msg_.name.resize(2);
+  bio_gripper_joint_state_msg_.position.resize(2, std::numeric_limits<double>::quiet_NaN());
+  bio_gripper_joint_state_msg_.velocity.resize(2, std::numeric_limits<double>::quiet_NaN());
+  bio_gripper_joint_state_msg_.effort.resize(2, std::numeric_limits<double>::quiet_NaN());
+  bio_gripper_joint_state_msg_.name[0] = prefix_ + "left_finger_joint";
+  bio_gripper_joint_state_msg_.name[1] = prefix_ + "right_finger_joint";
+  bio_gripper_action_server_.reset(new actionlib::ActionServer<control_msgs::GripperCommandAction>(gripper_node, "gripper_action",
+    std::bind(&XArmDriver::_handle_bio_gripper_action_goal, this, std::placeholders::_1),
+    std::bind(&XArmDriver::_handle_bio_gripper_action_cancel, this, std::placeholders::_1),
+    false));
+  bio_gripper_action_server_->start(); 
+
+  bool add_bio_gripper = false;
+  bool rtt = nh_.getParam("add_bio_gripper", add_bio_gripper);
+  // has "add_bio_gripper" parameter and its value is true.
+  if(rtt && add_bio_gripper)
+  {   
+    bio_gripper_added_ = true;
+    // int ret_grip = arm->get_bio_gripper_position(&bio_gripper_pos);
+    // if(ret_grip || bio_gripper_pos<0 || bio_gripper_pos>bio_gripper_max_pos)
+    //   ROS_ERROR("Abnormal when update BIO Gripper initial position, ret = %d, pos = %f, please check the gripper connection!", ret_grip, bio_gripper_pos);
+    
+    bio_gripper_init_loop_ = false;
+    std::thread([this]() {
+      int bio_gripper_pos;
+      int ret_grip = arm->get_bio_gripper_position(&bio_gripper_pos);
+      while (ros::ok() && !bio_gripper_init_loop_)
+      {
+        ros::Duration(0.1).sleep();
+        _pub_bio_gripper_joint_states(bio_gripper_pos);
+      }
+    }).detach();
+  }
+}
+
+void XArmDriver::_pub_bio_gripper_joint_states(float pos)
+{
+  bio_gripper_joint_state_msg_.header.stamp = ros::Time::now();
+  float p = _bio_gripper_pos_convert(pos);
+  for (int i = 0; i < 6; i++) {
+    bio_gripper_joint_state_msg_.position[i] = p;
+  }
+  pub_joint_state(bio_gripper_joint_state_msg_);
+}
+
+void XArmDriver::_handle_bio_gripper_action_goal(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh)
+{
+  bio_gripper_init_loop_ = true;
+  ros::Rate loop_rate(10);
+  const auto goal = gh.getGoal();
+  ROS_INFO("gripper_action_goal handle, position: %f", goal->command.position);
+  gh.setAccepted();
+  control_msgs::GripperCommandResult result;
+  control_msgs::GripperCommandFeedback feedback;
+
+  int ret;
+  int cur_pos = 0;
+  int err = 0;
+  ret = arm->get_bio_gripper_error(&err);
+  if (ret != 0 || err != 0) {
+    arm->clean_bio_gripper_error();
+    ret = arm->get_bio_gripper_error(&err);
+  }
+  if (ret != 0 || err != 0) {
+    try {
+      gh.setCanceled(result);
+    } catch (std::exception &e) {
+      ROS_ERROR("bio goal_handle setCanceled exception, ex=%s", e.what());
+    }
+    ROS_ERROR("get_bio_gripper_error, ret=%d, err=%d", ret, err);
+    return;
+  }
+  ret = arm->get_bio_gripper_position(&cur_pos);
+  _pub_bio_gripper_joint_states(cur_pos);
+
+  // ret = arm->set_bio_gripper_enable(true);
+  // if (ret != 0) {
+  //   result.position = _bio_gripper_pos_convert(cur_pos);
+  //   try {
+  //     gh.setCanceled(result);
+  //   } catch (std::exception &e) {
+  //     ROS_ERROR("bio goal_handle setCanceled exception, ex=%s", e.what());
+  //   }
+  //   ret = arm->get_bio_gripper_error(&err);
+  //   ROS_WARN("set_bio_gripper_enable, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
+  //   return;
+  // }
+  // ret = arm->set_bio_gripper_speed(3000);
+  // if (ret != 0) {
+  //   result.position = _bio_gripper_pos_convert(cur_pos);
+  //   try {
+  //     gh.setCanceled(result);
+  //   } catch (std::exception &e) {
+  //     ROS_ERROR("bio goal_handle setCanceled exception, ex=%s", e.what());
+  //   }
+  //   ret = arm->get_bio_gripper_error(&err);
+  //   ROS_WARN("set_bio_gripper_speed, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
+  //   return;
+  // }
+
+  float target_pos = _bio_gripper_pos_convert(goal->command.position, true);
+  bool is_move = true;
+  std::thread([this, &target_pos, &is_move, &cur_pos]() {
+    is_move = true;
+    int ret2;
+    if (target_pos >= 100)
+        ret2 = arm->open_bio_gripper(2000, true, 5, false); // set wait_motion=false
+    else
+        ret2 = arm->close_bio_gripper(2000, true, 5, false); // set wait_motion=false
+    int err;
+    arm->get_bio_gripper_error(&err);
+    ROS_INFO("set_bio_gripper_position, ret=%d, err=%d, cur_pos=%f", ret2, err, cur_pos);
+    is_move = false;
+  }).detach();
+  while (is_move && ros::ok())
+  {
+    loop_rate.sleep();
+    ret = arm->get_bio_gripper_position(&cur_pos);
+    if (ret == 0) {
+      feedback.position = _bio_gripper_pos_convert(cur_pos);
+      try {
+        gh.publishFeedback(feedback);
+      } catch (std::exception &e) {
+        ROS_ERROR("bio goal_handle publishFeedback exception, ex=%s", e.what());
+      }
+      _pub_bio_gripper_joint_states(cur_pos);
+    }
+  }
+  arm->get_bio_gripper_position(&cur_pos);
+  ROS_INFO("bio move finish, cur_pos=%f", cur_pos);
+  if (ros::ok()) {
+    result.position = _bio_gripper_pos_convert(cur_pos);
+    try {
+      gh.setSucceeded(result);
+    } catch (std::exception &e) {
+      ROS_ERROR("bio goal_handle setSucceeded exception, ex=%s", e.what());
+    }
+    ROS_INFO("Goal succeeded");
+  }
+}
+
+void XArmDriver::_handle_bio_gripper_action_cancel(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh)
+{
+  ROS_INFO("bio gripper cancel, not support");
 }
 
 bool XArmDriver::ClearErrCB(xarm_msgs::ClearErr::Request& req, xarm_msgs::ClearErr::Response& res)
 {
   // First clear controller warning and error:
-  if(gripper_added_)
+  if(xarm_gripper_added_)
     int ret1 = arm->clean_gripper_error();
 
   int ret2 = arm->clean_error(); 
