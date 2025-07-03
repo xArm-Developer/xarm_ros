@@ -18,7 +18,7 @@ class XArmDriver
 public:
   XArmDriver():spinner_(4){ spinner_.start(); };
   ~XArmDriver();
-  void init(ros::NodeHandle& root_nh, std::string &server_ip, bool is_moveit = false);
+  void init(ros::NodeHandle& root_nh, std::string &server_ip, bool in_ros_control = false);
 
   // provide a list of services:
   bool MotionCtrlCB(xarm_msgs::SetAxis::Request &req, xarm_msgs::SetAxis::Response &res);
@@ -105,24 +105,37 @@ public:
   bool is_connected(void);
   std::string controller_error_interpreter(int err=-1);
 
+  sensor_msgs::JointState* get_joint_states();
+
+  /* only use in xarm_controller */
+  int update_joint_states(bool initialized = true, int flag = -1);
+
 private:
   void _report_connect_changed_callback(bool connected, bool reported);
   void _report_data_callback(XArmReportData *report_data_ptr);
   bool _get_wait_param(void);
 
-  void _handle_gripper_action_goal(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh);
-  void _handle_gripper_action_cancel(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh);
-  void _pub_gripper_joint_states(float pos);
+  inline float _xarm_gripper_pos_convert(float pos, bool reversed = false);
+  void _handle_xarm_gripper_action_goal(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh);
+  void _handle_xarm_gripper_action_cancel(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh);
+  void _pub_xarm_gripper_joint_states(float pos);
 
-  void _init_params(void);
+  inline float _bio_gripper_pos_convert(float pos, bool reversed = false);
+  void _handle_bio_gripper_action_goal(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh);
+  void _handle_bio_gripper_action_cancel(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh);
+  void _pub_bio_gripper_joint_states(float pos);
+
   void _init_publisher(void);
   void _init_subscriber(void);
   void _init_service(void);
-  void _init_gripper(void);
+  void _init_xarm_gripper(void);
+  void _init_bio_gripper(void);
+  bool _firmware_version_is_ge(int major, int minor, int revision);
 
 public:
   XArmAPI *arm;
-  const static int max_gripper_pos = 850;
+  const static int xarm_gripper_max_pos = 850;
+  const static int bio_gripper_max_pos = 850;
   int curr_state;
   int curr_err;
   int curr_cmdnum;
@@ -130,6 +143,8 @@ public:
 
 private:
   int dof_;
+  int joint_states_rate_;
+  int joint_state_flags_;
   std::string report_type_;
   std::string prefix_;
   sensor_msgs::JointState joint_state_msg_;
@@ -140,10 +155,11 @@ private:
 
   ros::AsyncSpinner spinner_;
   
-  float init_gripper_pos_;
-  bool gripper_init_loop_;
-  bool gripper_added_;
-  bool is_moveit_;
+  bool xarm_gripper_init_loop_;
+  bool xarm_gripper_added_;
+  bool bio_gripper_init_loop_;
+  bool bio_gripper_added_;
+  bool in_ros_control_;
 
   ros::NodeHandle nh_;
   ros::ServiceServer go_home_server_;
@@ -235,8 +251,11 @@ private:
   ros::Subscriber velo_move_joint_sub_;
   ros::Subscriber velo_move_line_sub_;
 
-  std::shared_ptr<actionlib::ActionServer<control_msgs::GripperCommandAction>> gripper_action_server_;
-  sensor_msgs::JointState gripper_joint_state_msg_;
+  std::shared_ptr<actionlib::ActionServer<control_msgs::GripperCommandAction>> xarm_gripper_action_server_;
+  sensor_msgs::JointState xarm_gripper_joint_state_msg_;
+
+  std::shared_ptr<actionlib::ActionServer<control_msgs::GripperCommandAction>> bio_gripper_action_server_;
+  sensor_msgs::JointState bio_gripper_joint_state_msg_;
 };
 }
 
