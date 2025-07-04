@@ -396,7 +396,6 @@ void XArmDriver::init(ros::NodeHandle& root_nh, std::string &server_ip, bool in_
   if (!in_ros_control_)
   {
     std::thread([this]() {
-      float cur_pos;
       float position[7] = {0};
       float velocity[7] = {0};
       float effort[7] = {0};
@@ -500,10 +499,10 @@ bool XArmDriver::_firmware_version_is_ge(int major, int minor, int revision)
 inline float XArmDriver::_xarm_gripper_pos_convert(float pos, bool reversed)
 {
   if (reversed) {
-    return fabs(xarm_gripper_max_pos - pos * 1000);
+    return fabs(xarm_gripper_max_pos - pos * 1000.0);
   }
   else {
-    return fabs(xarm_gripper_max_pos - pos) / 1000;
+    return fabs(xarm_gripper_max_pos - pos) / 1000.0;
   }
 }
 
@@ -551,18 +550,18 @@ void XArmDriver::_init_xarm_gripper(void)
     
     xarm_gripper_init_loop_ = false;
     std::thread([this]() {
-      float xarm_gripper_pos;
-      int ret_grip = arm->get_gripper_position(&xarm_gripper_pos);
+      int curr_pos;
+      int ret_grip = arm->get_gripper_position(&curr_pos);
       while (ros::ok() && !xarm_gripper_init_loop_)
       {
         ros::Duration(0.1).sleep();
-        _pub_xarm_gripper_joint_states(xarm_gripper_pos);
+        _pub_xarm_gripper_joint_states(curr_pos);
       }
     }).detach();
   }
 }
 
-void XArmDriver::_pub_xarm_gripper_joint_states(float pos)
+void XArmDriver::_pub_xarm_gripper_joint_states(int pos)
 {
   xarm_gripper_joint_state_msg_.header.stamp = ros::Time::now();
   float p = _xarm_gripper_pos_convert(pos);
@@ -583,7 +582,7 @@ void XArmDriver::_handle_xarm_gripper_action_goal(actionlib::ActionServer<contro
   control_msgs::GripperCommandFeedback feedback;
 
   int ret;
-  float cur_pos = 0;
+  int curr_pos = 0;
   int err = 0;
   ret = arm->get_gripper_err_code(&err);
   if (err != 0) {
@@ -595,74 +594,74 @@ void XArmDriver::_handle_xarm_gripper_action_goal(actionlib::ActionServer<contro
     ROS_ERROR("get_gripper_err_code, ret=%d, err=%d", ret, err);
     return;
   }
-  ret = arm->get_gripper_position(&cur_pos);
-  _pub_xarm_gripper_joint_states(cur_pos);
+  ret = arm->get_gripper_position(&curr_pos);
+  _pub_xarm_gripper_joint_states(curr_pos);
 
   ret = arm->set_gripper_mode(0);
   if (ret != 0) {
-    result.position = _xarm_gripper_pos_convert(cur_pos);
+    result.position = _xarm_gripper_pos_convert(curr_pos);
     try {
       gh.setCanceled(result);
     } catch (std::exception &e) {
       ROS_ERROR("goal_handle setCanceled exception, ex=%s", e.what());
     }
     ret = arm->get_gripper_err_code(&err);
-    ROS_WARN("set_gripper_mode, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
+    ROS_WARN("set_gripper_mode, ret=%d, err=%d, curr_pos=%d", ret, err, curr_pos);
     return;
   }
   ret = arm->set_gripper_enable(true);
   if (ret != 0) {
-    result.position = _xarm_gripper_pos_convert(cur_pos);
+    result.position = _xarm_gripper_pos_convert(curr_pos);
     try {
       gh.setCanceled(result);
     } catch (std::exception &e) {
       ROS_ERROR("goal_handle setCanceled exception, ex=%s", e.what());
     }
     ret = arm->get_gripper_err_code(&err);
-    ROS_WARN("set_gripper_enable, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
+    ROS_WARN("set_gripper_enable, ret=%d, err=%d, curr_pos=%d", ret, err, curr_pos);
     return;
   }
   ret = arm->set_gripper_speed(3000);
   if (ret != 0) {
-    result.position = _xarm_gripper_pos_convert(cur_pos);
+    result.position = _xarm_gripper_pos_convert(curr_pos);
     try {
       gh.setCanceled(result);
     } catch (std::exception &e) {
       ROS_ERROR("goal_handle setCanceled exception, ex=%s", e.what());
     }
     ret = arm->get_gripper_err_code(&err);
-    ROS_WARN("set_gripper_speed, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
+    ROS_WARN("set_gripper_speed, ret=%d, err=%d, curr_pos=%d", ret, err, curr_pos);
     return;
   }
 
   float target_pos = _xarm_gripper_pos_convert(goal->command.position, true);
   bool is_move = true;
-  std::thread([this, &target_pos, &is_move, &cur_pos]() {
+  std::thread([this, &target_pos, &is_move, &curr_pos]() {
     is_move = true;
-    int ret2 = arm->set_gripper_position(target_pos, true, -1, false); // set wait_motion=false
+    int ret2 = arm->set_gripper_position((int)target_pos, true, -1, false); // set wait_motion=false
     int err;
     arm->get_gripper_err_code(&err);
-    ROS_INFO("set_gripper_position, ret=%d, err=%d, cur_pos=%f", ret2, err, cur_pos);
+    ROS_INFO("set_gripper_position, ret=%d, err=%d, curr_pos=%d", ret2, err, curr_pos);
     is_move = false;
   }).detach();
   while (is_move && ros::ok())
   {
     loop_rate.sleep();
-    ret = arm->get_gripper_position(&cur_pos);
+    ret = arm->get_gripper_position(&curr_pos);
     if (ret == 0) {
-      feedback.position = _xarm_gripper_pos_convert(cur_pos);
+      feedback.position = _xarm_gripper_pos_convert(curr_pos);
       try {
         gh.publishFeedback(feedback);
       } catch (std::exception &e) {
         ROS_ERROR("goal_handle publishFeedback exception, ex=%s", e.what());
       }
-      _pub_xarm_gripper_joint_states(cur_pos);
+      _pub_xarm_gripper_joint_states(curr_pos);
     }
   }
-  arm->get_gripper_position(&cur_pos);
-  ROS_INFO("move finish, cur_pos=%f", cur_pos);
+  arm->get_gripper_position(&curr_pos);
+  ROS_INFO("move finish, curr_pos=%d", curr_pos);
   if (ros::ok()) {
-    result.position = _xarm_gripper_pos_convert(cur_pos);
+    result.position = _xarm_gripper_pos_convert(curr_pos);
     try {
       gh.setSucceeded(result);
     } catch (std::exception &e) {
@@ -726,18 +725,18 @@ void XArmDriver::_init_bio_gripper(void)
     
     bio_gripper_init_loop_ = false;
     std::thread([this]() {
-      int bio_gripper_pos;
-      int ret_grip = arm->get_bio_gripper_position(&bio_gripper_pos);
+      int curr_pos;
+      int ret_grip = arm->get_bio_gripper_position(&curr_pos);
       while (ros::ok() && !bio_gripper_init_loop_)
       {
         ros::Duration(0.1).sleep();
-        _pub_bio_gripper_joint_states(bio_gripper_pos);
+        _pub_bio_gripper_joint_states(curr_pos);
       }
     }).detach();
   }
 }
 
-void XArmDriver::_pub_bio_gripper_joint_states(float pos)
+void XArmDriver::_pub_bio_gripper_joint_states(int pos)
 {
   bio_gripper_joint_state_msg_.header.stamp = ros::Time::now();
   float p = _bio_gripper_pos_convert(pos);
@@ -758,7 +757,7 @@ void XArmDriver::_handle_bio_gripper_action_goal(actionlib::ActionServer<control
   control_msgs::GripperCommandFeedback feedback;
 
   int ret;
-  int cur_pos = 0;
+  int curr_pos = 0;
   int err = 0;
   ret = arm->get_bio_gripper_error(&err);
   if (ret != 0 || err != 0) {
@@ -774,37 +773,37 @@ void XArmDriver::_handle_bio_gripper_action_goal(actionlib::ActionServer<control
     ROS_ERROR("get_bio_gripper_error, ret=%d, err=%d", ret, err);
     return;
   }
-  ret = arm->get_bio_gripper_position(&cur_pos);
-  _pub_bio_gripper_joint_states(cur_pos);
+  ret = arm->get_bio_gripper_position(&curr_pos);
+  _pub_bio_gripper_joint_states(curr_pos);
 
   // ret = arm->set_bio_gripper_enable(true);
   // if (ret != 0) {
-  //   result.position = _bio_gripper_pos_convert(cur_pos);
+  //   result.position = _bio_gripper_pos_convert(curr_pos);
   //   try {
   //     gh.setCanceled(result);
   //   } catch (std::exception &e) {
   //     ROS_ERROR("bio goal_handle setCanceled exception, ex=%s", e.what());
   //   }
   //   ret = arm->get_bio_gripper_error(&err);
-  //   ROS_WARN("set_bio_gripper_enable, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
+  //   ROS_WARN("set_bio_gripper_enable, ret=%d, err=%d, curr_pos=%d", ret, err, curr_pos);
   //   return;
   // }
   // ret = arm->set_bio_gripper_speed(3000);
   // if (ret != 0) {
-  //   result.position = _bio_gripper_pos_convert(cur_pos);
+  //   result.position = _bio_gripper_pos_convert(curr_pos);
   //   try {
   //     gh.setCanceled(result);
   //   } catch (std::exception &e) {
   //     ROS_ERROR("bio goal_handle setCanceled exception, ex=%s", e.what());
   //   }
   //   ret = arm->get_bio_gripper_error(&err);
-  //   ROS_WARN("set_bio_gripper_speed, ret=%d, err=%d, cur_pos=%f", ret, err, cur_pos);
+  //   ROS_WARN("set_bio_gripper_speed, ret=%d, err=%d, curr_pos=%d", ret, err, curr_pos);
   //   return;
   // }
 
   float target_pos = _bio_gripper_pos_convert(goal->command.position, true);
   bool is_move = true;
-  std::thread([this, &target_pos, &is_move, &cur_pos]() {
+  std::thread([this, &target_pos, &is_move, &curr_pos]() {
     is_move = true;
     int ret2;
     if (target_pos >= 100)
@@ -813,27 +812,27 @@ void XArmDriver::_handle_bio_gripper_action_goal(actionlib::ActionServer<control
         ret2 = arm->close_bio_gripper(2000, true, 5, false); // set wait_motion=false
     int err;
     arm->get_bio_gripper_error(&err);
-    ROS_INFO("set_bio_gripper_position, ret=%d, err=%d, cur_pos=%f", ret2, err, cur_pos);
+    ROS_INFO("set_bio_gripper_position, ret=%d, err=%d, curr_pos=%d", ret2, err, curr_pos);
     is_move = false;
   }).detach();
   while (is_move && ros::ok())
   {
     loop_rate.sleep();
-    ret = arm->get_bio_gripper_position(&cur_pos);
+    ret = arm->get_bio_gripper_position(&curr_pos);
     if (ret == 0) {
-      feedback.position = _bio_gripper_pos_convert(cur_pos);
+      feedback.position = _bio_gripper_pos_convert(curr_pos);
       try {
         gh.publishFeedback(feedback);
       } catch (std::exception &e) {
         ROS_ERROR("bio goal_handle publishFeedback exception, ex=%s", e.what());
       }
-      _pub_bio_gripper_joint_states(cur_pos);
+      _pub_bio_gripper_joint_states(curr_pos);
     }
   }
-  arm->get_bio_gripper_position(&cur_pos);
-  ROS_INFO("bio move finish, cur_pos=%f", cur_pos);
+  arm->get_bio_gripper_position(&curr_pos);
+  ROS_INFO("bio move finish, curr_pos=%d", curr_pos);
   if (ros::ok()) {
-    result.position = _bio_gripper_pos_convert(cur_pos);
+    result.position = _bio_gripper_pos_convert(curr_pos);
     try {
       gh.setSucceeded(result);
     } catch (std::exception &e) {

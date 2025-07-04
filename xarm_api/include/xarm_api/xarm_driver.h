@@ -118,12 +118,12 @@ private:
   inline float _xarm_gripper_pos_convert(float pos, bool reversed = false);
   void _handle_xarm_gripper_action_goal(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh);
   void _handle_xarm_gripper_action_cancel(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh);
-  void _pub_xarm_gripper_joint_states(float pos);
+  void _pub_xarm_gripper_joint_states(int pos);
 
   inline float _bio_gripper_pos_convert(float pos, bool reversed = false);
   void _handle_bio_gripper_action_goal(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh);
   void _handle_bio_gripper_action_cancel(actionlib::ActionServer<control_msgs::GripperCommandAction>::GoalHandle gh);
-  void _pub_bio_gripper_joint_states(float pos);
+  void _pub_bio_gripper_joint_states(int pos);
 
   void _init_publisher(void);
   void _init_subscriber(void);
