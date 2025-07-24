@@ -11,7 +11,7 @@ uint8 host_id
 bool is_transparent_transmission
 
 # whether to use port 503 for communication
-# if it is true, it will connect to 503 port for communication when it is used for the first time, which is generally only useful for transparent transmission
+# if it is true, it will connect to 503 port for communication when it is used for the first time
 bool use_503_port
 
 ---
