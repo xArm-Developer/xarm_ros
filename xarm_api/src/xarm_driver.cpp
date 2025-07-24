@@ -211,13 +211,20 @@ void XArmDriver::_init_service(void)
   
   set_modbus_timeout_server_ = nh_.advertiseService("set_tgpio_modbus_timeout", &XArmDriver::SetModbusToutCB, this);
   getset_tgpio_modbus_server_ = nh_.advertiseService("getset_tgpio_modbus_data", &XArmDriver::GetSetModbusCB, this);
+  set_tgpio_modbus_use_503_server_ = nh_.advertiseService("set_tgpio_modbus_use_503_port", &XArmDriver::SetModbusUsePort503CB, this);
 
-  ft_sensor_enable_server_ = nh_.advertiseService("ft_sensor_enable", &XArmDriver::FtSensorEnable, this);
-  ft_sensor_app_set_server_ = nh_.advertiseService("ft_sensor_app_set", &XArmDriver::FtSensorAppSet, this);
-  ft_sensor_set_zero_server_ = nh_.advertiseService("ft_sensor_set_zero", &XArmDriver::FtSensorSetZero, this);
-  ft_sensor_cali_load_server_ = nh_.advertiseService("ft_sensor_cali_load", &XArmDriver::FtSensorCaliLoad, this);
-  ft_sensor_iden_load_server_ = nh_.advertiseService("ft_sensor_iden_load", &XArmDriver::FtSensorIdenLoad, this);
+  set_ft_sensor_enable_server_ = nh_.advertiseService("set_ft_sensor_enable", &XArmDriver::FtSensorEnable, this);
+  set_ft_sensor_mode_server_ = nh_.advertiseService("set_ft_sensor_mode", &XArmDriver::FtSensorSetMode, this);
+  set_ft_sensor_zero_server_ = nh_.advertiseService("set_ft_sensor_zero", &XArmDriver::FtSensorSetZero, this);
+  iden_ft_sensor_load_offset_server_ = nh_.advertiseService("iden_ft_sensor_load_offset", &XArmDriver::FtSensorIdenLoad, this);
+  set_ft_sensor_load_offset_server_ = nh_.advertiseService("set_ft_sensor_load_offset", &XArmDriver::FtSensorCaliLoad, this);
   get_ft_sensor_error_server_ = nh_.advertiseService("get_ft_sensor_error", &XArmDriver::GetFtSensorError, this);
+  // OLD SERVICE
+  ft_sensor_enable_server_ = nh_.advertiseService("ft_sensor_enable", &XArmDriver::FtSensorEnable, this);
+  ft_sensor_app_set_server_ = nh_.advertiseService("ft_sensor_app_set", &XArmDriver::FtSensorSetMode, this);
+  ft_sensor_set_zero_server_ = nh_.advertiseService("ft_sensor_set_zero", &XArmDriver::FtSensorSetZero, this);
+  ft_sensor_iden_load_server_ = nh_.advertiseService("ft_sensor_iden_load", &XArmDriver::FtSensorIdenLoad, this);
+  ft_sensor_cali_load_server_ = nh_.advertiseService("ft_sensor_cali_load", &XArmDriver::FtSensorCaliLoad, this);
 
   open_lite6_gripper_server_ = nh_.advertiseService("open_lite6_gripper", &XArmDriver::OpenLite6Gripper, this);
   close_lite6_gripper_server_ = nh_.advertiseService("close_lite6_gripper", &XArmDriver::CloseLite6Gripper, this);
@@ -1732,24 +1739,31 @@ bool XArmDriver::GetSetModbusCB(xarm_msgs::GetSetModbusData::Request &req, xarm_
   return true;
 }
 
-bool XArmDriver::FtSensorEnable(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
+bool XArmDriver::SetModbusUsePort503CB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
 {
-  res.ret = arm->ft_sensor_enable(req.data);
-  res.message = "ft_sensor_enable, ret = " + std::to_string(res.ret);
+  res.ret = arm->set_tgpio_modbus_use_503_port(req.data);
+  res.message = "set_tgpio_modbus_use_503_port, ret = " + std::to_string(res.ret);
   return true;
 }
 
-bool XArmDriver::FtSensorAppSet(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
+bool XArmDriver::FtSensorEnable(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
 {
-  res.ret = arm->ft_sensor_app_set(req.data);
-  res.message = "ft_sensor_app_set, ret = " + std::to_string(res.ret);
+  res.ret = arm->set_ft_sensor_enable(req.data);
+  res.message = "set_ft_sensor_enable, ret = " + std::to_string(res.ret);
+  return true;
+}
+
+bool XArmDriver::FtSensorSetMode(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
+{
+  res.ret = arm->set_ft_sensor_mode(req.data);
+  res.message = "set_ft_sensor_mode, ret = " + std::to_string(res.ret);
   return true;
 }
 
 bool XArmDriver::FtSensorSetZero(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res)
 {
-  res.ret = arm->ft_sensor_set_zero();
-  res.message = "ft_sensor_set_zero, ret = " + std::to_string(res.ret);
+  res.ret = arm->set_ft_sensor_zero();
+  res.message = "set_ft_sensor_zero, ret = " + std::to_string(res.ret);
   return true;
 }
 
@@ -1760,19 +1774,19 @@ bool XArmDriver::FtSensorCaliLoad(xarm_msgs::FtCaliLoad::Request& req, xarm_msgs
     return true;
   }
 
-  res.ret = arm->ft_sensor_cali_load(&req.datas[0], req.association_setting_tcp_load);
+  res.ret = arm->set_ft_sensor_load_offset(&req.datas[0], req.association_setting_tcp_load);
   if (res.ret >= 0)
     arm->save_conf();
-  // res.ret = arm->ft_sensor_cali_load(&req.datas[0], req.association_setting_tcp_load, req.m, req.x, req.y, req.z);
-  res.message = "ft_sensor_cali_load, ret = " + std::to_string(res.ret);
+  // res.ret = arm->set_ft_sensor_load_offset(&req.datas[0], req.association_setting_tcp_load, req.m, req.x, req.y, req.z);
+  res.message = "set_ft_sensor_load_offset, ret = " + std::to_string(res.ret);
   return true;
 }
 
 bool XArmDriver::FtSensorIdenLoad(xarm_msgs::FtIdenLoad::Request& req, xarm_msgs::FtIdenLoad::Response& res)
 {
   res.datas.resize(10);
-  res.ret = arm->ft_sensor_iden_load(&res.datas[0]);
-  res.message = "ft_sensor_iden_load, ret = " + std::to_string(res.ret);
+  res.ret = arm->iden_ft_sensor_load_offset(&res.datas[0]);
+  res.message = "iden_ft_sensor_load_offset, ret = " + std::to_string(res.ret);
   return true;
 }
 

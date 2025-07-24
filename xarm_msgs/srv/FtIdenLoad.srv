@@ -1,5 +1,5 @@
 # This format is suitable for the following services
-#   - ft_sensor_iden_load
+#   - iden_ft_sensor_load_offset     # The old name is ft_sensor_iden_load, please use the new one
 
 ---
 
@@ -7,5 +7,5 @@ int16 ret
 string message
 
 # the result of identification
-#   ft_sensor_iden_load: [mass(kg)，x_centroid(mm)，y_centroid(mm)，z_centroid(mm)，Fx_offset，Fy_offset，Fz_offset，Tx_offset，Ty_offset，Tz_ffset]
+#   iden_ft_sensor_load_offset: [mass(kg)，x_centroid(mm)，y_centroid(mm)，z_centroid(mm)，Fx_offset，Fy_offset，Fz_offset，Tx_offset，Ty_offset，Tz_ffset]
 float32[] datas

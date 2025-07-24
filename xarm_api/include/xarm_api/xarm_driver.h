@@ -81,9 +81,10 @@ public:
 
   bool SetModbusToutCB(xarm_msgs::SetModbusTimeout::Request &req, xarm_msgs::SetModbusTimeout::Response &res);
   bool GetSetModbusCB(xarm_msgs::GetSetModbusData::Request &req, xarm_msgs::GetSetModbusData::Response &res);
+  bool SetModbusUsePort503CB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
 
   bool FtSensorEnable(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
-  bool FtSensorAppSet(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
+  bool FtSensorSetMode(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
   bool FtSensorSetZero(xarm_msgs::Call::Request& req, xarm_msgs::Call::Response& res);
   bool FtSensorCaliLoad(xarm_msgs::FtCaliLoad::Request& req, xarm_msgs::FtCaliLoad::Response& res);
   bool FtSensorIdenLoad(xarm_msgs::FtIdenLoad::Request& req, xarm_msgs::FtIdenLoad::Response& res);
@@ -197,6 +198,7 @@ private:
 
   ros::ServiceServer set_modbus_timeout_server_;
   ros::ServiceServer getset_tgpio_modbus_server_;
+  ros::ServiceServer set_tgpio_modbus_use_503_server_;
 
   // ros::ServiceServer tgpio_delay_set_digital_server_;
   // ros::ServiceServer cgpio_delay_set_digital_server_;
@@ -229,12 +231,18 @@ private:
   ros::ServiceServer get_position_aa_server_;
   ros::ServiceServer get_tgpio_baudrate_server_;
   
+  ros::ServiceServer set_ft_sensor_enable_server_;
+  ros::ServiceServer set_ft_sensor_mode_server_;
+  ros::ServiceServer set_ft_sensor_zero_server_;
+  ros::ServiceServer iden_ft_sensor_load_offset_server_;
+  ros::ServiceServer set_ft_sensor_load_offset_server_;
+  ros::ServiceServer get_ft_sensor_error_server_;
+  // OLD SERVICE
   ros::ServiceServer ft_sensor_enable_server_;
   ros::ServiceServer ft_sensor_app_set_server_;
   ros::ServiceServer ft_sensor_set_zero_server_;
-  ros::ServiceServer ft_sensor_cali_load_server_;
   ros::ServiceServer ft_sensor_iden_load_server_;
-  ros::ServiceServer get_ft_sensor_error_server_;
+  ros::ServiceServer ft_sensor_cali_load_server_;
 
   ros::ServiceServer open_lite6_gripper_server_;
   ros::ServiceServer close_lite6_gripper_server_;
