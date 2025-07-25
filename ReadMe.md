@@ -143,9 +143,12 @@ Moveit tutorial: <http://docs.ros.org/kinetic/api/moveit_tutorials/html/>
 ## 4.2.1 update the package
    ```bash
    $ cd ~/catkin_ws/src/xarm_ros
-   $ git pull
-   $ git submodule sync
-   $ git submodule update --init --remote
+   
+   # If you did not use the --recursive or --recurse-submodules option when cloning, use this command to initialize and update all submodules
+   $ git submodule update --init --recursive
+   
+   # Pull the main repository and update the submodule
+   $ git pull --recurse-submodules
    ```
 
 ## 4.3 Install other dependent packages:
