@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:macro name="realsense_gazebo" params="prefix:='' ">
+  <xacro:macro name="realsense_gazebo" params="prefix:=''">
     <gazebo reference="${prefix}camera_depth_frame">
-      <sensor name="cameradepth" type="depth">
-        <camera name="camera">
+      <sensor name="${prefix}cameradepth" type="depth">
+        <camera name="${prefix}camera">
           <horizontal_fov>1.57</horizontal_fov>
           <image>
             <width>1280</width>
@@ -26,8 +26,8 @@
       </sensor>
     </gazebo>
     <gazebo reference="${prefix}camera_color_frame">
-      <sensor name="cameracolor" type="camera">
-        <camera name="camera">
+      <sensor name="${prefix}cameracolor" type="camera">
+        <camera name="${prefix}camera">
           <horizontal_fov>1.57</horizontal_fov>
           <image>
             <width>1280</width>
@@ -50,8 +50,8 @@
       </sensor>
     </gazebo>
     <gazebo reference="${prefix}camera_left_ir_frame">
-      <sensor name="cameraired1" type="camera">
-        <camera name="camera">
+      <sensor name="${prefix}cameraired1" type="camera">
+        <camera name="${prefix}camera">
           <horizontal_fov>1.57</horizontal_fov>
           <image>
             <width>1280</width>
@@ -74,8 +74,8 @@
       </sensor>
     </gazebo>
     <gazebo reference="${prefix}camera_right_ir_frame">
-      <sensor name="cameraired2" type="camera">
-        <camera name="camera">
+      <sensor name="${prefix}cameraired2" type="camera">
+        <camera name="${prefix}camera">
           <horizontal_fov>1.57</horizontal_fov>
           <image>
             <width>1280</width>
@@ -99,26 +99,26 @@
     </gazebo>
     <gazebo>
       <plugin name="realsense_gazebo_camera" filename="librealsense_gazebo_plugin.so">
-        <prefix>camera</prefix>
+        <prefix>${prefix}camera</prefix>
         <depthUpdateRate>30.0</depthUpdateRate>
         <colorUpdateRate>30.0</colorUpdateRate>
         <infraredUpdateRate>30.0</infraredUpdateRate>
-        <depthTopicName>aligned_depth_to_color/image_raw</depthTopicName>
-        <depthCameraInfoTopicName>depth/camera_info</depthCameraInfoTopicName>
-        <colorTopicName>color/image_raw</colorTopicName>
-        <colorCameraInfoTopicName>color/camera_info</colorCameraInfoTopicName>
-        <infrared1TopicName>infra1/image_raw</infrared1TopicName>
-        <infrared1CameraInfoTopicName>infra1/camera_info</infrared1CameraInfoTopicName>
-        <infrared2TopicName>infra2/image_raw</infrared2TopicName>
-        <infrared2CameraInfoTopicName>infra2/camera_info</infrared2CameraInfoTopicName>
-        <colorOpticalframeName>camera_color_optical_frame</colorOpticalframeName>
-        <depthOpticalframeName>camera_depth_optical_frame</depthOpticalframeName>
-        <infrared1OpticalframeName>camera_left_ir_optical_frame</infrared1OpticalframeName>
-        <infrared2OpticalframeName>camera_right_ir_optical_frame</infrared2OpticalframeName>
+        <depthTopicName>${prefix}aligned_depth_to_color/image_raw</depthTopicName>
+        <depthCameraInfoTopicName>${prefix}depth/camera_info</depthCameraInfoTopicName>
+        <colorTopicName>${prefix}color/image_raw</colorTopicName>
+        <colorCameraInfoTopicName>${prefix}color/camera_info</colorCameraInfoTopicName>
+        <infrared1TopicName>${prefix}infra1/image_raw</infrared1TopicName>
+        <infrared1CameraInfoTopicName>${prefix}infra1/camera_info</infrared1CameraInfoTopicName>
+        <infrared2TopicName>${prefix}infra2/image_raw</infrared2TopicName>
+        <infrared2CameraInfoTopicName>${prefix}infra2/camera_info</infrared2CameraInfoTopicName>
+        <colorOpticalframeName>${prefix}camera_color_optical_frame</colorOpticalframeName>
+        <depthOpticalframeName>${prefix}camera_depth_optical_frame</depthOpticalframeName>
+        <infrared1OpticalframeName>${prefix}camera_left_ir_optical_frame</infrared1OpticalframeName>
+        <infrared2OpticalframeName>${prefix}camera_right_ir_optical_frame</infrared2OpticalframeName>
         <rangeMinDepth>0.3</rangeMinDepth>
         <rangeMaxDepth>3.0</rangeMaxDepth>
         <pointCloud>true</pointCloud>
-        <pointCloudTopicName>depth/color/points</pointCloudTopicName>
+        <pointCloudTopicName>${prefix}depth/color/points</pointCloudTopicName>
         <pointCloudCutoff>0.3</pointCloudCutoff>
       </plugin>
     </gazebo>

@@ -291,12 +291,15 @@
         <xacro:if value="${ros2_control_params != ''}">
           <xacro:property name="new_ros2_control_params" value="${ros2_control_params}"/>
         </xacro:if>
+        <xacro:if value="${ros2_control_plugin == 'gz_ros2_control/GazeboSimSystem'}">
+          <xacro:gz_ros2_control_plugin ros2_control_params="${new_ros2_control_params}"/>
+        </xacro:if>
         <xacro:if value="${ros2_control_plugin == 'ign_ros2_control/IgnitionSystem'}">
           <xacro:ignition_ros2_control_plugin prefix="${prefix}" ros2_control_params="${new_ros2_control_params}"/>
         </xacro:if>
-        <xacro:unless value="${ros2_control_plugin == 'ign_ros2_control/IgnitionSystem'}">
+        <xacro:if value="${ros2_control_plugin == 'gazebo_ros2_control/GazeboSystem'}">
           <xacro:gazebo_ros2_control_plugin ros2_control_params="${new_ros2_control_params}"/>
-        </xacro:unless>
+        </xacro:if>
       </xacro:if>
       <xacro:unless value="${is_ros2}">
         <xacro:gazebo_ros1_control_plugin namespace="${hw_ns}"/>
