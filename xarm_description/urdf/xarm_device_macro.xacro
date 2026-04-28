@@ -41,6 +41,7 @@
     robot_sn:='' 
     mesh_suffix:='stl' 
     kinematics_suffix:=''
+    gripper_version:='G1'
     "
     > 
 
@@ -216,8 +217,21 @@
       <xacro:include filename="$(find xarm_description)/urdf/camera/realsense_d435i.urdf.xacro" />
       <xacro:d435i_urdf prefix="${prefix}" add_d435i_links="${add_d435i_links}" />
       <xacro:if value="${add_d435i_links}">
-        <xacro:include filename="$(find xarm_description)/urdf/camera/realsense.gazebo.xacro" />    
-        <xacro:realsense_gazebo prefix="${prefix}" />
+        <xacro:include filename="$(find xarm_description)/urdf/camera/realsense.gazebo.xacro" />
+        <xacro:if value="${is_ros2}">
+          <xacro:if value="${ros2_control_plugin == 'gz_ros2_control/GazeboSimSystem'}">
+            <xacro:realsense_gz prefix="${prefix}" />
+          </xacro:if>
+          <xacro:if value="${ros2_control_plugin == 'ign_ros2_control/IgnitionSystem'}">
+            <xacro:realsense_ignition prefix="${prefix}" />
+          </xacro:if>
+          <xacro:if value="${ros2_control_plugin == 'gazebo_ros2_control/GazeboSystem'}">
+            <xacro:realsense_gazebo prefix="${prefix}" />
+          </xacro:if>
+        </xacro:if>
+        <xacro:unless value="${is_ros2}">
+          <xacro:realsense_gazebo prefix="${prefix}" />
+        </xacro:unless>
       </xacro:if>
     </xacro:if>
     <xacro:unless value="${add_realsense_d435i}">
@@ -232,14 +246,17 @@
     <xacro:if value="${add_gripper}">
       <xacro:if value="${robot_type == 'lite'}">
         <!-- Load Lite Gripper Model URDF -->
-        <xacro:include filename="$(find xarm_description)/urdf/gripper/lite_gripper.urdf.xacro" />
-        <xacro:uflite_gripper_urdf prefix="${prefix}" attach_to="${prefix}link_eef" />
+        <xacro:include filename="$(find xarm_description)/urdf/gripper/uflite_gripper_macro.xacro" />
+        <xacro:uflite_gripper_macro prefix="${prefix}" attach_to="${prefix}link_eef" 
+          ros2_control_plugin="${ros2_control_plugin}" dof="${dof}" hard_interface="${hard_interface}" 
+          gripper_version="${gripper_version}" />
       </xacro:if>
       <xacro:unless value="${robot_type == 'lite'}">
         <!-- Load XArm Gripper Model URDF -->
         <xacro:include filename="$(find xarm_description)/urdf/gripper/xarm_gripper_macro.xacro" />
         <xacro:xarm_gripper_macro prefix="${prefix}" attach_to="${prefix}link_eef" 
-          ros2_control_plugin="${ros2_control_plugin}" dof="${dof}" hard_interface="${hard_interface}" />
+          ros2_control_plugin="${ros2_control_plugin}" dof="${dof}" hard_interface="${hard_interface}" 
+          gripper_version="${gripper_version}" />
       </xacro:unless>
     </xacro:if>
 
@@ -248,7 +265,8 @@
         <!-- Load BIO Gripper Model URDF -->
         <xacro:include filename="$(find xarm_description)/urdf/gripper/bio_gripper_macro.xacro" />
         <xacro:bio_gripper_macro prefix="${prefix}" attach_to="${prefix}link_eef" 
-          ros2_control_plugin="${ros2_control_plugin}" dof="${dof}" hard_interface="${hard_interface}" />
+          ros2_control_plugin="${ros2_control_plugin}" dof="${dof}" hard_interface="${hard_interface}" 
+          gripper_version="${gripper_version}" />
       </xacro:unless>
     </xacro:if>
 
@@ -291,12 +309,15 @@
         <xacro:if value="${ros2_control_params != ''}">
           <xacro:property name="new_ros2_control_params" value="${ros2_control_params}"/>
         </xacro:if>
+        <xacro:if value="${ros2_control_plugin == 'gz_ros2_control/GazeboSimSystem'}">
+          <xacro:gz_ros2_control_plugin ros2_control_params="${new_ros2_control_params}"/>
+        </xacro:if>
         <xacro:if value="${ros2_control_plugin == 'ign_ros2_control/IgnitionSystem'}">
           <xacro:ignition_ros2_control_plugin prefix="${prefix}" ros2_control_params="${new_ros2_control_params}"/>
         </xacro:if>
-        <xacro:unless value="${ros2_control_plugin == 'ign_ros2_control/IgnitionSystem'}">
+        <xacro:if value="${ros2_control_plugin == 'gazebo_ros2_control/GazeboSystem'}">
           <xacro:gazebo_ros2_control_plugin ros2_control_params="${new_ros2_control_params}"/>
-        </xacro:unless>
+        </xacro:if>
       </xacro:if>
       <xacro:unless value="${is_ros2}">
         <xacro:gazebo_ros1_control_plugin namespace="${hw_ns}"/>

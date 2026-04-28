@@ -14,7 +14,7 @@
     >
 
     <!-- define property -->
-    <xacro:if value="${model_num >= 1305 and model_num != 1380}">
+    <xacro:if value="${mesh_suffix == 'dae' or (model_num >= 1305 and model_num != 1380)}">
       <xacro:property name="visual_dir" value="xarm7_1305/visual"/>
       <xacro:property name="collision_dir" value="xarm7_1305/collision"/>
       <xacro:property name="add_mesh_suffix" value="false"/>
@@ -22,7 +22,7 @@
       <xacro:property name="link7_visual" value="xarm7_1305/visual/link7"/>
       <xacro:property name="link7_collision" value="xarm7_1305/collision/link7"/>
     </xacro:if>
-    <xacro:unless value="${model_num >= 1305 and model_num != 1380}">
+    <xacro:unless value="${mesh_suffix == 'dae' or (model_num >= 1305 and model_num != 1380)}">
       <xacro:property name="visual_dir" value="xarm7/visual"/>
       <xacro:property name="collision_dir" value="xarm7/visual"/>
       <xacro:property name="add_mesh_suffix" value="true"/>

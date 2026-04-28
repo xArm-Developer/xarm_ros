@@ -35,8 +35,7 @@
     <arg name="robot_name" value="$(arg robot_name)"/>
   </include>
 
-  <arg name="gripper_controller" if="$(eval arg('robot_type') == 'lite')" value="false"/>
-  <arg name="gripper_controller" unless="$(eval arg('robot_type') == 'lite')" value="$(arg add_gripper)"/>
+  <arg name="gripper_controller" value="$(arg add_gripper)"/>
   
   <!-- Trajectory Execution Functionality -->
   <include ns="move_group" file="$(find uf_robot_moveit_config)/launch/__trajectory_execution.launch.xml" if="$(arg allow_trajectory_execution)">

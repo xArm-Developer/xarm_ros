@@ -1,7 +1,14 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="uf_bio_gripper">
-  <xacro:macro name="bio_gripper_urdf" params="prefix:='' attach_to:='' attach_xyz:='0 0 0' attach_rpy:='0 0 0' ">
-    
+  <xacro:macro name="bio_gripper_urdf" params="prefix:='' attach_to:='' attach_xyz:='0 0 0' attach_rpy:='0 0 0' gripper_version:='G1' ">
+
+    <xacro:property name="name_suffix" value=""/>
+    <xacro:if value="${mesh_suffix == 'dae'}">
+      <xacro:if value="${gripper_version == 'G2' or gripper_version == 'g2'}">
+        <xacro:property name="name_suffix" value="_g2"/>
+      </xacro:if>
+    </xacro:if>
+
     <xacro:unless value="${attach_to == ''}">
       <joint name="${prefix}bio_gripper_fix" type="fixed">
         <parent link="${attach_to}"/>
@@ -19,12 +26,12 @@
           iyy="0.00018256" iyz="4.0828E-08" izz="0.00094673" />
       </inertial>
       <xacro:common_link_visual 
-        mesh_filename="gripper/bio/link_base"  
+        mesh_filename="gripper/bio/link_base${name_suffix}"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="gripper/bio/link_base"  
+        mesh_filename="gripper/bio/link_base${name_suffix}"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
@@ -38,12 +45,12 @@
           iyy="1.744E-05" iyz="1.2237E-06" izz="1.7775E-05" />
       </inertial>
       <xacro:common_link_visual 
-        mesh_filename="gripper/bio/left_finger"  
+        mesh_filename="gripper/bio/left_finger${name_suffix}"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="gripper/bio/left_finger"  
+        mesh_filename="gripper/bio/left_finger${name_suffix}"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
@@ -65,12 +72,12 @@
           iyy="1.6115E-05" iyz="-1.6711E-06" izz="1.6032E-05" />
       </inertial>
       <xacro:common_link_visual 
-        mesh_filename="gripper/bio/right_finger"  
+        mesh_filename="gripper/bio/right_finger${name_suffix}"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="gripper/bio/right_finger"  
+        mesh_filename="gripper/bio/right_finger${name_suffix}"  
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>

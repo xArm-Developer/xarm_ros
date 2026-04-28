@@ -32,6 +32,10 @@
   <arg name="kinematics_suffix_1" default="" />
   <arg name="kinematics_suffix_2" default="" />
 
+  <arg name="mesh_suffix" default="stl" />
+  <arg name="gripper_version_1" default="G1" />
+  <arg name="gripper_version_2" default="G1" />
+
   <include file="$(find uf_robot_moveit_config)/launch/_dual_robot_moveit_gazebo.launch">
     <arg name="dof" value="5" />
     <arg name="robot_type" value="xarm" />
@@ -67,6 +71,9 @@
 
     <arg name="kinematics_suffix_1" value="$(arg kinematics_suffix_1)"/>
     <arg name="kinematics_suffix_2" value="$(arg kinematics_suffix_2)"/>
+    <arg name="mesh_suffix" value="$(arg mesh_suffix)"/>
+    <arg name="gripper_version_1" value="$(arg gripper_version_1)"/>
+    <arg name="gripper_version_2" value="$(arg gripper_version_2)"/>
 
   </include>
 

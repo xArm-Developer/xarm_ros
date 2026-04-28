@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
   <!-- from mimic_joint_gazebo_tutorial by @mintar, refer: https://github.com/mintar/mimic_joint_gazebo_tutorial -->
-  <xacro:macro name="mimic_joint_plugin_gazebo" params="name_prefix following_joint mimic_joint has_pid:=false multiplier:=1.0 offset:=0 sensitiveness:=0.0 max_effort:=1.0 robot_namespace:=''">
+  <xacro:macro name="mimic_joint_plugin_gazebo" params="name_prefix following_joint mimic_joint has_pid:=false multiplier:=1.0 offset:=0 sensitiveness:=0.0 max_effort:=1.0 ros2_control_plugin:='gazebo_ros2_control/GazeboSystem' robot_namespace:=''">
     <!-- ros2 -->
     <xacro:if value="${is_ros2}"> 
       <xacro:property name="filename" value="libgazebo_mimic_joint_plugin.so" />
@@ -12,8 +12,14 @@
       <xacro:property name="filename" value="libroboticsgroup_gazebo_mimic_joint_plugin.so" />
       <!-- <xacro:property name="filename" value="libroboticsgroup_upatras_gazebo_mimic_joint_plugin.so" /> -->
     </xacro:unless>
+    <xacro:if value="${ros2_control_plugin == 'gazebo_ros2_control/GazeboSystem'}"> 
+      <xacro:property name="plugin_name" value="${name_prefix}mimic_joint_plugin" />
+    </xacro:if>
+    <xacro:unless value="${ros2_control_plugin == 'gazebo_ros2_control/GazeboSystem'}">
+      <xacro:property name="plugin_name" value="gz::sim::systems::GazeboMimicJointPlugin" />
+    </xacro:unless>
     <gazebo>
-      <plugin name="${name_prefix}mimic_joint_plugin" filename="${filename}">
+      <plugin name="${plugin_name}" filename="${filename}">
         <joint>${following_joint}</joint>
         <mimicJoint>${mimic_joint}</mimicJoint>
         <xacro:if value="${has_pid}">                     <!-- if set to true, PID parameters from "/gazebo_ros_control/pid_gains/${mimic_joint}" are loaded -->

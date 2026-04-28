@@ -11,6 +11,10 @@
     inertial_params_filename:='' kinematics_params_filename:='' "
     >
 
+    <!-- define property -->
+    <xacro:property name="add_mesh_suffix" value="false"/>
+    <xacro:property name="collison_mesh_suffix" value="stl"/>
+
     <!-- load params and define property -->
     <xacro:property name="default_inertial_params_filename" value="xarm6_type9_HT_BR2"/>
     <xacro:if value="${inertial_params_filename != ''}">
@@ -43,7 +47,9 @@
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="lite6/collision/link_base"  
+        mesh_filename="lite6/collision/link_base" 
+        add_mesh_suffix="${add_mesh_suffix}" 
+        other_mesh_suffix="${collison_mesh_suffix}" 
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
@@ -57,7 +63,9 @@
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="lite6/collision/link1"  
+        mesh_filename="lite6/collision/link1" 
+        add_mesh_suffix="${add_mesh_suffix}" 
+        other_mesh_suffix="${collison_mesh_suffix}" 
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
@@ -84,7 +92,9 @@
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="lite6/collision/link2"  
+        mesh_filename="lite6/collision/link2" 
+        add_mesh_suffix="${add_mesh_suffix}" 
+        other_mesh_suffix="${collison_mesh_suffix}" 
         origin_xyz="0 0 ${-kinematics_params['joint2']['y']}" 
         origin_rpy="0 0 0" />
     </link>
@@ -111,7 +121,9 @@
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="lite6/collision/link3"  
+        mesh_filename="lite6/collision/link3" 
+        add_mesh_suffix="${add_mesh_suffix}" 
+        other_mesh_suffix="${collison_mesh_suffix}" 
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
@@ -138,7 +150,9 @@
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="lite6/collision/link4"  
+        mesh_filename="lite6/collision/link4" 
+        add_mesh_suffix="${add_mesh_suffix}" 
+        other_mesh_suffix="${collison_mesh_suffix}" 
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
@@ -165,7 +179,9 @@
         origin_rpy="0 0 0"
         material_name="${prefix}White" />
       <xacro:common_link_collision 
-        mesh_filename="lite6/collision/link5"  
+        mesh_filename="lite6/collision/link5" 
+        add_mesh_suffix="${add_mesh_suffix}" 
+        other_mesh_suffix="${collison_mesh_suffix}" 
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
@@ -192,7 +208,9 @@
         origin_rpy="0 0 0"
         material_name="${prefix}Silver" />
       <xacro:common_link_collision 
-        mesh_filename="lite6/collision/link6"  
+        mesh_filename="lite6/collision/link6" 
+        add_mesh_suffix="${add_mesh_suffix}" 
+        other_mesh_suffix="${collison_mesh_suffix}" 
         origin_xyz="0 0 0" 
         origin_rpy="0 0 0" />
     </link>
