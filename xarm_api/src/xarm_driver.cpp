@@ -211,7 +211,7 @@ void XArmDriver::_init_service(void)
   
   set_modbus_timeout_server_ = nh_.advertiseService("set_tgpio_modbus_timeout", &XArmDriver::SetModbusToutCB, this);
   getset_tgpio_modbus_server_ = nh_.advertiseService("getset_tgpio_modbus_data", &XArmDriver::GetSetModbusCB, this);
-  set_tgpio_modbus_use_503_server_ = nh_.advertiseService("set_tgpio_modbus_use_503_port", &XArmDriver::SetModbusUsePort503CB, this);
+  set_rs485_use_503_port_server_ = nh_.advertiseService("set_rs485_use_503_port", &XArmDriver::SetRS485UsePort503CB, this);
 
   set_ft_sensor_enable_server_ = nh_.advertiseService("set_ft_sensor_enable", &XArmDriver::FtSensorEnable, this);
   set_ft_sensor_mode_server_ = nh_.advertiseService("set_ft_sensor_mode", &XArmDriver::FtSensorSetMode, this);
@@ -445,6 +445,101 @@ void XArmDriver::init(ros::NodeHandle& root_nh, std::string &server_ip, bool in_
   _init_subscriber();
   _init_xarm_gripper();
   _init_bio_gripper();
+
+  bool add_gripper = false;
+  bool rtt1 = nh_.getParam("add_gripper", add_gripper);
+  add_gripper = add_gripper && rtt1;
+
+  bool add_bio_gripper = false;
+  bool rtt2 = nh_.getParam("add_bio_gripper", add_bio_gripper);
+  add_bio_gripper = add_bio_gripper && rtt2;
+
+  if (_firmware_version_is_ge(2, 7, 101) && (add_gripper || add_bio_gripper)) {
+    sock_rt_ = std::make_shared<SocketPort>((char *)server_ip.data(), 30000, 10, 1024, 1);
+    std::thread([this]() {
+      int ret;
+      int size = 0;
+      unsigned char rx_data[1024];
+
+      // float target_joint_positions[7];
+      // float target_joint_velocities[7];
+      // float target_joint_accelerations[7];
+      // float actual_joint_positions[7];
+      // float actual_joint_velocities[7];
+      // float actual_joint_accelerations[7];
+      // float actual_joint_currents[7];
+      // float estimated_joint_torques[7];
+
+      // float ftsensor_raw_data[6];
+      // float ftsensor_filtered_data[6];
+
+      int dev_type = 0;
+      // int dev_status = 0;
+      int external_device_info[3];
+      int gripper_pulse;
+
+      while (arm->is_connected()) {
+        if (sock_rt_->is_ok() != 0) {
+          ROS_ERROR("SocketPort 30000 disconnected!");
+          break;
+        }
+        memset(rx_data, 0, 1024);
+        ret = sock_rt_->read_frame(rx_data);
+        if (ret != 0) continue;
+        if (size == 0) size = bin8_to_32(rx_data + 4);
+        unsigned char *data_fp = &rx_data[4];
+
+        // hex_to_nfp32(data_fp + 32, target_joint_positions, 7);
+        // hex_to_nfp32(data_fp + 60, target_joint_velocities, 7);
+        // // hex_to_nfp32(data_fp + 88, target_joint_accelerations, 7);
+        // hex_to_nfp32(data_fp + 116, actual_joint_positions, 7);
+        // hex_to_nfp32(data_fp + 144, actual_joint_velocities, 7);
+        // // hex_to_nfp32(data_fp + 172, actual_joint_accelerations, 7);
+        // hex_to_nfp32(data_fp + 200, actual_joint_currents, 7);
+        // hex_to_nfp32(data_fp + 118, estimated_joint_torques, 7);
+
+        // hex_to_nfp32(data_fp + 688, ftsensor_raw_data, 6);
+        // hex_to_nfp32(data_fp + 712, ftsensor_filtered_data, 6);
+
+        dev_type = data_fp[736];
+        // dev_status = data_fp[737];
+        bin8_to_ns16(data_fp + 738, external_device_info, 3);
+
+        // joint_state_msg_.header.stamp = node_->get_clock()->now();
+        // for(int i = 0; i < dof_; i++)
+        // {
+        //   if (joint_state_flags_ & 0x01) {
+        //     joint_state_msg_.position[i] = (double)target_joint_positions[i];
+        //   }
+        //   else {
+        //     joint_state_msg_.position[i] = (double)actual_joint_positions[i];
+        //   }
+        //   if (joint_state_flags_ & 0x02) {
+        //     joint_state_msg_.velocity[i] = (double)target_joint_velocities[i];
+        //   }
+        //   else {
+        //     joint_state_msg_.velocity[i] = (double)actual_joint_velocities[i];
+        //   }
+        //   joint_state_msg_.effort[i] = (double)estimated_joint_torques[i];
+        // }
+        // pub_joint_state(joint_state_msg_);
+
+        if (dev_type == 1 || dev_type == 2) {
+          gripper_pulse = (int)((asin((external_device_info[0] - 16) / 110.0) * 57.29577951308232 + 8.33) * 18.28);
+          _pub_xarm_gripper_joint_states(gripper_pulse);
+        }
+        else if (dev_type == 3) {
+          // 注: 这里是mm
+          _pub_bio_gripper_joint_states(external_device_info[0]);
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+      }
+    }).detach();
+  }
+  else {
+    sock_rt_ = NULL;
+  }
 }
 
 sensor_msgs::JointState* XArmDriver::get_joint_states()
@@ -1739,10 +1834,10 @@ bool XArmDriver::GetSetModbusCB(xarm_msgs::GetSetModbusData::Request &req, xarm_
   return true;
 }
 
-bool XArmDriver::SetModbusUsePort503CB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
+bool XArmDriver::SetRS485UsePort503CB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res)
 {
-  res.ret = arm->set_tgpio_modbus_use_503_port(req.data);
-  res.message = "set_tgpio_modbus_use_503_port, ret = " + std::to_string(res.ret);
+  res.ret = arm->set_rs485_use_503_port(req.data);
+  res.message = "set_rs485_use_503_port, ret = " + std::to_string(res.ret);
   return true;
 }
 
