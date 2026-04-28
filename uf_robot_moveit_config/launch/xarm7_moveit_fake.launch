@@ -29,6 +29,9 @@
   <arg name="sensors_3d" default="false" />
   <arg name="jnt_stat_pub_rate" default="10" />
 
+  <arg name="mesh_suffix" default="stl" />
+  <arg name="gripper_version" default="G1" />
+
   <include file="$(find uf_robot_moveit_config)/launch/_robot_moveit_fake.launch">
     <arg name="dof" value="7"/>
     <arg name="robot_type" value="xarm"/>
@@ -61,7 +64,7 @@
     <arg name="ext_ns" value="$(arg ext_ns)" />
     <arg name="sensors_3d" value="$(arg sensors_3d)" />
     <arg name="jnt_stat_pub_rate" value="$(arg jnt_stat_pub_rate)"/>
-    
-  </include>
+    <arg name="mesh_suffix" value="$(arg mesh_suffix)" />
+    <arg name="gripper_version" value="$(arg gripper_version)" />
 
 </launch>

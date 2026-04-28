@@ -14,6 +14,7 @@
   <arg name="add_realsense_d435i" default="false" />
   <arg name="add_d435i_links" default="false" />
   <arg name="add_gripper" default="false" />
+  <arg name="gripper_action" default="false" />
   <arg name="add_vacuum_gripper" default="false" />
   <arg name="add_other_geometry" default="false"/>
   <arg name="geometry_type" default="box"/>
@@ -34,6 +35,10 @@
   <arg name="kinematics_suffix_1" default="" />
   <arg name="kinematics_suffix_2" default="" />
 
+  <arg name="mesh_suffix" default="stl" />
+  <arg name="gripper_version_1" default="G1" />
+  <arg name="gripper_version_2" default="G1" />
+
   <arg name="robot_dof" value="$(eval arg('dof') if arg('robot_type') == 'xarm' else 6)" />
   <arg name="robot_name" value="$(eval 'uf850' if arg('robot_type') == 'uf850' else arg('robot_type') + str(arg('robot_dof')))" />
 
@@ -43,9 +48,12 @@
   <arg unless="$(eval arg('robot_type') == 'uf850')" name="robot_controller_name" value="$(eval str(arg('robot_type')) + str(arg('dof')) + ('_velo_traj_controller' if arg('velocity_control') else '_traj_controller'))" />
   <remap from="/L_$(arg robot_name)_controller/follow_joint_trajectory" to="/$(arg hw_ns)/L_$(arg robot_controller_name)/follow_joint_trajectory"/>
   <remap from="/R_$(arg robot_name)_controller/follow_joint_trajectory" to="/$(arg hw_ns)/R_$(arg robot_controller_name)/follow_joint_trajectory"/>
-  <arg name="gripper_controller_name" value="$(eval 'gripper_velo_traj_controller' if arg('velocity_control') else 'gripper_traj_controller')" />
-  <remap if="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" from="L_gripper_controller/follow_joint_trajectory" to="/$(arg hw_ns)/L_$(arg gripper_controller_name)/follow_joint_trajectory"/>
-  <remap if="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" from="R_gripper_controller/follow_joint_trajectory" to="/$(arg hw_ns)/R_$(arg gripper_controller_name)/follow_joint_trajectory"/>
+
+  <arg name="gripper_controller_name" value="$(eval 'gripper_action_controller' if arg('gripper_action') else 'gripper_velo_traj_controller' if arg('velocity_control') else 'gripper_traj_controller')" />
+  <remap if="$(eval arg('add_gripper') and not arg('gripper_action'))" from="L_gripper_controller/follow_joint_trajectory" to="/$(arg hw_ns)/L_$(arg gripper_controller_name)/follow_joint_trajectory"/>
+  <remap if="$(eval arg('add_gripper') and arg('gripper_action'))" from="L_gripper_controller/gripper_action" to="/$(arg hw_ns)/L_$(arg gripper_controller_name)/gripper_cmd"/>
+  <remap if="$(eval arg('add_gripper') and not arg('gripper_action'))" from="R_gripper_controller/follow_joint_trajectory" to="/$(arg hw_ns)/R_$(arg gripper_controller_name)/follow_joint_trajectory"/>
+  <remap if="$(eval arg('add_gripper') and arg('gripper_action'))" from="R_gripper_controller/gripper_action" to="/$(arg hw_ns)/R_$(arg gripper_controller_name)/gripper_cmd"/>
 
   <include file="$(find uf_robot_moveit_config)/launch/__moveit_rviz_common.launch">
     <arg name="jnt_stat_source" value="[/$(arg hw_ns)/joint_states]" />
@@ -87,6 +95,9 @@
 
     <arg name="kinematics_suffix_1" value="$(arg kinematics_suffix_1)"/>
     <arg name="kinematics_suffix_2" value="$(arg kinematics_suffix_2)"/>
+    <arg name="mesh_suffix" value="$(arg mesh_suffix)"/>
+    <arg name="gripper_version_1" value="$(arg gripper_version_1)"/>
+    <arg name="gripper_version_2" value="$(arg gripper_version_2)"/>
 
   </include>
 
@@ -122,6 +133,9 @@
 
     <arg name="kinematics_suffix_1" value="$(arg kinematics_suffix_1)"/>
     <arg name="kinematics_suffix_2" value="$(arg kinematics_suffix_2)"/>
+    <arg name="mesh_suffix" value="$(arg mesh_suffix)"/>
+    <arg name="gripper_version_1" value="$(arg gripper_version_1)"/>
+    <arg name="gripper_version_2" value="$(arg gripper_version_2)"/>
 
   </include>
 

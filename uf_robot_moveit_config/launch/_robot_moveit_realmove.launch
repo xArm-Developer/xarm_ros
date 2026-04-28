@@ -33,6 +33,9 @@
   <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
   <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
 
+  <arg name="mesh_suffix" default="stl" />
+  <arg name="gripper_version" default="G1" />
+
   <arg name="ext_ns" default="" />
   <arg name="sensors_3d" default="false" />
   <arg name="enforce_limits" default="true" />
@@ -97,7 +100,8 @@
     <arg name="model1300" value="$(arg model1300)"/>
     <arg name="limited" value="$(arg limited)"/>
     <arg name="kinematics_suffix_1" value="$(arg kinematics_suffix)"/>
-    
+    <arg name="mesh_suffix" value="$(arg mesh_suffix)"/>
+    <arg name="gripper_version_1" value="$(arg gripper_version)"/>
     <arg name="attach_to" value="$(arg attach_to)"/>
     <arg name="attach_xyz" value="$(arg attach_xyz)"/>
     <arg name="attach_rpy" value="$(arg attach_rpy)"/>

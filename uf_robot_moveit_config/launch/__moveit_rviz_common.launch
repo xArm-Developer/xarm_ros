@@ -58,6 +58,10 @@
   <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
   <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
 
+  <arg name="mesh_suffix" default="stl" />
+  <arg name="gripper_version_1" default="G1" />
+  <arg name="gripper_version_2" default="G1" />
+
   <arg name="pipeline" default="ompl" />
 
   <arg name="dual" default="false" />
@@ -97,6 +101,9 @@
     <arg name="geometry_mesh_origin_rpy" value="$(arg geometry_mesh_origin_rpy)"/>
     <arg name="geometry_mesh_tcp_xyz" value="$(arg geometry_mesh_tcp_xyz)"/>
     <arg name="geometry_mesh_tcp_rpy" value="$(arg geometry_mesh_tcp_rpy)"/>
+    <arg name="mesh_suffix" value="$(arg mesh_suffix)"/>
+    <arg name="gripper_version_1" value="$(arg gripper_version_1)"/>
+    <arg name="gripper_version_2" value="$(arg gripper_version_2)"/>
 
     <arg name="dof" value="$(arg robot_dof)"/>
     <arg name="robot_type" value="$(arg robot_type)"/>

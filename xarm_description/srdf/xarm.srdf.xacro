@@ -6,10 +6,11 @@
   <xacro:arg name="robot_type" default="xarm" />
   <xacro:arg name="add_gripper" default="false"/>
   <xacro:arg name="add_vacuum_gripper" default="false" />
+  <xacro:arg name="add_bio_gripper" default="false" />
   <xacro:arg name="add_other_geometry" default="false" />
 
   <xacro:include filename="$(find xarm_description)/srdf/xarm_macro.srdf.xacro" />
   <xacro:xarm_macro_srdf prefix="$(arg prefix)" dof="$(arg dof)" robot_type="$(arg robot_type)" 
-    add_gripper="$(arg add_gripper)" add_vacuum_gripper="$(arg add_vacuum_gripper)" add_other_geometry="$(arg add_other_geometry)" />
+    add_gripper="$(arg add_gripper)" add_vacuum_gripper="$(arg add_vacuum_gripper)" add_bio_gripper="$(arg add_bio_gripper)" add_other_geometry="$(arg add_other_geometry)" />
 
 </robot>

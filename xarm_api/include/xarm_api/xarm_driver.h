@@ -81,7 +81,7 @@ public:
 
   bool SetModbusToutCB(xarm_msgs::SetModbusTimeout::Request &req, xarm_msgs::SetModbusTimeout::Response &res);
   bool GetSetModbusCB(xarm_msgs::GetSetModbusData::Request &req, xarm_msgs::GetSetModbusData::Response &res);
-  bool SetModbusUsePort503CB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
+  bool SetRS485UsePort503CB(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
 
   bool FtSensorEnable(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
   bool FtSensorSetMode(xarm_msgs::SetInt16::Request& req, xarm_msgs::SetInt16::Response& res);
@@ -162,6 +162,8 @@ private:
   bool bio_gripper_added_;
   bool in_ros_control_;
 
+  std::shared_ptr<SocketPort> sock_rt_;
+
   ros::NodeHandle nh_;
   ros::ServiceServer go_home_server_;
   ros::ServiceServer move_joint_server_;
@@ -198,7 +200,7 @@ private:
 
   ros::ServiceServer set_modbus_timeout_server_;
   ros::ServiceServer getset_tgpio_modbus_server_;
-  ros::ServiceServer set_tgpio_modbus_use_503_server_;
+  ros::ServiceServer set_rs485_use_503_port_server_;
 
   // ros::ServiceServer tgpio_delay_set_digital_server_;
   // ros::ServiceServer cgpio_delay_set_digital_server_;

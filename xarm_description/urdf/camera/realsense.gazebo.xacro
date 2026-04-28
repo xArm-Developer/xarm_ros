@@ -124,4 +124,250 @@
     </gazebo>
   </xacro:macro>
 
+  <xacro:macro name="realsense_ignition" params="prefix:=''">
+    <gazebo reference="${prefix}camera_depth_frame">
+      <sensor name="${prefix}cameradepth" type="rgbd_camera">
+        <camera name="${prefix}camera">
+          <horizontal_fov>1.57</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+            <format>L8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+          <depth_camera>
+            <clip>
+              <near>0.1</near>
+              <far>10</far>
+            </clip>
+          </depth_camera>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.100</stddev>
+          </noise>
+           <!-- <camera_info_topic>${prefix}camera/depth/camera_info</camera_info_topic> -->
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>0</visualize>
+        <topic>${prefix}camera/depth</topic>
+      </sensor>
+    </gazebo>
+    <gazebo reference="${prefix}camera_color_frame">
+      <sensor name="${prefix}cameracolor" type="camera">
+        <!-- <ignition_frame_id>${prefix}camera_color_frame</ignition_frame_id>
+        <optical_frame_id>${prefix}camera_color_frame</optical_frame_id> -->
+        <camera name="${prefix}camera">
+          <horizontal_fov>1.57</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+            <format>RGB_INT8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+          <camera_info_topic>${prefix}camera/color/camera_info</camera_info_topic>
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>1</visualize>
+        <topic>${prefix}camera/color/image_raw</topic>
+        <enable_metrics>true</enable_metrics>
+      </sensor>
+    </gazebo>
+    <gazebo reference="${prefix}camera_left_ir_frame">
+      <sensor name="${prefix}cameraired1" type="camera">
+        <camera name="${prefix}camera">
+          <horizontal_fov>1.57</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+            <format>L_INT8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.05</stddev>
+          </noise>
+           <camera_info_topic>${prefix}camera/infra1/camera_info</camera_info_topic>
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>0</visualize>
+        <topic>${prefix}camera/infra1/image_raw</topic>
+      </sensor>
+    </gazebo>
+    <gazebo reference="${prefix}camera_right_ir_frame">
+      <sensor name="${prefix}cameraired2" type="camera">
+        <camera name="${prefix}camera">
+          <horizontal_fov>1.57</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+            <format>L_INT8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.05</stddev>
+          </noise>
+          <camera_info_topic>${prefix}camera/infra2/camera_info</camera_info_topic>
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>0</visualize>
+        <topic>${prefix}camera/infra2/image_raw</topic>
+      </sensor>
+    </gazebo>
+    <gazebo>
+      <plugin
+        filename="libignition-gazebo-sensors-system.so"
+        name="ignition::gazebo::systems::Sensors">
+        <render_engine>ogre2</render_engine>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="realsense_gz" params="prefix:=''">
+    <gazebo reference="${prefix}camera_depth_frame">
+      <sensor name="${prefix}cameradepth" type="rgbd_camera">
+        <camera name="${prefix}camera">
+          <horizontal_fov>1.57</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+            <format>L8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+          <depth_camera>
+            <clip>
+              <near>0.1</near>
+              <far>10</far>
+            </clip>
+          </depth_camera>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.100</stddev>
+          </noise>
+           <!-- <camera_info_topic>${prefix}camera/depth/camera_info</camera_info_topic> -->
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>0</visualize>
+        <topic>${prefix}camera/depth</topic>
+      </sensor>
+    </gazebo>
+    <gazebo reference="${prefix}camera_color_frame">
+      <sensor name="${prefix}cameracolor" type="camera">
+        <!-- <ignition_frame_id>${prefix}camera_color_frame</ignition_frame_id>
+        <optical_frame_id>${prefix}camera_color_frame</optical_frame_id> -->
+        <camera name="${prefix}camera">
+          <horizontal_fov>1.57</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+            <format>RGB_INT8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+          <camera_info_topic>${prefix}camera/color/camera_info</camera_info_topic>
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>1</visualize>
+        <topic>${prefix}camera/color/image_raw</topic>
+        <enable_metrics>true</enable_metrics>
+      </sensor>
+    </gazebo>
+    <gazebo reference="${prefix}camera_left_ir_frame">
+      <sensor name="${prefix}cameraired1" type="camera">
+        <camera name="${prefix}camera">
+          <horizontal_fov>1.57</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+            <format>L_INT8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.05</stddev>
+          </noise>
+           <camera_info_topic>${prefix}camera/infra1/camera_info</camera_info_topic>
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>0</visualize>
+        <topic>${prefix}camera/infra1/image_raw</topic>
+      </sensor>
+    </gazebo>
+    <gazebo reference="${prefix}camera_right_ir_frame">
+      <sensor name="${prefix}cameraired2" type="camera">
+        <camera name="${prefix}camera">
+          <horizontal_fov>1.57</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+            <format>L_INT8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.05</stddev>
+          </noise>
+          <camera_info_topic>${prefix}camera/infra2/camera_info</camera_info_topic>
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>0</visualize>
+        <topic>${prefix}camera/infra2/image_raw</topic>
+      </sensor>
+    </gazebo>
+    <gazebo>
+      <plugin
+        filename="libgz-sim-sensors-system.so"
+        name="gz::sim::systems::Sensors">
+        <render_engine>ogre2</render_engine>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
 </robot>

@@ -31,6 +31,9 @@
   <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
   <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
 
+  <arg name="mesh_suffix" default="stl" />
+  <arg name="gripper_version" default="G1" />
+
   <arg name="ext_ns" default="" />
   <arg name="sensors_3d" default="false" />
   <arg name="enforce_limits" default="true" />
@@ -74,7 +77,8 @@
     <arg name="geometry_mesh_origin_rpy" value="$(arg geometry_mesh_origin_rpy)"/>
     <arg name="geometry_mesh_tcp_xyz" value="$(arg geometry_mesh_tcp_xyz)"/>
     <arg name="geometry_mesh_tcp_rpy" value="$(arg geometry_mesh_tcp_rpy)"/>
-    
+    <arg name="mesh_suffix" value="$(arg mesh_suffix)" />
+    <arg name="gripper_version" value="$(arg gripper_version)" />
     <arg name="ext_ns" value="$(arg ext_ns)" />
     <arg name="sensors_3d" value="$(arg sensors_3d)" />
     <arg name="enforce_limits" value="$(arg enforce_limits)" />

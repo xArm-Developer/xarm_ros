@@ -45,6 +45,10 @@
   <arg name="kinematics_suffix_1" default="" />
   <arg name="kinematics_suffix_2" default="" />
 
+  <arg name="mesh_suffix" default="stl" />
+  <arg name="gripper_version_1" default="G1" />
+  <arg name="gripper_version_2" default="G1" />
+
   <arg name="robot_dof" value="$(eval arg('dof') if arg('robot_type') == 'xarm' else 6)" />
   <arg name="robot_name" value="$(eval 'uf850' if arg('robot_type') == 'uf850' else arg('robot_type') + str(arg('robot_dof')))" />
   
@@ -154,6 +158,9 @@
 
     <arg name="kinematics_suffix_1" value="$(arg kinematics_suffix_1)"/>
     <arg name="kinematics_suffix_2" value="$(arg kinematics_suffix_2)"/>
+    <arg name="mesh_suffix" value="$(arg mesh_suffix)"/>
+    <arg name="gripper_version_1" value="$(arg gripper_version_1)"/>
+    <arg name="gripper_version_2" value="$(arg gripper_version_2)"/>
   
   </include>
 

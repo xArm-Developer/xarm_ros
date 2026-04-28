@@ -34,6 +34,10 @@
   <arg name="geometry_mesh_tcp_xyz" default="'0 0 0'"/>
   <arg name="geometry_mesh_tcp_rpy" default="'0 0 0'"/>
 
+  <arg name="mesh_suffix" default="stl" />
+  <arg name="gripper_version_1" default="G1" />
+  <arg name="gripper_version_2" default="G1" />
+
   <!-- Load universal robot description format (URDF) -->
   <param if="$(arg load_robot_description)" name="$(arg robot_description)" 
     command="xacro --inorder  '$(find xarm_description)/urdf/dual_xarm_device.urdf.xacro' 
@@ -81,6 +85,9 @@
       geometry_mesh_tcp_xyz_2:=$(arg geometry_mesh_tcp_xyz)
       geometry_mesh_tcp_rpy_1:=$(arg geometry_mesh_tcp_rpy)
       geometry_mesh_tcp_rpy_2:=$(arg geometry_mesh_tcp_rpy)
+      mesh_suffix:=$(arg mesh_suffix)
+      gripper_version_1:=$(arg gripper_version_1)
+      gripper_version_2:=$(arg gripper_version_2)
     "/>
 
   <param if="$(arg load_robot_description)" name="$(arg robot_description)_semantic" 
@@ -99,8 +106,8 @@
 
   <!-- Load updated joint limits (override information from URDF) -->
   <group ns="$(arg robot_description)_planning">
-    <rosparam if="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" command="load" file="$(find uf_robot_moveit_config)/config/$(arg robot_name)/joint_limits_with_gripper.yaml"/>
-    <rosparam unless="$(eval arg('add_gripper') and arg('robot_type') != 'lite')" command="load" file="$(find uf_robot_moveit_config)/config/$(arg robot_name)/joint_limits.yaml"/>
+    <rosparam if="$(arg add_gripper)" command="load" file="$(find uf_robot_moveit_config)/config/$(arg robot_name)/joint_limits_with_gripper.yaml"/>
+    <rosparam unless="$(arg add_gripper)" command="load" file="$(find uf_robot_moveit_config)/config/$(arg robot_name)/joint_limits.yaml"/>
   </group>
 
   <!-- Load default settings for kinematics; these settings are overridden by settings in a node's namespace -->

@@ -35,6 +35,10 @@
 
   <arg name="kinematics_suffix_1" default=""/>
   <arg name="kinematics_suffix_2" default=""/>
+
+  <arg name="mesh_suffix" default="stl" />
+  <arg name="gripper_version_1" default="G1" />
+  <arg name="gripper_version_2" default="G1" />
   
   <arg name="robot_dof" value="$(eval arg('dof') if arg('robot_type') == 'xarm' else 6)" />
   <!-- <arg name="robot_name" value="$(eval 'dual_uf850' if arg('robot_type') == 'uf850' else 'dual_' + arg('robot_type') + str(arg('robot_dof')))" /> -->
@@ -98,6 +102,9 @@
     geometry_mesh_tcp_xyz_2:=$(arg geometry_mesh_tcp_xyz)
     geometry_mesh_tcp_rpy_1:=$(arg geometry_mesh_tcp_rpy)
     geometry_mesh_tcp_rpy_2:=$(arg geometry_mesh_tcp_rpy)
+    mesh_suffix:=$(arg mesh_suffix)
+    gripper_version_1:=$(arg gripper_version_1)
+    gripper_version_2:=$(arg gripper_version_2)
     "/>
 
   <!-- spawn robot model in gazebo, located on the table, -gazebo_namespace defaults to be /gazebo -->

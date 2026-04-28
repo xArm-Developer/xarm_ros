@@ -33,6 +33,9 @@
   <arg name="sensors_3d" default="false" />
   <arg name="jnt_stat_pub_rate" default="10" />
 
+  <arg name="mesh_suffix" default="stl" />
+  <arg name="gripper_version" default="G1" />
+
   <!-- Remap the name space so it can send command to gazebo loaded controller -->
   <!-- this remap must appear BEFORE move_group launch -->
   <arg if="$(eval arg('robot_type') == 'uf850')" name="robot_controller_name" value="$(eval arg('robot_type') + ('_velo_traj_controller' if arg('velocity_control') else '_traj_controller'))" />
@@ -55,6 +58,8 @@
     <arg name="limited" value="$(arg limited)"/>
     <arg name="velocity_control" value="$(arg velocity_control)" />
     <arg name="kinematics_suffix_1" value="$(arg kinematics_suffix)" />
+    <arg name="mesh_suffix" value="$(arg mesh_suffix)" />
+    <arg name="gripper_version_1" value="$(arg gripper_version)" />
 
     <arg name="attach_to" value="$(arg attach_to)"/>
     <arg name="attach_xyz" value="$(arg attach_xyz)"/>
@@ -92,6 +97,8 @@
     <arg name="hw_ns" value="$(arg hw_ns)"/>
     <arg name="velocity_control" value="$(arg velocity_control)" />
     <arg name="kinematics_suffix" value="$(arg kinematics_suffix)" />
+    <arg name="mesh_suffix" value="$(arg mesh_suffix)" />
+    <arg name="gripper_version" value="$(arg gripper_version)" />
 
     <arg name="attach_to" value="$(arg attach_to)"/>
     <arg name="attach_xyz" value="$(arg attach_xyz)"/>
