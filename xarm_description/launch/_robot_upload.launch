@@ -10,7 +10,9 @@
   <arg name="add_realsense_d435i" default="false" />
   <arg name="add_d435i_links" default="false" />
   <arg name="robot_sn" default="" />
-  
+  <arg name="mesh_suffix" default="stl" />
+  <arg name="gripper_version" default="G1" />
+
   <param name="robot_description" command="$(find xacro)/xacro
     --inorder '$(find xarm_description)/urdf/xarm_device.urdf.xacro'
     robot_type:=$(arg robot_type) dof:=$(arg dof) limited:=$(arg limited) 
@@ -20,6 +22,8 @@
     add_realsense_d435i:=$(arg add_realsense_d435i)
     add_d435i_links:=$(arg add_d435i_links)
     robot_sn:=$(arg robot_sn)
+    mesh_suffix:=$(arg mesh_suffix)
+    gripper_version:=$(arg gripper_version)
     " />
 
 </launch>

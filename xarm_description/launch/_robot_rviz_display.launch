@@ -11,6 +11,8 @@
   <arg name="add_realsense_d435i" default="false" />
   <arg name="add_d435i_links" default="false" />
   <arg name="robot_sn" default="" />
+  <arg name="mesh_suffix" default="stl" />
+  <arg name="gripper_version" default="G1" />
 
   <include file="$(find xarm_description)/launch/_robot_upload.launch" >
     <arg name="dof" value="$(arg dof)"/>
@@ -22,6 +24,8 @@
     <arg name="add_realsense_d435i" value="$(arg add_realsense_d435i)" />
     <arg name="add_d435i_links" value="$(arg add_d435i_links)" />
     <arg name="robot_sn" value="$(arg robot_sn)" />
+    <arg name="mesh_suffix" value="$(arg mesh_suffix)" />
+    <arg name="gripper_version" value="$(arg gripper_version)" />
   </include>
 
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >

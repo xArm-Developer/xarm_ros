@@ -27,6 +27,7 @@
   </xacro:macro>
   
   <xacro:macro name="common_link_visual" params="mesh_filename add_mesh_suffix:=true material_name:='White' origin_xyz:='0 0 0' origin_rpy:='0 0 0' other_mesh_suffix:=''">
+    <xacro:property name="add_material" value="${mesh_suffix != 'dae'}"/>
     <visual>
       <geometry>
         <xacro:if value="${add_mesh_suffix}">
@@ -34,6 +35,7 @@
         </xacro:if>
         <xacro:unless value="${add_mesh_suffix}">
           <xacro:if value="${other_mesh_suffix != ''}">
+            <xacro:property name="add_material" value="${other_mesh_suffix != 'dae'}"/>
             <mesh filename="${mesh_path}/${mesh_filename}.${other_mesh_suffix}"/>
           </xacro:if>
           <xacro:unless value="${other_mesh_suffix != ''}">
@@ -42,7 +44,9 @@
         </xacro:unless>
       </geometry>
       <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
-      <material name="${material_name}" />
+      <xacro:if value="${add_material}">
+        <material name="${material_name}" />
+      </xacro:if>
     </visual>
   </xacro:macro>
   

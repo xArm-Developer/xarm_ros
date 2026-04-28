@@ -38,12 +38,16 @@
 
   <rosparam if="$(eval arg('add_gripper') and arg('robot_type') != 'lite' and not arg('dual'))"
     file="$(find xarm_controller)/config/gripper/gripper_controllers.yaml" command="load" ns="$(arg hw_ns)"/>
+  <rosparam if="$(eval arg('add_gripper') and arg('robot_type') == 'lite' and not arg('dual'))"
+    file="$(find xarm_controller)/config/gripper/lite_gripper_controllers.yaml" command="load" ns="$(arg hw_ns)"/>
   <!-- dual -->
   <rosparam if="$(eval arg('add_gripper') and arg('robot_type') != 'lite' and arg('dual'))"
     file="$(find xarm_controller)/config/gripper/dual_gripper_controllers.yaml" command="load" ns="$(arg hw_ns)"/>
+  <rosparam if="$(eval arg('add_gripper') and arg('robot_type') == 'lite' and arg('dual'))"
+    file="$(find xarm_controller)/config/gripper/dual_lite_gripper_controllers.yaml" command="load" ns="$(arg hw_ns)"/>
 
   <arg name="gripper_controller_name" value="$(eval 'gripper_action_controller' if arg('gripper_action') else 'gripper_velo_traj_controller' if arg('velocity_control') else 'gripper_traj_controller')" />
-  <node if="$(eval arg('add_gripper') and arg('robot_type') != 'lite' and not arg('dual'))" name="gripper_controller_spawner"
+  <node if="$(eval arg('add_gripper') and not arg('dual'))" name="gripper_controller_spawner"
     pkg="controller_manager"
     type="spawner"
     respawn="false"
@@ -51,7 +55,7 @@
     ns="/$(arg hw_ns)"
     args="$(arg gripper_controller_name) "/>
   <!-- dual -->
-  <node if="$(eval arg('add_gripper') and arg('robot_type') != 'lite' and arg('dual'))" name="gripper_controller_spawner"
+  <node if="$(eval arg('add_gripper') and arg('dual'))" name="gripper_controller_spawner"
     pkg="controller_manager"
     type="spawner"
     respawn="false"

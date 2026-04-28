@@ -35,6 +35,10 @@
   <arg name="kinematics_suffix_1" default="" />
   <arg name="kinematics_suffix_2" default="" />
 
+  <arg name="mesh_suffix" default="stl" />
+  <arg name="gripper_version_1" default="G1" />
+  <arg name="gripper_version_2" default="G1" />
+
   <remap from="$(arg ext_ns)/source_list" to="/source_list" />
   <include file="$(find uf_robot_moveit_config)/launch/__moveit_rviz_common.launch">
     <arg name="jnt_stat_source" value="[move_group/fake_controller_joint_states]" />
@@ -77,7 +81,9 @@
 
     <arg name="kinematics_suffix_1" value="$(arg kinematics_suffix_1)"/>
     <arg name="kinematics_suffix_2" value="$(arg kinematics_suffix_2)"/>
-    
+    <arg name="mesh_suffix" value="$(arg mesh_suffix)"/>
+    <arg name="gripper_version_1" value="$(arg gripper_version_1)"/>
+    <arg name="gripper_version_2" value="$(arg gripper_version_2)"/>
   </include>
 
 </launch>
