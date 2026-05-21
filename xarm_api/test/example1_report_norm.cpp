@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
     return 0;
   }
   char *server_ip = argv[1];
-  SocketPort *arm_report = connect_tcp_report_norm(server_ip);
+  std::shared_ptr<SocketPort> arm_report = connect_tcp_report_norm2(server_ip);
   if (arm_report == NULL) return 0;
 
   ros::init(argc, argv, "example_report_norm");
