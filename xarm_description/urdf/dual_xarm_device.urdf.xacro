@@ -25,6 +25,10 @@
   <xacro:arg name="robot_sn_2" default=""/>
   <xacro:arg name="report_type_1" default="normal"/>
   <xacro:arg name="report_type_2" default="normal"/>
+  <xacro:arg name="attach_xyz_1" default="0 0 0"/>
+  <xacro:arg name="attach_rpy_1" default="0 0 0"/>
+  <xacro:arg name="attach_xyz_2" default="0 1 0"/>
+  <xacro:arg name="attach_rpy_2" default="0 0 0"/>
 
   <xacro:arg name="ros2_control_plugin" default="uf_robot_hardware/UFRobotSystemHardware"/>
   <xacro:arg name="ros2_control_params" default=""/>
@@ -81,7 +85,7 @@
     add_bio_gripper="$(arg add_bio_gripper_1)" dof="$(arg dof_1)"
     ros2_control_plugin="$(arg ros2_control_plugin)" robot_type="$(arg robot_type_1)"
     load_gazebo_plugin="false" ros2_control_params="$(arg ros2_control_params)"
-    attach_to="world" attach_xyz="0 0 0" attach_rpy="0 0 0"
+    attach_to="world" attach_xyz="$(arg attach_xyz_1)" attach_rpy="$(arg attach_rpy_1)"
     add_realsense_d435i="$(arg add_realsense_d435i_1)" 
     add_d435i_links="$(arg add_d435i_links_1)" 
     add_other_geometry="$(arg add_other_geometry_1)" 
@@ -100,7 +104,7 @@
     add_bio_gripper="$(arg add_bio_gripper_2)" dof="$(arg dof_2)"
     ros2_control_plugin="$(arg ros2_control_plugin)" robot_type="$(arg robot_type_2)"
     load_gazebo_plugin="true" ros2_control_params="$(arg ros2_control_params)"
-    attach_to="world" attach_xyz="0 1 0" attach_rpy="0 0 0" create_attach_link="false"
+    attach_to="world" attach_xyz="$(arg attach_xyz_2)" attach_rpy="$(arg attach_rpy_2)" create_attach_link="false"
     add_realsense_d435i="$(arg add_realsense_d435i_2)" 
     add_d435i_links="$(arg add_d435i_links_2)" 
     add_other_geometry="$(arg add_other_geometry_2)" 
