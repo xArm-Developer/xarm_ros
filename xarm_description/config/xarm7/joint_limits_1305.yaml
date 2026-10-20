@@ -1,0 +1,22 @@
+joint_limits:
+  joint1:
+    has_effort_limits: true
+    max_effort: 179.4445  # 179.4445(max torque) = 0.955(torque constant) * 100(gear ratio) * 1.879(overload limit)
+  joint2:
+    has_effort_limits: true
+    max_effort: 179.4445  # 179.4445(max torque) = 0.955(torque constant) * 100(gear ratio) * 1.879(overload limit)
+  joint3:
+    has_effort_limits: true
+    max_effort: 92        # 92(max torque) = 0.46(torque constant) * 100(gear ratio) * 2(overload limit)
+  joint4:
+    has_effort_limits: true
+    max_effort: 92        # 92(max torque) = 0.46(torque constant) * 100(gear ratio) * 2(overload limit)
+  joint5:
+    has_effort_limits: true
+    max_effort: 81.558    # 81.558(max torque) = 0.46(torque constant) * 100(gear ratio) * 1.773(overload limit)
+  joint6:
+    has_effort_limits: true
+    max_effort: 30.6      # 30.6(max torque) = 0.15(torque constant) * 100(gear ratio) * 2.04(overload limit)
+  joint7:
+    has_effort_limits: true
+    max_effort: 30.6      # 30.6(max torque) = 0.15(torque constant) * 100(gear ratio) * 2.04(overload limit)
