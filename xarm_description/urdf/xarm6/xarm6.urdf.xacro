@@ -34,6 +34,13 @@
         <xacro:property name="link6_collision" value="end_tool/collision/end_tool"/>
       </xacro:unless>
     </xacro:unless>
+
+    <xacro:if value="${model_num >= 1305}">
+      <xacro:property name="joint_limits_params_filename" value="$(find xarm_description)/config/xarm6/joint_limits_1305.yaml"/>
+    </xacro:if>
+    <xacro:unless value="${model_num >= 1305}">
+      <xacro:property name="joint_limits_params_filename" value="$(find xarm_description)/config/xarm6/joint_limits.yaml"/>
+    </xacro:unless>
     
     <!-- load params and define property -->
     <xacro:property name="default_inertial_params_filename" value="xarm6_type6_HT_BR2"/>
@@ -46,12 +53,15 @@
     <xacro:if value="${use_xacro_load_yaml}">
       <xacro:property name="inertial_params" value="${xacro.load_yaml(link_inertial_params_file)}"/>
       <xacro:property name="kinematics_config" value="${xacro.load_yaml(kinematics_params_filename)}"/>
+      <xacro:property name="joint_limits_config" value="${xacro.load_yaml(joint_limits_params_filename)}"/>
     </xacro:if>
     <xacro:unless value="${use_xacro_load_yaml}">
       <xacro:property name="inertial_params" value="${load_yaml(link_inertial_params_file)}"/>
       <xacro:property name="kinematics_config" value="${load_yaml(kinematics_params_filename)}"/>
+      <xacro:property name="joint_limits_config" value="${load_yaml(joint_limits_params_filename)}"/>
     </xacro:unless>
     <xacro:property name="kinematics_params" value="${kinematics_config['kinematics']}"/>
+    <xacro:property name="joint_limits" value="${joint_limits_config['joint_limits']}"/>
 
     <link name="${prefix}link_base">
       <inertial>
@@ -100,7 +110,7 @@
       <limit
         lower="${joint1_lower_limit}"
         upper="${joint1_upper_limit}"
-        effort="50.0"
+        effort="${joint_limits['joint1']['max_effort']}"
         velocity="3.14"/>
       <dynamics damping="1.0" friction="1.0"/>
     </joint>
@@ -131,7 +141,7 @@
       <limit
         lower="${joint2_lower_limit}"
         upper="${joint2_upper_limit}"
-        effort="50.0"
+        effort="${joint_limits['joint2']['max_effort']}"
         velocity="3.14"/>
       <dynamics damping="1.0" friction="1.0"/>
     </joint>
@@ -162,7 +172,7 @@
       <limit
         lower="${joint3_lower_limit}"
         upper="${joint3_upper_limit}"
-        effort="32.0"
+        effort="${joint_limits['joint3']['max_effort']}"
         velocity="3.14"/>
       <dynamics damping="1.0" friction="1.0"/>
     </joint>
@@ -193,7 +203,7 @@
       <limit
         lower="${joint4_lower_limit}"
         upper="${joint4_upper_limit}"
-        effort="32.0"
+        effort="${joint_limits['joint4']['max_effort']}"
         velocity="3.14"/>
       <dynamics damping="1.0" friction="1.0"/>
     </joint>
@@ -223,7 +233,7 @@
       <limit
         lower="${joint5_lower_limit}"
         upper="${joint5_upper_limit}"
-        effort="32.0"
+        effort="${joint_limits['joint5']['max_effort']}"
         velocity="3.14"/>
       <dynamics damping="1.0" friction="1.0"/>
     </joint>
@@ -254,7 +264,7 @@
       <limit
         lower="${joint6_lower_limit}"
         upper="${joint6_upper_limit}"
-        effort="20.0"
+        effort="${joint_limits['joint6']['max_effort']}"
         velocity="3.14"/>
       <dynamics damping="1.0" friction="1.0"/>
     </joint>
