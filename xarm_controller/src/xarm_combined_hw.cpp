@@ -15,7 +15,7 @@ namespace xarm_control
     for (robot_hw = robot_hw_list_.begin(); robot_hw != robot_hw_list_.end(); ++robot_hw)
     {
       xarm_control::XArmHW* xarm_hw_ptr = dynamic_cast<xarm_control::XArmHW *>((*robot_hw).get());
-      if(xarm_hw_ptr->need_reset())
+      if(xarm_hw_ptr && xarm_hw_ptr->need_reset())
         return true;
     }
     return false;
@@ -28,7 +28,7 @@ namespace xarm_control
       for (robot_hw = robot_hw_list_.begin(); robot_hw != robot_hw_list_.end(); ++robot_hw)
       {
         xarm_control::XArmHW* xarm_hw_ptr = dynamic_cast<xarm_control::XArmHW *>((*robot_hw).get());
-        if(!xarm_hw_ptr->wait_fbk_start(timeout))
+        if(xarm_hw_ptr && !xarm_hw_ptr->wait_fbk_start(timeout))
           return false;
       }
     return true;
